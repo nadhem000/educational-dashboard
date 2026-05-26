@@ -4,6 +4,7 @@
   "description": "Your learning hubs – a collection of educational resources",
   "start_url": "/",
   "display": "standalone",
+  "display_override": ["window-controls-overlay"],
   "background_color": "#f5f1eb",
   "theme_color": "#4a7fd9",
   "orientation": "any",
@@ -19,6 +20,18 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "assets/screenshots/desktop-wide.png",
+      "sizes": "1280x720",
+      "form_factor": "wide"
+    },
+    {
+      "src": "assets/screenshots/mobile-narrow.png",
+      "sizes": "750x1334",
+      "form_factor": "narrow"
     }
   ],
   "lang": "en",

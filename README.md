@@ -45,7 +45,7 @@ The entire UI logic, styling, and translation are embedded in `index.html` to ke
 
 ### 1. Clone or download the repository
 ```bash
-git clone https://github.com/your-username/educational-dashboard.git
+git clone https://github.com/nadhem000/educational-dashboard.git
 cd educational-dashboard
 ```
 
