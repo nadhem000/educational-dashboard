@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Educational Dashboard</title>
+<link rel="manifest" href="/manifest.json" />
+    <style>
+        :root {
+            --ED-General-color-bg: #f5f1eb;
+            --ED-General-color-bg-secondary: #ede7df;
+            --ED-General-color-surface: #ffffff;
+            --ED-General-color-surface-hover: #fafaf8;
+            --ED-General-color-text-primary: #1e293b;
+            --ED-General-color-text-secondary: #5a6c7d;
+            --ED-General-color-text-tertiary: #8b9aab;
+            --ED-General-color-border: #e2dcd4;
+            --ED-General-color-border-hover: #cbc3b8;
+            --ED-General-color-shadow: rgba(60, 50, 40, 0.07);
+            --ED-General-color-shadow-hover: rgba(60, 50, 40, 0.14);
+            --ED-General-color-accent-default: #4a7fd9;
+            --ED-General-color-accent-light: #e8f1fb;
+            --ED-General-color-accent-soft: #f0f5fc;
+            --ED-General-color-header-bg: #ffffff;
+            --ED-General-color-header-border: #e8e2d9;
+            --ED-General-color-toggle-bg: #e8e2d9;
+            --ED-General-color-toggle-text: #4a5568;
+            --ED-General-color-toggle-active-bg: #4a7fd9;
+            --ED-General-color-toggle-active-text: #ffffff;
+            --ED-General-color-badge-bg: #f0ece5;
+            --ED-General-color-badge-text: #5a6c7d;
+            --ED-General-color-badge-hover-bg: #e4ded5;
+            --ED-General-color-btn-primary-bg: #4a7fd9;
+            --ED-General-color-btn-primary-text: #ffffff;
+            --ED-General-color-btn-primary-hover: #3b6ec4;
+            --ED-General-color-btn-shadow: rgba(0, 0, 0, 0.2);
+            --ED-General-color-icon-container-bg: #f0f4f9;
+            --ED-General-card-radius: 16px;
+            --ED-General-card-padding: 1.5rem;
+            --ED-General-transition-speed: 0.3s;
+            --ED-General-grid-gap: 1.25rem;
+            --ED-General-font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+                "Noto Sans", "Noto Sans Arabic", sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+            --card-accent-r: 60;
+            --card-accent-g: 50;
+            --card-accent-b: 40;
+            --card-shadow-opacity: 0.10;
+            --card-shadow-opacity-hover: 0.22;
+            --card-shadow-blur: 10px;
+            --card-shadow-blur-hover: 30px;
+            --card-shadow-offset-x: 0px;
+            --card-shadow-offset-y: 3px;
+            --card-shadow-offset-y-hover: 8px;
+
+            /* New: header gradient stops */
+            --ED-General-color-header-gradient-start: #fefdfb;
+            --ED-General-color-header-gradient-mid1: #faf8f4;
+            --ED-General-color-header-gradient-mid2: #f6f3ee;
+            --ED-General-color-header-gradient-end: #f2efe8;
+
+            /* New: header accent gradient mid‑stop */
+            --ED-General-color-header-accent-gradient-stop: rgba(180, 160, 140, 0.5);
+
+            /* New: base RGB for shadows (light tint) */
+            --ED-General-color-shadow-rgb: 60, 50, 40;
+
+            /* New: accent RGB for opacity‑based shadows */
+            --ED-General-color-accent-rgb: 74, 127, 217;
+
+            /* New: icon colours */
+            --ED-General-color-icon-sun: #e8a840;
+            --ED-General-color-icon-moon: #7b8cb0;
+            --ED-General-color-icon-sun-glow: rgba(232, 168, 64, 0.3);
+            --ED-General-color-icon-moon-glow: rgba(122, 143, 176, 0.35);
+
+            /* New: text colour on accent (used for inside‑link & main‑button hover) */
+            --ED-General-color-text-on-accent: #ffffff;
+        }
+
+        [data-theme="dark"] {
+            --ED-General-color-bg: #171a20;
+            --ED-General-color-bg-secondary: #1e2129;
+            --ED-General-color-surface: #23262f;
+            --ED-General-color-surface-hover: #2a2e38;
+            --ED-General-color-text-primary: #e2e4ea;
+            --ED-General-color-text-secondary: #b0b5c2;
+            --ED-General-color-text-tertiary: #7d8494;
+            --ED-General-color-border: #32353e;
+            --ED-General-color-border-hover: #454952;
+            --ED-General-color-shadow: rgba(0, 0, 0, 0.25);
+            --ED-General-color-shadow-hover: rgba(0, 0, 0, 0.45);
+            --ED-General-color-accent-default: #7aafff;
+            --ED-General-color-accent-light: #1e2d45;
+            --ED-General-color-accent-soft: #1a2535;
+            --ED-General-color-header-bg: #1c1f28;
+            --ED-General-color-header-border: #2a2e38;
+            --ED-General-color-toggle-bg: #2a2e38;
+            --ED-General-color-toggle-text: #b0b5c2;
+            --ED-General-color-toggle-active-bg: #7aafff;
+            --ED-General-color-toggle-active-text: #12151c;
+            --ED-General-color-badge-bg: #2a2e38;
+            --ED-General-color-badge-text: #b0b5c2;
+            --ED-General-color-badge-hover-bg: #353a45;
+            --ED-General-color-btn-primary-bg: #7aafff;
+            --ED-General-color-btn-primary-text: #12151c;
+            --ED-General-color-btn-primary-hover: #6199f0;
+            --ED-General-color-btn-shadow: rgba(0, 0, 0, 0.5);
+            --ED-General-color-icon-container-bg: #252b38;
+
+            /* Dark overrides */
+            --ED-General-color-header-gradient-start: #1f222d;
+            --ED-General-color-header-gradient-mid1: #1c1f29;
+            --ED-General-color-header-gradient-mid2: #191c24;
+            --ED-General-color-header-gradient-end: #171a20;
+
+            --ED-General-color-header-accent-gradient-stop: rgba(160, 175, 200, 0.4);
+
+            --ED-General-color-shadow-rgb: 0, 0, 0;
+
+            --ED-General-color-accent-rgb: 122, 175, 255;
+
+            --ED-General-color-icon-sun: #e8a840;
+            --ED-General-color-icon-moon: #c4d0f0;
+            --ED-General-color-icon-sun-glow: rgba(232, 168, 64, 0.3);
+            --ED-General-color-icon-moon-glow: rgba(180, 195, 235, 0.35);
+
+            --ED-General-color-text-on-accent: #12151c;
+        }
+
+        [dir="rtl"] {
+            direction: rtl;
+            text-align: right;
+        }
+        [dir="rtl"] .ED-General-card__inside-links {
+            justify-content: flex-end;
+        }
+        [dir="rtl"] .ED-General-header__controls {
+            flex-direction: row-reverse;
+        }
+        [dir="rtl"] .ED-General-card__main-btn .ED-General-card__main-btn-arrow {
+            transform: scaleX(-1);
+        }
+        [dir="rtl"] .ED-General-card__main-btn:hover .ED-General-card__main-btn-arrow {
+            transform: scaleX(-1) translateX(-3px);
+        }
+        [dir="rtl"] .ED-General-inside-link__arrow {
+            transform: scaleX(-1);
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: var(--ED-General-font-stack);
+            background-color: var(--ED-General-color-bg);
+            color: var(--ED-General-color-text-primary);
+            min-height: 100vh;
+            transition: background-color var(--ED-General-transition-speed) ease, color var(--ED-General-transition-speed) ease;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ========== HEADER — refined & elevated ========== */
+        .ED-General-header {
+            background: linear-gradient(175deg,
+                    var(--ED-General-color-header-gradient-start) 0%,
+                    var(--ED-General-color-header-gradient-mid1) 25%,
+                    var(--ED-General-color-header-gradient-mid2) 60%,
+                    var(--ED-General-color-header-gradient-end) 100%);
+            border-bottom: 1px solid var(--ED-General-color-header-border);
+            padding: 1.05rem 1.75rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: background var(--ED-General-transition-speed) ease,
+                border-color var(--ED-General-transition-speed) ease,
+                box-shadow var(--ED-General-transition-speed) ease;
+            box-shadow:
+                0 1px 4px rgba(var(--ED-General-color-shadow-rgb), 0.04),
+                0 2px 10px rgba(var(--ED-General-color-shadow-rgb), 0.03);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+        }
+
+        [data-theme="dark"] .ED-General-header {
+            box-shadow:
+                0 1px 4px rgba(var(--ED-General-color-shadow-rgb), 0.25),
+                0 2px 10px rgba(var(--ED-General-color-shadow-rgb), 0.18);
+        }
+
+        .ED-General-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(105deg,
+                    var(--ED-General-color-accent-default) 0%,
+                    var(--ED-General-color-accent-default) 35%,
+                    var(--ED-General-color-header-accent-gradient-stop) 60%,
+                    transparent 85%);
+            opacity: 0.75;
+            border-radius: 0 0 1px 0;
+            transition: opacity 0.3s ease;
+        }
+        .ED-General-header:hover::before {
+            opacity: 0.95;
+        }
+
+        .ED-General-header__inner {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.85rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ED-General-header__title {
+            font-size: 1.38rem;
+            font-weight: 750;
+            letter-spacing: -0.025em;
+            color: var(--ED-General-color-text-primary);
+            white-space: nowrap;
+            transition: color var(--ED-General-transition-speed) ease,
+                text-shadow 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            text-shadow: 0 1px 2px rgba(var(--ED-General-color-shadow-rgb), 0.03);
+        }
+
+        [data-theme="dark"] .ED-General-header__title {
+            text-shadow: 0 1px 3px rgba(var(--ED-General-color-shadow-rgb), 0.2);
+        }
+
+        .ED-General-header__title-icon {
+            width: 26px;
+            height: 26px;
+            object-fit: contain;
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: drop-shadow(0 1px 2px rgba(var(--ED-General-color-shadow-rgb), 0.08));
+        }
+        .ED-General-header__title:hover .ED-General-header__title-icon {
+            transform: rotate(-5deg) scale(1.12);
+        }
+
+        .ED-General-header__controls {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            flex-wrap: wrap;
+        }
+
+        /* ========== LANG SELECT ========== */
+        .ED-General-lang-select {
+            padding: 0.48rem 2.1rem 0.48rem 0.9rem;
+            border-radius: 22px;
+            border: 1.5px solid var(--ED-General-color-border);
+            background: var(--ED-General-color-surface);
+            color: var(--ED-General-color-text-primary);
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-weight: 600;
+            font-family: var(--ED-General-font-stack);
+            transition: all 0.22s ease;
+            white-space: nowrap;
+            letter-spacing: 0.01em;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            box-shadow: 0 1px 3px rgba(var(--ED-General-color-shadow-rgb), 0.05);
+            position: relative;
+        }
+        .ED-General-lang-select::after {
+            content: '';
+            position: absolute;
+            right: 0.7rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 6px solid var(--ED-General-color-text-secondary);
+            pointer-events: none;
+            transition: border-top-color 0.2s ease;
+        }
+        [data-theme="dark"] .ED-General-lang-select::after {
+            border-top-color: var(--ED-General-color-text-secondary);
+        }
+        .ED-General-lang-select:hover {
+            border-color: var(--ED-General-color-accent-default);
+            background-color: var(--ED-General-color-accent-soft);
+            box-shadow: 0 2px 8px rgba(var(--ED-General-color-accent-rgb), 0.12);
+        }
+        .ED-General-lang-select:focus {
+            outline: none;
+            border-color: var(--ED-General-color-accent-default);
+            box-shadow: 0 0 0 3.5px rgba(var(--ED-General-color-accent-rgb), 0.14);
+        }
+
+        /* ========== THEME TOGGLE ========== */
+        .ED-General-theme-toggle {
+            width: 41px;
+            height: 41px;
+            border-radius: 50%;
+            border: 1.5px solid var(--ED-General-color-border);
+            background: var(--ED-General-color-surface);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--ED-General-color-text-primary);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            box-shadow: 0 1px 4px rgba(var(--ED-General-color-shadow-rgb), 0.06);
+            position: relative;
+            overflow: hidden;
+        }
+        .ED-General-theme-toggle::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle at center,
+                    var(--ED-General-color-accent-default) 0%,
+                    transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .ED-General-theme-toggle:hover::after {
+            opacity: 0.06;
+        }
+        .ED-General-theme-toggle:hover {
+            border-color: var(--ED-General-color-accent-default);
+            background: var(--ED-General-color-accent-soft);
+            box-shadow: 0 4px 16px rgba(var(--ED-General-color-accent-rgb), 0.15);
+            transform: scale(1.06);
+        }
+        .ED-General-theme-toggle:active {
+            transform: scale(0.94);
+            transition: 0.1s ease;
+        }
+        .ED-General-theme-toggle .ED-General-icon-sun,
+        .ED-General-theme-toggle .ED-General-icon-moon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            line-height: 1;
+            transition: all 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+            position: absolute;
+            pointer-events: none;
+        }
+        .ED-General-theme-toggle .ED-General-icon-sun {
+            opacity: 1;
+            transform: rotate(0deg) scale(1);
+            color: var(--ED-General-color-icon-sun);
+            filter: drop-shadow(0 0 3px var(--ED-General-color-icon-sun-glow));
+        }
+        .ED-General-theme-toggle .ED-General-icon-moon {
+            opacity: 0;
+            transform: rotate(-90deg) scale(0.5);
+            color: var(--ED-General-color-icon-moon);
+        }
+        [data-theme="dark"] .ED-General-theme-toggle .ED-General-icon-sun {
+            opacity: 0;
+            transform: rotate(90deg) scale(0.5);
+            filter: none;
+        }
+        [data-theme="dark"] .ED-General-theme-toggle .ED-General-icon-moon {
+            opacity: 1;
+            transform: rotate(0deg) scale(1);
+            color: var(--ED-General-color-icon-moon);
+            filter: drop-shadow(0 0 4px var(--ED-General-color-icon-moon-glow));
+        }
+.ED-General-header-btn {
+    background: var(--ED-General-color-surface);
+    border: 1.5px solid var(--ED-General-color-border);
+    border-radius: 22px;
+    padding: 0.45rem 1rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--ED-General-color-text-primary);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: all 0.22s ease;
+    white-space: nowrap;
+    font-family: var(--ED-General-font-stack);
+    box-shadow: 0 1px 3px rgba(var(--ED-General-color-shadow-rgb), 0.05);
+}
+.ED-General-header-btn:hover {
+    border-color: var(--ED-General-color-accent-default);
+    background: var(--ED-General-color-accent-soft);
+    box-shadow: 0 2px 8px rgba(var(--ED-General-color-accent-rgb), 0.12);
+}
+.ED-General-header-btn:active {
+    transform: scale(0.96);
+}
+
+        /* ========== MAIN ========== */
+        .ED-General-main {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 1.75rem 1.5rem 3rem;
+        }
+        .ED-General-main__subtitle {
+            font-size: 0.9rem;
+            color: var(--ED-General-color-text-tertiary);
+            margin-bottom: 1.5rem;
+            transition: color var(--ED-General-transition-speed) ease;
+            letter-spacing: 0.02em;
+        }
+        .ED-General-card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: var(--ED-General-grid-gap);
+        }
+
+        /* ========== CARD — per-card shadow via RGB custom props ========== */
+        .ED-General-card {
+            background: var(--ED-General-color-surface);
+            border: 1px solid var(--ED-General-color-border);
+            border-radius: var(--ED-General-card-radius);
+            padding: var(--ED-General-card-padding);
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            transition: all var(--ED-General-transition-speed) ease;
+            box-shadow:
+                0 var(--card-shadow-offset-y, 3px) var(--card-shadow-blur, 10px) rgba(var(--card-accent-r, 60), var(--card-accent-g, 50), var(--card-accent-b, 40), var(--card-shadow-opacity, 0.10)),
+                0 1px 4px rgba(var(--card-accent-r, 60), var(--card-accent-g, 50), var(--card-accent-b, 40), calc(var(--card-shadow-opacity, 0.10) * 0.55));
+            position: relative;
+            overflow: hidden;
+            cursor: default;
+            --card-accent: var(--ED-General-color-accent-default);
+        }
+        .ED-General-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--card-accent);
+            border-radius: 0 0 3px 3px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .ED-General-card:hover {
+            border-color: var(--card-accent);
+            box-shadow:
+                0 var(--card-shadow-offset-y-hover, 8px) var(--card-shadow-blur-hover, 30px) rgba(var(--card-accent-r, 60), var(--card-accent-g, 50), var(--card-accent-b, 40), var(--card-shadow-opacity-hover, 0.22)),
+                0 2px 8px rgba(var(--card-accent-r, 60), var(--card-accent-g, 50), var(--card-accent-b, 40), calc(var(--card-shadow-opacity-hover, 0.22) * 0.45));
+            transform: translateY(-3px);
+            background: var(--ED-General-color-surface-hover);
+        }
+        .ED-General-card:hover::before {
+            opacity: 1;
+        }
+
+        .ED-General-card__icon-container {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--ED-General-card-icon-bg, var(--ED-General-color-icon-container-bg));
+            flex-shrink: 0;
+            transition: background 0.3s ease, transform 0.3s ease;
+            overflow: hidden;
+        }
+        .ED-General-card:hover .ED-General-card__icon-container {
+            transform: scale(1.05);
+        }
+        .ED-General-card__icon-container img {
+            width: 38px;
+            height: 38px;
+            object-fit: contain;
+            border-radius: 6px;
+        }
+        .ED-General-card__icon-letter {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--card-accent);
+            text-transform: uppercase;
+            line-height: 1;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+        .ED-General-card__icon-container img[data-error] {
+            display: none;
+        }
+        .ED-General-card__icon-container img[data-error]+.ED-General-card__icon-letter {
+            display: flex;
+        }
+        .ED-General-card__name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            color: var(--ED-General-color-text-primary);
+        }
+        .ED-General-card__description {
+            font-size: 0.875rem;
+            color: var(--ED-General-color-text-secondary);
+            line-height: 1.55;
+            flex-grow: 1;
+        }
+        .ED-General-card__inside-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-top: 0.1rem;
+        }
+        .ED-General-inside-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.3rem 0.65rem;
+            border-radius: 14px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-decoration: none;
+            background: var(--ED-General-color-badge-bg);
+            color: var(--ED-General-color-badge-text);
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            font-family: var(--ED-General-font-stack);
+        }
+        .ED-General-inside-link:hover {
+            background: var(--card-accent);
+            color: var(--ED-General-color-text-on-accent);
+        }
+        .ED-General-inside-link__arrow {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            transition: transform 0.2s ease;
+        }
+        .ED-General-inside-link:hover .ED-General-inside-link__arrow {
+            opacity: 1;
+            transform: translateX(2px);
+        }
+        .ED-General-card__main-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 0.55rem 1.1rem;
+            border-radius: 22px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            background: var(--card-accent);
+            color: var(--ED-General-color-text-on-accent);
+            transition: all 0.25s ease;
+            font-family: var(--ED-General-font-stack);
+            align-self: flex-start;
+            margin-top: 0.2rem;
+        }
+        .ED-General-card__main-btn:hover {
+            filter: brightness(0.9);
+            box-shadow: 0 4px 14px var(--ED-General-color-btn-shadow);
+            transform: translateY(-1px);
+        }
+        .ED-General-card__main-btn-arrow {
+            display: inline-block;
+            font-size: 1rem;
+            font-weight: 700;
+            transition: transform 0.25s ease;
+            line-height: 1;
+        }
+        .ED-General-card__main-btn:hover .ED-General-card__main-btn-arrow {
+            transform: translateX(3px);
+        }
+        .ED-General-card--education {
+            border-radius: var(--ED-General-card-radius);
+        }
+        .ED-General-card--others {
+            border-radius: 12px 20px 12px 20px;
+        }
+        .ED-General-card--games {
+            border-radius: 20px 5px 20px 5px;
+        }
+        .ED-General-card--news {
+            border-radius: 4px 20px 4px 20px;
+        }
+        .ED-General-card--obsolete {
+            border-radius: 8px 22px 8px 22px;
+            opacity: 0.85;
+            filter: grayscale(0.2);
+        }
+        .ED-General-section-title {
+            font-size: 1.25rem;
+            font-weight: 650;
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.35rem;
+            border-bottom: 1px solid var(--ED-General-color-border);
+            color: var(--ED-General-color-text-primary);
+            transition: color var(--ED-General-transition-speed) ease, border-color var(--ED-General-transition-speed) ease;
+        }
+
+        /* ========== FOOTER — refined & polished ========== */
+        .ED-General-footer {
+            border-top: 1px solid var(--ED-General-color-border);
+            padding: 2rem 0 1.75rem;
+            font-size: 0.8rem;
+            color: var(--ED-General-color-text-tertiary);
+            transition: all var(--ED-General-transition-speed) ease;
+            background: linear-gradient(180deg,
+                    var(--ED-General-color-bg-secondary) 0%,
+                    var(--ED-General-color-bg) 60%);
+            box-shadow: 0 -1px 8px rgba(var(--ED-General-color-shadow-rgb), 0.04);
+            position: relative;
+        }
+        [data-theme="dark"] .ED-General-footer {
+            background: linear-gradient(180deg,
+                    var(--ED-General-color-bg-secondary) 0%,
+                    var(--ED-General-color-bg) 55%);
+            box-shadow: 0 -1px 8px rgba(var(--ED-General-color-shadow-rgb), 0.3);
+        }
+        .ED-General-footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 55px;
+            height: 3px;
+            background: var(--ED-General-color-accent-default);
+            border-radius: 0 0 3px 3px;
+            opacity: 0.55;
+            transition: width 0.3s ease, opacity 0.3s ease;
+        }
+        .ED-General-footer:hover::before {
+            width: 70px;
+            opacity: 0.75;
+        }
+        .ED-General-footer__grid {
+            display: grid;
+            grid-template-columns: 1fr 1.4fr 1fr;
+            gap: 2rem;
+            padding: 0 1.75rem;
+            max-width: 1300px;
+            margin: 0 auto;
+            align-items: start;
+        }
+        .ED-General-footer__col {
+            display: flex;
+            flex-direction: column;
+            gap: 0.55rem;
+        }
+        .ED-General-footer__col:first-child {
+            font-weight: 550;
+            letter-spacing: 0.015em;
+            color: var(--ED-General-color-text-secondary);
+        }
+        .ED-General-footer__col:nth-child(2) {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 0.55rem 1.1rem;
+            align-items: center;
+        }
+        .ED-General-footer__col:last-child {
+            text-align: right;
+            gap: 0.35rem;
+        }
+        [dir="rtl"] .ED-General-footer__col:last-child {
+            text-align: left;
+        }
+        .ED-General-footer a {
+            color: var(--ED-General-color-text-secondary);
+            text-decoration: none;
+            font-weight: 550;
+            transition: all 0.22s ease;
+            position: relative;
+            width: fit-content;
+            padding: 0.2rem 0;
+        }
+        .ED-General-footer a::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 0;
+            height: 1.5px;
+            background: var(--ED-General-color-accent-default);
+            border-radius: 1px;
+            transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .ED-General-footer a:hover {
+            color: var(--ED-General-color-accent-default);
+        }
+        .ED-General-footer a:hover::after {
+            width: 100%;
+        }
+        .ED-General-footer span {
+            display: block;
+            line-height: 1.5;
+        }
+        .ED-General-footer__col:last-child span {
+            font-size: 0.76rem;
+            color: var(--ED-General-color-text-tertiary);
+            letter-spacing: 0.01em;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 640px) {
+            .ED-General-card-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .ED-General-header__inner {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.6rem;
+            }
+            .ED-General-header__controls {
+                width: 100%;
+                justify-content: flex-start;
+            }
+            .ED-General-main {
+                padding: 1rem 0.75rem 2rem;
+            }
+            .ED-General-card {
+                padding: 1.15rem;
+            }
+            .ED-General-card__icon-container {
+                width: 42px;
+                height: 42px;
+                border-radius: 12px;
+            }
+            .ED-General-card__name {
+                font-size: 1rem;
+            }
+            .ED-General-footer__grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 1.25rem;
+            }
+            .ED-General-footer__col {
+                align-items: center;
+            }
+            .ED-General-footer__col:nth-child(2) {
+                justify-content: center;
+            }
+            .ED-General-footer__col:last-child {
+                text-align: center;
+                align-items: center;
+            }
+            .ED-General-footer a::after {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            .ED-General-footer a:hover::after {
+                width: 55%;
+            }
+        }
+        @media (min-width: 641px) and (max-width: 1024px) {
+            .ED-General-card-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            }
+            .ED-General-footer__grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 1.5rem;
+            }
+            .ED-General-footer__col:last-child {
+                grid-column: 1 / -1;
+                text-align: center;
+                align-items: center;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header id="header-container"></header>
+    <main class="ED-General-main">
+        <p class="ED-General-main__subtitle" data-i18n="subtitle">Your learning hubs</p>
+        <div class="ED-General-card-grid" id="cardGrid"></div>
+        <h2 class="ED-General-section-title" data-i18n="othersTitle">Others</h2>
+        <div class="ED-General-card-grid" id="othersGrid"></div>
+        <h2 class="ED-General-section-title" data-i18n="gamesTitle">Games</h2>
+        <div class="ED-General-card-grid" id="gamesGrid"></div>
+        <h2 class="ED-General-section-title" data-i18n="newsTitle">News</h2>
+        <div class="ED-General-card-grid" id="newsGrid"></div>
+        <h2 class="ED-General-section-title" data-i18n="obsoleteTitle">Obsolete & unused</h2>
+        <div class="ED-General-card-grid" id="obsoleteGrid"></div>
+    </main>
+   <footer id="footer-container"></footer>
+    <!-- External data file: card definitions & category config -->
+    <script src="data_general.js"></script>
+    <script>
+        (async function() {
+        // ----- 1. Load header & footer -----
+        async function loadComponent(url, targetId) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`Failed to load ${url}`);
+                const html = await response.text();
+                document.getElementById(targetId).innerHTML = html;
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        await Promise.all([
+            loadComponent('header.html', 'header-container'),
+            loadComponent('footer.html', 'footer-container')
+        ]);
+            // ========== Category → grid mapping is now in data_general.js ==========
+            // allCards and categoryConfig are globally available from data_general.js
+
+            // ========== UI text dictionary ==========
+            const uiText = {
+                en: {
+                    dashboardTitle: 'Educational Dashboard',
+                    subtitle: 'Your learning hubs',
+                    othersTitle: 'Others',
+                    gamesTitle: 'Games',
+                    newsTitle: 'News',
+                    obsoleteTitle: 'Obsolete & unused',
+                    visitBtn: 'Visit',
+                    noDescription: 'No description available.',
+                    imageIconAlt: 'icon',
+                    footer: {
+                        confidentiality: 'Confidentiality Politics',
+                        terms: 'Terms of Use',
+                        contact: 'Contact',
+                        version: "version '0.0.1'",
+                        developer: 'developed by: Mejri Ziad.',
+                        hosted: 'Hosted on Github and Netlify.'
+                    }
+                },
+                fr: {
+                    dashboardTitle: 'Tableau de Bord Éducatif',
+                    subtitle: 'Vos plateformes d\'apprentissage',
+                    othersTitle: 'Autres',
+                    gamesTitle: 'Jeux',
+                    newsTitle: 'Actualités',
+                    obsoleteTitle: 'Obsolète & inutilisé',
+                    visitBtn: 'Visiter',
+                    noDescription: 'Aucune description disponible.',
+                    imageIconAlt: 'icône',
+                    footer: {
+                        confidentiality: 'Politique de confidentialité',
+                        terms: 'Conditions d\'utilisation',
+                        contact: 'Contact',
+                        version: "version '0.0.1'",
+                        developer: 'développé par : Mejri Ziad.',
+                        hosted: 'Hébergé sur Github et Netlify.'
+                    }
+                },
+                ar: {
+                    dashboardTitle: 'لوحة التحكم التعليمية',
+                    subtitle: 'منصات التعلم الخاصة بك',
+                    othersTitle: 'أخرى',
+                    gamesTitle: 'ألعاب',
+                    newsTitle: 'أخبار',
+                    obsoleteTitle: 'قديم وغير مستخدم',
+                    visitBtn: 'زيارة',
+                    noDescription: 'لا يوجد وصف متاح.',
+                    imageIconAlt: 'أيقونة',
+                    footer: {
+                        confidentiality: 'سياسة الخصوصية',
+                        terms: 'شروط الاستخدام',
+                        contact: 'اتصل بنا',
+                        version: "الإصدار '0.0.1'",
+                        developer: 'طور بواسطة: ماجري زياد.',
+                        hosted: 'مستضاف على Github و Netlify.'
+                    }
+                },
+            };
+
+            let currentLang = localStorage.getItem('dashboardLang') || 'en';
+            let currentTheme = localStorage.getItem('dashboardTheme') || 'light';
+
+            // ========== Utility: get nested value from object using dot path ==========
+            function getNestedValue(obj, path) {
+                return path.split('.').reduce((o, k) => (o && o[k] !== undefined ? o[k] : undefined), obj) || '';
+            }
+
+            // ========== Translate the whole page (static elements with data-i18n) ==========
+            function translatePage() {
+                const lang = currentLang;
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    const text = getNestedValue(uiText[lang], key);
+                    if (text) el.textContent = text;
+                });
+                document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+                document.documentElement.setAttribute('lang', lang);
+                const langSelect = document.getElementById('langSelect');
+                if (langSelect) langSelect.value = lang;
+            }
+
+            // ========== Hex → RGB converter ==========
+            function hexToRgb(hex) {
+                const clean = hex.replace('#', '');
+                const full = clean.length === 3 ?
+                    clean[0] + clean[0] + clean[1] + clean[1] + clean[2] + clean[2] :
+                    clean;
+                const match = /^([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(full);
+                if (!match) return { r: 60, g: 50, b: 40 };
+                return {
+                    r: parseInt(match[1], 16),
+                    g: parseInt(match[2], 16),
+                    b: parseInt(match[3], 16)
+                };
+            }
+
+            // ========== Relative luminance (sRGB) ==========
+            function getLuminance(r, g, b) {
+                const linearize = (c) => {
+                    c = c / 255;
+                    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+                };
+                return 0.2126 * linearize(r) + 0.7152 * linearize(g) + 0.0722 * linearize(b);
+            }
+
+            // ========== Hue angle from RGB (0–360) ==========
+            function getHue(r, g, b) {
+                const rf = r / 255;
+                const gf = g / 255;
+                const bf = b / 255;
+                const max = Math.max(rf, gf, bf);
+                const min = Math.min(rf, gf, bf);
+                const delta = max - min;
+                if (delta === 0) return 0;
+                let hue = 0;
+                if (max === rf) hue = ((gf - bf) / delta) % 6;
+                else if (max === gf) hue = (bf - rf) / delta + 2;
+                else hue = (rf - gf) / delta + 4;
+                hue = Math.round(hue * 60);
+                if (hue < 0) hue += 360;
+                return hue;
+            }
+
+            // ========== Apply palette + unique per‑card shadow ==========
+            function applyCardPalettes() {
+                const isDark = currentTheme === 'dark';
+                document.querySelectorAll('.ED-General-card').forEach(cardEl => {
+                    const cardId = cardEl.getAttribute('data-card-id');
+                    const card = allCards.find(c => c.id === cardId);
+                    if (!card) return;
+                    const palette = isDark ? (card.darkModePalette || {}) : (card.lightModePalette || {});
+                    const accent = palette.accent || '#4a7fd9';
+                    cardEl.style.setProperty('--card-accent', accent);
+                    if (palette.iconBg) cardEl.style.setProperty('--ED-General-card-icon-bg', palette
+                        .iconBg);
+                    else cardEl.style.removeProperty('--ED-General-card-icon-bg');
+                    const rgb = hexToRgb(accent);
+                    const lum = getLuminance(rgb.r, rgb.g, rgb.b);
+                    const hue = getHue(rgb.r, rgb.g, rgb.b);
+                    const baseOpacity = 0.06 + (1 - lum) * 0.12;
+                    const opacityHover = baseOpacity * 2.1;
+                    const darkMultiplier = isDark ? 1.45 : 1;
+                    const finalOpacity = Math.min(baseOpacity * darkMultiplier, 0.22);
+                    const finalOpacityHover = Math.min(opacityHover * darkMultiplier, 0.40);
+                    let offsetX = 0;
+                    if (hue >= 0 && hue <= 50) offsetX = 2;
+                    else if (hue > 50 && hue <= 100) offsetX = 1;
+                    else if (hue >= 200 && hue <= 280) offsetX = -2;
+                    else if (hue > 280 && hue <= 330) offsetX = -1;
+                    let blurBase = 10;
+                    let blurHover = 30;
+                    if (hue >= 0 && hue <= 100) { blurBase = 12;
+                        blurHover = 34; }
+                    else if (hue >= 200 && hue <= 300) { blurBase = 8;
+                        blurHover = 26; }
+                    cardEl.style.setProperty('--card-accent-r', rgb.r);
+                    cardEl.style.setProperty('--card-accent-g', rgb.g);
+                    cardEl.style.setProperty('--card-accent-b', rgb.b);
+                    cardEl.style.setProperty('--card-shadow-opacity', finalOpacity.toFixed(3));
+                    cardEl.style.setProperty('--card-shadow-opacity-hover', finalOpacityHover.toFixed(3));
+                    cardEl.style.setProperty('--card-shadow-blur', blurBase + 'px');
+                    cardEl.style.setProperty('--card-shadow-blur-hover', blurHover + 'px');
+                    cardEl.style.setProperty('--card-shadow-offset-x', offsetX + 'px');
+                    cardEl.style.setProperty('--card-shadow-offset-y', '3px');
+                    cardEl.style.setProperty('--card-shadow-offset-y-hover', (6 + Math.abs(offsetX)) + 'px');
+                });
+            }
+
+            // ========== Generic card renderer ==========
+            function renderCardGrid(cards, targetId, categoryClass) {
+                const grid = document.getElementById(targetId);
+                if (!grid) return;
+                const lang = currentLang;
+                grid.innerHTML = '';
+                cards.forEach(card => {
+                    const cardLang = card[lang] || card['en'] || {};
+                    const cardName = cardLang.name || card.id;
+                    const cardDesc = cardLang.description || uiText[lang].noDescription;
+                    const firstLetter = cardName.charAt(0).toUpperCase();
+                    let iconHTML = '';
+                    if (card.imageIcon && card.imageIcon.trim() !== '') {
+                        iconHTML = `
+                            <img src="${escapeHTML(card.imageIcon)}" 
+                                 alt="${escapeHTML(uiText[lang].imageIconAlt)}" 
+                                 onerror="this.setAttribute('data-error','1');this.nextElementSibling.style.display='flex';"
+                                 loading="lazy">
+                            <span class="ED-General-card__icon-letter">${escapeHTML(firstLetter)}</span>`;
+                    } else {
+                        iconHTML =
+                        `<span class="ED-General-card__icon-letter" style="display:flex;">${escapeHTML(firstLetter)}</span>`;
+                    }
+                    let insideLinksHTML = '';
+                    if (card.insideLinks && card.insideLinks.length > 0) {
+                        const linksItems = card.insideLinks.map(il => {
+                            const linkLang = il[lang] || il['en'] || {};
+                            const linkName = linkLang.name || 'Link';
+                            const linkUrl = il.url || '#';
+                            return `
+                                <a href="${escapeHTML(linkUrl)}" class="ED-General-inside-link" target="_blank" rel="noopener noreferrer" title="${escapeHTML(linkName)}">
+                                    ${escapeHTML(linkName)}<span class="ED-General-inside-link__arrow">↗</span>
+                                </a>`;
+                        }).join('');
+                        insideLinksHTML =
+                        `<div class="ED-General-card__inside-links">${linksItems}</div>`;
+                    }
+                    const cardHTML = `
+                        <div class="ED-General-card ${categoryClass}" data-card-id="${escapeHTML(card.id)}">
+                            <div class="ED-General-card__icon-container">${iconHTML}</div>
+                            <h3 class="ED-General-card__name">${escapeHTML(cardName)}</h3>
+                            <p class="ED-General-card__description">${escapeHTML(cardDesc)}</p>
+                            ${insideLinksHTML}
+                            <a href="${escapeHTML(card.link)}" class="ED-General-card__main-btn" target="_blank" rel="noopener noreferrer">
+                                ${uiText[lang].visitBtn}
+                                <span class="ED-General-card__main-btn-arrow">→</span>
+                            </a>
+                        </div>`;
+                    grid.insertAdjacentHTML('beforeend', cardHTML);
+                });
+            }
+
+            function applyTheme() {
+                document.documentElement.setAttribute('data-theme', currentTheme);
+                localStorage.setItem('dashboardTheme', currentTheme);
+                applyCardPalettes();
+            }
+
+            function toggleTheme() {
+                currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+                applyTheme();
+            }
+
+            function setLanguage(lang) {
+                if (lang === currentLang) return;
+                currentLang = lang;
+                localStorage.setItem('dashboardLang', lang);
+                translatePage();
+                renderAll();
+            }
+
+            function renderAll() {
+                for (const [category, config] of Object.entries(categoryConfig)) {
+                    const filteredCards = allCards.filter(card => card.category === category);
+                    renderCardGrid(filteredCards, config.gridId, config.cssClass);
+                }
+                applyCardPalettes();
+            }
+
+            function escapeHTML(str) {
+                if (typeof str !== 'string') return '';
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+
+       
+// ========== PWA: Install prompt ==========
+let deferredPrompt;
+const installBtn = document.getElementById('installBtn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  if (installBtn) installBtn.style.display = 'inline-flex';
+});
+
+if (installBtn) {
+  installBtn.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log(`User response to install: ${outcome}`);
+    deferredPrompt = null;
+    installBtn.style.display = 'none';
+  });
+}
+
+window.addEventListener('appinstalled', () => {
+  deferredPrompt = null;
+  if (installBtn) installBtn.style.display = 'none';
+  console.log('App installed');
+});
+
+// ========== PWA: Push notifications ==========
+const notificationToggle = document.getElementById('notificationToggle');
+
+// VAPID public key – replace with your own generated key
+const applicationServerKey = urlBase64ToUint8Array(
+  'BEl62iLwq4sHjSX8xMP_DXtXfR_7g6mTJ-bZKoF9BhGq9e3dCXhO5sGk_8I8XhJ1Z6Uz6xK7vqL4tN2M5wFgE0'
+);
+
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+  const rawData = window.atob(base64);
+  return Uint8Array.from([...rawData].map(char => char.charCodeAt(0)));
+}
+
+async function updateNotificationUI() {
+  if (!('Notification' in window) || !('serviceWorker' in navigator)) {
+    notificationToggle.style.display = 'none';
+    return;
+  }
+  const reg = await navigator.serviceWorker.getRegistration();
+  if (!reg) return;
+
+  const subscription = await reg.pushManager.getSubscription();
+  if (subscription) {
+    notificationToggle.textContent = '🔕';
+    notificationToggle.title = 'Disable notifications';
+    notificationToggle.classList.add('active');
+  } else {
+    notificationToggle.textContent = '🔔';
+    notificationToggle.title = 'Enable notifications';
+    notificationToggle.classList.remove('active');
+  }
+}
+
+async function toggleNotificationSubscription() {
+  const reg = await navigator.serviceWorker.getRegistration();
+  if (!reg) return;
+
+  const subscription = await reg.pushManager.getSubscription();
+  if (subscription) {
+    // Unsubscribe
+    await subscription.unsubscribe();
+    console.log('Unsubscribed from push');
+    // TODO: send unsubscribe to your server
+  } else {
+    // Request permission & subscribe
+    const permission = await Notification.requestPermission();
+    if (permission !== 'granted') {
+      alert('Notification permission denied');
+      return;
+    }
+    try {
+      const newSub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: applicationServerKey
+      });
+      console.log('Push subscription:', JSON.stringify(newSub));
+      // TODO: send subscription object to your server
+      alert('Notifications enabled!');
+    } catch (err) {
+      console.error('Push subscription failed:', err);
+    }
+  }
+  updateNotificationUI();
+}
+
+if (notificationToggle) {
+  notificationToggle.addEventListener('click', toggleNotificationSubscription);
+}
+
+// ========== Update init() to include new features ==========
+function init() {
+  currentTheme = localStorage.getItem('dashboardTheme') || 'light';
+  applyTheme();
+  currentLang = localStorage.getItem('dashboardLang') || 'en';
+  translatePage();
+  renderAll();
+
+  // Service Worker registration
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(registration => {
+          console.log('SW registered:', registration.scope);
+          updateNotificationUI(); // set initial button state
+        })
+        .catch(err => console.error('SW registration failed:', err));
+    });
+  }
+
+  // Existing event listeners
+  const themeToggle = document.getElementById('themeToggle');
+  if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
+
+  const langSelect = document.getElementById('langSelect');
+  if (langSelect) langSelect.addEventListener('change', function() { setLanguage(this.value); });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey && e.shiftKey && e.key === 'T') {
+      e.preventDefault();
+      toggleTheme();
+    }
+  });
+}
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+        })();
+    </script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then((registration) => {
+          console.log('Service Worker registered with scope:', registration.scope);
+        })
+        .catch((error) => {
+          console.error('Service Worker registration failed:', error);
+        });
+    });
+  }
+</script>
+</body>
+</html>
