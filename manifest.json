@@ -1,6 +1,7 @@
 {
   "name": "Educational Dashboard",
   "short_name": "EduDash",
+  "id": "EduDash",
   "description": "Your learning hubs – a collection of educational resources",
   "start_url": "/",
   "display": "standalone",
