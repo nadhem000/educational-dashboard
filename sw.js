@@ -1,4 +1,4 @@
-const CACHE_NAME = 'edudash-v2';
+const CACHE_NAME = 'edudash-v3';
 
 const PRECACHE_ASSETS = [
   '/',
@@ -58,8 +58,8 @@ self.addEventListener('push', event => {
     const title = payload.title || 'Educational Dashboard';
     const options = {
       body: payload.body || '',
-      icon: '/icons/icon-192x192.png',
-      badge: '/icons/icon-96x96.png',
+      icon: 'assets/icons/icon-192x192.png',
+      badge: 'assets/icons/icon-96x96.png',
       data: payload.data || {}
     };
 
