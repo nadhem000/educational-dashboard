@@ -1,4 +1,4 @@
-const CACHE_NAME = 'edudash-v4';
+const CACHE_NAME = 'edudash-v5';
 
 const PRECACHE_ASSETS = [
   '/',
