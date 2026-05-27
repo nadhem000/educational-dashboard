@@ -5,15 +5,13 @@
             <span data-i18n="dashboardTitle">Educational Dashboard</span>
         </h1>
         <div class="ED-General-header__controls">
-            <!-- Connection status -->
-            <span class="ED-General-connection-status" id="connection-status">
-                <span class="ED-General-status-dot" id="status-dot"></span>
+            <!-- Connection status indicator -->
+            <span id="connection-status">
+                <span id="status-dot" class="status-dot"></span>
                 <span id="connection-status-label">Online</span>
             </span>
-            <!-- Install button -->
+            <!-- Install button (hidden by default) -->
             <button class="ED-General-header-btn" id="installBtn" title="Install app" style="display: none;" data-i18n="installBtn">📲 Install</button>
-            <!-- Browser notification permission button (NO data-i18n) -->
-            <button class="ED-General-header-btn" id="notificationBtn" title="Enable notifications" style="display: none;">🔔 Notifications</button>
             <!-- Language select -->
             <select class="ED-General-lang-select" id="langSelect" aria-label="Choose language">
                 <option value="en">English</option>
