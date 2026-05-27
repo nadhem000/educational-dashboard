@@ -776,7 +776,7 @@
             loadComponent('footer.html', 'footer-container')
         ]);
 
-        // ========== UI text dictionary (no notification keys) ==========
+        // ========== UI text dictionary ==========
         const uiText = {
             en: {
                 dashboardTitle: 'Educational Dashboard',
@@ -786,10 +786,12 @@
                 installBtn: '📲 Install App',
                 offlineBanner: 'You are offline. Some features may be unavailable.',
                 onlineStatus: 'Online', offlineStatus: 'Offline',
-themeToggleTitle: 'Dark/Light Theme',
-        enablePeriodicSyncBtn: 'Enable Background Updates',
-        periodicSyncEnabled: 'Background updates enabled!',
-        periodicSyncDenied: 'Permission not granted. Please check site settings.',
+                themeToggleTitle: 'Dark/Light Theme',
+                enablePeriodicSyncBtn: 'Enable Background Updates',
+                disablePeriodicSyncBtn: 'Disable Background Updates',
+                periodicSyncEnabled: 'Background updates enabled!',
+                periodicSyncDisabled: 'Background updates disabled!',
+                periodicSyncDenied: 'Permission not granted. Please check site settings.',
                 footer: {
                     confidentiality: 'Confidentiality Politics', terms: 'Terms of Use', contact: 'Contact',
                     version: "version '0.0.1'", developer: 'developed by: Mejri Ziad.', hosted: 'Hosted on Github and Netlify.'
@@ -803,10 +805,12 @@ themeToggleTitle: 'Dark/Light Theme',
                 installBtn: '📲 Installer l\'app',
                 offlineBanner: 'Vous êtes hors ligne. Certaines fonctionnalités peuvent être indisponibles.',
                 onlineStatus: 'En ligne', offlineStatus: 'Hors ligne',
-themeToggleTitle: 'Thème clair/sombre',
-        enablePeriodicSyncBtn: 'Activer les mises à jour en arrière-plan',
-        periodicSyncEnabled: 'Mises à jour en arrière-plan activées !',
-        periodicSyncDenied: 'Permission non accordée. Veuillez vérifier les paramètres du site.',
+                themeToggleTitle: 'Thème clair/sombre',
+                enablePeriodicSyncBtn: 'Activer les mises à jour en arrière-plan',
+                disablePeriodicSyncBtn: 'Désactiver les mises à jour en arrière-plan',
+                periodicSyncEnabled: 'Mises à jour en arrière-plan activées !',
+                periodicSyncDisabled: 'Mises à jour en arrière-plan désactivées !',
+                periodicSyncDenied: 'Permission non accordée. Veuillez vérifier les paramètres du site.',
                 footer: {
                     confidentiality: 'Politique de confidentialité', terms: 'Conditions d\'utilisation', contact: 'Contact',
                     version: "version '0.0.1'", developer: 'développé par : Mejri Ziad.', hosted: 'Hébergé sur Github et Netlify.'
@@ -820,10 +824,12 @@ themeToggleTitle: 'Thème clair/sombre',
                 installBtn: '📲 تثبيت التطبيق',
                 offlineBanner: 'أنت غير متصل بالإنترنت. قد لا تتوفر بعض الميزات.',
                 onlineStatus: 'متصل', offlineStatus: 'غير متصل',
-themeToggleTitle: 'وضع داكن/فاتح',
-        enablePeriodicSyncBtn: 'تفعيل التحديثات في الخلفية',
-        periodicSyncEnabled: 'تم تفعيل التحديثات في الخلفية!',
-        periodicSyncDenied: 'لم يتم منح الإذن. يرجى التحقق من إعدادات الموقع.',
+                themeToggleTitle: 'وضع داكن/فاتح',
+                enablePeriodicSyncBtn: 'تفعيل التحديثات في الخلفية',
+                disablePeriodicSyncBtn: 'تعطيل التحديثات في الخلفية',
+                periodicSyncEnabled: 'تم تفعيل التحديثات في الخلفية!',
+                periodicSyncDisabled: 'تم تعطيل التحديثات في الخلفية!',
+                periodicSyncDenied: 'لم يتم منح الإذن. يرجى التحقق من إعدادات الموقع.',
                 footer: {
                     confidentiality: 'سياسة الخصوصية', terms: 'شروط الاستخدام', contact: 'اتصل بنا',
                     version: "الإصدار '0.0.1'", developer: 'طور بواسطة: ماجري زياد.', hosted: 'مستضاف على Github و Netlify.'
@@ -844,15 +850,17 @@ themeToggleTitle: 'وضع داكن/فاتح',
                 const text = getNestedValue(uiText[lang], key);
                 if (text) el.textContent = text;
             });
-document.querySelectorAll('[data-i18n-title]').forEach(el => {
-    const key = el.getAttribute('data-i18n-title');
-    const text = getNestedValue(uiText[lang], key);
-    if (text) el.setAttribute('title', text);
-});
+            document.querySelectorAll('[data-i18n-title]').forEach(el => {
+                const key = el.getAttribute('data-i18n-title');
+                const text = getNestedValue(uiText[lang], key);
+                if (text) el.setAttribute('title', text);
+            });
             document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
             document.documentElement.lang = lang;
             const langSelect = document.getElementById('langSelect');
             if (langSelect) langSelect.value = lang;
+            // Update periodic sync button text if it exists
+            if (window.updatePeriodicSyncButton) window.updatePeriodicSyncButton();
         }
 
         function hexToRgb(hex) {
@@ -978,22 +986,21 @@ document.querySelectorAll('[data-i18n-title]').forEach(el => {
         }
 
         function updateConnectionStatus() {
-    const dot = document.getElementById('status-dot');
-    const label = document.getElementById('connection-status-label');
-    const statusSpan = document.getElementById('connection-status');
-    if (!dot || !statusSpan) return;
-    const online = navigator.onLine;
-    dot.className = 'status-dot' + (online ? '' : ' offline');
-    if (label) {
-        label.textContent = online
-            ? getNestedValue(uiText[currentLang], 'onlineStatus') || 'Online'
-            : getNestedValue(uiText[currentLang], 'offlineStatus') || 'Offline';
-    }
-    // Set tooltip on the whole container
-    statusSpan.title = online
-        ? (getNestedValue(uiText[currentLang], 'onlineStatus') || 'Online')
-        : (getNestedValue(uiText[currentLang], 'offlineStatus') || 'Offline');
-}
+            const dot = document.getElementById('status-dot');
+            const label = document.getElementById('connection-status-label');
+            const statusSpan = document.getElementById('connection-status');
+            if (!dot || !statusSpan) return;
+            const online = navigator.onLine;
+            dot.className = 'status-dot' + (online ? '' : ' offline');
+            if (label) {
+                label.textContent = online
+                    ? getNestedValue(uiText[currentLang], 'onlineStatus') || 'Online'
+                    : getNestedValue(uiText[currentLang], 'offlineStatus') || 'Offline';
+            }
+            statusSpan.title = online
+                ? (getNestedValue(uiText[currentLang], 'onlineStatus') || 'Online')
+                : (getNestedValue(uiText[currentLang], 'offlineStatus') || 'Offline');
+        }
 
         function setupConnectionIndicator() {
             const statusSpan = document.getElementById('connection-status');
@@ -1061,89 +1068,124 @@ document.querySelectorAll('[data-i18n-title]').forEach(el => {
             if (installBtn) installBtn.style.display = 'none';
         });
 
-        // Init
+        // ========== Init ==========
         function init() {
-    currentTheme = localStorage.getItem('dashboardTheme') || 'light';
-    applyTheme();
-    currentLang = localStorage.getItem('dashboardLang') || 'en';
-    translatePage();
-    setupConnectionIndicator();
-    setupOfflineBanner();
-    updateInstallButtonText();
-    renderAll();
+            currentTheme = localStorage.getItem('dashboardTheme') || 'light';
+            applyTheme();
+            currentLang = localStorage.getItem('dashboardLang') || 'en';
+            translatePage();
+            setupConnectionIndicator();
+            setupOfflineBanner();
+            updateInstallButtonText();
+            renderAll();
 
-if ('serviceWorker' in navigator && 'periodicSync' in ServiceWorkerRegistration.prototype) {
-    const btn = document.getElementById('enablePeriodicSync');
-    if (btn) btn.style.display = 'inline-block';
-}
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js')
-                .then(reg => {
-                    console.log('SW registered:', reg.scope);
+            // Service Worker registration & sync
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/sw.js')
+                        .then(reg => {
+                            console.log('SW registered:', reg.scope);
+                            // Background sync (tag registration)
+                            if ('SyncManager' in window) {
+                                reg.sync.register('sync-data').catch(() => {});
+                            }
+                            // Periodic sync: do NOT auto-register here – let the user toggle control it
+                        })
+                        .catch(err => console.error('SW registration failed:', err));
+                });
 
-                    // Register background sync
-                    if ('SyncManager' in window) {
-                        reg.sync.register('sync-data')
-                            .then(() => console.log('Background sync registered'))
-                            .catch(err => console.error('Sync registration failed:', err));
+                // Listen for data‑update messages from SW
+                navigator.serviceWorker.addEventListener('message', event => {
+                    if (event.data && event.data.type === 'DATA_UPDATED') {
+                        const script = document.createElement('script');
+                        script.src = '/data_general.js?' + Date.now();
+                        script.onload = () => {
+                            renderAll();
+                            applyCardPalettes();
+                        };
+                        document.head.appendChild(script);
                     }
-
-                    // Request periodic background sync (may fail without user gesture)
-                    if ('periodicSync' in reg) {
-                        reg.periodicSync.register('periodic-update', {
-                            minInterval: 6 * 60 * 60 * 1000
-                        }).then(() => console.log('Periodic sync registered'))
-                          .catch(err => console.warn('Periodic sync not yet granted:', err));
-                    }
-                })
-                .catch(err => console.error('SW registration failed:', err));
-        });
-
-        // Listen for data‑update messages from SW
-        navigator.serviceWorker.addEventListener('message', event => {
-            if (event.data && event.data.type === 'DATA_UPDATED') {
-                const script = document.createElement('script');
-                script.src = '/data_general.js?' + Date.now();
-                script.onload = () => {
-                    renderAll();
-                    applyCardPalettes();
-                };
-                document.head.appendChild(script);
+                });
             }
-        });
-    }
 
-    // Periodic sync button (if present)
-    const periodicSyncBtn = document.getElementById('enablePeriodicSync');
-    if (periodicSyncBtn) {
-        periodicSyncBtn.addEventListener('click', async () => {
-            if (!('serviceWorker' in navigator)) return;
-            const reg = await navigator.serviceWorker.ready;
-            if ('periodicSync' in reg) {
-                const status = await navigator.permissions.query({ name: 'periodic-background-sync' });
-                if (status.state === 'granted') {
-                    await reg.periodicSync.register('periodic-update', { minInterval: 6 * 60 * 60 * 1000 });
-                    alert(getNestedValue(uiText[currentLang], 'periodicSyncEnabled') || 'Background updates enabled!');
-                } else {
-                    alert(getNestedValue(uiText[currentLang], 'periodicSyncDenied') || 'Permission not granted.');
+            // ---------- Periodic Sync Toggle Button ----------
+            const periodicBtn = document.getElementById('enablePeriodicSync');
+            if (periodicBtn && 'serviceWorker' in navigator && 'periodicSync' in ServiceWorkerRegistration.prototype) {
+                periodicBtn.style.display = 'inline-block';   // show the button
+
+                let isSyncActive = false;
+
+                // Determine initial state (prefer the actual registration tag)
+                async function checkRegistrationState() {
+                    try {
+                        const reg = await navigator.serviceWorker.ready;
+                        if ('periodicSync' in reg) {
+                            const tags = await reg.periodicSync.getTags();
+                            isSyncActive = tags.includes('periodic-update');
+                        }
+                    } catch (e) {
+                        // fallback to localStorage
+                        isSyncActive = localStorage.getItem('periodicSyncActive') === 'true';
+                    }
+                    updatePeriodicSyncButton();
                 }
-            }
-        });
-    }
+                checkRegistrationState();
 
-    // Theme & language toggles
-    const themeToggle = document.getElementById('themeToggle');
-    if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
-    const langSelect = document.getElementById('langSelect');
-    if (langSelect) langSelect.addEventListener('change', function() { setLanguage(this.value); });
-    document.addEventListener('keydown', function(e) {
-        if (e.ctrlKey && e.shiftKey && e.key === 'T') {
-            e.preventDefault();
-            toggleTheme();
+                function updatePeriodicSyncButton() {
+                    const key = isSyncActive ? 'disablePeriodicSyncBtn' : 'enablePeriodicSyncBtn';
+                    periodicBtn.textContent = getNestedValue(uiText[currentLang], key);
+                    localStorage.setItem('periodicSyncActive', isSyncActive);
+                }
+                // Expose globally so language change can call it
+                window.updatePeriodicSyncButton = updatePeriodicSyncButton;
+
+                periodicBtn.addEventListener('click', async () => {
+                    const reg = await navigator.serviceWorker.ready;
+                    if (!('periodicSync' in reg)) return;
+
+                    if (isSyncActive) {
+                        // Disable
+                        try {
+                            await reg.periodicSync.unregister('periodic-update');
+                            isSyncActive = false;
+                            updatePeriodicSyncButton();
+                            alert(getNestedValue(uiText[currentLang], 'periodicSyncDisabled') || 'Background updates disabled.');
+                        } catch (err) {
+                            console.error('Unregister failed:', err);
+                            alert('Could not disable background updates.');
+                        }
+                    } else {
+                        // Enable
+                        try {
+                            const status = await navigator.permissions.query({ name: 'periodic-background-sync' });
+                            if (status.state !== 'granted') {
+                                alert(getNestedValue(uiText[currentLang], 'periodicSyncDenied'));
+                                return;
+                            }
+                            await reg.periodicSync.register('periodic-update', { minInterval: 6 * 60 * 60 * 1000 });
+                            isSyncActive = true;
+                            updatePeriodicSyncButton();
+                            alert(getNestedValue(uiText[currentLang], 'periodicSyncEnabled') || 'Background updates enabled!');
+                        } catch (err) {
+                            console.error('Register failed:', err);
+                            alert(getNestedValue(uiText[currentLang], 'periodicSyncDenied'));
+                        }
+                    }
+                });
+            }
+
+            // Theme & language toggles
+            const themeToggle = document.getElementById('themeToggle');
+            if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
+            const langSelect = document.getElementById('langSelect');
+            if (langSelect) langSelect.addEventListener('change', function() { setLanguage(this.value); });
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.shiftKey && e.key === 'T') {
+                    e.preventDefault();
+                    toggleTheme();
+                }
+            });
         }
-    });
-}
 
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', init);
