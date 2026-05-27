@@ -786,6 +786,7 @@
                 installBtn: '📲 Install App',
                 offlineBanner: 'You are offline. Some features may be unavailable.',
                 onlineStatus: 'Online', offlineStatus: 'Offline',
+themeToggleTitle: 'Dark/Light Theme',
                 footer: {
                     confidentiality: 'Confidentiality Politics', terms: 'Terms of Use', contact: 'Contact',
                     version: "version '0.0.1'", developer: 'developed by: Mejri Ziad.', hosted: 'Hosted on Github and Netlify.'
@@ -799,6 +800,7 @@
                 installBtn: '📲 Installer l\'app',
                 offlineBanner: 'Vous êtes hors ligne. Certaines fonctionnalités peuvent être indisponibles.',
                 onlineStatus: 'En ligne', offlineStatus: 'Hors ligne',
+themeToggleTitle: 'Thème clair/sombre',
                 footer: {
                     confidentiality: 'Politique de confidentialité', terms: 'Conditions d\'utilisation', contact: 'Contact',
                     version: "version '0.0.1'", developer: 'développé par : Mejri Ziad.', hosted: 'Hébergé sur Github et Netlify.'
@@ -812,6 +814,7 @@
                 installBtn: '📲 تثبيت التطبيق',
                 offlineBanner: 'أنت غير متصل بالإنترنت. قد لا تتوفر بعض الميزات.',
                 onlineStatus: 'متصل', offlineStatus: 'غير متصل',
+themeToggleTitle: 'وضع داكن/فاتح',
                 footer: {
                     confidentiality: 'سياسة الخصوصية', terms: 'شروط الاستخدام', contact: 'اتصل بنا',
                     version: "الإصدار '0.0.1'", developer: 'طور بواسطة: ماجري زياد.', hosted: 'مستضاف على Github و Netlify.'
@@ -832,6 +835,11 @@
                 const text = getNestedValue(uiText[lang], key);
                 if (text) el.textContent = text;
             });
+document.querySelectorAll('[data-i18n-title]').forEach(el => {
+    const key = el.getAttribute('data-i18n-title');
+    const text = getNestedValue(uiText[lang], key);
+    if (text) el.setAttribute('title', text);
+});
             document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
             document.documentElement.lang = lang;
             const langSelect = document.getElementById('langSelect');
@@ -961,15 +969,22 @@
         }
 
         function updateConnectionStatus() {
-            const dot = document.getElementById('status-dot');
-            const label = document.getElementById('connection-status-label');
-            if (!dot || !label) return;
-            const online = navigator.onLine;
-            dot.className = 'status-dot' + (online ? '' : ' offline');
-            label.textContent = online ?
-                getNestedValue(uiText[currentLang], 'onlineStatus') || 'Online' :
-                getNestedValue(uiText[currentLang], 'offlineStatus') || 'Offline';
-        }
+    const dot = document.getElementById('status-dot');
+    const label = document.getElementById('connection-status-label');
+    const statusSpan = document.getElementById('connection-status');
+    if (!dot || !statusSpan) return;
+    const online = navigator.onLine;
+    dot.className = 'status-dot' + (online ? '' : ' offline');
+    if (label) {
+        label.textContent = online
+            ? getNestedValue(uiText[currentLang], 'onlineStatus') || 'Online'
+            : getNestedValue(uiText[currentLang], 'offlineStatus') || 'Offline';
+    }
+    // Set tooltip on the whole container
+    statusSpan.title = online
+        ? (getNestedValue(uiText[currentLang], 'onlineStatus') || 'Online')
+        : (getNestedValue(uiText[currentLang], 'offlineStatus') || 'Offline');
+}
 
         function setupConnectionIndicator() {
             const statusSpan = document.getElementById('connection-status');
