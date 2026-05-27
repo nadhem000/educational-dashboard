@@ -379,8 +379,8 @@
         .ED-General-header-btn:active {
             transform: scale(0.96);
         }
-        /* ========== NEW: Connection status dot ========== */
-        #connection-status {
+        /* ========== Connection status dot ========== */
+        .ED-General-connection-status {
             display: inline-flex;
             align-items: center;
             gap: 0.3rem;
@@ -389,19 +389,113 @@
             color: var(--ED-General-color-text-secondary);
             white-space: nowrap;
         }
-        .status-dot {
+        .ED-General-status-dot {
             width: 10px;
             height: 10px;
             border-radius: 50%;
             display: inline-block;
-            background-color: #4caf50; /* online green */
+            background-color: #4caf50;
             box-shadow: 0 0 6px rgba(76, 175, 80, 0.6);
             transition: background-color 0.3s, box-shadow 0.3s;
         }
-        .status-dot.offline {
-            background-color: #f44336; /* offline red */
+        .ED-General-status-dot.ED-General-offline {
+            background-color: #f44336;
             box-shadow: 0 0 6px rgba(244, 67, 54, 0.6);
         }
+        /* ========== Notification bell & dropdown ========== */
+        .ED-General-notification-bell-container {
+            position: relative;
+            display: inline-flex;
+        }
+        .ED-General-notification-bell {
+            background: none;
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            padding: 0.3rem;
+            color: var(--ED-General-color-text-primary);
+            transition: transform 0.2s;
+            line-height: 1;
+        }
+        .ED-General-notification-bell:hover {
+            transform: scale(1.1);
+        }
+        .ED-General-notification-bell .ED-General-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: #f44336;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .ED-General-notification-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background: var(--ED-General-color-surface);
+            border: 1px solid var(--ED-General-color-border);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(var(--ED-General-color-shadow-rgb), 0.25);
+            width: 320px;
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 200;
+            display: none;
+            flex-direction: column;
+        }
+        .ED-General-notification-dropdown.ED-General-open {
+            display: flex;
+        }
+        .ED-General-notification-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--ED-General-color-border);
+            color: var(--ED-General-color-text-primary);
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .ED-General-notification-item:last-child {
+            border-bottom: none;
+        }
+        .ED-General-notification-item button {
+            background: var(--ED-General-color-accent-default);
+            color: var(--ED-General-color-text-on-accent);
+            border: none;
+            border-radius: 16px;
+            padding: 0.3rem 0.8rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .ED-General-notification-empty {
+            padding: 1.5rem;
+            text-align: center;
+            color: var(--ED-General-color-text-tertiary);
+        }
+        /* ========== Offline banner ========== */
+        .ED-General-offline-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--ED-General-color-accent-default);
+            color: var(--ED-General-color-text-on-accent);
+            text-align: center;
+            padding: 0.5rem;
+            z-index: 1000;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 -2px 8px rgba(var(--ED-General-color-shadow-rgb), 0.3);
+            display: none;
+        }
+        /* ========== Main, cards, footer, responsive ========== */
         .ED-General-main {
             max-width: 1300px;
             margin: 0 auto;
@@ -706,23 +800,7 @@
             color: var(--ED-General-color-text-tertiary);
             letter-spacing: 0.01em;
         }
-        /* Offline banner (bottom bar) – now secondary to the header dot */
-        .offline-banner {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--ED-General-color-accent-default);
-            color: var(--ED-General-color-text-on-accent);
-            text-align: center;
-            padding: 0.5rem;
-            z-index: 1000;
-            font-weight: 600;
-            font-size: 0.9rem;
-            box-shadow: 0 -2px 8px rgba(var(--ED-General-color-shadow-rgb), 0.3);
-            display: none;
-        }
-        /* Responsive */
+        /* ========== Responsive ========== */
         @media (max-width: 640px) {
             .ED-General-card-grid {
                 grid-template-columns: 1fr;
@@ -809,19 +887,17 @@
         <div class="ED-General-card-grid" id="obsoleteGrid"></div>
     </main>
     <footer id="footer-container"></footer>
-    <!-- Offline banner (secondary) -->
-    <div id="offline-banner" class="offline-banner" data-i18n="offlineBanner">You are offline. Some features may be unavailable.</div>
-    <!-- External data file: card definitions & category config -->
+    <!-- Offline banner -->
+    <div id="offline-banner" class="ED-General-offline-banner" data-i18n="offlineBanner">You are offline. Some features may be unavailable.</div>
     <script src="data_general.js"></script>
     <script>
         (async function() {
         // Load header & footer
         async function loadComponent(url, targetId) {
             try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error(`Failed to load ${url}`);
-                const html = await response.text();
-                document.getElementById(targetId).innerHTML = html;
+                const resp = await fetch(url);
+                if (!resp.ok) throw new Error(`Failed to load ${url}`);
+                document.getElementById(targetId).innerHTML = await resp.text();
             } catch (err) {
                 console.error(err);
             }
@@ -831,120 +907,177 @@
             loadComponent('footer.html', 'footer-container')
         ]);
 
-            // ========== UI text dictionary ==========
-            const uiText = {
-                en: {
-                    dashboardTitle: 'Educational Dashboard',
-                    subtitle: 'Your learning hubs',
-                    othersTitle: 'Others',
-                    gamesTitle: 'Games',
-                    newsTitle: 'News',
-                    obsoleteTitle: 'Obsolete & unused',
-                    visitBtn: 'Visit',
-                    noDescription: 'No description available.',
-                    imageIconAlt: 'icon',
-                    installBtn: '📲 Install App',
-                    notificationGranted: '✅ Notifications ON',
-                    notificationDenied: '🚫 Blocked',
-                    notificationDefault: '🔔 Enable Notifications',
-                    notificationDeniedAlert: 'Notifications are blocked. You can change this in your browser settings.',
-                    updateToastMessage: '✨ A new version is available.',
-                    updateToastButton: 'Update',
-                    updateToastDismissTitle: 'Dismiss',
-                    offlineBanner: 'You are offline. Some features may be unavailable.',
-                    onlineStatus: 'Online',
-                    offlineStatus: 'Offline',
-                    footer: {
-                        confidentiality: 'Confidentiality Politics',
-                        terms: 'Terms of Use',
-                        contact: 'Contact',
-                        version: "version '0.0.1'",
-                        developer: 'developed by: Mejri Ziad.',
-                        hosted: 'Hosted on Github and Netlify.'
-                    }
-                },
-                fr: {
-                    dashboardTitle: 'Tableau de Bord Éducatif',
-                    subtitle: 'Vos plateformes d\'apprentissage',
-                    othersTitle: 'Autres',
-                    gamesTitle: 'Jeux',
-                    newsTitle: 'Actualités',
-                    obsoleteTitle: 'Obsolète & inutilisé',
-                    visitBtn: 'Visiter',
-                    noDescription: 'Aucune description disponible.',
-                    imageIconAlt: 'icône',
-                    installBtn: '📲 Installer l\'app',
-                    notificationGranted: '✅ Notifications activées',
-                    notificationDenied: '🚫 Bloqué',
-                    notificationDefault: '🔔 Activer les notifications',
-                    notificationDeniedAlert: 'Les notifications sont bloquées. Vous pouvez modifier ce paramètre dans les options de votre navigateur.',
-                    updateToastMessage: '✨ Une nouvelle version est disponible.',
-                    updateToastButton: 'Mettre à jour',
-                    updateToastDismissTitle: 'Fermer',
-                    offlineBanner: 'Vous êtes hors ligne. Certaines fonctionnalités peuvent être indisponibles.',
-                    onlineStatus: 'En ligne',
-                    offlineStatus: 'Hors ligne',
-                    footer: {
-                        confidentiality: 'Politique de confidentialité',
-                        terms: 'Conditions d\'utilisation',
-                        contact: 'Contact',
-                        version: "version '0.0.1'",
-                        developer: 'développé par : Mejri Ziad.',
-                        hosted: 'Hébergé sur Github et Netlify.'
-                    }
-                },
-                ar: {
-                    dashboardTitle: 'لوحة التحكم التعليمية',
-                    subtitle: 'منصات التعلم الخاصة بك',
-                    othersTitle: 'أخرى',
-                    gamesTitle: 'ألعاب',
-                    newsTitle: 'أخبار',
-                    obsoleteTitle: 'قديم وغير مستخدم',
-                    visitBtn: 'زيارة',
-                    noDescription: 'لا يوجد وصف متاح.',
-                    imageIconAlt: 'أيقونة',
-                    installBtn: '📲 تثبيت التطبيق',
-                    notificationGranted: '✅ الإشعارات مفعلة',
-                    notificationDenied: '🚫 ممنوع',
-                    notificationDefault: '🔔 تفعيل الإشعارات',
-                    notificationDeniedAlert: 'الإشعارات محظورة. يمكنك تغيير هذا في إعدادات المتصفح.',
-                    updateToastMessage: '✨ نسخة جديدة متاحة.',
-                    updateToastButton: 'تحديث',
-                    updateToastDismissTitle: 'إغلاق',
-                    offlineBanner: 'أنت غير متصل بالإنترنت. قد لا تتوفر بعض الميزات.',
-                    onlineStatus: 'متصل',
-                    offlineStatus: 'غير متصل',
-                    footer: {
-                        confidentiality: 'سياسة الخصوصية',
-                        terms: 'شروط الاستخدام',
-                        contact: 'اتصل بنا',
-                        version: "الإصدار '0.0.1'",
-                        developer: 'طور بواسطة: ماجري زياد.',
-                        hosted: 'مستضاف على Github و Netlify.'
-                    }
-                },
+        // Inject notification bell into the header controls
+        function setupNotificationBell() {
+            const controls = document.querySelector('.ED-General-header__controls');
+            if (!controls) return;
+            const langSelect = document.getElementById('langSelect');
+            const bellHTML = `
+                <div class="ED-General-notification-bell-container" id="notifBellContainer">
+                    <button class="ED-General-notification-bell" id="notifBellBtn" title="Notifications">
+                        🔔
+                        <span class="ED-General-badge" id="notifBadge"></span>
+                    </button>
+                    <div class="ED-General-notification-dropdown" id="notifDropdown">
+                        <div class="ED-General-notification-empty" data-i18n="notifEmpty">No new notifications</div>
+                    </div>
+                </div>
+            `;
+            if (langSelect) {
+                langSelect.insertAdjacentHTML('beforebegin', bellHTML);
+            } else {
+                controls.insertAdjacentHTML('afterbegin', bellHTML);
+            }
+
+            const bellBtn = document.getElementById('notifBellBtn');
+            const dropdown = document.getElementById('notifDropdown');
+            bellBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('ED-General-open');
+            });
+            document.addEventListener('click', () => dropdown.classList.remove('ED-General-open'));
+
+            // Global function to add in-app notifications
+            window.addInAppNotification = function(message, actionText, actionCallback) {
+                const item = document.createElement('div');
+                item.className = 'ED-General-notification-item';
+                item.innerHTML = `<span>${escapeHTML(message)}</span>`;
+                if (actionText && actionCallback) {
+                    const btn = document.createElement('button');
+                    btn.textContent = actionText;
+                    btn.addEventListener('click', actionCallback);
+                    item.appendChild(btn);
+                }
+                const empty = dropdown.querySelector('.ED-General-notification-empty');
+                if (empty) empty.remove();
+                dropdown.insertBefore(item, dropdown.firstChild);
+                // Update badge
+                const badge = document.getElementById('notifBadge');
+                if (badge) {
+                    const count = dropdown.querySelectorAll('.ED-General-notification-item').length;
+                    badge.textContent = count;
+                    badge.style.display = count > 0 ? 'flex' : 'none';
+                }
             };
-            let currentLang = localStorage.getItem('dashboardLang') || 'en';
-            let currentTheme = localStorage.getItem('dashboardTheme') || 'light';
+        }
 
-            function getNestedValue(obj, path) {
-                return path.split('.').reduce((o, k) => (o && o[k] !== undefined ? o[k] : undefined), obj) || '';
+        // ========== UI text dictionary ==========
+        const uiText = {
+            en: {
+                dashboardTitle: 'Educational Dashboard',
+                subtitle: 'Your learning hubs',
+                othersTitle: 'Others',
+                gamesTitle: 'Games',
+                newsTitle: 'News',
+                obsoleteTitle: 'Obsolete & unused',
+                visitBtn: 'Visit',
+                noDescription: 'No description available.',
+                imageIconAlt: 'icon',
+                installBtn: '📲 Install App',
+                notificationGranted: '✅ Notifications ON',
+                notificationDenied: '🚫 Blocked',
+                notificationDefault: '🔔 Enable Notifications',
+                notificationDeniedAlert: 'Notifications are blocked. You can change this in your browser settings.',
+                notificationTurnOffAlert: 'Notifications are already enabled. To turn them off, go to your browser site settings.',
+                notifEmpty: 'No new notifications',
+                notifUpdateMsg: 'A new version is available.',
+                notifUpdateBtn: 'Update',
+                offlineBanner: 'You are offline. Some features may be unavailable.',
+                onlineStatus: 'Online',
+                offlineStatus: 'Offline',
+                footer: {
+                    confidentiality: 'Confidentiality Politics',
+                    terms: 'Terms of Use',
+                    contact: 'Contact',
+                    version: "version '0.0.1'",
+                    developer: 'developed by: Mejri Ziad.',
+                    hosted: 'Hosted on Github and Netlify.'
+                }
+            },
+            fr: {
+                dashboardTitle: 'Tableau de Bord Éducatif',
+                subtitle: 'Vos plateformes d\'apprentissage',
+                othersTitle: 'Autres',
+                gamesTitle: 'Jeux',
+                newsTitle: 'Actualités',
+                obsoleteTitle: 'Obsolète & inutilisé',
+                visitBtn: 'Visiter',
+                noDescription: 'Aucune description disponible.',
+                imageIconAlt: 'icône',
+                installBtn: '📲 Installer l\'app',
+                notificationGranted: '✅ Notifications activées',
+                notificationDenied: '🚫 Bloqué',
+                notificationDefault: '🔔 Activer les notifications',
+                notificationDeniedAlert: 'Les notifications sont bloquées. Vous pouvez les débloquer dans les paramètres de votre navigateur.',
+                notificationTurnOffAlert: 'Les notifications sont déjà activées. Pour les désactiver, allez dans les paramètres du site de votre navigateur.',
+                notifEmpty: 'Aucune nouvelle notification',
+                notifUpdateMsg: 'Une nouvelle version est disponible.',
+                notifUpdateBtn: 'Mettre à jour',
+                offlineBanner: 'Vous êtes hors ligne. Certaines fonctionnalités peuvent être indisponibles.',
+                onlineStatus: 'En ligne',
+                offlineStatus: 'Hors ligne',
+                footer: {
+                    confidentiality: 'Politique de confidentialité',
+                    terms: 'Conditions d\'utilisation',
+                    contact: 'Contact',
+                    version: "version '0.0.1'",
+                    developer: 'développé par : Mejri Ziad.',
+                    hosted: 'Hébergé sur Github et Netlify.'
+                }
+            },
+            ar: {
+                dashboardTitle: 'لوحة التحكم التعليمية',
+                subtitle: 'منصات التعلم الخاصة بك',
+                othersTitle: 'أخرى',
+                gamesTitle: 'ألعاب',
+                newsTitle: 'أخبار',
+                obsoleteTitle: 'قديم وغير مستخدم',
+                visitBtn: 'زيارة',
+                noDescription: 'لا يوجد وصف متاح.',
+                imageIconAlt: 'أيقونة',
+                installBtn: '📲 تثبيت التطبيق',
+                notificationGranted: '✅ الإشعارات مفعلة',
+                notificationDenied: '🚫 ممنوع',
+                notificationDefault: '🔔 تفعيل الإشعارات',
+                notificationDeniedAlert: 'الإشعارات محظورة. يمكنك تغيير هذا في إعدادات المتصفح.',
+                notificationTurnOffAlert: 'الإشعارات مفعلة بالفعل. لإيقافها، انتقل إلى إعدادات الموقع في متصفحك.',
+                notifEmpty: 'لا توجد إشعارات جديدة',
+                notifUpdateMsg: 'نسخة جديدة متاحة.',
+                notifUpdateBtn: 'تحديث',
+                offlineBanner: 'أنت غير متصل بالإنترنت. قد لا تتوفر بعض الميزات.',
+                onlineStatus: 'متصل',
+                offlineStatus: 'غير متصل',
+                footer: {
+                    confidentiality: 'سياسة الخصوصية',
+                    terms: 'شروط الاستخدام',
+                    contact: 'اتصل بنا',
+                    version: "الإصدار '0.0.1'",
+                    developer: 'طور بواسطة: ماجري زياد.',
+                    hosted: 'مستضاف على Github و Netlify.'
+                }
             }
+        };
+        let currentLang = localStorage.getItem('dashboardLang') || 'en';
+        let currentTheme = localStorage.getItem('dashboardTheme') || 'light';
 
-            function translatePage() {
-                const lang = currentLang;
-                document.querySelectorAll('[data-i18n]').forEach(el => {
-                    const key = el.getAttribute('data-i18n');
-                    const text = getNestedValue(uiText[lang], key);
-                    if (text) el.textContent = text;
-                });
-                document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
-                document.documentElement.setAttribute('lang', lang);
-                const langSelect = document.getElementById('langSelect');
-                if (langSelect) langSelect.value = lang;
-            }
+        function getNestedValue(obj, path) {
+            return path.split('.').reduce((o, k) => (o && o[k] !== undefined ? o[k] : undefined), obj) || '';
+        }
 
-            function hexToRgb(hex) {
+        function translatePage() {
+            const lang = currentLang;
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                const text = getNestedValue(uiText[lang], key);
+                if (text) el.textContent = text;
+            });
+            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+            document.documentElement.lang = lang;
+            const langSelect = document.getElementById('langSelect');
+            if (langSelect) langSelect.value = lang;
+        }
+
+        function hexToRgb(hex) {
                 const clean = hex.replace('#', '');
                 const full = clean.length === 3 ?
                     clean[0] + clean[0] + clean[1] + clean[1] + clean[2] + clean[2] :
@@ -976,300 +1109,269 @@
                 return hue;
             }
 
-            function applyCardPalettes() {
-                const isDark = currentTheme === 'dark';
-                document.querySelectorAll('.ED-General-card').forEach(cardEl => {
-                    const cardId = cardEl.getAttribute('data-card-id');
-                    const card = allCards.find(c => c.id === cardId);
-                    if (!card) return;
-                    const palette = isDark ? (card.darkModePalette || {}) : (card.lightModePalette || {});
-                    const accent = palette.accent || '#4a7fd9';
-                    cardEl.style.setProperty('--card-accent', accent);
-                    if (palette.iconBg) cardEl.style.setProperty('--ED-General-card-icon-bg', palette.iconBg);
-                    else cardEl.style.removeProperty('--ED-General-card-icon-bg');
-                    const rgb = hexToRgb(accent);
-                    const lum = getLuminance(rgb.r, rgb.g, rgb.b);
-                    const hue = getHue(rgb.r, rgb.g, rgb.b);
-                    const baseOpacity = 0.06 + (1 - lum) * 0.12;
-                    const opacityHover = baseOpacity * 2.1;
-                    const darkMultiplier = isDark ? 1.45 : 1;
-                    const finalOpacity = Math.min(baseOpacity * darkMultiplier, 0.22);
-                    const finalOpacityHover = Math.min(opacityHover * darkMultiplier, 0.40);
-                    let offsetX = 0;
-                    if (hue >= 0 && hue <= 50) offsetX = 2;
-                    else if (hue > 50 && hue <= 100) offsetX = 1;
-                    else if (hue >= 200 && hue <= 280) offsetX = -2;
-                    else if (hue > 280 && hue <= 330) offsetX = -1;
-                    let blurBase = 10, blurHover = 30;
-                    if (hue >= 0 && hue <= 100) { blurBase = 12; blurHover = 34; }
-                    else if (hue >= 200 && hue <= 300) { blurBase = 8; blurHover = 26; }
-                    cardEl.style.setProperty('--card-accent-r', rgb.r);
-                    cardEl.style.setProperty('--card-accent-g', rgb.g);
-                    cardEl.style.setProperty('--card-accent-b', rgb.b);
-                    cardEl.style.setProperty('--card-shadow-opacity', finalOpacity.toFixed(3));
-                    cardEl.style.setProperty('--card-shadow-opacity-hover', finalOpacityHover.toFixed(3));
-                    cardEl.style.setProperty('--card-shadow-blur', blurBase + 'px');
-                    cardEl.style.setProperty('--card-shadow-blur-hover', blurHover + 'px');
-                    cardEl.style.setProperty('--card-shadow-offset-x', offsetX + 'px');
-                    cardEl.style.setProperty('--card-shadow-offset-y', '3px');
-                    cardEl.style.setProperty('--card-shadow-offset-y-hover', (6 + Math.abs(offsetX)) + 'px');
-                });
-            }
+        function applyCardPalettes() {
+            const isDark = currentTheme === 'dark';
+            document.querySelectorAll('.ED-General-card').forEach(cardEl => {
+                const cardId = cardEl.getAttribute('data-card-id');
+                const card = allCards.find(c => c.id === cardId);
+                if (!card) return;
+                const palette = isDark ? (card.darkModePalette || {}) : (card.lightModePalette || {});
+                const accent = palette.accent || '#4a7fd9';
+                cardEl.style.setProperty('--card-accent', accent);
+                if (palette.iconBg) cardEl.style.setProperty('--ED-General-card-icon-bg', palette.iconBg);
+                else cardEl.style.removeProperty('--ED-General-card-icon-bg');
+                const rgb = hexToRgb(accent);
+                const lum = getLuminance(rgb.r, rgb.g, rgb.b);
+                const hue = getHue(rgb.r, rgb.g, rgb.b);
+                const baseOpacity = 0.06 + (1 - lum) * 0.12;
+                const opacityHover = baseOpacity * 2.1;
+                const darkMultiplier = isDark ? 1.45 : 1;
+                const finalOpacity = Math.min(baseOpacity * darkMultiplier, 0.22);
+                const finalOpacityHover = Math.min(opacityHover * darkMultiplier, 0.40);
+                let offsetX = 0;
+                if (hue >= 0 && hue <= 50) offsetX = 2;
+                else if (hue > 50 && hue <= 100) offsetX = 1;
+                else if (hue >= 200 && hue <= 280) offsetX = -2;
+                else if (hue > 280 && hue <= 330) offsetX = -1;
+                let blurBase = 10, blurHover = 30;
+                if (hue >= 0 && hue <= 100) { blurBase = 12; blurHover = 34; }
+                else if (hue >= 200 && hue <= 300) { blurBase = 8; blurHover = 26; }
+                cardEl.style.setProperty('--card-accent-r', rgb.r);
+                cardEl.style.setProperty('--card-accent-g', rgb.g);
+                cardEl.style.setProperty('--card-accent-b', rgb.b);
+                cardEl.style.setProperty('--card-shadow-opacity', finalOpacity.toFixed(3));
+                cardEl.style.setProperty('--card-shadow-opacity-hover', finalOpacityHover.toFixed(3));
+                cardEl.style.setProperty('--card-shadow-blur', blurBase + 'px');
+                cardEl.style.setProperty('--card-shadow-blur-hover', blurHover + 'px');
+                cardEl.style.setProperty('--card-shadow-offset-x', offsetX + 'px');
+                cardEl.style.setProperty('--card-shadow-offset-y', '3px');
+                cardEl.style.setProperty('--card-shadow-offset-y-hover', (6 + Math.abs(offsetX)) + 'px');
+            });
+        }
 
-            function renderCardGrid(cards, targetId, categoryClass) {
-                const grid = document.getElementById(targetId);
-                if (!grid) return;
-                const lang = currentLang;
-                grid.innerHTML = '';
-                cards.forEach(card => {
-                    const cardLang = card[lang] || card['en'] || {};
-                    const cardName = cardLang.name || card.id;
-                    const cardDesc = cardLang.description || uiText[lang].noDescription;
-                    const firstLetter = cardName.charAt(0).toUpperCase();
-                    let iconHTML = '';
-                    if (card.imageIcon && card.imageIcon.trim() !== '') {
-                        iconHTML = `<img src="${escapeHTML(card.imageIcon)}" alt="${escapeHTML(uiText[lang].imageIconAlt)}" onerror="this.setAttribute('data-error','1');this.nextElementSibling.style.display='flex';" loading="lazy"><span class="ED-General-card__icon-letter">${escapeHTML(firstLetter)}</span>`;
-                    } else {
-                        iconHTML = `<span class="ED-General-card__icon-letter" style="display:flex;">${escapeHTML(firstLetter)}</span>`;
-                    }
-                    let insideLinksHTML = '';
-                    if (card.insideLinks && card.insideLinks.length > 0) {
-                        insideLinksHTML = '<div class="ED-General-card__inside-links">' +
-                            card.insideLinks.map(il => {
-                                const linkLang = il[lang] || il['en'] || {};
-                                const linkName = linkLang.name || 'Link';
-                                return `<a href="${escapeHTML(il.url)}" class="ED-General-inside-link" target="_blank" rel="noopener noreferrer" title="${escapeHTML(linkName)}">${escapeHTML(linkName)}<span class="ED-General-inside-link__arrow">↗</span></a>`;
-                            }).join('') + '</div>';
-                    }
-                    grid.insertAdjacentHTML('beforeend', `
-                        <div class="ED-General-card ${categoryClass}" data-card-id="${escapeHTML(card.id)}">
-                            <div class="ED-General-card__icon-container">${iconHTML}</div>
-                            <h3 class="ED-General-card__name">${escapeHTML(cardName)}</h3>
-                            <p class="ED-General-card__description">${escapeHTML(cardDesc)}</p>
-                            ${insideLinksHTML}
-                            <a href="${escapeHTML(card.link)}" class="ED-General-card__main-btn" target="_blank" rel="noopener noreferrer">${uiText[lang].visitBtn}<span class="ED-General-card__main-btn-arrow">→</span></a>
-                        </div>
-                    `);
-                });
-            }
+        function renderCardGrid(cards, targetId, categoryClass) {
+            const grid = document.getElementById(targetId);
+            if (!grid) return;
+            const lang = currentLang;
+            grid.innerHTML = '';
+            cards.forEach(card => {
+                const cardLang = card[lang] || card['en'] || {};
+                const cardName = cardLang.name || card.id;
+                const cardDesc = cardLang.description || uiText[lang].noDescription;
+                const firstLetter = cardName.charAt(0).toUpperCase();
+                let iconHTML = '';
+                if (card.imageIcon && card.imageIcon.trim() !== '') {
+                    iconHTML = `<img src="${escapeHTML(card.imageIcon)}" alt="${escapeHTML(uiText[lang].imageIconAlt)}" onerror="this.setAttribute('data-error','1');this.nextElementSibling.style.display='flex';" loading="lazy"><span class="ED-General-card__icon-letter">${escapeHTML(firstLetter)}</span>`;
+                } else {
+                    iconHTML = `<span class="ED-General-card__icon-letter" style="display:flex;">${escapeHTML(firstLetter)}</span>`;
+                }
+                let insideLinksHTML = '';
+                if (card.insideLinks && card.insideLinks.length > 0) {
+                    insideLinksHTML = '<div class="ED-General-card__inside-links">' +
+                        card.insideLinks.map(il => {
+                            const linkLang = il[lang] || il['en'] || {};
+                            const linkName = linkLang.name || 'Link';
+                            return `<a href="${escapeHTML(il.url)}" class="ED-General-inside-link" target="_blank" rel="noopener noreferrer" title="${escapeHTML(linkName)}">${escapeHTML(linkName)}<span class="ED-General-inside-link__arrow">↗</span></a>`;
+                        }).join('') + '</div>';
+                }
+                grid.insertAdjacentHTML('beforeend', `
+                    <div class="ED-General-card ${categoryClass}" data-card-id="${escapeHTML(card.id)}">
+                        <div class="ED-General-card__icon-container">${iconHTML}</div>
+                        <h3 class="ED-General-card__name">${escapeHTML(cardName)}</h3>
+                        <p class="ED-General-card__description">${escapeHTML(cardDesc)}</p>
+                        ${insideLinksHTML}
+                        <a href="${escapeHTML(card.link)}" class="ED-General-card__main-btn" target="_blank" rel="noopener noreferrer">${uiText[lang].visitBtn}<span class="ED-General-card__main-btn-arrow">→</span></a>
+                    </div>
+                `);
+            });
+        }
 
-            function applyTheme() {
-                document.documentElement.setAttribute('data-theme', currentTheme);
-                localStorage.setItem('dashboardTheme', currentTheme);
-                applyCardPalettes();
-            }
+        function applyTheme() {
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            localStorage.setItem('dashboardTheme', currentTheme);
+            applyCardPalettes();
+        }
 
-            function toggleTheme() {
-                currentTheme = currentTheme === 'light' ? 'dark' : 'light';
-                applyTheme();
-            }
+        function toggleTheme() {
+            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+            applyTheme();
+        }
 
-            function updateInstallButtonText() {
-                const installBtn = document.getElementById('installBtn');
-                if (installBtn) installBtn.textContent = getNestedValue(uiText[currentLang], 'installBtn') || '📲 Install App';
-            }
+        function updateInstallButtonText() {
+            const btn = document.getElementById('installBtn');
+            if (btn) btn.textContent = getNestedValue(uiText[currentLang], 'installBtn') || '📲 Install App';
+        }
 
-            function updateNotificationButtonText() {
-                const btn = document.getElementById('notificationBtn');
-                if (!btn) return;
-                const lang = currentLang;
-                let key = 'notificationDefault';
-                if (Notification.permission === 'granted') key = 'notificationGranted';
-                else if (Notification.permission === 'denied') key = 'notificationDenied';
-                btn.textContent = getNestedValue(uiText[lang], key) || '🔔 Notifications';
-            }
+        // ----- Browser notification button -----
+        function updateNotificationButtonText() {
+            const btn = document.getElementById('notificationBtn');
+            if (!btn) return;
+            const lang = currentLang;
+            let key = 'notificationDefault';
+            if (Notification.permission === 'granted') key = 'notificationGranted';
+            else if (Notification.permission === 'denied') key = 'notificationDenied';
+            btn.textContent = getNestedValue(uiText[lang], key) || '🔔 Notifications';
+        }
 
-            function setupNotificationToggle() {
-                const btn = document.getElementById('notificationBtn');
-                if (!btn || !('Notification' in window)) return;
+        function setupNotificationToggle() {
+            const btn = document.getElementById('notificationBtn');
+            if (!btn || !('Notification' in window)) return;
+            btn.style.display = 'inline-flex';
+            updateNotificationButtonText();
+            btn.addEventListener('click', () => {
+                if (Notification.permission === 'default') {
+                    Notification.requestPermission().then(perm => {
+                        updateNotificationButtonText();
+                    });
+                } else if (Notification.permission === 'denied') {
+                    alert(getNestedValue(uiText[currentLang], 'notificationDeniedAlert'));
+                } else {
+                    // Already granted – guide user to browser settings
+                    alert(getNestedValue(uiText[currentLang], 'notificationTurnOffAlert'));
+                }
+            });
+            navigator.permissions?.query({ name: 'notifications' }).then(permStatus => {
+                permStatus.onchange = () => updateNotificationButtonText();
+            }).catch(() => {});
+        }
+
+        // ----- Connection indicator & offline banner -----
+        function updateConnectionStatus() {
+            const dot = document.getElementById('status-dot');
+            const label = document.getElementById('connection-status-label');
+            if (!dot || !label) return;
+            const online = navigator.onLine;
+            dot.className = 'ED-General-status-dot' + (online ? '' : ' ED-General-offline');
+            label.textContent = online ?
+                getNestedValue(uiText[currentLang], 'onlineStatus') || 'Online' :
+                getNestedValue(uiText[currentLang], 'offlineStatus') || 'Offline';
+        }
+
+        function setupConnectionIndicator() {
+            window.addEventListener('online', updateConnectionStatus);
+            window.addEventListener('offline', updateConnectionStatus);
+            updateConnectionStatus();
+        }
+
+        function setupOfflineBanner() {
+            const banner = document.getElementById('offline-banner');
+            if (!banner) return;
+            window.addEventListener('offline', () => banner.style.display = 'block');
+            window.addEventListener('online', () => banner.style.display = 'none');
+            if (!navigator.onLine) banner.style.display = 'block';
+        }
+
+        function setLanguage(lang) {
+            if (lang === currentLang) return;
+            currentLang = lang;
+            localStorage.setItem('dashboardLang', lang);
+            translatePage();
+            updateInstallButtonText();
+            updateNotificationButtonText();
+            updateConnectionStatus();
+            renderAll();
+        }
+
+        function renderAll() {
+            for (const [category, config] of Object.entries(categoryConfig)) {
+                renderCardGrid(allCards.filter(c => c.category === category), config.gridId, config.cssClass);
+            }
+            applyCardPalettes();
+        }
+
+        function escapeHTML(str) {
+            if (typeof str !== 'string') return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // ----- PWA Install -----
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const btn = document.getElementById('installBtn');
+            if (btn) {
                 btn.style.display = 'inline-flex';
-                updateNotificationButtonText();
-                btn.addEventListener('click', () => {
-                    if (Notification.permission === 'default') {
-                        Notification.requestPermission().then(perm => {
-                            updateNotificationButtonText();
-                            if (perm === 'granted') console.log('Notification permission granted');
-                        });
-                    } else if (Notification.permission === 'denied') {
-                        alert(getNestedValue(uiText[currentLang], 'notificationDeniedAlert') || 'Notifications are blocked.');
-                    }
-                });
-                navigator.permissions?.query({ name: 'notifications' }).then(permStatus => {
-                    permStatus.onchange = () => updateNotificationButtonText();
-                }).catch(() => {});
-            }
-
-            // ----- Persistent connection indicator -----
-            function updateConnectionStatus() {
-                const dot = document.getElementById('status-dot');
-                const label = document.getElementById('connection-status-label');
-                if (!dot || !label) return;
-                const online = navigator.onLine;
-                dot.className = 'status-dot' + (online ? '' : ' offline');
-                label.textContent = online ?
-                    getNestedValue(uiText[currentLang], 'onlineStatus') || 'Online' :
-                    getNestedValue(uiText[currentLang], 'offlineStatus') || 'Offline';
-            }
-
-            function setupConnectionIndicator() {
-                const statusSpan = document.getElementById('connection-status');
-                if (!statusSpan) return;
-                // Create the elements dynamically if needed, but they are already in header.html
-                const dot = statusSpan.querySelector('#status-dot');
-                const label = statusSpan.querySelector('#connection-status-label');
-                if (!dot || !label) return;
-                window.addEventListener('online', updateConnectionStatus);
-                window.addEventListener('offline', updateConnectionStatus);
-                updateConnectionStatus();
-            }
-
-            // Offline banner (secondary)
-            function setupOfflineBanner() {
-                const banner = document.getElementById('offline-banner');
-                if (!banner) return;
-                function show() { banner.style.display = 'block'; }
-                function hide() { banner.style.display = 'none'; }
-                window.addEventListener('offline', show);
-                window.addEventListener('online', hide);
-                if (!navigator.onLine) show();
-            }
-
-            function setLanguage(lang) {
-                if (lang === currentLang) return;
-                currentLang = lang;
-                localStorage.setItem('dashboardLang', lang);
-                translatePage();
                 updateInstallButtonText();
-                updateNotificationButtonText();
-                updateConnectionStatus();   // update the dot label
-                renderAll();
             }
+        });
+        document.getElementById('installBtn')?.addEventListener('click', async () => {
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            await deferredPrompt.userChoice;
+            deferredPrompt = null;
+            document.getElementById('installBtn').style.display = 'none';
+        });
+        window.addEventListener('appinstalled', () => {
+            deferredPrompt = null;
+            const btn = document.getElementById('installBtn');
+            if (btn) btn.style.display = 'none';
+        });
 
-            function renderAll() {
-                for (const [category, config] of Object.entries(categoryConfig)) {
-                    renderCardGrid(allCards.filter(c => c.category === category), config.gridId, config.cssClass);
-                }
-                applyCardPalettes();
-            }
-
-            function escapeHTML(str) {
-                if (typeof str !== 'string') return '';
-                const div = document.createElement('div');
-                div.textContent = str;
-                return div.innerHTML;
-            }
-
-            // PWA install
-            let deferredPrompt;
-            const installBtn = document.getElementById('installBtn');
-            window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                deferredPrompt = e;
-                if (installBtn) {
-                    installBtn.style.display = 'inline-flex';
-                    updateInstallButtonText();
-                }
-            });
-            if (installBtn) {
-                installBtn.addEventListener('click', async () => {
-                    if (!deferredPrompt) return;
-                    deferredPrompt.prompt();
-                    const { outcome } = await deferredPrompt.userChoice;
-                    console.log('Install outcome:', outcome);
-                    deferredPrompt = null;
-                    installBtn.style.display = 'none';
-                });
-            }
-            window.addEventListener('appinstalled', () => {
-                deferredPrompt = null;
-                if (installBtn) installBtn.style.display = 'none';
-            });
-
-            // Translated update toast
-            let newVersionAvailable = false;
-            function showUpdateToast() {
-                const lang = currentLang;
-                const msg = getNestedValue(uiText[lang], 'updateToastMessage') || '✨ A new version is available.';
-                const updateBtnText = getNestedValue(uiText[lang], 'updateToastButton') || 'Update';
-                const dismissTitle = getNestedValue(uiText[lang], 'updateToastDismissTitle') || 'Dismiss';
-                const toast = document.createElement('div');
-                toast.id = 'update-toast';
-                Object.assign(toast.style, {
-                    position: 'fixed', bottom: '20px', right: '20px',
-                    background: 'var(--ED-General-color-surface)',
-                    border: '1px solid var(--ED-General-color-accent-default)',
-                    borderRadius: '12px', padding: '1rem 1.5rem',
-                    boxShadow: '0 8px 24px rgba(var(--ED-General-color-shadow-rgb),0.2)',
-                    display: 'flex', alignItems: 'center', gap: '1rem',
-                    zIndex: '9999', fontFamily: 'var(--ED-General-font-stack)', maxWidth: '360px'
-                });
-                toast.innerHTML = `
-                    <span style="color: var(--ED-General-color-text-primary);">${escapeHTML(msg)}</span>
-                    <button id="update-now-btn" style="background: var(--ED-General-color-accent-default); color: var(--ED-General-color-text-on-accent); border: none; border-radius: 20px; padding: 0.4rem 1rem; cursor: pointer; font-weight: 600;">${escapeHTML(updateBtnText)}</button>
-                    <button id="update-dismiss" style="background: none; border: none; color: var(--ED-General-color-text-tertiary); cursor: pointer; font-size: 1.2rem;" title="${escapeHTML(dismissTitle)}">✕</button>
-                `;
-                document.body.appendChild(toast);
-                document.getElementById('update-now-btn').addEventListener('click', () => {
+        // ----- Update notification via bell -----
+        function showUpdateNotification() {
+            const lang = currentLang;
+            const msg = getNestedValue(uiText[lang], 'notifUpdateMsg') || 'A new version is available.';
+            const btnText = getNestedValue(uiText[lang], 'notifUpdateBtn') || 'Update';
+            if (window.addInAppNotification) {
+                window.addInAppNotification(msg, btnText, () => {
                     navigator.serviceWorker.getRegistration().then(reg => {
                         if (reg && reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
                     });
                 });
-                document.getElementById('update-dismiss').addEventListener('click', () => toast.remove());
             }
+        }
 
-            function init() {
-                currentTheme = localStorage.getItem('dashboardTheme') || 'light';
-                applyTheme();
-                currentLang = localStorage.getItem('dashboardLang') || 'en';
-                translatePage();
-                setupNotificationToggle();
-                setupConnectionIndicator();
-                setupOfflineBanner();
-                updateInstallButtonText();
-                renderAll();
+        function init() {
+            currentTheme = localStorage.getItem('dashboardTheme') || 'light';
+            applyTheme();
+            currentLang = localStorage.getItem('dashboardLang') || 'en';
+            translatePage();
+            setupNotificationBell();           // adds bell to header
+            setupNotificationToggle();        // browser permission button
+            setupConnectionIndicator();
+            setupOfflineBanner();
+            updateInstallButtonText();
+            renderAll();
 
-                if ('serviceWorker' in navigator) {
-                    window.addEventListener('load', () => {
-                        navigator.serviceWorker.register('/sw.js').then(reg => {
-                            reg.addEventListener('updatefound', () => {
-                                const newWorker = reg.installing;
-                                newWorker?.addEventListener('statechange', () => {
-                                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                        newVersionAvailable = true;
-                                        showUpdateToast();
-                                    }
-                                });
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/sw.js').then(reg => {
+                        reg.addEventListener('updatefound', () => {
+                            const newWorker = reg.installing;
+                            newWorker?.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    showUpdateNotification();
+                                }
                             });
-                            if (reg.waiting && navigator.serviceWorker.controller) {
-                                newVersionAvailable = true;
-                                showUpdateToast();
-                            }
-                            if ('periodicSync' in reg) {
-                                reg.periodicSync.register('sw-update-check', { minInterval: 24*60*60*1000 })
-                                    .then(() => console.log('Periodic sync registered'))
-                                    .catch(err => console.error('Periodic sync failed:', err));
-                            }
-                        }).catch(err => console.error('SW registration failed:', err));
+                        });
+                        if (reg.waiting && navigator.serviceWorker.controller) {
+                            showUpdateNotification();
+                        }
                     });
-                    navigator.serviceWorker.addEventListener('controllerchange', () => {
-                        if (newVersionAvailable) window.location.reload();
-                    });
-                }
-
-                const themeToggle = document.getElementById('themeToggle');
-                if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
-                const langSelect = document.getElementById('langSelect');
-                if (langSelect) langSelect.addEventListener('change', function() { setLanguage(this.value); });
-                document.addEventListener('keydown', function(e) {
-                    if (e.ctrlKey && e.shiftKey && e.key === 'T') { e.preventDefault(); toggleTheme(); }
+                });
+                navigator.serviceWorker.addEventListener('controllerchange', () => {
+                    window.location.reload();
                 });
             }
 
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', init);
-            } else {
-                init();
-            }
+            document.getElementById('themeToggle')?.addEventListener('click', toggleTheme);
+            document.getElementById('langSelect')?.addEventListener('change', e => setLanguage(e.target.value));
+            document.addEventListener('keydown', e => {
+                if (e.ctrlKey && e.shiftKey && e.key === 'T') {
+                    e.preventDefault();
+                    toggleTheme();
+                }
+            });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
         })();
     </script>
 </body>
