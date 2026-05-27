@@ -14,6 +14,9 @@
   "scope": "/",
   "iarc_rating_id": "6f9a2b3c-4d5e-6f7a-8b9c-0d1e2f3a4b5c",
   "prefer_related_applications": false,
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
   "categories": [
     "education",
     "entertainment",
@@ -22,6 +25,32 @@
     "music",
     "news",
     "utilities"
+  ],
+  "shortcuts": [
+    {
+      "name": "Education",
+      "short_name": "Edu",
+      "url": "/?category=education",
+      "icons": [{ "src": "assets/icons/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Games",
+      "short_name": "Games",
+      "url": "/?category=games",
+      "icons": [{ "src": "assets/icons/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "News",
+      "short_name": "News",
+      "url": "/?category=news",
+      "icons": [{ "src": "assets/icons/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Others",
+      "short_name": "Others",
+      "url": "/?category=others",
+      "icons": [{ "src": "assets/icons/icon-192x192.png", "sizes": "192x192" }]
+    }
   ],
   "icons": [
     {
