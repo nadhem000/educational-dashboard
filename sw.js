@@ -1,4 +1,4 @@
-const CACHE_NAME = 'edudash-v10';  // increment with each deploy
+const CACHE_NAME = 'edudash-v11';  // increment with each deploy
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
