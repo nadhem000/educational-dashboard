@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Educational Dashboard</title>
-<link rel="manifest" href="/manifest.json" />
+    <link rel="manifest" href="/manifest.json" />
     <style>
         :root {
             --ED-General-color-bg: #f5f1eb;
@@ -51,32 +51,25 @@
             --card-shadow-offset-x: 0px;
             --card-shadow-offset-y: 3px;
             --card-shadow-offset-y-hover: 8px;
-
             /* New: header gradient stops */
             --ED-General-color-header-gradient-start: #fefdfb;
             --ED-General-color-header-gradient-mid1: #faf8f4;
             --ED-General-color-header-gradient-mid2: #f6f3ee;
             --ED-General-color-header-gradient-end: #f2efe8;
-
             /* New: header accent gradient mid‑stop */
             --ED-General-color-header-accent-gradient-stop: rgba(180, 160, 140, 0.5);
-
             /* New: base RGB for shadows (light tint) */
             --ED-General-color-shadow-rgb: 60, 50, 40;
-
             /* New: accent RGB for opacity‑based shadows */
             --ED-General-color-accent-rgb: 74, 127, 217;
-
             /* New: icon colours */
             --ED-General-color-icon-sun: #e8a840;
             --ED-General-color-icon-moon: #7b8cb0;
             --ED-General-color-icon-sun-glow: rgba(232, 168, 64, 0.3);
             --ED-General-color-icon-moon-glow: rgba(122, 143, 176, 0.35);
-
             /* New: text colour on accent (used for inside‑link & main‑button hover) */
             --ED-General-color-text-on-accent: #ffffff;
         }
-
         [data-theme="dark"] {
             --ED-General-color-bg: #171a20;
             --ED-General-color-bg-secondary: #1e2129;
@@ -106,27 +99,20 @@
             --ED-General-color-btn-primary-hover: #6199f0;
             --ED-General-color-btn-shadow: rgba(0, 0, 0, 0.5);
             --ED-General-color-icon-container-bg: #252b38;
-
             /* Dark overrides */
             --ED-General-color-header-gradient-start: #1f222d;
             --ED-General-color-header-gradient-mid1: #1c1f29;
             --ED-General-color-header-gradient-mid2: #191c24;
             --ED-General-color-header-gradient-end: #171a20;
-
             --ED-General-color-header-accent-gradient-stop: rgba(160, 175, 200, 0.4);
-
             --ED-General-color-shadow-rgb: 0, 0, 0;
-
             --ED-General-color-accent-rgb: 122, 175, 255;
-
             --ED-General-color-icon-sun: #e8a840;
             --ED-General-color-icon-moon: #c4d0f0;
             --ED-General-color-icon-sun-glow: rgba(232, 168, 64, 0.3);
             --ED-General-color-icon-moon-glow: rgba(180, 195, 235, 0.35);
-
             --ED-General-color-text-on-accent: #12151c;
         }
-
         [dir="rtl"] {
             direction: rtl;
             text-align: right;
@@ -146,7 +132,6 @@
         [dir="rtl"] .ED-General-inside-link__arrow {
             transform: scaleX(-1);
         }
-
         *,
         *::before,
         *::after {
@@ -168,7 +153,6 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
-
         /* ========== HEADER — refined & elevated ========== */
         .ED-General-header {
             background: linear-gradient(175deg,
@@ -190,13 +174,11 @@
             backdrop-filter: blur(2px);
             -webkit-backdrop-filter: blur(2px);
         }
-
         [data-theme="dark"] .ED-General-header {
             box-shadow:
                 0 1px 4px rgba(var(--ED-General-color-shadow-rgb), 0.25),
                 0 2px 10px rgba(var(--ED-General-color-shadow-rgb), 0.18);
         }
-
         .ED-General-header::before {
             content: '';
             position: absolute;
@@ -216,7 +198,6 @@
         .ED-General-header:hover::before {
             opacity: 0.95;
         }
-
         .ED-General-header__inner {
             max-width: 1300px;
             margin: 0 auto;
@@ -228,7 +209,6 @@
             position: relative;
             z-index: 1;
         }
-
         .ED-General-header__title {
             font-size: 1.38rem;
             font-weight: 750;
@@ -242,11 +222,9 @@
             gap: 0.45rem;
             text-shadow: 0 1px 2px rgba(var(--ED-General-color-shadow-rgb), 0.03);
         }
-
         [data-theme="dark"] .ED-General-header__title {
             text-shadow: 0 1px 3px rgba(var(--ED-General-color-shadow-rgb), 0.2);
         }
-
         .ED-General-header__title-icon {
             width: 26px;
             height: 26px;
@@ -257,14 +235,12 @@
         .ED-General-header__title:hover .ED-General-header__title-icon {
             transform: rotate(-5deg) scale(1.12);
         }
-
         .ED-General-header__controls {
             display: flex;
             align-items: center;
             gap: 0.65rem;
             flex-wrap: wrap;
         }
-
         /* ========== LANG SELECT ========== */
         .ED-General-lang-select {
             padding: 0.48rem 2.1rem 0.48rem 0.9rem;
@@ -312,7 +288,6 @@
             border-color: var(--ED-General-color-accent-default);
             box-shadow: 0 0 0 3.5px rgba(var(--ED-General-color-accent-rgb), 0.14);
         }
-
         /* ========== THEME TOGGLE ========== */
         .ED-General-theme-toggle {
             width: 41px;
@@ -389,32 +364,31 @@
             color: var(--ED-General-color-icon-moon);
             filter: drop-shadow(0 0 4px var(--ED-General-color-icon-moon-glow));
         }
-.ED-General-header-btn {
-    background: var(--ED-General-color-surface);
-    border: 1.5px solid var(--ED-General-color-border);
-    border-radius: 22px;
-    padding: 0.45rem 1rem;
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: var(--ED-General-color-text-primary);
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    transition: all 0.22s ease;
-    white-space: nowrap;
-    font-family: var(--ED-General-font-stack);
-    box-shadow: 0 1px 3px rgba(var(--ED-General-color-shadow-rgb), 0.05);
-}
-.ED-General-header-btn:hover {
-    border-color: var(--ED-General-color-accent-default);
-    background: var(--ED-General-color-accent-soft);
-    box-shadow: 0 2px 8px rgba(var(--ED-General-color-accent-rgb), 0.12);
-}
-.ED-General-header-btn:active {
-    transform: scale(0.96);
-}
-
+        .ED-General-header-btn {
+            background: var(--ED-General-color-surface);
+            border: 1.5px solid var(--ED-General-color-border);
+            border-radius: 22px;
+            padding: 0.45rem 1rem;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--ED-General-color-text-primary);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: all 0.22s ease;
+            white-space: nowrap;
+            font-family: var(--ED-General-font-stack);
+            box-shadow: 0 1px 3px rgba(var(--ED-General-color-shadow-rgb), 0.05);
+        }
+        .ED-General-header-btn:hover {
+            border-color: var(--ED-General-color-accent-default);
+            background: var(--ED-General-color-accent-soft);
+            box-shadow: 0 2px 8px rgba(var(--ED-General-color-accent-rgb), 0.12);
+        }
+        .ED-General-header-btn:active {
+            transform: scale(0.96);
+        }
         /* ========== MAIN ========== */
         .ED-General-main {
             max-width: 1300px;
@@ -433,7 +407,6 @@
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: var(--ED-General-grid-gap);
         }
-
         /* ========== CARD — per-card shadow via RGB custom props ========== */
         .ED-General-card {
             background: var(--ED-General-color-surface);
@@ -475,7 +448,6 @@
         .ED-General-card:hover::before {
             opacity: 1;
         }
-
         .ED-General-card__icon-container {
             width: 52px;
             height: 52px;
@@ -620,7 +592,6 @@
             color: var(--ED-General-color-text-primary);
             transition: color var(--ED-General-transition-speed) ease, border-color var(--ED-General-transition-speed) ease;
         }
-
         /* ========== FOOTER — refined & polished ========== */
         .ED-General-footer {
             border-top: 1px solid var(--ED-General-color-border);
@@ -725,7 +696,6 @@
             color: var(--ED-General-color-text-tertiary);
             letter-spacing: 0.01em;
         }
-
         /* ========== RESPONSIVE ========== */
         @media (max-width: 640px) {
             .ED-General-card-grid {
@@ -812,7 +782,7 @@
         <h2 class="ED-General-section-title" data-i18n="obsoleteTitle">Obsolete & unused</h2>
         <div class="ED-General-card-grid" id="obsoleteGrid"></div>
     </main>
-   <footer id="footer-container"></footer>
+    <footer id="footer-container"></footer>
     <!-- External data file: card definitions & category config -->
     <script src="data_general.js"></script>
     <script>
@@ -828,14 +798,12 @@
                 console.error(err);
             }
         }
-
         await Promise.all([
             loadComponent('header.html', 'header-container'),
             loadComponent('footer.html', 'footer-container')
         ]);
             // ========== Category → grid mapping is now in data_general.js ==========
             // allCards and categoryConfig are globally available from data_general.js
-
             // ========== UI text dictionary ==========
             const uiText = {
                 en: {
@@ -896,15 +864,12 @@
                     }
                 },
             };
-
             let currentLang = localStorage.getItem('dashboardLang') || 'en';
             let currentTheme = localStorage.getItem('dashboardTheme') || 'light';
-
             // ========== Utility: get nested value from object using dot path ==========
             function getNestedValue(obj, path) {
                 return path.split('.').reduce((o, k) => (o && o[k] !== undefined ? o[k] : undefined), obj) || '';
             }
-
             // ========== Translate the whole page (static elements with data-i18n) ==========
             function translatePage() {
                 const lang = currentLang;
@@ -918,7 +883,6 @@
                 const langSelect = document.getElementById('langSelect');
                 if (langSelect) langSelect.value = lang;
             }
-
             // ========== Hex → RGB converter ==========
             function hexToRgb(hex) {
                 const clean = hex.replace('#', '');
@@ -933,7 +897,6 @@
                     b: parseInt(match[3], 16)
                 };
             }
-
             // ========== Relative luminance (sRGB) ==========
             function getLuminance(r, g, b) {
                 const linearize = (c) => {
@@ -942,7 +905,6 @@
                 };
                 return 0.2126 * linearize(r) + 0.7152 * linearize(g) + 0.0722 * linearize(b);
             }
-
             // ========== Hue angle from RGB (0–360) ==========
             function getHue(r, g, b) {
                 const rf = r / 255;
@@ -960,7 +922,6 @@
                 if (hue < 0) hue += 360;
                 return hue;
             }
-
             // ========== Apply palette + unique per‑card shadow ==========
             function applyCardPalettes() {
                 const isDark = currentTheme === 'dark';
@@ -1005,7 +966,6 @@
                     cardEl.style.setProperty('--card-shadow-offset-y-hover', (6 + Math.abs(offsetX)) + 'px');
                 });
             }
-
             // ========== Generic card renderer ==========
             function renderCardGrid(cards, targetId, categoryClass) {
                 const grid = document.getElementById(targetId);
@@ -1057,18 +1017,15 @@
                     grid.insertAdjacentHTML('beforeend', cardHTML);
                 });
             }
-
             function applyTheme() {
                 document.documentElement.setAttribute('data-theme', currentTheme);
                 localStorage.setItem('dashboardTheme', currentTheme);
                 applyCardPalettes();
             }
-
             function toggleTheme() {
                 currentTheme = currentTheme === 'light' ? 'dark' : 'light';
                 applyTheme();
             }
-
             function setLanguage(lang) {
                 if (lang === currentLang) return;
                 currentLang = lang;
@@ -1076,7 +1033,6 @@
                 translatePage();
                 renderAll();
             }
-
             function renderAll() {
                 for (const [category, config] of Object.entries(categoryConfig)) {
                     const filteredCards = allCards.filter(card => card.category === category);
@@ -1084,7 +1040,6 @@
                 }
                 applyCardPalettes();
             }
-
             function escapeHTML(str) {
                 if (typeof str !== 'string') return '';
                 const div = document.createElement('div');
@@ -1092,139 +1047,143 @@
                 return div.innerHTML;
             }
 
-       
-// ========== PWA: Install prompt ==========
-let deferredPrompt;
-const installBtn = document.getElementById('installBtn');
+            // ========== PWA: Install prompt ==========
+            let deferredPrompt;
+            const installBtn = document.getElementById('installBtn');
+            window.addEventListener('beforeinstallprompt', (e) => {
+              e.preventDefault();
+              deferredPrompt = e;
+              if (installBtn) installBtn.style.display = 'inline-flex';
+            });
+            if (installBtn) {
+              installBtn.addEventListener('click', async () => {
+                if (!deferredPrompt) return;
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User response to install: ${outcome}`);
+                deferredPrompt = null;
+                installBtn.style.display = 'none';
+              });
+            }
+            window.addEventListener('appinstalled', () => {
+              deferredPrompt = null;
+              if (installBtn) installBtn.style.display = 'none';
+              console.log('App installed');
+            });
 
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  if (installBtn) installBtn.style.display = 'inline-flex';
-});
+            // ========== New version detection (no VAPID, no version.json) ==========
+            let newVersionAvailable = false;
 
-if (installBtn) {
-  installBtn.addEventListener('click', async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    console.log(`User response to install: ${outcome}`);
-    deferredPrompt = null;
-    installBtn.style.display = 'none';
-  });
-}
+            function showUpdateToast() {
+                const toast = document.createElement('div');
+                toast.id = 'update-toast';
+                toast.style.cssText = `
+                    position: fixed; bottom: 20px; right: 20px;
+                    background: var(--ED-General-color-surface);
+                    border: 1px solid var(--ED-General-color-accent-default);
+                    border-radius: 12px;
+                    padding: 1rem 1.5rem;
+                    box-shadow: 0 8px 24px rgba(var(--ED-General-color-shadow-rgb),0.2);
+                    display: flex; align-items: center; gap: 1rem;
+                    z-index: 9999;
+                    font-family: var(--ED-General-font-stack);
+                    max-width: 360px;
+                `;
+                toast.innerHTML = `
+                    <span style="color: var(--ED-General-color-text-primary);">✨ A new version is available.</span>
+                    <button id="update-now-btn" style="
+                        background: var(--ED-General-color-accent-default);
+                        color: var(--ED-General-color-text-on-accent);
+                        border: none; border-radius: 20px;
+                        padding: 0.4rem 1rem;
+                        cursor: pointer; font-weight: 600;
+                    ">Update</button>
+                    <button id="update-dismiss" style="
+                        background: none; border: none;
+                        color: var(--ED-General-color-text-tertiary);
+                        cursor: pointer; font-size: 1.2rem; line-height:1;
+                    ">✕</button>
+                `;
+                document.body.appendChild(toast);
+                document.getElementById('update-now-btn').addEventListener('click', () => {
+                    navigator.serviceWorker.getRegistration().then(reg => {
+                        if (reg && reg.waiting) {
+                            reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+                        }
+                    });
+                });
+                document.getElementById('update-dismiss').addEventListener('click', () => {
+                    toast.remove();
+                });
+            }
 
-window.addEventListener('appinstalled', () => {
-  deferredPrompt = null;
-  if (installBtn) installBtn.style.display = 'none';
-  console.log('App installed');
-});
+            function registerPeriodicSync(registration) {
+                if ('periodicSync' in registration) {
+                    registration.periodicSync.register('sw-update-check', {
+                        minInterval: 24 * 60 * 60 * 1000  // once per day
+                    }).then(() => console.log('Periodic sync registered'))
+                      .catch(err => console.error('Periodic sync failed:', err));
+                } else {
+                    console.log('Periodic Background Sync not supported');
+                }
+            }
 
-// ========== PWA: Push notifications ==========
-const notificationToggle = document.getElementById('notificationToggle');
+            // ========== Init ==========
+            function init() {
+                currentTheme = localStorage.getItem('dashboardTheme') || 'light';
+                applyTheme();
+                currentLang = localStorage.getItem('dashboardLang') || 'en';
+                translatePage();
+                renderAll();
 
-// VAPID public key – replace with your own generated key
-const applicationServerKey = urlBase64ToUint8Array(
-  'BJhvzuA14TDFhkruUQRpArKx-a96ZyjTNW3sT1quevMcZiIbb2JuxLYUaCiRYGjYRdzx_HFpL9nEcYEcbVsVEi8'
-);
+                if ('serviceWorker' in navigator) {
+                    window.addEventListener('load', () => {
+                        navigator.serviceWorker.register('/sw.js')
+                            .then(registration => {
+                                console.log('SW registered:', registration.scope);
 
-function urlBase64ToUint8Array(base64String) {
-  const padding = '='.repeat((4 - base64String.length % 4) % 4);
-  const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
-  const rawData = window.atob(base64);
-  return Uint8Array.from([...rawData].map(char => char.charCodeAt(0)));
-}
+                                // Detect new version via updatefound
+                                registration.addEventListener('updatefound', () => {
+                                    const newWorker = registration.installing;
+                                    if (!newWorker) return;
+                                    newWorker.addEventListener('statechange', () => {
+                                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                            newVersionAvailable = true;
+                                            showUpdateToast();
+                                        }
+                                    });
+                                });
 
-async function updateNotificationUI() {
-  if (!('Notification' in window) || !('serviceWorker' in navigator)) {
-    notificationToggle.style.display = 'none';
-    return;
-  }
-  const reg = await navigator.serviceWorker.getRegistration();
-  if (!reg) return;
+                                // If a new SW is already waiting (e.g. after skipWaiting from a previous update)
+                                if (registration.waiting && navigator.serviceWorker.controller) {
+                                    newVersionAvailable = true;
+                                    showUpdateToast();
+                                }
 
-  const subscription = await reg.pushManager.getSubscription();
-  if (subscription) {
-    notificationToggle.textContent = '🔕';
-    notificationToggle.title = 'Disable notifications';
-    notificationToggle.classList.add('active');
-  } else {
-    notificationToggle.textContent = '🔔';
-    notificationToggle.title = 'Enable notifications';
-    notificationToggle.classList.remove('active');
-  }
-}
+                                // Register periodic background sync to check for SW updates
+                                registerPeriodicSync(registration);
+                            })
+                            .catch(err => console.error('SW registration failed:', err));
+                    });
 
-async function toggleNotificationSubscription() {
-  const reg = await navigator.serviceWorker.getRegistration();
-  if (!reg) return;
+                    navigator.serviceWorker.addEventListener('controllerchange', () => {
+                        if (newVersionAvailable) {
+                            window.location.reload();
+                        }
+                    });
+                }
 
-  const subscription = await reg.pushManager.getSubscription();
-  if (subscription) {
-    // Unsubscribe
-    await subscription.unsubscribe();
-    console.log('Unsubscribed from push');
-    // TODO: send unsubscribe to your server
-  } else {
-    // Request permission & subscribe
-    const permission = await Notification.requestPermission();
-    if (permission !== 'granted') {
-      alert('Notification permission denied');
-      return;
-    }
-    try {
-      const newSub = await reg.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: applicationServerKey
-      });
-      console.log('Push subscription:', JSON.stringify(newSub));
-      // TODO: send subscription object to your server
-      alert('Notifications enabled!');
-    } catch (err) {
-      console.error('Push subscription failed:', err);
-    }
-  }
-  updateNotificationUI();
-}
-
-if (notificationToggle) {
-  notificationToggle.addEventListener('click', toggleNotificationSubscription);
-}
-
-// ========== Update init() to include new features ==========
-function init() {
-  currentTheme = localStorage.getItem('dashboardTheme') || 'light';
-  applyTheme();
-  currentLang = localStorage.getItem('dashboardLang') || 'en';
-  translatePage();
-  renderAll();
-
-  // Service Worker registration
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
-        .then(registration => {
-          console.log('SW registered:', registration.scope);
-          updateNotificationUI(); // set initial button state
-        })
-        .catch(err => console.error('SW registration failed:', err));
-    });
-  }
-
-  // Existing event listeners
-  const themeToggle = document.getElementById('themeToggle');
-  if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
-
-  const langSelect = document.getElementById('langSelect');
-  if (langSelect) langSelect.addEventListener('change', function() { setLanguage(this.value); });
-
-  document.addEventListener('keydown', function(e) {
-    if (e.ctrlKey && e.shiftKey && e.key === 'T') {
-      e.preventDefault();
-      toggleTheme();
-    }
-  });
-}
+                const themeToggle = document.getElementById('themeToggle');
+                if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
+                const langSelect = document.getElementById('langSelect');
+                if (langSelect) langSelect.addEventListener('change', function() { setLanguage(this.value); });
+                document.addEventListener('keydown', function(e) {
+                    if (e.ctrlKey && e.shiftKey && e.key === 'T') {
+                        e.preventDefault();
+                        toggleTheme();
+                    }
+                });
+            }
 
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', init);
@@ -1233,18 +1192,5 @@ function init() {
             }
         })();
     </script>
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
-        .then((registration) => {
-          console.log('Service Worker registered with scope:', registration.scope);
-        })
-        .catch((error) => {
-          console.error('Service Worker registration failed:', error);
-        });
-    });
-  }
-</script>
 </body>
 </html>

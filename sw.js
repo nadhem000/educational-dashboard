@@ -1,5 +1,4 @@
-const CACHE_NAME = 'edudash-v6';
-
+const CACHE_NAME = 'edudash-v7';  // increment when you deploy a new version
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
@@ -16,7 +15,25 @@ self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(PRECACHE_ASSETS))
-      .then(() => self.skipWaiting())
+      .then(() => {
+        // If there is already an active SW, this is an update → notify
+        if (self.registration.active) {
+          const title = 'Educational Dashboard';
+          const options = {
+            body: 'A new version is available. Click to update.',
+            icon: '/assets/icons/icon-192x192.png',
+            badge: '/assets/icons/icon-96x96.png',
+            data: { url: '/' }
+          };
+          // Show notification only if the app isn't currently visible
+          self.clients.matchAll({ type: 'window' }).then(clients => {
+            if (clients.length === 0) {
+              self.registration.showNotification(title, options);
+            }
+          });
+        }
+        return self.skipWaiting();
+      })
   );
 });
 
@@ -48,42 +65,24 @@ self.addEventListener('fetch', event => {
 });
 
 // ------------------------------------------------------------
-// PUSH NOTIFICATIONS
+// MESSAGE (trigger SKIP_WAITING from client)
 // ------------------------------------------------------------
-self.addEventListener('push', event => {
-  if (!event.data) return;
-
-  try {
-    const payload = event.data.json();
-    const title = payload.title || 'Educational Dashboard';
-    const options = {
-      body: payload.body || '',
-      icon: 'assets/icons/icon-192x192.png',
-      badge: 'assets/icons/icon-96x96.png',
-      data: payload.data || {}
-    };
-
-    event.waitUntil(self.registration.showNotification(title, options));
-  } catch (e) {
-    // plain text fallback
-    event.waitUntil(
-      self.registration.showNotification('Educational Dashboard', {
-        body: event.data.text(),
-        icon: '/icons/icon-192x192.png'
-      })
-    );
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
   }
 });
 
-self.addEventListener('notificationclick', event => {
-  event.notification.close();
-  event.waitUntil(
-    clients.matchAll({ type: 'window' }).then(windowClients => {
-      if (windowClients.length > 0) {
-        windowClients[0].focus();
-      } else {
-        clients.openWindow('/');
-      }
-    })
-  );
+// ------------------------------------------------------------
+// PERIODIC BACKGROUND SYNC – force SW update check
+// ------------------------------------------------------------
+self.addEventListener('periodicsync', event => {
+  if (event.tag === 'sw-update-check') {
+    event.waitUntil(
+      // Fetch the SW script with cache: reload to trigger a SW update check
+      fetch('/sw.js', { cache: 'reload' })
+        .then(() => console.log('Periodic SW update check triggered'))
+        .catch(err => console.error('Periodic sync fetch failed:', err))
+    );
+  }
 });
