@@ -33,49 +33,49 @@
     {
       "name": "Wesnoth Tools",
       "short_name": "Tools",
-      "url": "https://wesnoth-tools-helpers.netlify.app",
+      "url": "/?goto=wesnoth-tools-helpers",
       "icons": [{ "src": "assets/icons/wesnothTools.png", "sizes": "192x192", "type": "image/png" }]
     },
     {
       "name": "Arabic Hub",
       "short_name": "Arabic",
-      "url": "https://arabic-hub.netlify.app",
+      "url": "/?goto=arabic-hub",
       "icons": [{ "src": "assets/icons/arabicHub.png", "sizes": "96x96", "type": "image/png" }]
     },
     {
       "name": "English Hub",
       "short_name": "English",
-      "url": "https://english-hub-education.netlify.app",
+      "url": "/?goto=english-hub-education",
       "icons": [{ "src": "assets/icons/englishHub.png", "sizes": "96x96", "type": "image/png" }]
     },
     {
       "name": "Mathematics Hub",
       "short_name": "Maths",
-      "url": "https://mathematics-hub-education.netlify.app",
+      "url": "/?goto=mathematics-hub-education",
       "icons": [{ "src": "assets/icons/mathematicsHub.png", "sizes": "96x96", "type": "image/png" }]
     },
     {
       "name": "French Hub",
       "short_name": "French",
-      "url": "https://french-hub.netlify.app",
+      "url": "/?goto=french-hub",
       "icons": [{ "src": "assets/icons/frenchHub.png", "sizes": "96x96", "type": "image/png" }]
     },
     {
       "name": "Game Hub",
       "short_name": "Games",
-      "url": "https://games-collection-hub.netlify.app",
+      "url": "/?goto=games-collection-hub",
       "icons": [{ "src": "assets/icons/gameHub.png", "sizes": "152x152", "type": "image/png" }]
     },
     {
       "name": "Cosmic News",
       "short_name": "News",
-      "url": "https://universe-chronicles.netlify.app",
+      "url": "/?goto=universe-chronicles",
       "icons": [{ "src": "assets/icons/cosmicNews.png", "sizes": "96x96", "type": "image/png" }]
     },
     {
       "name": "Documents Manager",
       "short_name": "Docs",
-      "url": "https://documents-manage.netlify.app",
+      "url": "/?goto=documents-manage",
       "icons": [{ "src": "assets/icons/documentsManager.png", "sizes": "72x72", "type": "image/png" }]
     }
   ],
