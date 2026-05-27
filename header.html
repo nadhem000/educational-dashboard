@@ -5,14 +5,10 @@
             <span data-i18n="dashboardTitle">Educational Dashboard</span>
         </h1>
         <div class="ED-General-header__controls">
-            <!-- Install button - always visible, translated via JS -->
-            <button class="ED-General-header-btn" id="installBtn" title="Install app" data-i18n="installBtn">
-                📲 Install
-            </button>
-            <!-- Notification permission toggle - always visible, text controlled by JS -->
-            <button class="ED-General-header-btn" id="notificationBtn" title="Enable notifications">
-                🔔 Notifications
-            </button>
+            <!-- Install button (hidden by default, shown via JS) -->
+            <button class="ED-General-header-btn" id="installBtn" title="Install app" style="display: none;" data-i18n="installBtn">📲 Install</button>
+            <!-- Notification permission toggle -->
+            <button class="ED-General-header-btn" id="notificationBtn" title="Enable notifications" style="display: none;" data-i18n="notificationDefault">🔔 Notifications</button>
             <select class="ED-General-lang-select" id="langSelect" aria-label="Choose language">
                 <option value="en">English</option>
                 <option value="fr">Français</option>

@@ -766,23 +766,6 @@
                 gap: 1rem;
             }
         }
-    
-    /* ===== NEW: Offline banner ===== */
-    .offline-banner {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: #ffc107;
-        color: #1a1a1a;
-        text-align: center;
-        padding: 0.5rem;
-        z-index: 1000;
-        font-weight: 600;
-        font-size: 0.9rem;
-        box-shadow: 0 -2px 8px rgba(0,0,0,0.15);
-        display: none;
-    }
     </style>
 </head>
 <body>
@@ -800,8 +783,6 @@
         <div class="ED-General-card-grid" id="obsoleteGrid"></div>
     </main>
     <footer id="footer-container"></footer>
-    <!-- Offline banner (initially hidden) -->
-    <div id="offline-banner" class="offline-banner" data-i18n="offlineMessage">You are offline. Some features may be unavailable.</div>
     <!-- External data file: card definitions & category config -->
     <script src="data_general.js"></script>
     <script>
@@ -821,47 +802,7 @@
             loadComponent('header.html', 'header-container'),
             loadComponent('footer.html', 'footer-container')
         ]);
-
-            // ========== NEW: Notification permission toggle ==========
-            function setupNotificationToggle() {
-                const btn = document.getElementById('notificationBtn');
-                if (!btn || !('Notification' in window)) return;
-                // Always show the button
-                btn.style.display = 'inline-flex';
-                updateNotificationButtonText();
-                btn.addEventListener('click', () => {
-                    if (Notification.permission === 'default') {
-                        Notification.requestPermission().then(perm => {
-                            updateNotificationButtonText();
-                            if (perm === 'granted') {
-                                console.log('Notification permission granted');
-                            }
-                        });
-                    } else if (Notification.permission === 'denied') {
-                        alert(uiText[currentLang].notificationBlockedHelp || 'Notifications are blocked. You can change this in your browser settings.');
-                    }
-                });
-                // Update when permission changes externally
-                if (navigator.permissions) {
-                    navigator.permissions.query({ name: 'notifications' }).then(permStatus => {
-                        permStatus.onchange = () => updateNotificationButtonText();
-                    }).catch(() => {});
-                }
-            }
-
-            // ========== NEW: Offline indicator ==========
-            function setupOfflineIndicator() {
-                const banner = document.getElementById('offline-banner');
-                if (!banner) return;
-                function showOffline() { banner.style.display = 'block'; }
-                function showOnline()  { banner.style.display = 'none'; }
-                window.addEventListener('offline', showOffline);
-                window.addEventListener('online', showOnline);
-                if (!navigator.onLine) showOffline();
-            }
-            // ========== Category → grid mapping is now in data_general.js ==========
-            // allCards and categoryConfig are globally available from data_general.js
-            // ========== UI text dictionary ==========
+            // ========== UI text dictionary (updated with button translations) ==========
             const uiText = {
                 en: {
                     dashboardTitle: 'Educational Dashboard',
@@ -873,12 +814,10 @@
                     visitBtn: 'Visit',
                     noDescription: 'No description available.',
                     imageIconAlt: 'icon',
-                    installBtn: '📲 Install',
-                    installManualHint: 'To install, use the browser menu.',
-                    notificationEnable: '🔔 Enable Notifications',
+                    installBtn: '📲 Install App',
                     notificationGranted: '✅ Notifications ON',
-                    notificationBlocked: '🚫 Blocked',
-                    offlineMessage: 'You are offline. Some features may be unavailable.',
+                    notificationDenied: '🚫 Blocked',
+                    notificationDefault: '🔔 Enable Notifications',
                     footer: {
                         confidentiality: 'Confidentiality Politics',
                         terms: 'Terms of Use',
@@ -898,12 +837,10 @@
                     visitBtn: 'Visiter',
                     noDescription: 'Aucune description disponible.',
                     imageIconAlt: 'icône',
-                    installBtn: '📲 Installer',
-                    installManualHint: 'Pour installer, utilisez le menu du navigateur.',
-                    notificationEnable: '🔔 Activer les notifications',
+                    installBtn: '📲 Installer l\'app',
                     notificationGranted: '✅ Notifications activées',
-                    notificationBlocked: '🚫 Bloquées',
-                    offlineMessage: 'Vous êtes hors ligne. Certaines fonctionnalités peuvent être indisponibles.',
+                    notificationDenied: '🚫 Bloqué',
+                    notificationDefault: '🔔 Activer les notifications',
                     footer: {
                         confidentiality: 'Politique de confidentialité',
                         terms: 'Conditions d\'utilisation',
@@ -923,12 +860,10 @@
                     visitBtn: 'زيارة',
                     noDescription: 'لا يوجد وصف متاح.',
                     imageIconAlt: 'أيقونة',
-                    installBtn: '📲 تثبيت',
-                    installManualHint: 'للتثبيت، استخدم قائمة المتصفح.',
-                    notificationEnable: '🔔 تفعيل الإشعارات',
+                    installBtn: '📲 تثبيت التطبيق',
                     notificationGranted: '✅ الإشعارات مفعلة',
-                    notificationBlocked: '🚫 محظورة',
-                    offlineMessage: 'أنت غير متصل. بعض الميزات قد لا تكون متاحة.',
+                    notificationDenied: '🚫 ممنوع',
+                    notificationDefault: '🔔 تفعيل الإشعارات',
                     footer: {
                         confidentiality: 'سياسة الخصوصية',
                         terms: 'شروط الاستخدام',
@@ -957,8 +892,6 @@
                 document.documentElement.setAttribute('lang', lang);
                 const langSelect = document.getElementById('langSelect');
                 if (langSelect) langSelect.value = lang;
-                // Update notification button after translation
-                updateNotificationButtonText();
             }
             // ========== Hex → RGB converter ==========
             function hexToRgb(hex) {
@@ -1103,11 +1036,69 @@
                 currentTheme = currentTheme === 'light' ? 'dark' : 'light';
                 applyTheme();
             }
+            // ========== Update install button text based on current language ==========
+            function updateInstallButtonText() {
+                const installBtn = document.getElementById('installBtn');
+                if (installBtn) {
+                    installBtn.textContent = getNestedValue(uiText[currentLang], 'installBtn') || '📲 Install App';
+                }
+            }
+            // ========== Update notification button text based on permission and language ==========
+            function updateNotificationButtonText() {
+                const btn = document.getElementById('notificationBtn');
+                if (!btn) return;
+                const lang = currentLang;
+                let textKey = '';
+                switch (Notification.permission) {
+                    case 'granted': textKey = 'notificationGranted'; break;
+                    case 'denied': textKey = 'notificationDenied'; break;
+                    default: textKey = 'notificationDefault';
+                }
+                btn.textContent = getNestedValue(uiText[lang], textKey) || '🔔 Notifications';
+            }
+            // ========== Notification permission toggle (with translation support) ==========
+            function setupNotificationToggle() {
+                const btn = document.getElementById('notificationBtn');
+                if (!btn || !('Notification' in window)) return;
+                // Show the button (initially hidden)
+                btn.style.display = 'inline-flex';
+                updateNotificationButtonText();
+                btn.addEventListener('click', () => {
+                    if (Notification.permission === 'default') {
+                        Notification.requestPermission().then(perm => {
+                            updateNotificationButtonText();
+                            if (perm === 'granted') {
+                                console.log('Notification permission granted');
+                            }
+                        });
+                    } else if (Notification.permission === 'denied') {
+                        alert(getNestedValue(uiText[currentLang], 'notificationDeniedAlert') || 'Notifications are blocked. You can change this in your browser settings.');
+                    }
+                });
+                // Update when permission changes (e.g. from settings)
+                navigator.permissions?.query({ name: 'notifications' }).then(permStatus => {
+                    permStatus.onchange = () => updateNotificationButtonText();
+                }).catch(() => {});
+            }
+            // ========== NEW: Offline indicator ==========
+            function setupOfflineIndicator() {
+                const banner = document.getElementById('offline-banner');
+                if (!banner) return;
+                function showOffline() { banner.style.display = 'block'; }
+                function showOnline()  { banner.style.display = 'none'; }
+                window.addEventListener('offline', showOffline);
+                window.addEventListener('online', showOnline);
+                if (!navigator.onLine) showOffline();
+            }
+            // ========== Category → grid mapping is now in data_general.js ==========
+            // allCards and categoryConfig are globally available from data_general.js
             function setLanguage(lang) {
                 if (lang === currentLang) return;
                 currentLang = lang;
                 localStorage.setItem('dashboardLang', lang);
                 translatePage();
+                updateInstallButtonText();
+                updateNotificationButtonText();
                 renderAll();
             }
             function renderAll() {
@@ -1123,62 +1114,34 @@
                 div.textContent = str;
                 return div.innerHTML;
             }
-function updateNotificationButtonText() {
-                const btn = document.getElementById('notificationBtn');
-                if (!btn || !('Notification' in window)) return;
-                const lang = currentLang;
-                switch (Notification.permission) {
-                    case 'granted':
-                        btn.innerHTML = uiText[lang].notificationGranted || '✅ Notifications ON';
-                        btn.style.opacity = '0.6';
-                        btn.style.pointerEvents = 'none';
-                        btn.title = 'Notifications are enabled';
-                        break;
-                    case 'denied':
-                        btn.innerHTML = uiText[lang].notificationBlocked || '🚫 Blocked';
-                        btn.style.opacity = '0.8';
-                        btn.style.pointerEvents = 'auto';
-                        btn.title = 'Notifications are blocked. Change in browser settings.';
-                        break;
-                    default:
-                        btn.innerHTML = uiText[lang].notificationEnable || '🔔 Enable Notifications';
-                        btn.style.opacity = '1';
-                        btn.style.pointerEvents = 'auto';
-                        btn.title = 'Request notification permission';
-                }
-            }
             // ========== PWA: Install prompt ==========
             let deferredPrompt;
             const installBtn = document.getElementById('installBtn');
             window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                deferredPrompt = e;
-                // Button is already visible; no need to show again
+              e.preventDefault();
+              deferredPrompt = e;
+              if (installBtn) {
+                  installBtn.style.display = 'inline-flex';
+                  updateInstallButtonText(); // ensure translated text
+              }
             });
             if (installBtn) {
-                // Always show the button (remove any hidden style if present)
-                installBtn.style.display = 'inline-flex';
-                installBtn.addEventListener('click', async () => {
-                    if (deferredPrompt) {
-                        deferredPrompt.prompt();
-                        const { outcome } = await deferredPrompt.userChoice;
-                        console.log(`User response to install: ${outcome}`);
-                        deferredPrompt = null;
-                    } else {
-                        // If install prompt not available, give manual instruction
-                        alert(uiText[currentLang].installManualHint || 'To install, use the browser menu.');
-                    }
-                });
+              installBtn.addEventListener('click', async () => {
+                if (!deferredPrompt) return;
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User response to install: ${outcome}`);
+                deferredPrompt = null;
+                installBtn.style.display = 'none';
+              });
             }
             window.addEventListener('appinstalled', () => {
               deferredPrompt = null;
               if (installBtn) installBtn.style.display = 'none';
               console.log('App installed');
             });
-
             // ========== New version detection (no VAPID, no version.json) ==========
             let newVersionAvailable = false;
-
             function showUpdateToast() {
                 const toast = document.createElement('div');
                 toast.id = 'update-toast';
@@ -1221,7 +1184,6 @@ function updateNotificationButtonText() {
                     toast.remove();
                 });
             }
-
             function registerPeriodicSync(registration) {
                 if ('periodicSync' in registration) {
                     registration.periodicSync.register('sw-update-check', {
@@ -1232,7 +1194,6 @@ function updateNotificationButtonText() {
                     console.log('Periodic Background Sync not supported');
                 }
             }
-
             // ========== Init ==========
             function init() {
                 currentTheme = localStorage.getItem('dashboardTheme') || 'light';
@@ -1241,14 +1202,13 @@ function updateNotificationButtonText() {
                 translatePage();
                 setupNotificationToggle();
                 setupOfflineIndicator();
+                updateInstallButtonText(); // initial translation for install button
                 renderAll();
-
                 if ('serviceWorker' in navigator) {
                     window.addEventListener('load', () => {
                         navigator.serviceWorker.register('/sw.js')
                             .then(registration => {
                                 console.log('SW registered:', registration.scope);
-
                                 // Detect new version via updatefound
                                 registration.addEventListener('updatefound', () => {
                                     const newWorker = registration.installing;
@@ -1260,26 +1220,22 @@ function updateNotificationButtonText() {
                                         }
                                     });
                                 });
-
                                 // If a new SW is already waiting (e.g. after skipWaiting from a previous update)
                                 if (registration.waiting && navigator.serviceWorker.controller) {
                                     newVersionAvailable = true;
                                     showUpdateToast();
                                 }
-
                                 // Register periodic background sync to check for SW updates
                                 registerPeriodicSync(registration);
                             })
                             .catch(err => console.error('SW registration failed:', err));
                     });
-
                     navigator.serviceWorker.addEventListener('controllerchange', () => {
                         if (newVersionAvailable) {
                             window.location.reload();
                         }
                     });
                 }
-
                 const themeToggle = document.getElementById('themeToggle');
                 if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
                 const langSelect = document.getElementById('langSelect');
@@ -1291,7 +1247,6 @@ function updateNotificationButtonText() {
                     }
                 });
             }
-
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', init);
             } else {
