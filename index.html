@@ -787,6 +787,9 @@
                 offlineBanner: 'You are offline. Some features may be unavailable.',
                 onlineStatus: 'Online', offlineStatus: 'Offline',
 themeToggleTitle: 'Dark/Light Theme',
+        enablePeriodicSyncBtn: 'Enable Background Updates',
+        periodicSyncEnabled: 'Background updates enabled!',
+        periodicSyncDenied: 'Permission not granted. Please check site settings.',
                 footer: {
                     confidentiality: 'Confidentiality Politics', terms: 'Terms of Use', contact: 'Contact',
                     version: "version '0.0.1'", developer: 'developed by: Mejri Ziad.', hosted: 'Hosted on Github and Netlify.'
@@ -801,6 +804,9 @@ themeToggleTitle: 'Dark/Light Theme',
                 offlineBanner: 'Vous êtes hors ligne. Certaines fonctionnalités peuvent être indisponibles.',
                 onlineStatus: 'En ligne', offlineStatus: 'Hors ligne',
 themeToggleTitle: 'Thème clair/sombre',
+        enablePeriodicSyncBtn: 'Activer les mises à jour en arrière-plan',
+        periodicSyncEnabled: 'Mises à jour en arrière-plan activées !',
+        periodicSyncDenied: 'Permission non accordée. Veuillez vérifier les paramètres du site.',
                 footer: {
                     confidentiality: 'Politique de confidentialité', terms: 'Conditions d\'utilisation', contact: 'Contact',
                     version: "version '0.0.1'", developer: 'développé par : Mejri Ziad.', hosted: 'Hébergé sur Github et Netlify.'
@@ -815,6 +821,9 @@ themeToggleTitle: 'Thème clair/sombre',
                 offlineBanner: 'أنت غير متصل بالإنترنت. قد لا تتوفر بعض الميزات.',
                 onlineStatus: 'متصل', offlineStatus: 'غير متصل',
 themeToggleTitle: 'وضع داكن/فاتح',
+        enablePeriodicSyncBtn: 'تفعيل التحديثات في الخلفية',
+        periodicSyncEnabled: 'تم تفعيل التحديثات في الخلفية!',
+        periodicSyncDenied: 'لم يتم منح الإذن. يرجى التحقق من إعدادات الموقع.',
                 footer: {
                     confidentiality: 'سياسة الخصوصية', terms: 'شروط الاستخدام', contact: 'اتصل بنا',
                     version: "الإصدار '0.0.1'", developer: 'طور بواسطة: ماجري زياد.', hosted: 'مستضاف على Github و Netlify.'
@@ -1054,78 +1063,87 @@ document.querySelectorAll('[data-i18n-title]').forEach(el => {
 
         // Init
         function init() {
-            currentTheme = localStorage.getItem('dashboardTheme') || 'light';
-            applyTheme();
-            currentLang = localStorage.getItem('dashboardLang') || 'en';
-            translatePage();
-            setupConnectionIndicator();
-            setupOfflineBanner();
-            updateInstallButtonText();
-            renderAll();
+    currentTheme = localStorage.getItem('dashboardTheme') || 'light';
+    applyTheme();
+    currentLang = localStorage.getItem('dashboardLang') || 'en';
+    translatePage();
+    setupConnectionIndicator();
+    setupOfflineBanner();
+    updateInstallButtonText();
+    renderAll();
 
-            if ('serviceWorker' in navigator) {
-                window.addEventListener('load', () => {
-                    navigator.serviceWorker.register('/sw.js')
-                        .then(reg => console.log('SW registered:', reg.scope))
-                        .catch(err => console.error('SW registration failed:', err));
-                });
+if ('serviceWorker' in navigator && 'periodicSync' in ServiceWorkerRegistration.prototype) {
+    const btn = document.getElementById('enablePeriodicSync');
+    if (btn) btn.style.display = 'inline-block';
+}
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js')
+                .then(reg => {
+                    console.log('SW registered:', reg.scope);
+
+                    // Register background sync
+                    if ('SyncManager' in window) {
+                        reg.sync.register('sync-data')
+                            .then(() => console.log('Background sync registered'))
+                            .catch(err => console.error('Sync registration failed:', err));
+                    }
+
+                    // Request periodic background sync (may fail without user gesture)
+                    if ('periodicSync' in reg) {
+                        reg.periodicSync.register('periodic-update', {
+                            minInterval: 6 * 60 * 60 * 1000
+                        }).then(() => console.log('Periodic sync registered'))
+                          .catch(err => console.warn('Periodic sync not yet granted:', err));
+                    }
+                })
+                .catch(err => console.error('SW registration failed:', err));
+        });
+
+        // Listen for data‑update messages from SW
+        navigator.serviceWorker.addEventListener('message', event => {
+            if (event.data && event.data.type === 'DATA_UPDATED') {
+                const script = document.createElement('script');
+                script.src = '/data_general.js?' + Date.now();
+                script.onload = () => {
+                    renderAll();
+                    applyCardPalettes();
+                };
+                document.head.appendChild(script);
             }
-// Register background sync
-if ('serviceWorker' in navigator && 'SyncManager' in window) {
-  navigator.serviceWorker.ready.then(reg => {
-    reg.sync.register('sync-data')
-      .then(() => console.log('Background sync registered'))
-      .catch(err => console.error('Sync registration failed:', err));
-  });
-}
-
-// Request periodic background sync if available
-if ('serviceWorker' in navigator && 'periodicSync' in navigator.serviceWorker) {
-  navigator.serviceWorker.ready.then(reg => {
-    // Request permission (must be triggered by user gesture in many browsers)
-    reg.periodicSync.register('periodic-update', {
-      minInterval: 6 * 60 * 60 * 1000  // 6 hours
-    }).then(() => console.log('Periodic sync registered'))
-      .catch(err => console.error('Periodic sync registration failed:', err));
-  });
-}
-navigator.serviceWorker.addEventListener('message', event => {
-  if (event.data && event.data.type === 'DATA_UPDATED') {
-    // Re‑render the cards with fresh data (re‑executes data_general.js)
-    // Option 1: force reload of the script
-    const script = document.createElement('script');
-    script.src = '/data_general.js?' + Date.now();
-    script.onload = () => {
-      // Re‑render grids
-      renderAll();
-      applyCardPalettes();
-    };
-    document.head.appendChild(script);
-  }
-});
-document.getElementById('enablePeriodicSync').addEventListener('click', async () => {
-    const reg = await navigator.serviceWorker.ready;
-    if ('periodicSync' in reg) {
-        const status = await navigator.permissions.query({ name: 'periodic-background-sync' });
-        if (status.state === 'granted') {
-            await reg.periodicSync.register('periodic-update', { minInterval: 6 * 60 * 60 * 1000 });
-            alert('Background updates enabled!');
-        } else {
-            alert('Permission not granted. Check site settings.');
-        }
+        });
     }
-});
-            const themeToggle = document.getElementById('themeToggle');
-            if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
-            const langSelect = document.getElementById('langSelect');
-            if (langSelect) langSelect.addEventListener('change', function() { setLanguage(this.value); });
-            document.addEventListener('keydown', function(e) {
-                if (e.ctrlKey && e.shiftKey && e.key === 'T') {
-                    e.preventDefault();
-                    toggleTheme();
+
+    // Periodic sync button (if present)
+    const periodicSyncBtn = document.getElementById('enablePeriodicSync');
+    if (periodicSyncBtn) {
+        periodicSyncBtn.addEventListener('click', async () => {
+            if (!('serviceWorker' in navigator)) return;
+            const reg = await navigator.serviceWorker.ready;
+            if ('periodicSync' in reg) {
+                const status = await navigator.permissions.query({ name: 'periodic-background-sync' });
+                if (status.state === 'granted') {
+                    await reg.periodicSync.register('periodic-update', { minInterval: 6 * 60 * 60 * 1000 });
+                    alert(getNestedValue(uiText[currentLang], 'periodicSyncEnabled') || 'Background updates enabled!');
+                } else {
+                    alert(getNestedValue(uiText[currentLang], 'periodicSyncDenied') || 'Permission not granted.');
                 }
-            });
+            }
+        });
+    }
+
+    // Theme & language toggles
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
+    const langSelect = document.getElementById('langSelect');
+    if (langSelect) langSelect.addEventListener('change', function() { setLanguage(this.value); });
+    document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && e.shiftKey && e.key === 'T') {
+            e.preventDefault();
+            toggleTheme();
         }
+    });
+}
 
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', init);
