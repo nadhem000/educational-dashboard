@@ -9,6 +9,20 @@
   "background_color": "#f5f1eb",
   "theme_color": "#4a7fd9",
   "orientation": "any",
+  "lang": "en",
+  "dir": "ltr",
+  "scope": "/",
+  "iarc_rating_id": "6f9a2b3c-4d5e-6f7a-8b9c-0d1e2f3a4b5c",
+  "prefer_related_applications": false,
+  "categories": [
+    "education",
+    "entertainment",
+    "games",
+    "magazines",
+    "music",
+    "news",
+    "utilities"
+  ],
   "icons": [
     {
       "src": "assets/icons/icon-192x192.png",
@@ -27,14 +41,14 @@
     {
       "src": "assets/screenshots/desktop-wide.png",
       "sizes": "1280x720",
+      "type": "image/png",
       "form_factor": "wide"
     },
     {
       "src": "assets/screenshots/mobile-narrow.png",
       "sizes": "750x1334",
+      "type": "image/png",
       "form_factor": "narrow"
     }
-  ],
-  "lang": "en",
-  "dir": "ltr"
+  ]
 }
