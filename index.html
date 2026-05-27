@@ -51,23 +51,17 @@
             --card-shadow-offset-x: 0px;
             --card-shadow-offset-y: 3px;
             --card-shadow-offset-y-hover: 8px;
-            /* New: header gradient stops */
             --ED-General-color-header-gradient-start: #fefdfb;
             --ED-General-color-header-gradient-mid1: #faf8f4;
             --ED-General-color-header-gradient-mid2: #f6f3ee;
             --ED-General-color-header-gradient-end: #f2efe8;
-            /* New: header accent gradient mid‑stop */
             --ED-General-color-header-accent-gradient-stop: rgba(180, 160, 140, 0.5);
-            /* New: base RGB for shadows (light tint) */
             --ED-General-color-shadow-rgb: 60, 50, 40;
-            /* New: accent RGB for opacity‑based shadows */
             --ED-General-color-accent-rgb: 74, 127, 217;
-            /* New: icon colours */
             --ED-General-color-icon-sun: #e8a840;
             --ED-General-color-icon-moon: #7b8cb0;
             --ED-General-color-icon-sun-glow: rgba(232, 168, 64, 0.3);
             --ED-General-color-icon-moon-glow: rgba(122, 143, 176, 0.35);
-            /* New: text colour on accent (used for inside‑link & main‑button hover) */
             --ED-General-color-text-on-accent: #ffffff;
         }
         [data-theme="dark"] {
@@ -99,7 +93,6 @@
             --ED-General-color-btn-primary-hover: #6199f0;
             --ED-General-color-btn-shadow: rgba(0, 0, 0, 0.5);
             --ED-General-color-icon-container-bg: #252b38;
-            /* Dark overrides */
             --ED-General-color-header-gradient-start: #1f222d;
             --ED-General-color-header-gradient-mid1: #1c1f29;
             --ED-General-color-header-gradient-mid2: #191c24;
@@ -153,7 +146,6 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
-        /* ========== HEADER — refined & elevated ========== */
         .ED-General-header {
             background: linear-gradient(175deg,
                     var(--ED-General-color-header-gradient-start) 0%,
@@ -241,7 +233,6 @@
             gap: 0.65rem;
             flex-wrap: wrap;
         }
-        /* ========== LANG SELECT ========== */
         .ED-General-lang-select {
             padding: 0.48rem 2.1rem 0.48rem 0.9rem;
             border-radius: 22px;
@@ -288,7 +279,6 @@
             border-color: var(--ED-General-color-accent-default);
             box-shadow: 0 0 0 3.5px rgba(var(--ED-General-color-accent-rgb), 0.14);
         }
-        /* ========== THEME TOGGLE ========== */
         .ED-General-theme-toggle {
             width: 41px;
             height: 41px;
@@ -389,7 +379,6 @@
         .ED-General-header-btn:active {
             transform: scale(0.96);
         }
-        /* ========== MAIN ========== */
         .ED-General-main {
             max-width: 1300px;
             margin: 0 auto;
@@ -407,7 +396,6 @@
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: var(--ED-General-grid-gap);
         }
-        /* ========== CARD — per-card shadow via RGB custom props ========== */
         .ED-General-card {
             background: var(--ED-General-color-surface);
             border: 1px solid var(--ED-General-color-border);
@@ -592,7 +580,6 @@
             color: var(--ED-General-color-text-primary);
             transition: color var(--ED-General-transition-speed) ease, border-color var(--ED-General-transition-speed) ease;
         }
-        /* ========== FOOTER — refined & polished ========== */
         .ED-General-footer {
             border-top: 1px solid var(--ED-General-color-border);
             padding: 2rem 0 1.75rem;
@@ -696,7 +683,23 @@
             color: var(--ED-General-color-text-tertiary);
             letter-spacing: 0.01em;
         }
-        /* ========== RESPONSIVE ========== */
+        /* Offline banner */
+        .offline-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--ED-General-color-accent-default);
+            color: var(--ED-General-color-text-on-accent);
+            text-align: center;
+            padding: 0.5rem;
+            z-index: 1000;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 -2px 8px rgba(var(--ED-General-color-shadow-rgb), 0.3);
+            display: none;
+        }
+        /* Responsive */
         @media (max-width: 640px) {
             .ED-General-card-grid {
                 grid-template-columns: 1fr;
@@ -766,22 +769,6 @@
                 gap: 1rem;
             }
         }
-    /* ===== NEW: Offline banner ===== */
-    .offline-banner {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: var(--ED-General-color-accent-default);
-        color: var(--ED-General-color-text-tertiary);
-        text-align: center;
-        padding: 0.5rem;
-        z-index: 1000;
-        font-weight: 600;
-        font-size: 0.9rem;
-        box-shadow: 0 -2px 8px rgba(var(--ED-General-color-shadow-rgb), 0.3);
-        display: none;
-    }
     </style>
 </head>
 <body>
@@ -799,6 +786,8 @@
         <div class="ED-General-card-grid" id="obsoleteGrid"></div>
     </main>
     <footer id="footer-container"></footer>
+    <!-- Offline banner (now visible when offline) -->
+    <div id="offline-banner" class="offline-banner" data-i18n="offlineBanner">You are offline. Some features may be unavailable.</div>
     <!-- External data file: card definitions & category config -->
     <script src="data_general.js"></script>
     <script>
@@ -818,7 +807,7 @@
             loadComponent('header.html', 'header-container'),
             loadComponent('footer.html', 'footer-container')
         ]);
-            // ========== UI text dictionary (updated with button translations) ==========
+            // ========== UI text dictionary ==========
             const uiText = {
                 en: {
                     dashboardTitle: 'Educational Dashboard',
@@ -834,6 +823,11 @@
                     notificationGranted: '✅ Notifications ON',
                     notificationDenied: '🚫 Blocked',
                     notificationDefault: '🔔 Enable Notifications',
+                    notificationDeniedAlert: 'Notifications are blocked. You can change this in your browser settings.',
+                    updateToastMessage: '✨ A new version is available.',
+                    updateToastButton: 'Update',
+                    updateToastDismissTitle: 'Dismiss',
+                    offlineBanner: 'You are offline. Some features may be unavailable.',
                     footer: {
                         confidentiality: 'Confidentiality Politics',
                         terms: 'Terms of Use',
@@ -857,6 +851,11 @@
                     notificationGranted: '✅ Notifications activées',
                     notificationDenied: '🚫 Bloqué',
                     notificationDefault: '🔔 Activer les notifications',
+                    notificationDeniedAlert: 'Les notifications sont bloquées. Vous pouvez modifier ce paramètre dans les options de votre navigateur.',
+                    updateToastMessage: '✨ Une nouvelle version est disponible.',
+                    updateToastButton: 'Mettre à jour',
+                    updateToastDismissTitle: 'Fermer',
+                    offlineBanner: 'Vous êtes hors ligne. Certaines fonctionnalités peuvent être indisponibles.',
                     footer: {
                         confidentiality: 'Politique de confidentialité',
                         terms: 'Conditions d\'utilisation',
@@ -880,6 +879,11 @@
                     notificationGranted: '✅ الإشعارات مفعلة',
                     notificationDenied: '🚫 ممنوع',
                     notificationDefault: '🔔 تفعيل الإشعارات',
+                    notificationDeniedAlert: 'الإشعارات محظورة. يمكنك تغيير هذا في إعدادات المتصفح.',
+                    updateToastMessage: '✨ نسخة جديدة متاحة.',
+                    updateToastButton: 'تحديث',
+                    updateToastDismissTitle: 'إغلاق',
+                    offlineBanner: 'أنت غير متصل بالإنترنت. قد لا تتوفر بعض الميزات.',
                     footer: {
                         confidentiality: 'سياسة الخصوصية',
                         terms: 'شروط الاستخدام',
@@ -1096,7 +1100,7 @@
                     permStatus.onchange = () => updateNotificationButtonText();
                 }).catch(() => {});
             }
-            // ========== NEW: Offline indicator ==========
+            // ========== Offline indicator ==========
             function setupOfflineIndicator() {
                 const banner = document.getElementById('offline-banner');
                 if (!banner) return;
@@ -1156,9 +1160,13 @@
               if (installBtn) installBtn.style.display = 'none';
               console.log('App installed');
             });
-            // ========== New version detection (no VAPID, no version.json) ==========
+            // ========== New version detection (with translated toast) ==========
             let newVersionAvailable = false;
             function showUpdateToast() {
+                const lang = currentLang;
+                const message = getNestedValue(uiText[lang], 'updateToastMessage') || '✨ A new version is available.';
+                const updateBtnText = getNestedValue(uiText[lang], 'updateToastButton') || 'Update';
+                const dismissTitle = getNestedValue(uiText[lang], 'updateToastDismissTitle') || 'Dismiss';
                 const toast = document.createElement('div');
                 toast.id = 'update-toast';
                 toast.style.cssText = `
@@ -1174,19 +1182,19 @@
                     max-width: 360px;
                 `;
                 toast.innerHTML = `
-                    <span style="color: var(--ED-General-color-text-primary);">✨ A new version is available.</span>
+                    <span style="color: var(--ED-General-color-text-primary);">${escapeHTML(message)}</span>
                     <button id="update-now-btn" style="
                         background: var(--ED-General-color-accent-default);
                         color: var(--ED-General-color-text-on-accent);
                         border: none; border-radius: 20px;
                         padding: 0.4rem 1rem;
                         cursor: pointer; font-weight: 600;
-                    ">Update</button>
+                    ">${escapeHTML(updateBtnText)}</button>
                     <button id="update-dismiss" style="
                         background: none; border: none;
                         color: var(--ED-General-color-text-tertiary);
                         cursor: pointer; font-size: 1.2rem; line-height:1;
-                    ">✕</button>
+                    " title="${escapeHTML(dismissTitle)}">✕</button>
                 `;
                 document.body.appendChild(toast);
                 document.getElementById('update-now-btn').addEventListener('click', () => {
