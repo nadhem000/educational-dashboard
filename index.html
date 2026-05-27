@@ -379,6 +379,29 @@
         .ED-General-header-btn:active {
             transform: scale(0.96);
         }
+        /* ========== NEW: Connection status dot ========== */
+        #connection-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--ED-General-color-text-secondary);
+            white-space: nowrap;
+        }
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            background-color: #4caf50; /* online green */
+            box-shadow: 0 0 6px rgba(76, 175, 80, 0.6);
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+        .status-dot.offline {
+            background-color: #f44336; /* offline red */
+            box-shadow: 0 0 6px rgba(244, 67, 54, 0.6);
+        }
         .ED-General-main {
             max-width: 1300px;
             margin: 0 auto;
@@ -683,7 +706,7 @@
             color: var(--ED-General-color-text-tertiary);
             letter-spacing: 0.01em;
         }
-        /* Offline banner */
+        /* Offline banner (bottom bar) – now secondary to the header dot */
         .offline-banner {
             position: fixed;
             bottom: 0;
@@ -786,13 +809,13 @@
         <div class="ED-General-card-grid" id="obsoleteGrid"></div>
     </main>
     <footer id="footer-container"></footer>
-    <!-- Offline banner (now visible when offline) -->
+    <!-- Offline banner (secondary) -->
     <div id="offline-banner" class="offline-banner" data-i18n="offlineBanner">You are offline. Some features may be unavailable.</div>
     <!-- External data file: card definitions & category config -->
     <script src="data_general.js"></script>
     <script>
         (async function() {
-        // ----- 1. Load header & footer -----
+        // Load header & footer
         async function loadComponent(url, targetId) {
             try {
                 const response = await fetch(url);
@@ -807,6 +830,7 @@
             loadComponent('header.html', 'header-container'),
             loadComponent('footer.html', 'footer-container')
         ]);
+
             // ========== UI text dictionary ==========
             const uiText = {
                 en: {
@@ -828,6 +852,8 @@
                     updateToastButton: 'Update',
                     updateToastDismissTitle: 'Dismiss',
                     offlineBanner: 'You are offline. Some features may be unavailable.',
+                    onlineStatus: 'Online',
+                    offlineStatus: 'Offline',
                     footer: {
                         confidentiality: 'Confidentiality Politics',
                         terms: 'Terms of Use',
@@ -856,6 +882,8 @@
                     updateToastButton: 'Mettre à jour',
                     updateToastDismissTitle: 'Fermer',
                     offlineBanner: 'Vous êtes hors ligne. Certaines fonctionnalités peuvent être indisponibles.',
+                    onlineStatus: 'En ligne',
+                    offlineStatus: 'Hors ligne',
                     footer: {
                         confidentiality: 'Politique de confidentialité',
                         terms: 'Conditions d\'utilisation',
@@ -884,6 +912,8 @@
                     updateToastButton: 'تحديث',
                     updateToastDismissTitle: 'إغلاق',
                     offlineBanner: 'أنت غير متصل بالإنترنت. قد لا تتوفر بعض الميزات.',
+                    onlineStatus: 'متصل',
+                    offlineStatus: 'غير متصل',
                     footer: {
                         confidentiality: 'سياسة الخصوصية',
                         terms: 'شروط الاستخدام',
@@ -896,11 +926,11 @@
             };
             let currentLang = localStorage.getItem('dashboardLang') || 'en';
             let currentTheme = localStorage.getItem('dashboardTheme') || 'light';
-            // ========== Utility: get nested value from object using dot path ==========
+
             function getNestedValue(obj, path) {
                 return path.split('.').reduce((o, k) => (o && o[k] !== undefined ? o[k] : undefined), obj) || '';
             }
-            // ========== Translate the whole page (static elements with data-i18n) ==========
+
             function translatePage() {
                 const lang = currentLang;
                 document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -913,7 +943,7 @@
                 const langSelect = document.getElementById('langSelect');
                 if (langSelect) langSelect.value = lang;
             }
-            // ========== Hex → RGB converter ==========
+
             function hexToRgb(hex) {
                 const clean = hex.replace('#', '');
                 const full = clean.length === 3 ?
@@ -921,13 +951,9 @@
                     clean;
                 const match = /^([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(full);
                 if (!match) return { r: 60, g: 50, b: 40 };
-                return {
-                    r: parseInt(match[1], 16),
-                    g: parseInt(match[2], 16),
-                    b: parseInt(match[3], 16)
-                };
+                return { r: parseInt(match[1], 16), g: parseInt(match[2], 16), b: parseInt(match[3], 16) };
             }
-            // ========== Relative luminance (sRGB) ==========
+
             function getLuminance(r, g, b) {
                 const linearize = (c) => {
                     c = c / 255;
@@ -935,13 +961,10 @@
                 };
                 return 0.2126 * linearize(r) + 0.7152 * linearize(g) + 0.0722 * linearize(b);
             }
-            // ========== Hue angle from RGB (0–360) ==========
+
             function getHue(r, g, b) {
-                const rf = r / 255;
-                const gf = g / 255;
-                const bf = b / 255;
-                const max = Math.max(rf, gf, bf);
-                const min = Math.min(rf, gf, bf);
+                const rf = r / 255, gf = g / 255, bf = b / 255;
+                const max = Math.max(rf, gf, bf), min = Math.min(rf, gf, bf);
                 const delta = max - min;
                 if (delta === 0) return 0;
                 let hue = 0;
@@ -952,7 +975,7 @@
                 if (hue < 0) hue += 360;
                 return hue;
             }
-            // ========== Apply palette + unique per‑card shadow ==========
+
             function applyCardPalettes() {
                 const isDark = currentTheme === 'dark';
                 document.querySelectorAll('.ED-General-card').forEach(cardEl => {
@@ -962,8 +985,7 @@
                     const palette = isDark ? (card.darkModePalette || {}) : (card.lightModePalette || {});
                     const accent = palette.accent || '#4a7fd9';
                     cardEl.style.setProperty('--card-accent', accent);
-                    if (palette.iconBg) cardEl.style.setProperty('--ED-General-card-icon-bg', palette
-                        .iconBg);
+                    if (palette.iconBg) cardEl.style.setProperty('--ED-General-card-icon-bg', palette.iconBg);
                     else cardEl.style.removeProperty('--ED-General-card-icon-bg');
                     const rgb = hexToRgb(accent);
                     const lum = getLuminance(rgb.r, rgb.g, rgb.b);
@@ -978,12 +1000,9 @@
                     else if (hue > 50 && hue <= 100) offsetX = 1;
                     else if (hue >= 200 && hue <= 280) offsetX = -2;
                     else if (hue > 280 && hue <= 330) offsetX = -1;
-                    let blurBase = 10;
-                    let blurHover = 30;
-                    if (hue >= 0 && hue <= 100) { blurBase = 12;
-                        blurHover = 34; }
-                    else if (hue >= 200 && hue <= 300) { blurBase = 8;
-                        blurHover = 26; }
+                    let blurBase = 10, blurHover = 30;
+                    if (hue >= 0 && hue <= 100) { blurBase = 12; blurHover = 34; }
+                    else if (hue >= 200 && hue <= 300) { blurBase = 8; blurHover = 26; }
                     cardEl.style.setProperty('--card-accent-r', rgb.r);
                     cardEl.style.setProperty('--card-accent-g', rgb.g);
                     cardEl.style.setProperty('--card-accent-b', rgb.b);
@@ -996,7 +1015,7 @@
                     cardEl.style.setProperty('--card-shadow-offset-y-hover', (6 + Math.abs(offsetX)) + 'px');
                 });
             }
-            // ========== Generic card renderer ==========
+
             function renderCardGrid(cards, targetId, categoryClass) {
                 const grid = document.getElementById(targetId);
                 if (!grid) return;
@@ -1009,109 +1028,112 @@
                     const firstLetter = cardName.charAt(0).toUpperCase();
                     let iconHTML = '';
                     if (card.imageIcon && card.imageIcon.trim() !== '') {
-                        iconHTML = `
-                            <img src="${escapeHTML(card.imageIcon)}" 
-                                 alt="${escapeHTML(uiText[lang].imageIconAlt)}" 
-                                 onerror="this.setAttribute('data-error','1');this.nextElementSibling.style.display='flex';"
-                                 loading="lazy">
-                            <span class="ED-General-card__icon-letter">${escapeHTML(firstLetter)}</span>`;
+                        iconHTML = `<img src="${escapeHTML(card.imageIcon)}" alt="${escapeHTML(uiText[lang].imageIconAlt)}" onerror="this.setAttribute('data-error','1');this.nextElementSibling.style.display='flex';" loading="lazy"><span class="ED-General-card__icon-letter">${escapeHTML(firstLetter)}</span>`;
                     } else {
-                        iconHTML =
-                        `<span class="ED-General-card__icon-letter" style="display:flex;">${escapeHTML(firstLetter)}</span>`;
+                        iconHTML = `<span class="ED-General-card__icon-letter" style="display:flex;">${escapeHTML(firstLetter)}</span>`;
                     }
                     let insideLinksHTML = '';
                     if (card.insideLinks && card.insideLinks.length > 0) {
-                        const linksItems = card.insideLinks.map(il => {
-                            const linkLang = il[lang] || il['en'] || {};
-                            const linkName = linkLang.name || 'Link';
-                            const linkUrl = il.url || '#';
-                            return `
-                                <a href="${escapeHTML(linkUrl)}" class="ED-General-inside-link" target="_blank" rel="noopener noreferrer" title="${escapeHTML(linkName)}">
-                                    ${escapeHTML(linkName)}<span class="ED-General-inside-link__arrow">↗</span>
-                                </a>`;
-                        }).join('');
-                        insideLinksHTML =
-                        `<div class="ED-General-card__inside-links">${linksItems}</div>`;
+                        insideLinksHTML = '<div class="ED-General-card__inside-links">' +
+                            card.insideLinks.map(il => {
+                                const linkLang = il[lang] || il['en'] || {};
+                                const linkName = linkLang.name || 'Link';
+                                return `<a href="${escapeHTML(il.url)}" class="ED-General-inside-link" target="_blank" rel="noopener noreferrer" title="${escapeHTML(linkName)}">${escapeHTML(linkName)}<span class="ED-General-inside-link__arrow">↗</span></a>`;
+                            }).join('') + '</div>';
                     }
-                    const cardHTML = `
+                    grid.insertAdjacentHTML('beforeend', `
                         <div class="ED-General-card ${categoryClass}" data-card-id="${escapeHTML(card.id)}">
                             <div class="ED-General-card__icon-container">${iconHTML}</div>
                             <h3 class="ED-General-card__name">${escapeHTML(cardName)}</h3>
                             <p class="ED-General-card__description">${escapeHTML(cardDesc)}</p>
                             ${insideLinksHTML}
-                            <a href="${escapeHTML(card.link)}" class="ED-General-card__main-btn" target="_blank" rel="noopener noreferrer">
-                                ${uiText[lang].visitBtn}
-                                <span class="ED-General-card__main-btn-arrow">→</span>
-                            </a>
-                        </div>`;
-                    grid.insertAdjacentHTML('beforeend', cardHTML);
+                            <a href="${escapeHTML(card.link)}" class="ED-General-card__main-btn" target="_blank" rel="noopener noreferrer">${uiText[lang].visitBtn}<span class="ED-General-card__main-btn-arrow">→</span></a>
+                        </div>
+                    `);
                 });
             }
+
             function applyTheme() {
                 document.documentElement.setAttribute('data-theme', currentTheme);
                 localStorage.setItem('dashboardTheme', currentTheme);
                 applyCardPalettes();
             }
+
             function toggleTheme() {
                 currentTheme = currentTheme === 'light' ? 'dark' : 'light';
                 applyTheme();
             }
-            // ========== Update install button text based on current language ==========
+
             function updateInstallButtonText() {
                 const installBtn = document.getElementById('installBtn');
-                if (installBtn) {
-                    installBtn.textContent = getNestedValue(uiText[currentLang], 'installBtn') || '📲 Install App';
-                }
+                if (installBtn) installBtn.textContent = getNestedValue(uiText[currentLang], 'installBtn') || '📲 Install App';
             }
-            // ========== Update notification button text based on permission and language ==========
+
             function updateNotificationButtonText() {
                 const btn = document.getElementById('notificationBtn');
                 if (!btn) return;
                 const lang = currentLang;
-                let textKey = '';
-                switch (Notification.permission) {
-                    case 'granted': textKey = 'notificationGranted'; break;
-                    case 'denied': textKey = 'notificationDenied'; break;
-                    default: textKey = 'notificationDefault';
-                }
-                btn.textContent = getNestedValue(uiText[lang], textKey) || '🔔 Notifications';
+                let key = 'notificationDefault';
+                if (Notification.permission === 'granted') key = 'notificationGranted';
+                else if (Notification.permission === 'denied') key = 'notificationDenied';
+                btn.textContent = getNestedValue(uiText[lang], key) || '🔔 Notifications';
             }
-            // ========== Notification permission toggle (with translation support) ==========
+
             function setupNotificationToggle() {
                 const btn = document.getElementById('notificationBtn');
                 if (!btn || !('Notification' in window)) return;
-                // Show the button (initially hidden)
                 btn.style.display = 'inline-flex';
                 updateNotificationButtonText();
                 btn.addEventListener('click', () => {
                     if (Notification.permission === 'default') {
                         Notification.requestPermission().then(perm => {
                             updateNotificationButtonText();
-                            if (perm === 'granted') {
-                                console.log('Notification permission granted');
-                            }
+                            if (perm === 'granted') console.log('Notification permission granted');
                         });
                     } else if (Notification.permission === 'denied') {
-                        alert(getNestedValue(uiText[currentLang], 'notificationDeniedAlert') || 'Notifications are blocked. You can change this in your browser settings.');
+                        alert(getNestedValue(uiText[currentLang], 'notificationDeniedAlert') || 'Notifications are blocked.');
                     }
                 });
-                // Update when permission changes (e.g. from settings)
                 navigator.permissions?.query({ name: 'notifications' }).then(permStatus => {
                     permStatus.onchange = () => updateNotificationButtonText();
                 }).catch(() => {});
             }
-            // ========== Offline indicator ==========
-            function setupOfflineIndicator() {
+
+            // ----- Persistent connection indicator -----
+            function updateConnectionStatus() {
+                const dot = document.getElementById('status-dot');
+                const label = document.getElementById('connection-status-label');
+                if (!dot || !label) return;
+                const online = navigator.onLine;
+                dot.className = 'status-dot' + (online ? '' : ' offline');
+                label.textContent = online ?
+                    getNestedValue(uiText[currentLang], 'onlineStatus') || 'Online' :
+                    getNestedValue(uiText[currentLang], 'offlineStatus') || 'Offline';
+            }
+
+            function setupConnectionIndicator() {
+                const statusSpan = document.getElementById('connection-status');
+                if (!statusSpan) return;
+                // Create the elements dynamically if needed, but they are already in header.html
+                const dot = statusSpan.querySelector('#status-dot');
+                const label = statusSpan.querySelector('#connection-status-label');
+                if (!dot || !label) return;
+                window.addEventListener('online', updateConnectionStatus);
+                window.addEventListener('offline', updateConnectionStatus);
+                updateConnectionStatus();
+            }
+
+            // Offline banner (secondary)
+            function setupOfflineBanner() {
                 const banner = document.getElementById('offline-banner');
                 if (!banner) return;
-                function showOffline() { banner.style.display = 'block'; }
-                function showOnline()  { banner.style.display = 'none'; }
-                window.addEventListener('offline', showOffline);
-                window.addEventListener('online', showOnline);
-                if (!navigator.onLine) showOffline();
+                function show() { banner.style.display = 'block'; }
+                function hide() { banner.style.display = 'none'; }
+                window.addEventListener('offline', show);
+                window.addEventListener('online', hide);
+                if (!navigator.onLine) show();
             }
-            // ========== Category → grid mapping is now in data_general.js ==========
-            // allCards and categoryConfig are globally available from data_general.js
+
             function setLanguage(lang) {
                 if (lang === currentLang) return;
                 currentLang = lang;
@@ -1119,158 +1141,130 @@
                 translatePage();
                 updateInstallButtonText();
                 updateNotificationButtonText();
+                updateConnectionStatus();   // update the dot label
                 renderAll();
             }
+
             function renderAll() {
                 for (const [category, config] of Object.entries(categoryConfig)) {
-                    const filteredCards = allCards.filter(card => card.category === category);
-                    renderCardGrid(filteredCards, config.gridId, config.cssClass);
+                    renderCardGrid(allCards.filter(c => c.category === category), config.gridId, config.cssClass);
                 }
                 applyCardPalettes();
             }
+
             function escapeHTML(str) {
                 if (typeof str !== 'string') return '';
                 const div = document.createElement('div');
                 div.textContent = str;
                 return div.innerHTML;
             }
-            // ========== PWA: Install prompt ==========
+
+            // PWA install
             let deferredPrompt;
             const installBtn = document.getElementById('installBtn');
             window.addEventListener('beforeinstallprompt', (e) => {
-              e.preventDefault();
-              deferredPrompt = e;
-              if (installBtn) {
-                  installBtn.style.display = 'inline-flex';
-                  updateInstallButtonText(); // ensure translated text
-              }
+                e.preventDefault();
+                deferredPrompt = e;
+                if (installBtn) {
+                    installBtn.style.display = 'inline-flex';
+                    updateInstallButtonText();
+                }
             });
             if (installBtn) {
-              installBtn.addEventListener('click', async () => {
-                if (!deferredPrompt) return;
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                console.log(`User response to install: ${outcome}`);
-                deferredPrompt = null;
-                installBtn.style.display = 'none';
-              });
+                installBtn.addEventListener('click', async () => {
+                    if (!deferredPrompt) return;
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log('Install outcome:', outcome);
+                    deferredPrompt = null;
+                    installBtn.style.display = 'none';
+                });
             }
             window.addEventListener('appinstalled', () => {
-              deferredPrompt = null;
-              if (installBtn) installBtn.style.display = 'none';
-              console.log('App installed');
+                deferredPrompt = null;
+                if (installBtn) installBtn.style.display = 'none';
             });
-            // ========== New version detection (with translated toast) ==========
+
+            // Translated update toast
             let newVersionAvailable = false;
             function showUpdateToast() {
                 const lang = currentLang;
-                const message = getNestedValue(uiText[lang], 'updateToastMessage') || '✨ A new version is available.';
+                const msg = getNestedValue(uiText[lang], 'updateToastMessage') || '✨ A new version is available.';
                 const updateBtnText = getNestedValue(uiText[lang], 'updateToastButton') || 'Update';
                 const dismissTitle = getNestedValue(uiText[lang], 'updateToastDismissTitle') || 'Dismiss';
                 const toast = document.createElement('div');
                 toast.id = 'update-toast';
-                toast.style.cssText = `
-                    position: fixed; bottom: 20px; right: 20px;
-                    background: var(--ED-General-color-surface);
-                    border: 1px solid var(--ED-General-color-accent-default);
-                    border-radius: 12px;
-                    padding: 1rem 1.5rem;
-                    box-shadow: 0 8px 24px rgba(var(--ED-General-color-shadow-rgb),0.2);
-                    display: flex; align-items: center; gap: 1rem;
-                    z-index: 9999;
-                    font-family: var(--ED-General-font-stack);
-                    max-width: 360px;
-                `;
+                Object.assign(toast.style, {
+                    position: 'fixed', bottom: '20px', right: '20px',
+                    background: 'var(--ED-General-color-surface)',
+                    border: '1px solid var(--ED-General-color-accent-default)',
+                    borderRadius: '12px', padding: '1rem 1.5rem',
+                    boxShadow: '0 8px 24px rgba(var(--ED-General-color-shadow-rgb),0.2)',
+                    display: 'flex', alignItems: 'center', gap: '1rem',
+                    zIndex: '9999', fontFamily: 'var(--ED-General-font-stack)', maxWidth: '360px'
+                });
                 toast.innerHTML = `
-                    <span style="color: var(--ED-General-color-text-primary);">${escapeHTML(message)}</span>
-                    <button id="update-now-btn" style="
-                        background: var(--ED-General-color-accent-default);
-                        color: var(--ED-General-color-text-on-accent);
-                        border: none; border-radius: 20px;
-                        padding: 0.4rem 1rem;
-                        cursor: pointer; font-weight: 600;
-                    ">${escapeHTML(updateBtnText)}</button>
-                    <button id="update-dismiss" style="
-                        background: none; border: none;
-                        color: var(--ED-General-color-text-tertiary);
-                        cursor: pointer; font-size: 1.2rem; line-height:1;
-                    " title="${escapeHTML(dismissTitle)}">✕</button>
+                    <span style="color: var(--ED-General-color-text-primary);">${escapeHTML(msg)}</span>
+                    <button id="update-now-btn" style="background: var(--ED-General-color-accent-default); color: var(--ED-General-color-text-on-accent); border: none; border-radius: 20px; padding: 0.4rem 1rem; cursor: pointer; font-weight: 600;">${escapeHTML(updateBtnText)}</button>
+                    <button id="update-dismiss" style="background: none; border: none; color: var(--ED-General-color-text-tertiary); cursor: pointer; font-size: 1.2rem;" title="${escapeHTML(dismissTitle)}">✕</button>
                 `;
                 document.body.appendChild(toast);
                 document.getElementById('update-now-btn').addEventListener('click', () => {
                     navigator.serviceWorker.getRegistration().then(reg => {
-                        if (reg && reg.waiting) {
-                            reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-                        }
+                        if (reg && reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
                     });
                 });
-                document.getElementById('update-dismiss').addEventListener('click', () => {
-                    toast.remove();
-                });
+                document.getElementById('update-dismiss').addEventListener('click', () => toast.remove());
             }
-            function registerPeriodicSync(registration) {
-                if ('periodicSync' in registration) {
-                    registration.periodicSync.register('sw-update-check', {
-                        minInterval: 24 * 60 * 60 * 1000  // once per day
-                    }).then(() => console.log('Periodic sync registered'))
-                      .catch(err => console.error('Periodic sync failed:', err));
-                } else {
-                    console.log('Periodic Background Sync not supported');
-                }
-            }
-            // ========== Init ==========
+
             function init() {
                 currentTheme = localStorage.getItem('dashboardTheme') || 'light';
                 applyTheme();
                 currentLang = localStorage.getItem('dashboardLang') || 'en';
                 translatePage();
                 setupNotificationToggle();
-                setupOfflineIndicator();
-                updateInstallButtonText(); // initial translation for install button
+                setupConnectionIndicator();
+                setupOfflineBanner();
+                updateInstallButtonText();
                 renderAll();
+
                 if ('serviceWorker' in navigator) {
                     window.addEventListener('load', () => {
-                        navigator.serviceWorker.register('/sw.js')
-                            .then(registration => {
-                                console.log('SW registered:', registration.scope);
-                                // Detect new version via updatefound
-                                registration.addEventListener('updatefound', () => {
-                                    const newWorker = registration.installing;
-                                    if (!newWorker) return;
-                                    newWorker.addEventListener('statechange', () => {
-                                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                            newVersionAvailable = true;
-                                            showUpdateToast();
-                                        }
-                                    });
+                        navigator.serviceWorker.register('/sw.js').then(reg => {
+                            reg.addEventListener('updatefound', () => {
+                                const newWorker = reg.installing;
+                                newWorker?.addEventListener('statechange', () => {
+                                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                        newVersionAvailable = true;
+                                        showUpdateToast();
+                                    }
                                 });
-                                // If a new SW is already waiting (e.g. after skipWaiting from a previous update)
-                                if (registration.waiting && navigator.serviceWorker.controller) {
-                                    newVersionAvailable = true;
-                                    showUpdateToast();
-                                }
-                                // Register periodic background sync to check for SW updates
-                                registerPeriodicSync(registration);
-                            })
-                            .catch(err => console.error('SW registration failed:', err));
+                            });
+                            if (reg.waiting && navigator.serviceWorker.controller) {
+                                newVersionAvailable = true;
+                                showUpdateToast();
+                            }
+                            if ('periodicSync' in reg) {
+                                reg.periodicSync.register('sw-update-check', { minInterval: 24*60*60*1000 })
+                                    .then(() => console.log('Periodic sync registered'))
+                                    .catch(err => console.error('Periodic sync failed:', err));
+                            }
+                        }).catch(err => console.error('SW registration failed:', err));
                     });
                     navigator.serviceWorker.addEventListener('controllerchange', () => {
-                        if (newVersionAvailable) {
-                            window.location.reload();
-                        }
+                        if (newVersionAvailable) window.location.reload();
                     });
                 }
+
                 const themeToggle = document.getElementById('themeToggle');
                 if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
                 const langSelect = document.getElementById('langSelect');
                 if (langSelect) langSelect.addEventListener('change', function() { setLanguage(this.value); });
                 document.addEventListener('keydown', function(e) {
-                    if (e.ctrlKey && e.shiftKey && e.key === 'T') {
-                        e.preventDefault();
-                        toggleTheme();
-                    }
+                    if (e.ctrlKey && e.shiftKey && e.key === 'T') { e.preventDefault(); toggleTheme(); }
                 });
             }
+
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', init);
             } else {
