@@ -1070,7 +1070,51 @@ document.querySelectorAll('[data-i18n-title]').forEach(el => {
                         .catch(err => console.error('SW registration failed:', err));
                 });
             }
+// Register background sync
+if ('serviceWorker' in navigator && 'SyncManager' in window) {
+  navigator.serviceWorker.ready.then(reg => {
+    reg.sync.register('sync-data')
+      .then(() => console.log('Background sync registered'))
+      .catch(err => console.error('Sync registration failed:', err));
+  });
+}
 
+// Request periodic background sync if available
+if ('serviceWorker' in navigator && 'periodicSync' in navigator.serviceWorker) {
+  navigator.serviceWorker.ready.then(reg => {
+    // Request permission (must be triggered by user gesture in many browsers)
+    reg.periodicSync.register('periodic-update', {
+      minInterval: 6 * 60 * 60 * 1000  // 6 hours
+    }).then(() => console.log('Periodic sync registered'))
+      .catch(err => console.error('Periodic sync registration failed:', err));
+  });
+}
+navigator.serviceWorker.addEventListener('message', event => {
+  if (event.data && event.data.type === 'DATA_UPDATED') {
+    // Re‑render the cards with fresh data (re‑executes data_general.js)
+    // Option 1: force reload of the script
+    const script = document.createElement('script');
+    script.src = '/data_general.js?' + Date.now();
+    script.onload = () => {
+      // Re‑render grids
+      renderAll();
+      applyCardPalettes();
+    };
+    document.head.appendChild(script);
+  }
+});
+document.getElementById('enablePeriodicSync').addEventListener('click', async () => {
+    const reg = await navigator.serviceWorker.ready;
+    if ('periodicSync' in reg) {
+        const status = await navigator.permissions.query({ name: 'periodic-background-sync' });
+        if (status.state === 'granted') {
+            await reg.periodicSync.register('periodic-update', { minInterval: 6 * 60 * 60 * 1000 });
+            alert('Background updates enabled!');
+        } else {
+            alert('Permission not granted. Check site settings.');
+        }
+    }
+});
             const themeToggle = document.getElementById('themeToggle');
             if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
             const langSelect = document.getElementById('langSelect');
