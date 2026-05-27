@@ -5,11 +5,18 @@
             <span data-i18n="dashboardTitle">Educational Dashboard</span>
         </h1>
         <div class="ED-General-header__controls">
-            <!-- Install button (hidden by default, shown when possible) -->
+            <!-- Install button (hidden by default) -->
             <button class="ED-General-header-btn" id="installBtn" title="Install app" style="display: none;">
                 📲 Install
             </button>
-            <!-- Notification toggle removed – no VAPID dependency -->
+            <!-- Notification permission toggle -->
+            <button class="ED-General-header-btn" id="notificationBtn" title="Enable notifications">
+                🔔 Notifications
+            </button>
+            <!-- Online status button -->
+            <button class="ED-General-header-btn" id="onlineStatusBtn" title="Connection status">
+                🌐 Online
+            </button>
             <select class="ED-General-lang-select" id="langSelect" aria-label="Choose language">
                 <option value="en">English</option>
                 <option value="fr">Français</option>

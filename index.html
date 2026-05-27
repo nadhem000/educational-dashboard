@@ -766,6 +766,23 @@
                 gap: 1rem;
             }
         }
+    
+    /* ===== NEW: Offline banner ===== */
+    .offline-banner {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #ffc107;
+        color: #1a1a1a;
+        text-align: center;
+        padding: 0.5rem;
+        z-index: 1000;
+        font-weight: 600;
+        font-size: 0.9rem;
+        box-shadow: 0 -2px 8px rgba(0,0,0,0.15);
+        display: none;
+    }
     </style>
 </head>
 <body>
@@ -802,6 +819,42 @@
             loadComponent('header.html', 'header-container'),
             loadComponent('footer.html', 'footer-container')
         ]);
+
+            // ========== NEW: Notification permission toggle ==========
+            function setupNotificationToggle() {
+    const btn = document.getElementById('notificationBtn');
+    if (!btn || !('Notification' in window)) return;
+    updateNotificationButton(); // initial set
+
+    btn.addEventListener('click', () => {
+        if (Notification.permission === 'default') {
+            Notification.requestPermission().then(perm => {
+                updateNotificationButton();
+                if (perm === 'granted') console.log('Notification permission granted');
+            });
+        } else if (Notification.permission === 'denied') {
+            alert(uiText[currentLang].notificationsBlockedMsg || 'Notifications are blocked. You can change this in your browser settings.');
+        }
+    });
+
+    navigator.permissions?.query({ name: 'notifications' }).then(permStatus => {
+        permStatus.onchange = () => updateNotificationButton();
+    }).catch(() => {});
+}
+
+            // ========== NEW: Offline indicator ==========
+            function setupOfflineIndicator() {
+                const banner = document.getElementById('offline-banner');
+                if (!banner) return;
+                
+                function showOffline() { banner.style.display = 'block'; }
+                function showOnline()  { banner.style.display = 'none'; }
+                
+                window.addEventListener('offline', showOffline);
+                window.addEventListener('online', showOnline);
+                
+                if (!navigator.onLine) showOffline();
+            }
             // ========== Category → grid mapping is now in data_general.js ==========
             // allCards and categoryConfig are globally available from data_general.js
             // ========== UI text dictionary ==========
@@ -816,6 +869,15 @@
                     visitBtn: 'Visit',
                     noDescription: 'No description available.',
                     imageIconAlt: 'icon',
+        installBtn: '📲 Install',
+        installTitle: 'Install app',
+        notificationsEnabled: '✅ Notifications ON',
+        notificationsBlocked: '🚫 Blocked',
+        notificationsEnable: '🔔 Enable Notifications',
+        onlineStatus: '🌐 Online',
+        offlineStatus: '⚠️ Offline',
+        onlineTitle: 'You are online',
+        offlineTitle: 'You are offline – check your connection',
                     footer: {
                         confidentiality: 'Confidentiality Politics',
                         terms: 'Terms of Use',
@@ -835,6 +897,15 @@
                     visitBtn: 'Visiter',
                     noDescription: 'Aucune description disponible.',
                     imageIconAlt: 'icône',
+        installBtn: '📲 Installer',
+        installTitle: 'Installer l\'application',
+        notificationsEnabled: '✅ Notifications activées',
+        notificationsBlocked: '🚫 Bloqué',
+        notificationsEnable: '🔔 Activer les notifications',
+        onlineStatus: '🌐 En ligne',
+        offlineStatus: '⚠️ Hors ligne',
+        onlineTitle: 'Vous êtes en ligne',
+        offlineTitle: 'Vous êtes hors ligne – vérifiez votre connexion',
                     footer: {
                         confidentiality: 'Politique de confidentialité',
                         terms: 'Conditions d\'utilisation',
@@ -854,6 +925,15 @@
                     visitBtn: 'زيارة',
                     noDescription: 'لا يوجد وصف متاح.',
                     imageIconAlt: 'أيقونة',
+        installBtn: '📲 تثبيت',
+        installTitle: 'تثبيت التطبيق',
+        notificationsEnabled: '✅ الإشعارات مفعلة',
+        notificationsBlocked: '🚫 محظورة',
+        notificationsEnable: '🔔 تفعيل الإشعارات',
+        onlineStatus: '🌐 متصل',
+        offlineStatus: '⚠️ غير متصل',
+        onlineTitle: 'أنت متصل بالإنترنت',
+        offlineTitle: 'أنت غير متصل – تحقق من اتصالك',
                     footer: {
                         confidentiality: 'سياسة الخصوصية',
                         terms: 'شروط الاستخدام',
@@ -870,6 +950,48 @@
             function getNestedValue(obj, path) {
                 return path.split('.').reduce((o, k) => (o && o[k] !== undefined ? o[k] : undefined), obj) || '';
             }
+// Update notification button text & title based on current language + permission
+function updateNotificationButton() {
+    const btn = document.getElementById('notificationBtn');
+    if (!btn) return;
+    const lang = currentLang;
+    const perm = Notification.permission;
+    let text = '', title = '';
+    switch (perm) {
+        case 'granted':
+            text = uiText[lang].notificationsEnabled;
+            title = 'Notifications are enabled';
+            break;
+        case 'denied':
+            text = uiText[lang].notificationsBlocked;
+            title = 'Notifications are blocked. Change in browser settings.';
+            break;
+        default:
+            text = uiText[lang].notificationsEnable;
+            title = 'Request notification permission';
+    }
+    btn.innerHTML = text;
+    btn.title = title;
+}
+
+// Update install button text & title
+function updateInstallButtonText() {
+    const btn = document.getElementById('installBtn');
+    if (!btn) return;
+    const lang = currentLang;
+    btn.innerHTML = uiText[lang].installBtn;
+    btn.title = uiText[lang].installTitle;
+}
+
+// Update online status button text & title based on navigator.onLine
+function updateOnlineStatusButton() {
+    const btn = document.getElementById('onlineStatusBtn');
+    if (!btn) return;
+    const lang = currentLang;
+    const isOnline = navigator.onLine;
+    btn.innerHTML = isOnline ? uiText[lang].onlineStatus : uiText[lang].offlineStatus;
+    btn.title = isOnline ? uiText[lang].onlineTitle : uiText[lang].offlineTitle;
+}
             // ========== Translate the whole page (static elements with data-i18n) ==========
             function translatePage() {
                 const lang = currentLang;
@@ -1027,12 +1149,15 @@
                 applyTheme();
             }
             function setLanguage(lang) {
-                if (lang === currentLang) return;
-                currentLang = lang;
-                localStorage.setItem('dashboardLang', lang);
-                translatePage();
-                renderAll();
-            }
+    if (lang === currentLang) return;
+    currentLang = lang;
+    localStorage.setItem('dashboardLang', lang);
+    translatePage();
+    renderAll();
+    updateNotificationButton();
+    updateInstallButtonText();
+    updateOnlineStatusButton();
+}
             function renderAll() {
                 for (const [category, config] of Object.entries(categoryConfig)) {
                     const filteredCards = allCards.filter(card => card.category === category);
@@ -1051,10 +1176,13 @@
             let deferredPrompt;
             const installBtn = document.getElementById('installBtn');
             window.addEventListener('beforeinstallprompt', (e) => {
-              e.preventDefault();
-              deferredPrompt = e;
-              if (installBtn) installBtn.style.display = 'inline-flex';
-            });
+    e.preventDefault();
+    deferredPrompt = e;
+    if (installBtn) {
+        installBtn.style.display = 'inline-flex';
+        updateInstallButtonText(); // apply current language
+    }
+});
             if (installBtn) {
               installBtn.addEventListener('click', async () => {
                 if (!deferredPrompt) return;
@@ -1134,6 +1262,11 @@
                 applyTheme();
                 currentLang = localStorage.getItem('dashboardLang') || 'en';
                 translatePage();
+window.addEventListener('online', () => updateOnlineStatusButton());
+window.addEventListener('offline', () => updateOnlineStatusButton());
+updateOnlineStatusButton(); // initial call
+                setupNotificationToggle();
+                setupOfflineIndicator();
                 renderAll();
 
                 if ('serviceWorker' in navigator) {
