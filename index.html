@@ -801,7 +801,6 @@
     const urlParams = new URLSearchParams(window.location.search);
     const goto = urlParams.get('goto');
     if (goto) {
-        // Map shortcut IDs to actual external URLs
         const linkMap = {
             'arabic-hub': 'https://arabic-hub.netlify.app',
             'english-hub': 'https://english-hub-education.netlify.app',
@@ -813,7 +812,47 @@
         };
         const targetUrl = linkMap[goto];
         if (targetUrl) {
-            window.location.replace(targetUrl);
+            // Build a friendly name from the shortcut ID
+            const siteName = goto.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            // Show an overlay that requires a user click → popup allowed
+            const overlay = document.createElement('div');
+            overlay.id = 'goto-overlay';
+            overlay.style.cssText = `
+                position:fixed;top:0;left:0;width:100%;height:100%;
+                background:rgba(0,0,0,0.7);display:flex;align-items:center;
+                justify-content:center;z-index:9999;
+            `;
+            overlay.innerHTML = `
+                <div style="
+                    background:var(--ED-General-color-surface,#fff);
+                    padding:2rem;border-radius:16px;text-align:center;
+                    max-width:320px;box-shadow:0 4px 20px rgba(0,0,0,0.3);
+                ">
+                    <h3 style="margin:0 0 0.8rem;color:var(--ED-General-color-text-primary,#1e293b)">
+                        ${siteName}
+                    </h3>
+                    <p style="margin:0 0 1.5rem;color:var(--ED-General-color-text-secondary,#5a6c7d)">
+                        Open in a new tab?
+                    </p>
+                    <button id="goto-launch-btn" style="
+                        background:var(--card-accent,var(--ED-General-color-accent-default,#4a7fd9));
+                        color:var(--ED-General-color-text-on-accent,#fff);
+                        border:none;border-radius:22px;padding:0.6rem 1.5rem;
+                        font-weight:600;cursor:pointer;font-size:1rem;
+                    ">Launch</button>
+                </div>
+            `;
+            document.body.prepend(overlay);
+
+            // Click handler – now a real user click, so window.open works
+            document.getElementById('goto-launch-btn').addEventListener('click', () => {
+                window.open(targetUrl, '_blank', 'noopener');
+                // Clean up: remove overlay and clear the query string
+                overlay.remove();
+                history.replaceState(null, '', window.location.pathname);
+                // Optionally reload the dashboard to its default state
+                location.reload();
+            });
         }
     }
 })();
