@@ -23,9 +23,3 @@
   from = "/footer.html"
   to = "/footer.html"
   status = 200
-
-# Now the SPA fallback – only for requests that don’t match any real file
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
