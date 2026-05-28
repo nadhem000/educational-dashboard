@@ -1,4 +1,4 @@
-const CACHE_NAME = 'edudash-v36';             // bump version
+const CACHE_NAME = 'edudash-v37';             // bump version
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
@@ -37,24 +37,28 @@ self.addEventListener('fetch', event => {
   // Navigation: network first, fallback to cached shell
   if (event.request.mode === 'navigate') {
     event.respondWith(
-      fetch(event.request)
-        .catch(() => caches.match('/index.html') || caches.match('/'))
+      fetch(event.request).catch(() => 
+        caches.match('/index.html').then(r => r || caches.match('/'))
+      )
     );
     return;
   }
 
-  // Other requests: cache first, then network (and update cache in background)
+  // All other requests: cache first, with network fallback
   event.respondWith(
     caches.match(event.request).then(cached => {
-      const fetchPromise = fetch(event.request).then(response => {
-        if (response && response.status === 200) {
-          const responseClone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseClone));
-        }
-        return response;
-      }).catch(() => cached);  // if network fails, use cached (or nothing)
-
-      return cached || fetchPromise;
+      if (cached) {
+        // Update cache in background (fire-and-forget)
+        fetch(event.request).then(response => {
+          if (response && response.status === 200) {
+            const responseClone = response.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseClone));
+          }
+        }).catch(() => {});
+        return cached;
+      }
+      // Not in cache → try network (will fail offline, but that's OK – no type error)
+      return fetch(event.request);
     })
   );
 });
