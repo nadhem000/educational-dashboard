@@ -781,8 +781,8 @@
         };
         const targetUrl = linkMap[goto];
         if (targetUrl) {
-            window.location.replace(targetUrl);
-        }
+    window.open(targetUrl, '_blank', 'noopener,noreferrer');
+}
     }
 })();
         (async function() {
