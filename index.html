@@ -1122,19 +1122,6 @@
         } else {
             window.addEventListener('load', registerServiceWorker);
         }
-
-        // Listen for data‑update messages from SW
-        navigator.serviceWorker.addEventListener('message', event => {
-            if (event.data && event.data.type === 'DATA_UPDATED') {
-                const script = document.createElement('script');
-                script.src = '/data_general.js?' + Date.now();
-                script.onload = () => {
-                    renderAll();
-                    applyCardPalettes();
-                };
-                document.head.appendChild(script);
-            }
-        });
     }
 
     // ---------- Periodic Sync Toggle Button ----------

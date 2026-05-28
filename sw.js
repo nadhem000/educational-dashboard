@@ -1,11 +1,48 @@
-const CACHE_NAME = 'edudash-v41';             // bump version
+const CACHE_NAME = 'edudash-v42'; // bump version when you deploy this
+
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
   '/data_general.js',
   '/header.html',
   '/footer.html',
-  '/manifest.json'
+  '/manifest.json',
+
+  // All card icons (from data_general.js)
+  '/assets/icons/arabicHub.png',
+  '/assets/icons/englishHub.png',
+  '/assets/icons/mathematicsHub.png',
+  '/assets/icons/frenchHub.png',
+  '/assets/icons/naturalScienceHub.png',
+  '/assets/icons/physicsHub.png',
+  '/assets/icons/philosophyHub.png',
+  '/assets/icons/testsHub.png',
+  '/assets/icons/wesnothTools.png',
+  '/assets/icons/wesnothEditor.png',
+  '/assets/icons/wesnothTimeline.png',
+  '/assets/icons/multiTasksCalendar.png',
+  '/assets/icons/codeHub.png',
+  '/assets/icons/spiritualGuideHub.png',
+  '/assets/icons/spiritArchetype.png',
+  '/assets/icons/documentsManager.png',
+  '/assets/icons/bacHistoryGeographyQuiz.png',
+  '/assets/icons/gameHub.png',
+  '/assets/icons/cosmicNews.png',
+  '/assets/icons/nocTunisia.png',
+  '/assets/icons/mmathematicsCalculators.png',
+  '/assets/icons/calendarMultiTaskOld.png',
+  '/assets/icons/encyclopediaOfCivilisations.png',
+  '/assets/icons/spiritualConsultation.png',
+  '/assets/icons/spiritualConsultationTest.png',
+  '/assets/icons/wesnothTimelineOld.png',
+  '/assets/icons/interactiveTimelineEditor.png',
+  '/assets/icons/oldQuizGame.png',
+  '/assets/icons/mathematicsHubOld.png',
+  '/assets/icons/simpleTestAppOld.png',
+  '/assets/icons/newsTestTestingShares.png',
+
+  // Header icon
+  '/assets/icons/icon-96x96.png'
 ];
 
 // ---------- Install ----------
@@ -52,8 +89,7 @@ self.addEventListener('fetch', event => {
           caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseClone));
         }
         return response;
-      }).catch(() => cached);  // if network fails, use cached (or nothing)
-
+      }).catch(() => cached);
       return cached || fetchPromise;
     })
   );
@@ -63,7 +99,6 @@ self.addEventListener('fetch', event => {
 self.addEventListener('sync', event => {
   if (event.tag === 'sync-data') {
     event.waitUntil(
-      // Example: re-fetch the data file and update cache
       fetch('/data_general.js')
         .then(response => {
           if (response.ok) {
@@ -71,12 +106,6 @@ self.addEventListener('sync', event => {
               cache.put('/data_general.js', response)
             );
           }
-        })
-        .then(() => {
-          // Notify all clients that data may have changed
-          return self.clients.matchAll().then(clients => {
-            clients.forEach(client => client.postMessage({ type: 'DATA_UPDATED' }));
-          });
         })
         .catch(err => console.error('Background sync failed:', err))
     );
@@ -87,7 +116,6 @@ self.addEventListener('sync', event => {
 self.addEventListener('periodicsync', event => {
   if (event.tag === 'periodic-update') {
     event.waitUntil(
-      // Fetch all important assets and update cache
       Promise.all(
         PRECACHE_ASSETS.map(url =>
           fetch(url, { cache: 'no-cache' })
@@ -98,15 +126,9 @@ self.addEventListener('periodicsync', event => {
                 );
               }
             })
-            .catch(() => {})   // ignore failures for individual files
+            .catch(() => {})
         )
-      ).then(() => {
-        console.log('Periodic sync completed');
-        // Optionally notify clients
-        return self.clients.matchAll().then(clients => {
-          clients.forEach(client => client.postMessage({ type: 'PERIODIC_UPDATE_DONE' }));
-        });
-      })
+      )
     );
   }
 });
