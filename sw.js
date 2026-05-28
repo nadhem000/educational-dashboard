@@ -1,4 +1,4 @@
-const CACHE_NAME = 'edudash-v43'; // bump version when you deploy this
+const CACHE_NAME = 'edudash-v45'; // bump version when you deploy
 
 const PRECACHE_ASSETS = [
   '/',
@@ -8,7 +8,6 @@ const PRECACHE_ASSETS = [
   '/footer.html',
   '/manifest.json',
 
-  // All card icons (from data_general.js)
   '/assets/icons/arabicHub.png',
   '/assets/icons/englishHub.png',
   '/assets/icons/mathematicsHub.png',
@@ -40,17 +39,20 @@ const PRECACHE_ASSETS = [
   '/assets/icons/mathematicsHubOld.png',
   '/assets/icons/simpleTestAppOld.png',
   '/assets/icons/newsTestTestingShares.png',
-
-  // Header icon
   '/assets/icons/icon-96x96.png'
 ];
 
 // ---------- Install ----------
 self.addEventListener('install', event => {
+  const isUpdate = self.registration.active !== null; // true if this is an update
+
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(PRECACHE_ASSETS))
-      .then(() => self.skipWaiting())
+      .then(() => {
+        self.skipWaiting();
+        self.isUpdate = isUpdate; // store for later use
+      })
   );
 });
 
@@ -65,13 +67,23 @@ self.addEventListener('activate', event => {
       )
     ).then(() => self.clients.claim())
   );
+
+  // Notify all open clients if this is a version update (not first install)
+  if (self.isUpdate) {
+    event.waitUntil(
+      self.clients.matchAll().then(clients => {
+        clients.forEach(client =>
+          client.postMessage({ type: 'NEW_VERSION_READY' })
+        );
+      })
+    );
+  }
 });
 
 // ---------- Fetch (offline support) ----------
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
 
-  // Navigation: network first, fallback to cached shell
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request)
@@ -80,7 +92,6 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Other requests: cache first, then network (and update cache in background)
   event.respondWith(
     caches.match(event.request).then(cached => {
       const fetchPromise = fetch(event.request).then(response => {
@@ -133,7 +144,7 @@ self.addEventListener('periodicsync', event => {
   }
 });
 
-// ---------- Skip waiting message ----------
+// ---------- Skip waiting message (manual) ----------
 self.addEventListener('message', event => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();

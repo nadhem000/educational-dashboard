@@ -708,7 +708,7 @@
             letter-spacing: 0.01em;
         }
         /* Offline banner */
-        .offline-banner {
+        .ED-General-offline-banner {
             position: fixed;
             bottom: 0;
             left: 0;
@@ -723,6 +723,33 @@
             box-shadow: 0 -2px 8px rgba(var(--ED-General-color-shadow-rgb), 0.3);
             display: none;
         }
+        /* update banner */
+.ED-General-update-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--ED-General-color-accent-default);
+    color: var(--ED-General-color-text-on-accent);
+    text-align: center;
+    padding: 0.8rem;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    font-weight: 600;
+    box-shadow: 0 -2px 10px rgba(var(--ED-General-color-shadow-rgb), 0.3);
+}
+.ED-General-update-banner button {
+    background: var(--ED-General-color-text-on-accent);
+    color: var(--ED-General-color-accent-default);
+    border: none;
+    border-radius: 20px;
+    padding: 0.4rem 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+}
         @media (max-width: 640px) {
             .ED-General-card-grid { grid-template-columns: 1fr; gap: 1rem; }
             .ED-General-header__inner { flex-direction: column; align-items: flex-start; gap: 0.6rem; }
@@ -761,7 +788,11 @@
     </main>
     <footer id="footer-container"></footer>
     <!-- Offline banner -->
-    <div id="offline-banner" class="offline-banner" data-i18n="offlineBanner">You are offline. Some features may be unavailable.</div>
+    <div id="offline-banner" class="ED-General-offline-banner" data-i18n="offlineBanner">You are offline. Some features may be unavailable.</div>
+<div id="update-banner" class="ED-General-update-banner" style="display:none;">
+    <span id="update-banner-text" data-i18n="updateNotification">A new version is available.</span>
+    <button id="update-reload-btn" data-i18n="updateReloadBtn">Reload</button>
+</div>
     <!-- External data file -->
     <script src="data_general.js"></script>
     <script>
@@ -814,6 +845,8 @@
                 periodicSyncEnabled: 'Background updates enabled!',
                 periodicSyncDisabled: 'Background updates disabled!',
                 periodicSyncDenied: 'Permission not granted. Please check site settings.',
+    updateNotification: 'A new version is available.',
+    updateReloadBtn: 'Reload',
                 footer: {
                     confidentiality: 'Confidentiality Politics', terms: 'Terms of Use', contact: 'Contact',
                     version: "version '0.0.1'", developer: 'developed by: Mejri Ziad.', hosted: 'Hosted on Github and Netlify.'
@@ -833,6 +866,8 @@
                 periodicSyncEnabled: 'Mises à jour en arrière-plan activées !',
                 periodicSyncDisabled: 'Mises à jour en arrière-plan désactivées !',
                 periodicSyncDenied: 'Permission non accordée. Veuillez vérifier les paramètres du site.',
+    updateNotification: 'Une nouvelle version est disponible.',
+    updateReloadBtn: 'Recharger',
                 footer: {
                     confidentiality: 'Politique de confidentialité', terms: 'Conditions d\'utilisation', contact: 'Contact',
                     version: "version '0.0.1'", developer: 'développé par : Mejri Ziad.', hosted: 'Hébergé sur Github et Netlify.'
@@ -852,6 +887,8 @@
                 periodicSyncEnabled: 'تم تفعيل التحديثات في الخلفية!',
                 periodicSyncDisabled: 'تم تعطيل التحديثات في الخلفية!',
                 periodicSyncDenied: 'لم يتم منح الإذن. يرجى التحقق من إعدادات الموقع.',
+    updateNotification: 'نسخة جديدة متاحة.',
+    updateReloadBtn: 'إعادة التحميل',
                 footer: {
                     confidentiality: 'سياسة الخصوصية', terms: 'شروط الاستخدام', contact: 'اتصل بنا',
                     version: "الإصدار '0.0.1'", developer: 'طور بواسطة: ماجري زياد.', hosted: 'مستضاف على Github و Netlify.'
@@ -1190,6 +1227,20 @@
         });
     }
 
+// Listen for new version notification from the service worker
+navigator.serviceWorker.addEventListener('message', event => {
+    if (event.data && event.data.type === 'NEW_VERSION_READY') {
+        const banner = document.getElementById('update-banner');
+        if (banner) {
+            banner.style.display = 'flex';
+            // Ensure translation is applied (translatePage already handles it)
+        }
+    }
+});
+document.getElementById('update-reload-btn').addEventListener('click', () => {
+    window.location.reload();
+});
+```
     // Theme & language toggles
     const themeToggle = document.getElementById('themeToggle');
     if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
