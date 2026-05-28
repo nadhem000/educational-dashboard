@@ -1,4 +1,4 @@
-const CACHE_NAME = 'edudash-v35';             // bump version
+const CACHE_NAME = 'edudash-v36';             // bump version
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
