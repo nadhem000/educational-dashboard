@@ -71,12 +71,6 @@
       "short_name": "News",
       "url": "/?goto=universe-chronicles",
       "icons": [{ "src": "assets/icons/cosmicNews.png", "sizes": "96x96", "type": "image/png" }]
-    },
-    {
-      "name": "Documents Manager",
-      "short_name": "Docs",
-      "url": "/?goto=documents-manage",
-      "icons": [{ "src": "assets/icons/documentsManager.png", "sizes": "72x72", "type": "image/png" }]
     }
   ],
   "icons": [
@@ -164,8 +158,8 @@
       "ms_ac_template": "data:application/json;base64,ewogICJ0eXBlIjogIkFkYXB0aXZlQ2FyZCIsCiAgInZlcnNpb24iOiAiMS41IiwKICAiYm9keSI6IFsKICAgIHsKICAgICAgInR5cGUiOiAiVGV4dEJsb2NrIiwKICAgICAgInRleHQiOiAiRWR1Y2F0aW9uYWwgRGFzaGJvYXJkIiwKICAgICAgInNpemUiOiAibGFyZ2UiLAogICAgICAid2VpZ2h0IjogImJvbGRlciIKICAgIH0sCiAgICB7CiAgICAgICJ0eXBlIjogIlRleHRCbG9jayIsCiAgICAgICJ0ZXh0IjogIkFjY2VzcyB5b3VyIGxlYXJuaW5nIGh1YnMgcXVpY2tseS4iLAogICAgICAid3JhcCI6IHRydWUKICAgIH0KICBdLAogICJhY3Rpb25zIjogWwogICAgewogICAgICAidHlwZSI6ICJBY3Rpb24uT3BlblVybCIsCiAgICAgICJ0aXRsZSI6ICJPcGVuIERhc2hib2FyZCIsCiAgICAgICJ1cmwiOiAiLyIKICAgIH0KICBdCn0=",
       "screenshots": [
         {
-      "src": "assets/screenshots/mobile-narrow.png",
-      "sizes": "750x1334",
+      "src": "assets/icons/icon-512x512.png",
+      "sizes": "512x512",
           "label": "Quick access to educational dashboard"
         }
       ],
