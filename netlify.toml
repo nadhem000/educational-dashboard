@@ -1,25 +1,36 @@
+[build]
+  # No build step – the site is static
+  command = ""
+  publish = "."
+
+# Make sure the PWA service worker always gets fresh copies
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Optional: catch‑all redirect to support client‑side routing (SPA fallback)
+# If a user requests a path that isn’t a real file, serve index.html instead.
+# Netlify automatically checks for existing files first, so static assets (CSS, JS, images) are safe.
 [[redirects]]
-  from = "/sw.js"
-  to = "/sw.js"
+  from = "/*"
+  to = "/index.html"
   status = 200
 
-[[redirects]]
-  from = "/manifest.json"
-  to = "/manifest.json"
-  status = 200
+# Example security headers (optional)
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
 
-# Optionally, protect other assets that are fetched directly:
-[[redirects]]
-  from = "/data_general.js"
-  to = "/data_general.js"
-  status = 200
+[[headers]]
+  for = "/icons/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
 
-[[redirects]]
-  from = "/header.html"
-  to = "/header.html"
-  status = 200
-
-[[redirects]]
-  from = "/footer.html"
-  to = "/footer.html"
-  status = 200
+[[headers]]
+  for = "/screenshots/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
