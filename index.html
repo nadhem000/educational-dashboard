@@ -1262,6 +1262,10 @@ if (document.readyState === 'complete') {
 } else {
   window.addEventListener('load', subscribeToPush);
 }
+document.getElementById('enableNotifications').addEventListener('click', async () => {
+  await subscribeToPush();
+  // Optionally hide the button after success
+});
     // ---------- Periodic Sync Toggle Button ----------
     const periodicBtn = document.getElementById('enablePeriodicSync');
     if (periodicBtn && 'serviceWorker' in navigator && 'periodicSync' in ServiceWorkerRegistration.prototype) {
