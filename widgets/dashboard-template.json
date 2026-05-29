@@ -1,0 +1,24 @@
+{
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "Educational Dashboard",
+      "size": "large",
+      "weight": "bolder"
+    },
+    {
+      "type": "TextBlock",
+      "text": "Access your learning hubs quickly.",
+      "wrap": true
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.OpenUrl",
+      "title": "Open Dashboard",
+      "url": "/"
+    }
+  ]
+}

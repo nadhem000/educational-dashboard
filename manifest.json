@@ -150,21 +150,21 @@
 		}
 	],
 	"widgets": [
-		{
-			"name": "Dashboard Widget",
-			"short_name": "EduDash",
-			"description": "Quick access to educational dashboard",
-			"tag": "edudash-widget",
-			"ms_ac_template": "data:application/json;base64,ewogICJ0eXBlIjogIkFkYXB0aXZlQ2FyZCIsCiAgInZlcnNpb24iOiAiMS41IiwKICAiYm9keSI6IFsKICAgIHsKICAgICAgInR5cGUiOiAiVGV4dEJsb2NrIiwKICAgICAgInRleHQiOiAiRWR1Y2F0aW9uYWwgRGFzaGJvYXJkIiwKICAgICAgInNpemUiOiAibGFyZ2UiLAogICAgICAid2VpZ2h0IjogImJvbGRlciIKICAgIH0sCiAgICB7CiAgICAgICJ0eXBlIjogIlRleHRCbG9jayIsCiAgICAgICJ0ZXh0IjogIkFjY2VzcyB5b3VyIGxlYXJuaW5nIGh1YnMgcXVpY2tseS4iLAogICAgICAid3JhcCI6IHRydWUKICAgIH0KICBdLAogICJhY3Rpb25zIjogWwogICAgewogICAgICAidHlwZSI6ICJBY3Rpb24uT3BlblVybCIsCiAgICAgICJ0aXRsZSI6ICJPcGVuIERhc2hib2FyZCIsCiAgICAgICJ1cmwiOiAiLyIKICAgIH0KICBdCn0=",
-			"screenshots": [
-				{
-					"src": "assets/icons/icon-512x512.png",
-					"sizes": "512x512",
-					"label": "Quick access to educational dashboard"
-				}
-			],
-			"template": "data:application/json;base64,ewogICJ0eXBlIjogIkFkYXB0aXZlQ2FyZCIsCiAgInZlcnNpb24iOiAiMS41IiwKICAiYm9keSI6IFsKICAgIHsKICAgICAgInR5cGUiOiAiVGV4dEJsb2NrIiwKICAgICAgInRleHQiOiAiRWR1Y2F0aW9uYWwgRGFzaGJvYXJkIiwKICAgICAgInNpemUiOiAibGFyZ2UiLAogICAgICAid2VpZ2h0IjogImJvbGRlciIKICAgIH0sCiAgICB7CiAgICAgICJ0eXBlIjogIlRleHRCbG9jayIsCiAgICAgICJ0ZXh0IjogIkFjY2VzcyB5b3VyIGxlYXJuaW5nIGh1YnMgcXVpY2tseS4iLAogICAgICAid3JhcCI6IHRydWUKICAgIH0KICBdLAogICJhY3Rpb25zIjogWwogICAgewogICAgICAidHlwZSI6ICJBY3Rpb24uT3BlblVybCIsCiAgICAgICJ0aXRsZSI6ICJPcGVuIERhc2hib2FyZCIsCiAgICAgICJ1cmwiOiAiLyIKICAgIH0KICBdCn0=",
-			"data": "data:application/json;base64,e30="
-		}
-	]
+  {
+    "name": "Dashboard Widget",
+    "short_name": "EduDash",
+    "description": "Quick access to educational dashboard",
+    "tag": "edudash-widget",
+    "template": "edudash-widget",
+    "ms_ac_template": "/widgets/dashboard-template.json",
+    "data": "/widgets/dashboard-widgets.json",
+    "screenshots": [
+      {
+        "src": "assets/icons/icon-512x512.png",
+        "sizes": "512x512",
+        "label": "Quick access to educational dashboard"
+      }
+    ]
+  }
+]
 }
