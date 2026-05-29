@@ -1,4 +1,4 @@
-const CACHE_NAME = 'edudash-v59'; // bump version when you deploy
+const CACHE_NAME = 'edudash-v60'; // bump version when  deploy
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
@@ -65,9 +65,6 @@ self.addEventListener('activate', event => {
     ).then(() => self.clients.claim())
   );
 
-  // Update all widget instances after service worker activation
-  event.waitUntil(updateWidgetsAfterActivation());
-
   // Notify open clients about version update
   if (self.isUpdate) {
     event.waitUntil(
@@ -78,8 +75,8 @@ self.addEventListener('activate', event => {
       })
     );
   }
-  // Then update widgets
- 
+
+  // Update all existing widget instances
   if ('widgets' in self) {
     event.waitUntil(
       (async () => {
@@ -235,8 +232,8 @@ self.addEventListener('widgetinstall', event => {
   event.waitUntil(renderWidgetByTag(event.widget.definition.tag));
 });
 
-// (Optional) Handle widget actions – your template uses Action.OpenUrl,
-// which the OS handles automatically, but you must still register the event.
+// (Optional) Handle widget actions –  template uses Action.OpenUrl,
+// which the OS handles automatically, but  must still register the event.
 self.addEventListener('widgetclick', event => {
   console.log(`Widget action: ${event.action}`);
 });
