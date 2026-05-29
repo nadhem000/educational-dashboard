@@ -796,6 +796,31 @@
     <!-- External data file -->
     <script src="data_general.js"></script>
     <script>
+// Catch runtime errors
+window.addEventListener('error', function(event) {
+  const entry = {
+    time: new Date().toISOString(),
+    message: event.message,
+    filename: event.filename,
+    lineno: event.lineno,
+    colno: event.colno,
+  };
+  // Append to localStorage (you can read it later via console)
+  const errors = JSON.parse(localStorage.getItem('startupErrors') || '[]');
+  errors.push(entry);
+  localStorage.setItem('startupErrors', JSON.stringify(errors));
+});
+
+// Catch unhandled promise rejections
+window.addEventListener('unhandledrejection', function(event) {
+  const entry = {
+    time: new Date().toISOString(),
+    reason: String(event.reason),
+  };
+  const errors = JSON.parse(localStorage.getItem('startupErrors') || '[]');
+  errors.push(entry);
+  localStorage.setItem('startupErrors', JSON.stringify(errors));
+});
 // Handle shortcut redirects (e.g., /?goto=arabic-hub)
 (function() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -1175,9 +1200,13 @@
     body: JSON.stringify({ subscription })
   });
   // 409 means duplicate – that's okay, we can ignore
-  if (!response.ok && response.status !== 409) {
+  if (response.status === 409) {
+    // subscription already exists – that's fine
+    return;
+}
+if (!response.ok) {
     console.error('Failed to save subscription:', response.status);
-  }
+}
 }
 
     // Ask for permission and subscribe
