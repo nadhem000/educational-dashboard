@@ -1181,8 +1181,8 @@ function urlBase64ToUint8Array(base64String) {
 // Store subscription in Supabase
 async function saveSubscription(subscription) {
   // Replace with your actual Supabase anon key and URL
-  const SUPABASE_URL = 'https://your-project.supabase.co';
-  const SUPABASE_ANON_KEY = 'your-anon-key';
+  const SUPABASE_URL = 'https://hmjbzzuresgzwzefjpyt.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtamJ6enVyZXNnend6ZWZqcHl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwMjczNDUsImV4cCI6MjA5NTYwMzM0NX0.44Q-Hkl4Rr9LuQhwryrQklFi809xYGteHgsS9nMG0ro';
 
   await fetch(`${SUPABASE_URL}/rest/v1/push_subscriptions`, {
     method: 'POST',
