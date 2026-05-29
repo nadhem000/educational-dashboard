@@ -1,4 +1,4 @@
-const CACHE_NAME = 'edudash-v48'; // bump version when you deploy
+const CACHE_NAME = 'edudash-v51'; // bump version when you deploy
 
 const PRECACHE_ASSETS = [
   '/',
@@ -144,6 +144,47 @@ self.addEventListener('periodicsync', event => {
   }
 });
 
+// ========== REAL PUSH EVENT ==========
+self.addEventListener('push', event => {
+  let data = { title: 'Update Available', body: 'A new version is ready.' };
+  if (event.data) {
+    try {
+      data = event.data.json();
+    } catch (e) {
+      data.body = event.data.text();
+    }
+  }
+
+  event.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: '/assets/icons/icon-96x96.png',
+      badge: '/assets/icons/icon-64x64.png',
+      tag: 'version-update',
+      requireInteraction: true
+    })
+  );
+});
+
+// ========== NOTIFICATION CLICK ==========
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+
+  if (event.notification.tag === 'version-update') {
+    event.waitUntil(
+      clients.matchAll({ type: 'window' }).then(clientList => {
+        for (const client of clientList) {
+          if ('focus' in client) {
+            client.focus();
+            return;
+          }
+        }
+        // No window open – open the app
+        return clients.openWindow('/');
+      })
+    );
+  }
+});
 // ---------- Skip waiting message (manual) ----------
 self.addEventListener('message', event => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
