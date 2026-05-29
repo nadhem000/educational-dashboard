@@ -158,6 +158,13 @@
     "template": "edudash-widget",
     "ms_ac_template": "/widgets/dashboard-template.json",
     "data": "/widgets/dashboard-widgets.json",
+    "type": "application/json",
+    "icons": [
+      {
+        "src": "/assets/icons/icon-96x96.png",
+        "sizes": "96x96"
+      }
+    ],
     "screenshots": [
       {
         "src": "assets/icons/icon-512x512.png",

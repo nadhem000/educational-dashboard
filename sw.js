@@ -78,6 +78,17 @@ self.addEventListener('activate', event => {
       })
     );
   }
+  // Then update widgets
+  if ('widgets' in self) {
+    event.waitUntil(
+      (async () => {
+        const widgets = await self.widgets.matchAll({ installed: true });
+        for (const w of widgets) {
+          await renderWidgetByTag(w.definition.tag);
+        }
+      })()
+    );
+  }
 });
 
 // ---------- Fetch (offline support) ----------
@@ -192,57 +203,39 @@ self.addEventListener('message', event => {
 // Helper to fetch template and data, then render the widget
 async function renderWidgetByTag(tag) {
   try {
-    // Get widget definition from the service worker (it reads manifest)
     const widget = await self.widgets.getByTag(tag);
     if (!widget) return;
 
     const definition = widget.definition;
 
-    // Fetch the Adaptive Card template (ms_ac_template)
+    // Fetch the Adaptive Card template
     const templateUrl = definition.msAcTemplate;
     const templateResponse = await fetch(templateUrl);
-    if (!templateResponse.ok) throw new Error(`Template fetch failed: ${templateResponse.status}`);
+    if (!templateResponse.ok)
+      throw new Error(`Template fetch failed: ${templateResponse.status}`);
     const template = await templateResponse.text();
 
-    // Fetch the data (if defined; otherwise use empty object)
+    // Fetch the data (default empty object)
     let data = '{}';
     if (definition.data) {
       const dataResponse = await fetch(definition.data);
-      if (dataResponse.ok) {
-        data = await dataResponse.text();
-      }
+      if (dataResponse.ok) data = await dataResponse.text();
     }
 
-    // Update all instances of this widget
     await self.widgets.updateByTag(tag, { template, data });
-    console.log(`Widget "${definition.name}" rendered successfully.`);
-  } catch (error) {
-    console.error(`Failed to render widget for tag "${tag}":`, error);
+    console.log(`Widget "${definition.name}" rendered.`);
+  } catch (err) {
+    console.error(`Widget render failed for tag "${tag}":`, err);
   }
 }
 
-// Render widget when it is installed
+// Render widget when the user adds it to the dashboard
 self.addEventListener('widgetinstall', event => {
   event.waitUntil(renderWidgetByTag(event.widget.definition.tag));
 });
 
-// Render all existing widgets on service worker activation
-async function updateWidgetsAfterActivation() {
-  if (!('widgets' in self)) return;
-  try {
-    const allWidgets = await self.widgets.matchAll({ installable: true, installed: true });
-    const tags = new Set(allWidgets.map(w => w.definition.tag));
-    for (const tag of tags) {
-      await renderWidgetByTag(tag);
-    }
-  } catch (error) {
-    console.error('Widget update on activation failed:', error);
-  }
-}
-
-// Handle widget click actions (if your template uses custom verbs)
+// (Optional) Handle widget actions – your template uses Action.OpenUrl,
+// which the OS handles automatically, but you must still register the event.
 self.addEventListener('widgetclick', event => {
-  console.log(`Widget click action: ${event.action}`, event);
-  // For simple Action.OpenUrl in your template, the OS opens the URL automatically.
-  // If you later add custom verbs, add your logic here.
+  console.log(`Widget action: ${event.action}`);
 });
