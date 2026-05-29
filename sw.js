@@ -1,4 +1,4 @@
-const CACHE_NAME = 'edudash-v58'; // bump version when you deploy
+const CACHE_NAME = 'edudash-v59'; // bump version when you deploy
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
@@ -79,6 +79,7 @@ self.addEventListener('activate', event => {
     );
   }
   // Then update widgets
+ 
   if ('widgets' in self) {
     event.waitUntil(
       (async () => {
@@ -202,34 +203,34 @@ self.addEventListener('message', event => {
 
 // Helper to fetch template and data, then render the widget
 async function renderWidgetByTag(tag) {
-  try {
-    const widget = await self.widgets.getByTag(tag);
-    if (!widget) return;
+  const widget = await self.widgets.getByTag(tag);
+  if (!widget) return;
 
-    const definition = widget.definition;
+  const definition = widget.definition;
 
-    // Fetch the Adaptive Card template
-    const templateUrl = definition.msAcTemplate;
-    const templateResponse = await fetch(templateUrl);
-    if (!templateResponse.ok)
-      throw new Error(`Template fetch failed: ${templateResponse.status}`);
-    const template = await templateResponse.text();
-
-    // Fetch the data (default empty object)
-    let data = '{}';
-    if (definition.data) {
-      const dataResponse = await fetch(definition.data);
-      if (dataResponse.ok) data = await dataResponse.text();
-    }
-
-    await self.widgets.updateByTag(tag, { template, data });
-    console.log(`Widget "${definition.name}" rendered.`);
-  } catch (err) {
-    console.error(`Widget render failed for tag "${tag}":`, err);
+  // Fetch the Adaptive Card template
+  const templateUrl = definition.msAcTemplate;
+  const templateResponse = await fetch(templateUrl);
+  if (!templateResponse.ok) {
+    console.error('Template fetch failed');
+    return;
   }
+  const template = await templateResponse.text();
+
+  // Fetch the data (if defined)
+  let data = '{}';
+  if (definition.data) {
+    const dataResponse = await fetch(definition.data);
+    if (dataResponse.ok) {
+      data = await dataResponse.text();
+    }
+  }
+
+  // Render all instances of this widget
+  await self.widgets.updateByTag(tag, { template, data });
 }
 
-// Render widget when the user adds it to the dashboard
+// When user adds the widget to the dashboard
 self.addEventListener('widgetinstall', event => {
   event.waitUntil(renderWidgetByTag(event.widget.definition.tag));
 });
