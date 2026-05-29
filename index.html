@@ -750,6 +750,78 @@
     font-weight: 600;
     cursor: pointer;
 }
+/* ========== Footer Buttons Styling ========== */
+.ED-General-footer-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.1rem;
+    border-radius: 32px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    font-family: var(--ED-General-font-stack);
+    border: 1.5px solid transparent;
+    background: var(--ED-General-color-surface);
+    color: var(--ED-General-color-text-primary);
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    box-shadow: 0 1px 3px rgba(var(--ED-General-color-shadow-rgb), 0.06);
+    white-space: nowrap;
+    letter-spacing: 0.01em;
+}
+
+.ED-General-footer-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(var(--ED-General-color-shadow-rgb), 0.12);
+    border-color: var(--ED-General-color-accent-default);
+    background: var(--ED-General-color-accent-soft);
+    color: var(--ED-General-color-accent-default);
+}
+
+.ED-General-footer-btn:active {
+    transform: translateY(1px);
+    transition: 0.05s linear;
+}
+
+/* Sync button (background updates) */
+.ED-General-footer-btn--sync {
+    background: linear-gradient(135deg, var(--ED-General-color-surface) 0%, var(--ED-General-color-bg-secondary) 100%);
+    border-color: var(--ED-General-color-border);
+}
+
+.ED-General-footer-btn--sync:hover {
+    background: var(--ED-General-color-accent-default);
+    border-color: var(--ED-General-color-accent-default);
+    color: var(--ED-General-color-text-on-accent);
+}
+
+/* Notifications button */
+.ED-General-footer-btn--notify {
+    background: var(--ED-General-color-surface);
+    border-color: var(--ED-General-color-accent-default);
+    color: var(--ED-General-color-accent-default);
+}
+
+.ED-General-footer-btn--notify:hover {
+    background: var(--ED-General-color-accent-default);
+    color: var(--ED-General-color-text-on-accent);
+    border-color: var(--ED-General-color-accent-default);
+}
+
+/* Adjust button spacing inside footer columns */
+.ED-General-footer__col {
+    gap: 0.75rem;
+}
+
+.ED-General-footer__col .ED-General-footer-btn {
+    margin-top: 0.15rem;
+}
+
+/* RTL support */
+[dir="rtl"] .ED-General-footer-btn {
+    flex-direction: row-reverse;
+}
         @media (max-width: 640px) {
             .ED-General-card-grid { grid-template-columns: 1fr; gap: 1rem; }
             .ED-General-header__inner { flex-direction: column; align-items: flex-start; gap: 0.6rem; }
@@ -764,6 +836,15 @@
             .ED-General-footer__col:last-child { text-align: center; align-items: center; }
             .ED-General-footer a::after { left: 50%; transform: translateX(-50%); }
             .ED-General-footer a:hover::after { width: 55%; }
+    .ED-General-footer-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
+    }
+    .ED-General-footer__col:first-child {
+        align-items: stretch;
+    }
         }
         @media (min-width: 641px) and (max-width: 1024px) {
             .ED-General-card-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
@@ -906,6 +987,7 @@ window.addEventListener('unhandledrejection', function(event) {
             periodicSyncDenied: 'Permission not granted. Please check site settings.',
             updateNotification: 'A new version is available.',
             updateReloadBtn: 'Reload',
+    enableNotificationsBtn: 'Enable Notifications',
             footer: {
                 confidentiality: 'Confidentiality Politics', terms: 'Terms of Use', contact: 'Contact',
                 version: "version '0.0.1'", developer: 'developed by: Mejri Ziad.', hosted: 'Hosted on Github and Netlify.'
@@ -927,6 +1009,7 @@ window.addEventListener('unhandledrejection', function(event) {
             periodicSyncDenied: 'Permission non accordée. Veuillez vérifier les paramètres du site.',
             updateNotification: 'Une nouvelle version est disponible.',
             updateReloadBtn: 'Recharger',
+    enableNotificationsBtn: 'Activer les Notifications',
             footer: {
                 confidentiality: 'Politique de confidentialité', terms: 'Conditions d\'utilisation', contact: 'Contact',
                 version: "version '0.0.1'", developer: 'développé par : Mejri Ziad.', hosted: 'Hébergé sur Github et Netlify.'
@@ -948,6 +1031,7 @@ window.addEventListener('unhandledrejection', function(event) {
             periodicSyncDenied: 'لم يتم منح الإذن. يرجى التحقق من إعدادات الموقع.',
             updateNotification: 'نسخة جديدة متاحة.',
             updateReloadBtn: 'إعادة التحميل',
+    enableNotificationsBtn: 'تفعيل الاشعارات',
             footer: {
                 confidentiality: 'سياسة الخصوصية', terms: 'شروط الاستخدام', contact: 'اتصل بنا',
                 version: "الإصدار '0.0.1'", developer: 'طور بواسطة: ماجري زياد.', hosted: 'مستضاف على Github و Netlify.'
