@@ -1,5 +1,4 @@
-const CACHE_NAME = 'edudash-v56'; // bump version when you deploy
-
+const CACHE_NAME = 'edudash-v57'; // bump version when you deploy
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
@@ -7,7 +6,6 @@ const PRECACHE_ASSETS = [
   '/header.html',
   '/footer.html',
   '/manifest.json',
-
   '/assets/icons/arabicHub.png',
   '/assets/icons/englishHub.png',
   '/assets/icons/mathematicsHub.png',
@@ -44,14 +42,13 @@ const PRECACHE_ASSETS = [
 
 // ---------- Install ----------
 self.addEventListener('install', event => {
-  const isUpdate = self.registration.active !== null; // true if this is an update
-
+  const isUpdate = self.registration.active !== null;
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(PRECACHE_ASSETS))
       .then(() => {
         self.skipWaiting();
-        self.isUpdate = isUpdate; // store for later use
+        self.isUpdate = isUpdate;
       })
   );
 });
@@ -68,7 +65,10 @@ self.addEventListener('activate', event => {
     ).then(() => self.clients.claim())
   );
 
-  // Notify all open clients if this is a version update (not first install)
+  // Update all widget instances after service worker activation
+  event.waitUntil(updateWidgetsAfterActivation());
+
+  // Notify open clients about version update
   if (self.isUpdate) {
     event.waitUntil(
       self.clients.matchAll().then(clients => {
@@ -83,7 +83,6 @@ self.addEventListener('activate', event => {
 // ---------- Fetch (offline support) ----------
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
-
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request)
@@ -91,7 +90,6 @@ self.addEventListener('fetch', event => {
     );
     return;
   }
-
   event.respondWith(
     caches.match(event.request).then(cached => {
       const fetchPromise = fetch(event.request).then(response => {
@@ -144,7 +142,7 @@ self.addEventListener('periodicsync', event => {
   }
 });
 
-// ========== REAL PUSH EVENT ==========
+// ========== PUSH NOTIFICATION ==========
 self.addEventListener('push', event => {
   let data = { title: 'Update Available', body: 'A new version is ready.' };
   if (event.data) {
@@ -154,7 +152,6 @@ self.addEventListener('push', event => {
       data.body = event.data.text();
     }
   }
-
   event.waitUntil(
     self.registration.showNotification(data.title, {
       body: data.body,
@@ -166,10 +163,8 @@ self.addEventListener('push', event => {
   );
 });
 
-// ========== NOTIFICATION CLICK ==========
 self.addEventListener('notificationclick', event => {
   event.notification.close();
-
   if (event.notification.tag === 'version-update') {
     event.waitUntil(
       clients.matchAll({ type: 'window' }).then(clientList => {
@@ -179,15 +174,75 @@ self.addEventListener('notificationclick', event => {
             return;
           }
         }
-        // No window open – open the app
         return clients.openWindow('/');
       })
     );
   }
 });
+
 // ---------- Skip waiting message (manual) ----------
 self.addEventListener('message', event => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
+});
+
+// ========== WIDGET SUPPORT ==========
+
+// Helper to fetch template and data, then render the widget
+async function renderWidgetByTag(tag) {
+  try {
+    // Get widget definition from the service worker (it reads manifest)
+    const widget = await self.widgets.getByTag(tag);
+    if (!widget) return;
+
+    const definition = widget.definition;
+
+    // Fetch the Adaptive Card template (ms_ac_template)
+    const templateUrl = definition.msAcTemplate;
+    const templateResponse = await fetch(templateUrl);
+    if (!templateResponse.ok) throw new Error(`Template fetch failed: ${templateResponse.status}`);
+    const template = await templateResponse.text();
+
+    // Fetch the data (if defined; otherwise use empty object)
+    let data = '{}';
+    if (definition.data) {
+      const dataResponse = await fetch(definition.data);
+      if (dataResponse.ok) {
+        data = await dataResponse.text();
+      }
+    }
+
+    // Update all instances of this widget
+    await self.widgets.updateByTag(tag, { template, data });
+    console.log(`Widget "${definition.name}" rendered successfully.`);
+  } catch (error) {
+    console.error(`Failed to render widget for tag "${tag}":`, error);
+  }
+}
+
+// Render widget when it is installed
+self.addEventListener('widgetinstall', event => {
+  event.waitUntil(renderWidgetByTag(event.widget.definition.tag));
+});
+
+// Render all existing widgets on service worker activation
+async function updateWidgetsAfterActivation() {
+  if (!('widgets' in self)) return;
+  try {
+    const allWidgets = await self.widgets.matchAll({ installable: true, installed: true });
+    const tags = new Set(allWidgets.map(w => w.definition.tag));
+    for (const tag of tags) {
+      await renderWidgetByTag(tag);
+    }
+  } catch (error) {
+    console.error('Widget update on activation failed:', error);
+  }
+}
+
+// Handle widget click actions (if your template uses custom verbs)
+self.addEventListener('widgetclick', event => {
+  console.log(`Widget click action: ${event.action}`, event);
+  // For simple Action.OpenUrl in your template, the OS opens the URL automatically.
+  // If you later add custom verbs, add your logic here.
 });
