@@ -796,7 +796,7 @@
     <!-- External data file -->
     <script src="data_general.js"></script>
     <script>
-	// Handle shortcut redirects (e.g., /?goto=arabic-hub)
+// Handle shortcut redirects (e.g., /?goto=arabic-hub)
 (function() {
     const urlParams = new URLSearchParams(window.location.search);
     const goto = urlParams.get('goto');
@@ -812,9 +812,7 @@
         };
         const targetUrl = linkMap[goto];
         if (targetUrl) {
-            // Build a friendly name from the shortcut ID
             const siteName = goto.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-            // Show an overlay that requires a user click → popup allowed
             const overlay = document.createElement('div');
             overlay.id = 'goto-overlay';
             overlay.style.cssText = `
@@ -843,527 +841,517 @@
                 </div>
             `;
             document.body.prepend(overlay);
-
-            // Click handler – now a real user click, so window.open works
             document.getElementById('goto-launch-btn').addEventListener('click', () => {
                 window.open(targetUrl, '_blank', 'noopener');
-                // Clean up: remove overlay and clear the query string
                 overlay.remove();
                 history.replaceState(null, '', window.location.pathname);
-                // Optionally reload the dashboard to its default state
                 location.reload();
             });
         }
     }
 })();
-        (async function() {
-        // Load header & footer
-        async function loadComponent(url, targetId) {
-            const resp = await fetch(url);
-            if (!resp.ok) throw new Error(`Failed to load ${url}`);
-            document.getElementById(targetId).innerHTML = await resp.text();
-        }
-        await Promise.all([
-            loadComponent('header.html', 'header-container'),
-            loadComponent('footer.html', 'footer-container')
-        ]);
 
-        // ========== UI text dictionary ==========
-        const uiText = {
-            en: {
-                dashboardTitle: 'Educational Dashboard',
-                subtitle: 'Your learning hubs',
-                othersTitle: 'Others', gamesTitle: 'Games', newsTitle: 'News', obsoleteTitle: 'Obsolete & unused',
-                visitBtn: 'Visit', noDescription: 'No description available.', imageIconAlt: 'icon',
-                installBtn: '📲 Install App',
-                offlineBanner: 'You are offline. Some features may be unavailable.',
-                onlineStatus: 'Online', offlineStatus: 'Offline',
-                themeToggleTitle: 'Dark/Light Theme',
-                enablePeriodicSyncBtn: 'Enable Background Updates',
-                disablePeriodicSyncBtn: 'Disable Background Updates',
-                periodicSyncEnabled: 'Background updates enabled!',
-                periodicSyncDisabled: 'Background updates disabled!',
-                periodicSyncDenied: 'Permission not granted. Please check site settings.',
-    updateNotification: 'A new version is available.',
-    updateReloadBtn: 'Reload',
-                footer: {
-                    confidentiality: 'Confidentiality Politics', terms: 'Terms of Use', contact: 'Contact',
-                    version: "version '0.0.1'", developer: 'developed by: Mejri Ziad.', hosted: 'Hosted on Github and Netlify.'
-                }
-            },
-            fr: {
-                dashboardTitle: 'Tableau de Bord Éducatif',
-                subtitle: 'Vos plateformes d\'apprentissage',
-                othersTitle: 'Autres', gamesTitle: 'Jeux', newsTitle: 'Actualités', obsoleteTitle: 'Obsolète & inutilisé',
-                visitBtn: 'Visiter', noDescription: 'Aucune description disponible.', imageIconAlt: 'icône',
-                installBtn: '📲 Installer l\'app',
-                offlineBanner: 'Vous êtes hors ligne. Certaines fonctionnalités peuvent être indisponibles.',
-                onlineStatus: 'En ligne', offlineStatus: 'Hors ligne',
-                themeToggleTitle: 'Thème clair/sombre',
-                enablePeriodicSyncBtn: 'Activer les mises à jour en arrière-plan',
-                disablePeriodicSyncBtn: 'Désactiver les mises à jour en arrière-plan',
-                periodicSyncEnabled: 'Mises à jour en arrière-plan activées !',
-                periodicSyncDisabled: 'Mises à jour en arrière-plan désactivées !',
-                periodicSyncDenied: 'Permission non accordée. Veuillez vérifier les paramètres du site.',
-    updateNotification: 'Une nouvelle version est disponible.',
-    updateReloadBtn: 'Recharger',
-                footer: {
-                    confidentiality: 'Politique de confidentialité', terms: 'Conditions d\'utilisation', contact: 'Contact',
-                    version: "version '0.0.1'", developer: 'développé par : Mejri Ziad.', hosted: 'Hébergé sur Github et Netlify.'
-                }
-            },
-            ar: {
-                dashboardTitle: 'لوحة التحكم التعليمية',
-                subtitle: 'منصات التعلم الخاصة بك',
-                othersTitle: 'أخرى', gamesTitle: 'ألعاب', newsTitle: 'أخبار', obsoleteTitle: 'قديم وغير مستخدم',
-                visitBtn: 'زيارة', noDescription: 'لا يوجد وصف متاح.', imageIconAlt: 'أيقونة',
-                installBtn: '📲 تثبيت التطبيق',
-                offlineBanner: 'أنت غير متصل بالإنترنت. قد لا تتوفر بعض الميزات.',
-                onlineStatus: 'متصل', offlineStatus: 'غير متصل',
-                themeToggleTitle: 'وضع داكن/فاتح',
-                enablePeriodicSyncBtn: 'تفعيل التحديثات في الخلفية',
-                disablePeriodicSyncBtn: 'تعطيل التحديثات في الخلفية',
-                periodicSyncEnabled: 'تم تفعيل التحديثات في الخلفية!',
-                periodicSyncDisabled: 'تم تعطيل التحديثات في الخلفية!',
-                periodicSyncDenied: 'لم يتم منح الإذن. يرجى التحقق من إعدادات الموقع.',
-    updateNotification: 'نسخة جديدة متاحة.',
-    updateReloadBtn: 'إعادة التحميل',
-                footer: {
-                    confidentiality: 'سياسة الخصوصية', terms: 'شروط الاستخدام', contact: 'اتصل بنا',
-                    version: "الإصدار '0.0.1'", developer: 'طور بواسطة: ماجري زياد.', hosted: 'مستضاف على Github و Netlify.'
-                }
+(async function() {
+    // Load header & footer
+    async function loadComponent(url, targetId) {
+        const resp = await fetch(url);
+        if (!resp.ok) throw new Error(`Failed to load ${url}`);
+        document.getElementById(targetId).innerHTML = await resp.text();
+    }
+    await Promise.all([
+        loadComponent('header.html', 'header-container'),
+        loadComponent('footer.html', 'footer-container')
+    ]);
+
+    // ========== UI text dictionary ==========
+    const uiText = {
+        en: {
+            dashboardTitle: 'Educational Dashboard',
+            subtitle: 'Your learning hubs',
+            othersTitle: 'Others', gamesTitle: 'Games', newsTitle: 'News', obsoleteTitle: 'Obsolete & unused',
+            visitBtn: 'Visit', noDescription: 'No description available.', imageIconAlt: 'icon',
+            installBtn: '📲 Install App',
+            offlineBanner: 'You are offline. Some features may be unavailable.',
+            onlineStatus: 'Online', offlineStatus: 'Offline',
+            themeToggleTitle: 'Dark/Light Theme',
+            enablePeriodicSyncBtn: 'Enable Background Updates',
+            disablePeriodicSyncBtn: 'Disable Background Updates',
+            periodicSyncEnabled: 'Background updates enabled!',
+            periodicSyncDisabled: 'Background updates disabled!',
+            periodicSyncDenied: 'Permission not granted. Please check site settings.',
+            updateNotification: 'A new version is available.',
+            updateReloadBtn: 'Reload',
+            footer: {
+                confidentiality: 'Confidentiality Politics', terms: 'Terms of Use', contact: 'Contact',
+                version: "version '0.0.1'", developer: 'developed by: Mejri Ziad.', hosted: 'Hosted on Github and Netlify.'
             }
+        },
+        fr: {
+            dashboardTitle: 'Tableau de Bord Éducatif',
+            subtitle: 'Vos plateformes d\'apprentissage',
+            othersTitle: 'Autres', gamesTitle: 'Jeux', newsTitle: 'Actualités', obsoleteTitle: 'Obsolète & inutilisé',
+            visitBtn: 'Visiter', noDescription: 'Aucune description disponible.', imageIconAlt: 'icône',
+            installBtn: '📲 Installer l\'app',
+            offlineBanner: 'Vous êtes hors ligne. Certaines fonctionnalités peuvent être indisponibles.',
+            onlineStatus: 'En ligne', offlineStatus: 'Hors ligne',
+            themeToggleTitle: 'Thème clair/sombre',
+            enablePeriodicSyncBtn: 'Activer les mises à jour en arrière-plan',
+            disablePeriodicSyncBtn: 'Désactiver les mises à jour en arrière-plan',
+            periodicSyncEnabled: 'Mises à jour en arrière-plan activées !',
+            periodicSyncDisabled: 'Mises à jour en arrière-plan désactivées !',
+            periodicSyncDenied: 'Permission non accordée. Veuillez vérifier les paramètres du site.',
+            updateNotification: 'Une nouvelle version est disponible.',
+            updateReloadBtn: 'Recharger',
+            footer: {
+                confidentiality: 'Politique de confidentialité', terms: 'Conditions d\'utilisation', contact: 'Contact',
+                version: "version '0.0.1'", developer: 'développé par : Mejri Ziad.', hosted: 'Hébergé sur Github et Netlify.'
+            }
+        },
+        ar: {
+            dashboardTitle: 'لوحة التحكم التعليمية',
+            subtitle: 'منصات التعلم الخاصة بك',
+            othersTitle: 'أخرى', gamesTitle: 'ألعاب', newsTitle: 'أخبار', obsoleteTitle: 'قديم وغير مستخدم',
+            visitBtn: 'زيارة', noDescription: 'لا يوجد وصف متاح.', imageIconAlt: 'أيقونة',
+            installBtn: '📲 تثبيت التطبيق',
+            offlineBanner: 'أنت غير متصل بالإنترنت. قد لا تتوفر بعض الميزات.',
+            onlineStatus: 'متصل', offlineStatus: 'غير متصل',
+            themeToggleTitle: 'وضع داكن/فاتح',
+            enablePeriodicSyncBtn: 'تفعيل التحديثات في الخلفية',
+            disablePeriodicSyncBtn: 'تعطيل التحديثات في الخلفية',
+            periodicSyncEnabled: 'تم تفعيل التحديثات في الخلفية!',
+            periodicSyncDisabled: 'تم تعطيل التحديثات في الخلفية!',
+            periodicSyncDenied: 'لم يتم منح الإذن. يرجى التحقق من إعدادات الموقع.',
+            updateNotification: 'نسخة جديدة متاحة.',
+            updateReloadBtn: 'إعادة التحميل',
+            footer: {
+                confidentiality: 'سياسة الخصوصية', terms: 'شروط الاستخدام', contact: 'اتصل بنا',
+                version: "الإصدار '0.0.1'", developer: 'طور بواسطة: ماجري زياد.', hosted: 'مستضاف على Github و Netlify.'
+            }
+        }
+    };
+
+    let currentLang = localStorage.getItem('dashboardLang') || 'en';
+    let currentTheme = localStorage.getItem('dashboardTheme') || 'light';
+
+    function getNestedValue(obj, path) {
+        return path.split('.').reduce((o, k) => (o && o[k] !== undefined ? o[k] : undefined), obj) || '';
+    }
+
+    function translatePage() {
+        const lang = currentLang;
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            const text = getNestedValue(uiText[lang], key);
+            if (text) el.textContent = text;
+        });
+        document.querySelectorAll('[data-i18n-title]').forEach(el => {
+            const key = el.getAttribute('data-i18n-title');
+            const text = getNestedValue(uiText[lang], key);
+            if (text) el.setAttribute('title', text);
+        });
+        document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+        document.documentElement.lang = lang;
+        const langSelect = document.getElementById('langSelect');
+        if (langSelect) langSelect.value = lang;
+        if (window.updatePeriodicSyncButton) window.updatePeriodicSyncButton();
+    }
+
+    function hexToRgb(hex) {
+        const clean = hex.replace('#', '');
+        const full = clean.length === 3 ? clean[0]+clean[0]+clean[1]+clean[1]+clean[2]+clean[2] : clean;
+        const match = /^([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(full);
+        if (!match) return { r: 60, g: 50, b: 40 };
+        return { r: parseInt(match[1], 16), g: parseInt(match[2], 16), b: parseInt(match[3], 16) };
+    }
+    function getLuminance(r, g, b) {
+        const linearize = (c) => {
+            c = c / 255;
+            return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
         };
-        let currentLang = localStorage.getItem('dashboardLang') || 'en';
-        let currentTheme = localStorage.getItem('dashboardTheme') || 'light';
-
-        function getNestedValue(obj, path) {
-            return path.split('.').reduce((o, k) => (o && o[k] !== undefined ? o[k] : undefined), obj) || '';
-        }
-
-        function translatePage() {
-            const lang = currentLang;
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                const text = getNestedValue(uiText[lang], key);
-                if (text) el.textContent = text;
-            });
-            document.querySelectorAll('[data-i18n-title]').forEach(el => {
-                const key = el.getAttribute('data-i18n-title');
-                const text = getNestedValue(uiText[lang], key);
-                if (text) el.setAttribute('title', text);
-            });
-            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-            document.documentElement.lang = lang;
-            const langSelect = document.getElementById('langSelect');
-            if (langSelect) langSelect.value = lang;
-            // Update periodic sync button text if it exists
-            if (window.updatePeriodicSyncButton) window.updatePeriodicSyncButton();
-        }
-
-        function hexToRgb(hex) {
-            const clean = hex.replace('#', '');
-            const full = clean.length === 3 ? clean[0]+clean[0]+clean[1]+clean[1]+clean[2]+clean[2] : clean;
-            const match = /^([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(full);
-            if (!match) return { r: 60, g: 50, b: 40 };
-            return { r: parseInt(match[1], 16), g: parseInt(match[2], 16), b: parseInt(match[3], 16) };
-        }
-
-        function getLuminance(r, g, b) {
-            const linearize = (c) => {
-                c = c / 255;
-                return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
-            };
-            return 0.2126 * linearize(r) + 0.7152 * linearize(g) + 0.0722 * linearize(b);
-        }
-
-        function getHue(r, g, b) {
-            const rf = r / 255, gf = g / 255, bf = b / 255;
-            const max = Math.max(rf, gf, bf), min = Math.min(rf, gf, bf), delta = max - min;
-            if (delta === 0) return 0;
-            let hue = 0;
-            if (max === rf) hue = ((gf - bf) / delta) % 6;
-            else if (max === gf) hue = (bf - rf) / delta + 2;
-            else hue = (rf - gf) / delta + 4;
-            hue = Math.round(hue * 60);
-            if (hue < 0) hue += 360;
-            return hue;
-        }
-
-        function applyCardPalettes() {
-            const isDark = currentTheme === 'dark';
-            document.querySelectorAll('.ED-General-card').forEach(cardEl => {
-                const cardId = cardEl.getAttribute('data-card-id');
-                const card = allCards.find(c => c.id === cardId);
-                if (!card) return;
-                const palette = isDark ? (card.darkModePalette || {}) : (card.lightModePalette || {});
-                const accent = palette.accent || '#4a7fd9';
-                cardEl.style.setProperty('--card-accent', accent);
-                if (palette.iconBg) cardEl.style.setProperty('--ED-General-card-icon-bg', palette.iconBg);
-                else cardEl.style.removeProperty('--ED-General-card-icon-bg');
-                const rgb = hexToRgb(accent);
-                const lum = getLuminance(rgb.r, rgb.g, rgb.b);
-                const hue = getHue(rgb.r, rgb.g, rgb.b);
-                const baseOpacity = 0.06 + (1 - lum) * 0.12;
-                const opacityHover = baseOpacity * 2.1;
-                const darkMultiplier = isDark ? 1.45 : 1;
-                const finalOpacity = Math.min(baseOpacity * darkMultiplier, 0.22);
-                const finalOpacityHover = Math.min(opacityHover * darkMultiplier, 0.40);
-                let offsetX = 0;
-                if (hue >= 0 && hue <= 50) offsetX = 2;
-                else if (hue > 50 && hue <= 100) offsetX = 1;
-                else if (hue >= 200 && hue <= 280) offsetX = -2;
-                else if (hue > 280 && hue <= 330) offsetX = -1;
-                let blurBase = 10, blurHover = 30;
-                if (hue >= 0 && hue <= 100) { blurBase = 12; blurHover = 34; }
-                else if (hue >= 200 && hue <= 300) { blurBase = 8; blurHover = 26; }
-                cardEl.style.setProperty('--card-accent-r', rgb.r);
-                cardEl.style.setProperty('--card-accent-g', rgb.g);
-                cardEl.style.setProperty('--card-accent-b', rgb.b);
-                cardEl.style.setProperty('--card-shadow-opacity', finalOpacity.toFixed(3));
-                cardEl.style.setProperty('--card-shadow-opacity-hover', finalOpacityHover.toFixed(3));
-                cardEl.style.setProperty('--card-shadow-blur', blurBase + 'px');
-                cardEl.style.setProperty('--card-shadow-blur-hover', blurHover + 'px');
-                cardEl.style.setProperty('--card-shadow-offset-x', offsetX + 'px');
-                cardEl.style.setProperty('--card-shadow-offset-y', '3px');
-                cardEl.style.setProperty('--card-shadow-offset-y-hover', (6 + Math.abs(offsetX)) + 'px');
-            });
-        }
-
-        function renderCardGrid(cards, targetId, categoryClass) {
-            const grid = document.getElementById(targetId);
-            if (!grid) return;
-            const lang = currentLang;
-            grid.innerHTML = '';
-            cards.forEach(card => {
-                const cardLang = card[lang] || card['en'] || {};
-                const cardName = cardLang.name || card.id;
-                const cardDesc = cardLang.description || uiText[lang].noDescription;
-                const firstLetter = cardName.charAt(0).toUpperCase();
-                let iconHTML = '';
-                if (card.imageIcon && card.imageIcon.trim() !== '') {
-                    iconHTML = `<img src="${escapeHTML(card.imageIcon)}" alt="${escapeHTML(uiText[lang].imageIconAlt)}" onerror="this.setAttribute('data-error','1');this.nextElementSibling.style.display='flex';" loading="lazy"><span class="ED-General-card__icon-letter">${escapeHTML(firstLetter)}</span>`;
-                } else {
-                    iconHTML = `<span class="ED-General-card__icon-letter" style="display:flex;">${escapeHTML(firstLetter)}</span>`;
-                }
-                let insideLinksHTML = '';
-                if (card.insideLinks && card.insideLinks.length > 0) {
-                    insideLinksHTML = '<div class="ED-General-card__inside-links">' +
-                        card.insideLinks.map(il => {
-                            const linkLang = il[lang] || il['en'] || {};
-                            const linkName = linkLang.name || 'Link';
-                            return `<a href="${escapeHTML(il.url)}" class="ED-General-inside-link" target="_blank" rel="noopener noreferrer" title="${escapeHTML(linkName)}">${escapeHTML(linkName)}<span class="ED-General-inside-link__arrow">↗</span></a>`;
-                        }).join('') + '</div>';
-                }
-                grid.insertAdjacentHTML('beforeend', `
-                    <div class="ED-General-card ${categoryClass}" data-card-id="${escapeHTML(card.id)}">
-                        <div class="ED-General-card__icon-container">${iconHTML}</div>
-                        <h3 class="ED-General-card__name">${escapeHTML(cardName)}</h3>
-                        <p class="ED-General-card__description">${escapeHTML(cardDesc)}</p>
-                        ${insideLinksHTML}
-                        <a href="${escapeHTML(card.link)}" class="ED-General-card__main-btn" target="_blank" rel="noopener noreferrer">${uiText[lang].visitBtn}<span class="ED-General-card__main-btn-arrow">→</span></a>
-                    </div>
-                `);
-            });
-        }
-
-        function applyTheme() {
-            document.documentElement.setAttribute('data-theme', currentTheme);
-            localStorage.setItem('dashboardTheme', currentTheme);
-            applyCardPalettes();
-        }
-
-        function toggleTheme() {
-            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
-            applyTheme();
-        }
-
-        function updateInstallButtonText() {
-            const installBtn = document.getElementById('installBtn');
-            if (installBtn) installBtn.textContent = getNestedValue(uiText[currentLang], 'installBtn') || '📲 Install App';
-        }
-
-        function updateConnectionStatus() {
-            const dot = document.getElementById('status-dot');
-            const label = document.getElementById('connection-status-label');
-            const statusSpan = document.getElementById('connection-status');
-            if (!dot || !statusSpan) return;
-            const online = navigator.onLine;
-            dot.className = 'status-dot' + (online ? '' : ' offline');
-            if (label) {
-                label.textContent = online
-                    ? getNestedValue(uiText[currentLang], 'onlineStatus') || 'Online'
-                    : getNestedValue(uiText[currentLang], 'offlineStatus') || 'Offline';
-            }
-            statusSpan.title = online
-                ? (getNestedValue(uiText[currentLang], 'onlineStatus') || 'Online')
-                : (getNestedValue(uiText[currentLang], 'offlineStatus') || 'Offline');
-        }
-
-        function setupConnectionIndicator() {
-            const statusSpan = document.getElementById('connection-status');
-            if (!statusSpan) return;
-            window.addEventListener('online', updateConnectionStatus);
-            window.addEventListener('offline', updateConnectionStatus);
-            updateConnectionStatus();
-        }
-
-        function setupOfflineBanner() {
-            const banner = document.getElementById('offline-banner');
-            if (!banner) return;
-            window.addEventListener('offline', () => banner.style.display = 'block');
-            window.addEventListener('online', () => banner.style.display = 'none');
-            if (!navigator.onLine) banner.style.display = 'block';
-        }
-
-        function setLanguage(lang) {
-            if (lang === currentLang) return;
-            currentLang = lang;
-            localStorage.setItem('dashboardLang', lang);
-            translatePage();
-            updateInstallButtonText();
-            updateConnectionStatus();
-            renderAll();
-        }
-
-        function renderAll() {
-            for (const [category, config] of Object.entries(categoryConfig)) {
-                renderCardGrid(allCards.filter(c => c.category === category), config.gridId, config.cssClass);
-            }
-            applyCardPalettes();
-        }
-
-        function escapeHTML(str) {
-            if (typeof str !== 'string') return '';
-            const div = document.createElement('div');
-            div.textContent = str;
-            return div.innerHTML;
-        }
-
-        // PWA install
-        let deferredPrompt;
-        const installBtn = document.getElementById('installBtn');
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            if (installBtn) {
-                installBtn.style.display = 'inline-flex';
-                updateInstallButtonText();
-            }
-        });
-        if (installBtn) {
-            installBtn.addEventListener('click', async () => {
-                if (!deferredPrompt) return;
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                console.log('Install outcome:', outcome);
-                deferredPrompt = null;
-                installBtn.style.display = 'none';
-            });
-        }
-        window.addEventListener('appinstalled', () => {
-            deferredPrompt = null;
-            if (installBtn) installBtn.style.display = 'none';
-        });
-
-// Convert base64 VAPID public key to Uint8Array
-function urlBase64ToUint8Array(base64String) {
-  const padding = '='.repeat((4 - base64String.length % 4) % 4);
-  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-  const rawData = window.atob(base64);
-  const outputArray = new Uint8Array(rawData.length);
-  for (let i = 0; i < rawData.length; ++i) {
-    outputArray[i] = rawData.charCodeAt(i);
-  }
-  return outputArray;
-}
-
-// Store subscription in Supabase
-async function saveSubscription(subscription) {
-  // Replace with your actual Supabase anon key and URL
-  const SUPABASE_URL = 'https://hmjbzzuresgzwzefjpyt.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtamJ6enVyZXNnend6ZWZqcHl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwMjczNDUsImV4cCI6MjA5NTYwMzM0NX0.44Q-Hkl4Rr9LuQhwryrQklFi809xYGteHgsS9nMG0ro';
-
-  await fetch(`${SUPABASE_URL}/rest/v1/push_subscriptions`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'apikey': SUPABASE_ANON_KEY,
-      'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-    },
-    body: JSON.stringify({ subscription })
-  });
-}
-
-// Ask for permission and subscribe
-async function subscribeToPush() {
-  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-    console.warn('Push not supported');
-    return;
-  }
-
-  const permission = await Notification.requestPermission();
-  if (permission !== 'granted') {
-    console.warn('Notification permission denied');
-    return;
-  }
-
-  const registration = await navigator.serviceWorker.ready;
-  const existingSubscription = await registration.pushManager.getSubscription();
-  if (existingSubscription) {
-    await saveSubscription(existingSubscription);
-    return;
-  }
-
-  const subscription = await registration.pushManager.subscribe({
-    userVisibleOnly: true,
-    applicationServerKey: urlBase64ToUint8Array('BO2xV3C8PcVFX-2SqsAyHZgzyDBaC0N7GzDktpoX2J5Pj5Cz9IazAcybQqxe13xYqGnEpoVmXM2jHFqmjXko1kw')
-  });
-
-  await saveSubscription(subscription);
-  console.log('Push subscription saved');
-}
-        // ========== Init ==========
-        function init() {
-    currentTheme = localStorage.getItem('dashboardTheme') || 'light';
-    applyTheme();
-    currentLang = localStorage.getItem('dashboardLang') || 'en';
-    translatePage();
-    setupConnectionIndicator();
-    setupOfflineBanner();
-    updateInstallButtonText();
-    renderAll();
-
-    // Service Worker registration & sync (fixed to run immediately if document is already complete)
-    if ('serviceWorker' in navigator) {
-        function registerServiceWorker() {
-            navigator.serviceWorker.register('/sw.js')
-                .then(reg => {
-                    console.log('SW registered:', reg.scope);
-                    // Background sync (tag registration)
-                    if ('SyncManager' in window) {
-                        reg.sync.register('sync-data').catch(() => {});
-                    }
-                    // Periodic sync: do NOT auto-register here – let the user toggle control it
-                })
-                .catch(err => console.error('SW registration failed:', err));
-        }
-
-        // If the page is already fully loaded, register immediately; otherwise wait for load event
-        if (document.readyState === 'complete') {
-            registerServiceWorker();
-        } else {
-            window.addEventListener('load', registerServiceWorker);
-        }
+        return 0.2126 * linearize(r) + 0.7152 * linearize(g) + 0.0722 * linearize(b);
     }
-
-if (document.readyState === 'complete') {
-  subscribeToPush();
-} else {
-  window.addEventListener('load', subscribeToPush);
-}
-document.getElementById('enableNotifications').addEventListener('click', async () => {
-  await subscribeToPush();
-  // Optionally hide the button after success
-});
-    // ---------- Periodic Sync Toggle Button ----------
-    const periodicBtn = document.getElementById('enablePeriodicSync');
-    if (periodicBtn && 'serviceWorker' in navigator && 'periodicSync' in ServiceWorkerRegistration.prototype) {
-        periodicBtn.style.display = 'inline-block';   // show the button
-
-        let isSyncActive = false;
-
-        // Determine initial state (prefer the actual registration tag)
-        async function checkRegistrationState() {
-            try {
-                const reg = await navigator.serviceWorker.ready;
-                if ('periodicSync' in reg) {
-                    const tags = await reg.periodicSync.getTags();
-                    isSyncActive = tags.includes('periodic-update');
-                }
-            } catch (e) {
-                // fallback to localStorage
-                isSyncActive = localStorage.getItem('periodicSyncActive') === 'true';
-            }
-            updatePeriodicSyncButton();
-        }
-        checkRegistrationState();
-
-        function updatePeriodicSyncButton() {
-            const key = isSyncActive ? 'disablePeriodicSyncBtn' : 'enablePeriodicSyncBtn';
-            periodicBtn.textContent = getNestedValue(uiText[currentLang], key);
-            localStorage.setItem('periodicSyncActive', isSyncActive);
-        }
-        // Expose globally so language change can call it
-        window.updatePeriodicSyncButton = updatePeriodicSyncButton;
-
-        periodicBtn.addEventListener('click', async () => {
-            const reg = await navigator.serviceWorker.ready;
-            if (!('periodicSync' in reg)) return;
-
-            if (isSyncActive) {
-                // Disable
-                try {
-                    await reg.periodicSync.unregister('periodic-update');
-                    isSyncActive = false;
-                    updatePeriodicSyncButton();
-                    alert(getNestedValue(uiText[currentLang], 'periodicSyncDisabled') || 'Background updates disabled.');
-                } catch (err) {
-                    console.error('Unregister failed:', err);
-                    alert('Could not disable background updates.');
-                }
+    function getHue(r, g, b) {
+        const rf = r / 255, gf = g / 255, bf = b / 255;
+        const max = Math.max(rf, gf, bf), min = Math.min(rf, gf, bf), delta = max - min;
+        if (delta === 0) return 0;
+        let hue = 0;
+        if (max === rf) hue = ((gf - bf) / delta) % 6;
+        else if (max === gf) hue = (bf - rf) / delta + 2;
+        else hue = (rf - gf) / delta + 4;
+        hue = Math.round(hue * 60);
+        if (hue < 0) hue += 360;
+        return hue;
+    }
+    function applyCardPalettes() {
+        const isDark = currentTheme === 'dark';
+        document.querySelectorAll('.ED-General-card').forEach(cardEl => {
+            const cardId = cardEl.getAttribute('data-card-id');
+            const card = allCards.find(c => c.id === cardId);
+            if (!card) return;
+            const palette = isDark ? (card.darkModePalette || {}) : (card.lightModePalette || {});
+            const accent = palette.accent || '#4a7fd9';
+            cardEl.style.setProperty('--card-accent', accent);
+            if (palette.iconBg) cardEl.style.setProperty('--ED-General-card-icon-bg', palette.iconBg);
+            else cardEl.style.removeProperty('--ED-General-card-icon-bg');
+            const rgb = hexToRgb(accent);
+            const lum = getLuminance(rgb.r, rgb.g, rgb.b);
+            const hue = getHue(rgb.r, rgb.g, rgb.b);
+            const baseOpacity = 0.06 + (1 - lum) * 0.12;
+            const opacityHover = baseOpacity * 2.1;
+            const darkMultiplier = isDark ? 1.45 : 1;
+            const finalOpacity = Math.min(baseOpacity * darkMultiplier, 0.22);
+            const finalOpacityHover = Math.min(opacityHover * darkMultiplier, 0.40);
+            let offsetX = 0;
+            if (hue >= 0 && hue <= 50) offsetX = 2;
+            else if (hue > 50 && hue <= 100) offsetX = 1;
+            else if (hue >= 200 && hue <= 280) offsetX = -2;
+            else if (hue > 280 && hue <= 330) offsetX = -1;
+            let blurBase = 10, blurHover = 30;
+            if (hue >= 0 && hue <= 100) { blurBase = 12; blurHover = 34; }
+            else if (hue >= 200 && hue <= 300) { blurBase = 8; blurHover = 26; }
+            cardEl.style.setProperty('--card-accent-r', rgb.r);
+            cardEl.style.setProperty('--card-accent-g', rgb.g);
+            cardEl.style.setProperty('--card-accent-b', rgb.b);
+            cardEl.style.setProperty('--card-shadow-opacity', finalOpacity.toFixed(3));
+            cardEl.style.setProperty('--card-shadow-opacity-hover', finalOpacityHover.toFixed(3));
+            cardEl.style.setProperty('--card-shadow-blur', blurBase + 'px');
+            cardEl.style.setProperty('--card-shadow-blur-hover', blurHover + 'px');
+            cardEl.style.setProperty('--card-shadow-offset-x', offsetX + 'px');
+            cardEl.style.setProperty('--card-shadow-offset-y', '3px');
+            cardEl.style.setProperty('--card-shadow-offset-y-hover', (6 + Math.abs(offsetX)) + 'px');
+        });
+    }
+    function renderCardGrid(cards, targetId, categoryClass) {
+        const grid = document.getElementById(targetId);
+        if (!grid) return;
+        const lang = currentLang;
+        grid.innerHTML = '';
+        cards.forEach(card => {
+            const cardLang = card[lang] || card['en'] || {};
+            const cardName = cardLang.name || card.id;
+            const cardDesc = cardLang.description || uiText[lang].noDescription;
+            const firstLetter = cardName.charAt(0).toUpperCase();
+            let iconHTML = '';
+            if (card.imageIcon && card.imageIcon.trim() !== '') {
+                iconHTML = `<img src="${escapeHTML(card.imageIcon)}" alt="${escapeHTML(uiText[lang].imageIconAlt)}" onerror="this.setAttribute('data-error','1');this.nextElementSibling.style.display='flex';" loading="lazy"><span class="ED-General-card__icon-letter">${escapeHTML(firstLetter)}</span>`;
             } else {
-                // Enable
-                try {
-                    const status = await navigator.permissions.query({ name: 'periodic-background-sync' });
-                    if (status.state !== 'granted') {
-                        alert(getNestedValue(uiText[currentLang], 'periodicSyncDenied'));
-                        return;
-                    }
-                    await reg.periodicSync.register('periodic-update', { minInterval: 6 * 60 * 60 * 1000 });
-                    isSyncActive = true;
-                    updatePeriodicSyncButton();
-                    alert(getNestedValue(uiText[currentLang], 'periodicSyncEnabled') || 'Background updates enabled!');
-                } catch (err) {
-                    console.error('Register failed:', err);
-                    alert(getNestedValue(uiText[currentLang], 'periodicSyncDenied'));
-                }
+                iconHTML = `<span class="ED-General-card__icon-letter" style="display:flex;">${escapeHTML(firstLetter)}</span>`;
             }
+            let insideLinksHTML = '';
+            if (card.insideLinks && card.insideLinks.length > 0) {
+                insideLinksHTML = '<div class="ED-General-card__inside-links">' +
+                    card.insideLinks.map(il => {
+                        const linkLang = il[lang] || il['en'] || {};
+                        const linkName = linkLang.name || 'Link';
+                        return `<a href="${escapeHTML(il.url)}" class="ED-General-inside-link" target="_blank" rel="noopener noreferrer" title="${escapeHTML(linkName)}">${escapeHTML(linkName)}<span class="ED-General-inside-link__arrow">↗</span></a>`;
+                    }).join('') + '</div>';
+            }
+            grid.insertAdjacentHTML('beforeend', `
+                <div class="ED-General-card ${categoryClass}" data-card-id="${escapeHTML(card.id)}">
+                    <div class="ED-General-card__icon-container">${iconHTML}</div>
+                    <h3 class="ED-General-card__name">${escapeHTML(cardName)}</h3>
+                    <p class="ED-General-card__description">${escapeHTML(cardDesc)}</p>
+                    ${insideLinksHTML}
+                    <a href="${escapeHTML(card.link)}" class="ED-General-card__main-btn" target="_blank" rel="noopener noreferrer">${uiText[lang].visitBtn}<span class="ED-General-card__main-btn-arrow">→</span></a>
+                </div>
+            `);
         });
     }
-
-// Listen for new version notification from the service worker
-navigator.serviceWorker.addEventListener('message', event => {
-    if (event.data && event.data.type === 'NEW_VERSION_READY') {
-        const banner = document.getElementById('update-banner');
-        if (banner) {
-            banner.style.display = 'flex';
-            // Ensure translation is applied (translatePage already handles it)
-        }
+    function applyTheme() {
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        localStorage.setItem('dashboardTheme', currentTheme);
+        applyCardPalettes();
     }
-});
-document.getElementById('update-reload-btn').addEventListener('click', () => {
-    window.location.reload();
-});
-    // Theme & language toggles
-    const themeToggle = document.getElementById('themeToggle');
-    if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
-    const langSelect = document.getElementById('langSelect');
-    if (langSelect) langSelect.addEventListener('change', function() { setLanguage(this.value); });
-    document.addEventListener('keydown', function(e) {
-        if (e.ctrlKey && e.shiftKey && e.key === 'T') {
-            e.preventDefault();
-            toggleTheme();
+    function toggleTheme() {
+        currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+        applyTheme();
+    }
+    function updateInstallButtonText() {
+        const installBtn = document.getElementById('installBtn');
+        if (installBtn) installBtn.textContent = getNestedValue(uiText[currentLang], 'installBtn') || '📲 Install App';
+    }
+    function updateConnectionStatus() {
+        const dot = document.getElementById('status-dot');
+        const label = document.getElementById('connection-status-label');
+        const statusSpan = document.getElementById('connection-status');
+        if (!dot || !statusSpan) return;
+        const online = navigator.onLine;
+        dot.className = 'status-dot' + (online ? '' : ' offline');
+        if (label) {
+            label.textContent = online
+                ? getNestedValue(uiText[currentLang], 'onlineStatus') || 'Online'
+                : getNestedValue(uiText[currentLang], 'offlineStatus') || 'Offline';
+        }
+        statusSpan.title = online
+            ? (getNestedValue(uiText[currentLang], 'onlineStatus') || 'Online')
+            : (getNestedValue(uiText[currentLang], 'offlineStatus') || 'Offline');
+    }
+    function setupConnectionIndicator() {
+        const statusSpan = document.getElementById('connection-status');
+        if (!statusSpan) return;
+        window.addEventListener('online', updateConnectionStatus);
+        window.addEventListener('offline', updateConnectionStatus);
+        updateConnectionStatus();
+    }
+    function setupOfflineBanner() {
+        const banner = document.getElementById('offline-banner');
+        if (!banner) return;
+        window.addEventListener('offline', () => banner.style.display = 'block');
+        window.addEventListener('online', () => banner.style.display = 'none');
+        if (!navigator.onLine) banner.style.display = 'block';
+    }
+    function setLanguage(lang) {
+        if (lang === currentLang) return;
+        currentLang = lang;
+        localStorage.setItem('dashboardLang', lang);
+        translatePage();
+        updateInstallButtonText();
+        updateConnectionStatus();
+        renderAll();
+    }
+    function renderAll() {
+        for (const [category, config] of Object.entries(categoryConfig)) {
+            renderCardGrid(allCards.filter(c => c.category === category), config.gridId, config.cssClass);
+        }
+        applyCardPalettes();
+    }
+    function escapeHTML(str) {
+        if (typeof str !== 'string') return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    // PWA install
+    let deferredPrompt;
+    const installBtn = document.getElementById('installBtn');
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        if (installBtn) {
+            installBtn.style.display = 'inline-flex';
+            updateInstallButtonText();
         }
     });
-}
+    if (installBtn) {
+        installBtn.addEventListener('click', async () => {
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log('Install outcome:', outcome);
+            deferredPrompt = null;
+            installBtn.style.display = 'none';
+        });
+    }
+    window.addEventListener('appinstalled', () => {
+        deferredPrompt = null;
+        if (installBtn) installBtn.style.display = 'none';
+    });
 
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', init);
-        } else {
-            init();
+    // Convert base64 VAPID public key to Uint8Array
+    function urlBase64ToUint8Array(base64String) {
+        const padding = '='.repeat((4 - base64String.length % 4) % 4);
+        const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+        const rawData = window.atob(base64);
+        const outputArray = new Uint8Array(rawData.length);
+        for (let i = 0; i < rawData.length; ++i) {
+            outputArray[i] = rawData.charCodeAt(i);
         }
-        })();
-    </script>
+        return outputArray;
+    }
+
+    // Store subscription in Supabase
+    async function saveSubscription(subscription) {
+        const SUPABASE_URL = 'https://hmjbzzuresgzwzefjpyt.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtamJ6enVyZXNnend6ZWZqcHl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwMjczNDUsImV4cCI6MjA5NTYwMzM0NX0.44Q-Hkl4Rr9LuQhwryrQklFi809xYGteHgsS9nMG0ro';
+        await fetch(`${SUPABASE_URL}/rest/v1/push_subscriptions`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+            },
+            body: JSON.stringify({ subscription })
+        });
+    }
+
+    // Ask for permission and subscribe
+    async function subscribeToPush() {
+        if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+            console.warn('Push not supported');
+            return;
+        }
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') {
+            console.warn('Notification permission denied');
+            return;
+        }
+        const registration = await navigator.serviceWorker.ready;
+        const existingSubscription = await registration.pushManager.getSubscription();
+        if (existingSubscription) {
+            await saveSubscription(existingSubscription);
+            return;
+        }
+        const subscription = await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array('BO2xV3C8PcVFX-2SqsAyHZgzyDBaC0N7GzDktpoX2J5Pj5Cz9IazAcybQqxe13xYqGnEpoVmXM2jHFqmjXko1kw')
+        });
+        await saveSubscription(subscription);
+        console.log('Push subscription saved');
+    }
+
+    // --- NEW: UI helper for the notification button ---
+    async function updateNotificationUI() {
+        const btn = document.getElementById('enableNotifications');
+        if (!btn) return;
+        if ('Notification' in window) {
+            if (Notification.permission === 'default') {
+                btn.style.display = 'inline-block';   // show button so user can click
+            } else {
+                btn.style.display = 'none';           // already granted or denied – hide it
+                // If already granted, subscribe automatically
+                if (Notification.permission === 'granted') {
+                    await subscribeToPush();
+                }
+            }
+        } else {
+            btn.style.display = 'none';
+        }
+    }
+
+    // ========== Init ==========
+    function init() {
+        currentTheme = localStorage.getItem('dashboardTheme') || 'light';
+        applyTheme();
+        currentLang = localStorage.getItem('dashboardLang') || 'en';
+        translatePage();
+        setupConnectionIndicator();
+        setupOfflineBanner();
+        updateInstallButtonText();
+        renderAll();
+
+        // Service Worker registration
+        if ('serviceWorker' in navigator) {
+            function registerServiceWorker() {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => {
+                        console.log('SW registered:', reg.scope);
+                        if ('SyncManager' in window) {
+                            reg.sync.register('sync-data').catch(() => {});
+                        }
+                    })
+                    .catch(err => console.error('SW registration failed:', err));
+            }
+            if (document.readyState === 'complete') {
+                registerServiceWorker();
+            } else {
+                window.addEventListener('load', registerServiceWorker);
+            }
+        }
+
+        // Notification button click handler (button is in footer, already loaded)
+        const notifBtn = document.getElementById('enableNotifications');
+        if (notifBtn) {
+            notifBtn.addEventListener('click', async () => {
+                await subscribeToPush();
+                updateNotificationUI();
+            });
+        }
+
+        // Show or hide the button (and auto‑subscribe if already allowed)
+        updateNotificationUI();
+
+        // Periodic Sync Toggle Button
+        const periodicBtn = document.getElementById('enablePeriodicSync');
+        if (periodicBtn && 'serviceWorker' in navigator && 'periodicSync' in ServiceWorkerRegistration.prototype) {
+            periodicBtn.style.display = 'inline-block';
+            let isSyncActive = false;
+            async function checkRegistrationState() {
+                try {
+                    const reg = await navigator.serviceWorker.ready;
+                    if ('periodicSync' in reg) {
+                        const tags = await reg.periodicSync.getTags();
+                        isSyncActive = tags.includes('periodic-update');
+                    }
+                } catch (e) {
+                    isSyncActive = localStorage.getItem('periodicSyncActive') === 'true';
+                }
+                updatePeriodicSyncButton();
+            }
+            checkRegistrationState();
+            function updatePeriodicSyncButton() {
+                const key = isSyncActive ? 'disablePeriodicSyncBtn' : 'enablePeriodicSyncBtn';
+                periodicBtn.textContent = getNestedValue(uiText[currentLang], key);
+                localStorage.setItem('periodicSyncActive', isSyncActive);
+            }
+            window.updatePeriodicSyncButton = updatePeriodicSyncButton;
+            periodicBtn.addEventListener('click', async () => {
+                const reg = await navigator.serviceWorker.ready;
+                if (!('periodicSync' in reg)) return;
+                if (isSyncActive) {
+                    try {
+                        await reg.periodicSync.unregister('periodic-update');
+                        isSyncActive = false;
+                        updatePeriodicSyncButton();
+                        alert(getNestedValue(uiText[currentLang], 'periodicSyncDisabled') || 'Background updates disabled.');
+                    } catch (err) {
+                        console.error('Unregister failed:', err);
+                        alert('Could not disable background updates.');
+                    }
+                } else {
+                    try {
+                        const status = await navigator.permissions.query({ name: 'periodic-background-sync' });
+                        if (status.state !== 'granted') {
+                            alert(getNestedValue(uiText[currentLang], 'periodicSyncDenied'));
+                            return;
+                        }
+                        await reg.periodicSync.register('periodic-update', { minInterval: 6 * 60 * 60 * 1000 });
+                        isSyncActive = true;
+                        updatePeriodicSyncButton();
+                        alert(getNestedValue(uiText[currentLang], 'periodicSyncEnabled') || 'Background updates enabled!');
+                    } catch (err) {
+                        console.error('Register failed:', err);
+                        alert(getNestedValue(uiText[currentLang], 'periodicSyncDenied'));
+                    }
+                }
+            });
+        }
+
+        // Listen for NEW_VERSION_READY message from SW (existing update banner)
+        if (navigator.serviceWorker) {
+            navigator.serviceWorker.addEventListener('message', event => {
+                if (event.data && event.data.type === 'NEW_VERSION_READY') {
+                    const banner = document.getElementById('update-banner');
+                    if (banner) {
+                        banner.style.display = 'flex';
+                    }
+                }
+            });
+        }
+
+        document.getElementById('update-reload-btn').addEventListener('click', () => {
+            window.location.reload();
+        });
+
+        // Theme & language toggles
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
+        const langSelect = document.getElementById('langSelect');
+        if (langSelect) langSelect.addEventListener('change', function() { setLanguage(this.value); });
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.shiftKey && e.key === 'T') {
+                e.preventDefault();
+                toggleTheme();
+            }
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+</script>
 </body>
 </html>
