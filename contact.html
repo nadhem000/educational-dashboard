@@ -565,25 +565,28 @@
         }
 
         function renderSocialGrid() {
-            const grid = document.getElementById('socialGrid');
-            if (!grid) return;
-            grid.innerHTML = socialMedias.map(sm => {
-                const name = sm[currentLang]?.mediaName || sm.en.mediaName;
-                const link = sm.mediaLink || '#';
-                const disabled = !sm.mediaLink;
-                const smallIcon = `<span class="ED-General-social-icon-small">${sm.mediaSmallIcon}</span>`;
-                const imgTag = sm.mediaImage
-                    ? `<img src="${sm.mediaImage}" class="ED-General-social-img" alt="${name}"
-                         onerror="this.style.display='none'; this.previousElementSibling.style.display='inline-block';">`
-                    : '';
-                const titleAttr = disabled ? ` title="${t('noLink')}"` : '';
-                return `<a href="${link}" class="ED-General-social-card" target="_blank" rel="noopener"
-                           ${disabled ? 'style="opacity:0.6; pointer-events:none;"' + titleAttr : ''}>
-                            ${sm.mediaImage ? imgTag + smallIcon : smallIcon}
-                            <span>${name}</span>
-                        </a>`;
-            }).join('');
-        }
+    const grid = document.getElementById('socialGrid');
+    if (!grid) return;
+    grid.innerHTML = socialMedias.map(sm => {
+        const name = sm[currentLang]?.mediaName || sm.en.mediaName;
+        const link = sm.mediaLink || '#';
+        const disabled = !sm.mediaLink;
+        // 🔽 NEW: hide the emoji if an image is present
+        const smallIconHidden = sm.mediaImage ? ' style="display:none;"' : '';
+        const smallIcon = `<span class="ED-General-social-icon-small"${smallIconHidden}>${sm.mediaSmallIcon}</span>`;
+        const imgTag = sm.mediaImage
+            ? `<img src="${sm.mediaImage}" class="ED-General-social-img" alt="${name}"
+                 onerror="this.style.display='none'; this.previousElementSibling.style.display='inline-block';">`
+            : '';
+        const titleAttr = disabled ? ` title="${t('noLink')}"` : '';
+        // 🔽 NEW: fallback BEFORE image so onerror can reach it
+        return `<a href="${link}" class="ED-General-social-card" target="_blank" rel="noopener"
+                   ${disabled ? 'style="opacity:0.6; pointer-events:none;"' + titleAttr : ''}>
+                    ${sm.mediaImage ? smallIcon + imgTag : smallIcon}
+                    <span>${name}</span>
+                </a>`;
+    }).join('');
+}
 
 function updateConnectionStatus() {
     const dot = document.getElementById('status-dot');
