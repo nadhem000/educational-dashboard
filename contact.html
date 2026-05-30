@@ -836,6 +836,26 @@
             }).join('');
         }
 
+function updateConnectionStatus() {
+    const dot = document.getElementById('status-dot');
+    const label = document.getElementById('connection-status-label');
+    const statusSpan = document.getElementById('connection-status');
+    if (!dot || !statusSpan) return;
+    const online = navigator.onLine;
+    dot.className = 'status-dot' + (online ? '' : ' offline');
+    if (label) {
+        label.textContent = online ? t('onlineStatus') : t('offlineStatus');
+    }
+    statusSpan.title = online ? t('onlineStatus') : t('offlineStatus');
+}
+
+function setupConnectionIndicator() {
+    const statusSpan = document.getElementById('connection-status');
+    if (!statusSpan) return;
+    window.addEventListener('online', updateConnectionStatus);
+    window.addEventListener('offline', updateConnectionStatus);
+    updateConnectionStatus();
+}
         function translatePage() {
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
@@ -857,6 +877,8 @@
     document.getElementById('profileImg').alt = t('profile.imageAlt');
     const installBtn = document.getElementById('installBtn');
     if (installBtn) installBtn.textContent = t('installBtn');
+    // Refresh connection status tooltip after language change
+    updateConnectionStatus();
 }
 
         // ================== PWA ==================
@@ -958,6 +980,7 @@
         async function init() {
             applyTheme();
             await loadComponents();
+    setupConnectionIndicator();
             translatePage();
             setupPWA();
         }
