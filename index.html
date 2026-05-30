@@ -6,851 +6,359 @@
     <title>Educational Dashboard</title>
 <link rel="icon" type="image/x-icon" href="assets/icons/icon-64x64.png">
     <link rel="manifest" href="/manifest.json" />
+    <link rel="stylesheet" href="/ED-general-common.css">
     <style>
-        :root {
-            --ED-General-color-bg: #f5f1eb;
-            --ED-General-color-bg-secondary: #ede7df;
-            --ED-General-color-surface: #ffffff;
-            --ED-General-color-surface-hover: #fafaf8;
-            --ED-General-color-text-primary: #1e293b;
-            --ED-General-color-text-secondary: #5a6c7d;
-            --ED-General-color-text-tertiary: #8b9aab;
-            --ED-General-color-border: #e2dcd4;
-            --ED-General-color-border-hover: #cbc3b8;
-            --ED-General-color-shadow: rgba(60, 50, 40, 0.07);
-            --ED-General-color-shadow-hover: rgba(60, 50, 40, 0.14);
-            --ED-General-color-accent-default: #4a7fd9;
-            --ED-General-color-accent-light: #e8f1fb;
-            --ED-General-color-accent-soft: #f0f5fc;
-            --ED-General-color-header-bg: #ffffff;
-            --ED-General-color-header-border: #e8e2d9;
-            --ED-General-color-toggle-bg: #e8e2d9;
-            --ED-General-color-toggle-text: #4a5568;
-            --ED-General-color-toggle-active-bg: #4a7fd9;
-            --ED-General-color-toggle-active-text: #ffffff;
-            --ED-General-color-badge-bg: #f0ece5;
-            --ED-General-color-badge-text: #5a6c7d;
-            --ED-General-color-badge-hover-bg: #e4ded5;
-            --ED-General-color-btn-primary-bg: #4a7fd9;
-            --ED-General-color-btn-primary-text: #ffffff;
-            --ED-General-color-btn-primary-hover: #3b6ec4;
-            --ED-General-color-btn-shadow: rgba(0, 0, 0, 0.2);
-            --ED-General-color-icon-container-bg: #f0f4f9;
-            --ED-General-card-radius: 16px;
-            --ED-General-card-padding: 1.5rem;
-            --ED-General-transition-speed: 0.3s;
-            --ED-General-grid-gap: 1.25rem;
-            --ED-General-font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
-                "Noto Sans", "Noto Sans Arabic", sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-            --card-accent-r: 60;
-            --card-accent-g: 50;
-            --card-accent-b: 40;
-            --card-shadow-opacity: 0.10;
-            --card-shadow-opacity-hover: 0.22;
-            --card-shadow-blur: 10px;
-            --card-shadow-blur-hover: 30px;
-            --card-shadow-offset-x: 0px;
-            --card-shadow-offset-y: 3px;
-            --card-shadow-offset-y-hover: 8px;
-            --ED-General-color-header-gradient-start: #fefdfb;
-            --ED-General-color-header-gradient-mid1: #faf8f4;
-            --ED-General-color-header-gradient-mid2: #f6f3ee;
-            --ED-General-color-header-gradient-end: #f2efe8;
-            --ED-General-color-header-accent-gradient-stop: rgba(180, 160, 140, 0.5);
-            --ED-General-color-shadow-rgb: 60, 50, 40;
-            --ED-General-color-accent-rgb: 74, 127, 217;
-            --ED-General-color-icon-sun: #e8a840;
-            --ED-General-color-icon-moon: #7b8cb0;
-            --ED-General-color-icon-sun-glow: rgba(232, 168, 64, 0.3);
-            --ED-General-color-icon-moon-glow: rgba(122, 143, 176, 0.35);
-            --ED-General-color-text-on-accent: #ffffff;
-        }
-        [data-theme="dark"] {
-            --ED-General-color-bg: #171a20;
-            --ED-General-color-bg-secondary: #1e2129;
-            --ED-General-color-surface: #23262f;
-            --ED-General-color-surface-hover: #2a2e38;
-            --ED-General-color-text-primary: #e2e4ea;
-            --ED-General-color-text-secondary: #b0b5c2;
-            --ED-General-color-text-tertiary: #7d8494;
-            --ED-General-color-border: #32353e;
-            --ED-General-color-border-hover: #454952;
-            --ED-General-color-shadow: rgba(0, 0, 0, 0.25);
-            --ED-General-color-shadow-hover: rgba(0, 0, 0, 0.45);
-            --ED-General-color-accent-default: #7aafff;
-            --ED-General-color-accent-light: #1e2d45;
-            --ED-General-color-accent-soft: #1a2535;
-            --ED-General-color-header-bg: #1c1f28;
-            --ED-General-color-header-border: #2a2e38;
-            --ED-General-color-toggle-bg: #2a2e38;
-            --ED-General-color-toggle-text: #b0b5c2;
-            --ED-General-color-toggle-active-bg: #7aafff;
-            --ED-General-color-toggle-active-text: #12151c;
-            --ED-General-color-badge-bg: #2a2e38;
-            --ED-General-color-badge-text: #b0b5c2;
-            --ED-General-color-badge-hover-bg: #353a45;
-            --ED-General-color-btn-primary-bg: #7aafff;
-            --ED-General-color-btn-primary-text: #12151c;
-            --ED-General-color-btn-primary-hover: #6199f0;
-            --ED-General-color-btn-shadow: rgba(0, 0, 0, 0.5);
-            --ED-General-color-icon-container-bg: #252b38;
-            --ED-General-color-header-gradient-start: #1f222d;
-            --ED-General-color-header-gradient-mid1: #1c1f29;
-            --ED-General-color-header-gradient-mid2: #191c24;
-            --ED-General-color-header-gradient-end: #171a20;
-            --ED-General-color-header-accent-gradient-stop: rgba(160, 175, 200, 0.4);
-            --ED-General-color-shadow-rgb: 0, 0, 0;
-            --ED-General-color-accent-rgb: 122, 175, 255;
-            --ED-General-color-icon-sun: #e8a840;
-            --ED-General-color-icon-moon: #c4d0f0;
-            --ED-General-color-icon-sun-glow: rgba(232, 168, 64, 0.3);
-            --ED-General-color-icon-moon-glow: rgba(180, 195, 235, 0.35);
-            --ED-General-color-text-on-accent: #12151c;
-        }
-        [dir="rtl"] {
-            direction: rtl;
-            text-align: right;
-        }
-        [dir="rtl"] .ED-General-card__inside-links {
-            justify-content: flex-end;
-        }
-        [dir="rtl"] .ED-General-header__controls {
-            flex-direction: row-reverse;
-        }
-        [dir="rtl"] .ED-General-card__main-btn .ED-General-card__main-btn-arrow {
-            transform: scaleX(-1);
-        }
-        [dir="rtl"] .ED-General-card__main-btn:hover .ED-General-card__main-btn-arrow {
-            transform: scaleX(-1) translateX(-3px);
-        }
-        [dir="rtl"] .ED-General-inside-link__arrow {
-            transform: scaleX(-1);
-        }
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        html {
-            font-size: 16px;
-            scroll-behavior: smooth;
-        }
-        body {
-            font-family: var(--ED-General-font-stack);
-            background-color: var(--ED-General-color-bg);
-            color: var(--ED-General-color-text-primary);
-            min-height: 100vh;
-            transition: background-color var(--ED-General-transition-speed) ease, color var(--ED-General-transition-speed) ease;
-            line-height: 1.5;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-        .ED-General-header {
-            background: linear-gradient(175deg,
-                    var(--ED-General-color-header-gradient-start) 0%,
-                    var(--ED-General-color-header-gradient-mid1) 25%,
-                    var(--ED-General-color-header-gradient-mid2) 60%,
-                    var(--ED-General-color-header-gradient-end) 100%);
-            border-bottom: 1px solid var(--ED-General-color-header-border);
-            padding: 1.05rem 1.75rem;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            transition: background var(--ED-General-transition-speed) ease,
-                border-color var(--ED-General-transition-speed) ease,
-                box-shadow var(--ED-General-transition-speed) ease;
-            box-shadow:
-                0 1px 4px rgba(var(--ED-General-color-shadow-rgb), 0.04),
-                0 2px 10px rgba(var(--ED-General-color-shadow-rgb), 0.03);
-            backdrop-filter: blur(2px);
-            -webkit-backdrop-filter: blur(2px);
-        }
-        [data-theme="dark"] .ED-General-header {
-            box-shadow:
-                0 1px 4px rgba(var(--ED-General-color-shadow-rgb), 0.25),
-                0 2px 10px rgba(var(--ED-General-color-shadow-rgb), 0.18);
-        }
-        .ED-General-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(105deg,
-                    var(--ED-General-color-accent-default) 0%,
-                    var(--ED-General-color-accent-default) 35%,
-                    var(--ED-General-color-header-accent-gradient-stop) 60%,
-                    transparent 85%);
-            opacity: 0.75;
-            border-radius: 0 0 1px 0;
-            transition: opacity 0.3s ease;
-        }
-        .ED-General-header:hover::before {
-            opacity: 0.95;
-        }
-        .ED-General-header__inner {
-            max-width: 1300px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 0.85rem;
-            position: relative;
-            z-index: 1;
-        }
-        .ED-General-header__title {
-            font-size: 1.38rem;
-            font-weight: 750;
-            letter-spacing: -0.025em;
-            color: var(--ED-General-color-text-primary);
-            white-space: nowrap;
-            transition: color var(--ED-General-transition-speed) ease,
-                text-shadow 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.45rem;
-            text-shadow: 0 1px 2px rgba(var(--ED-General-color-shadow-rgb), 0.03);
-        }
-        [data-theme="dark"] .ED-General-header__title {
-            text-shadow: 0 1px 3px rgba(var(--ED-General-color-shadow-rgb), 0.2);
-        }
-        .ED-General-header__title-icon {
-            width: 26px;
-            height: 26px;
-            object-fit: contain;
-            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-            filter: drop-shadow(0 1px 2px rgba(var(--ED-General-color-shadow-rgb), 0.08));
-        }
-        .ED-General-header__title:hover .ED-General-header__title-icon {
-            transform: rotate(-5deg) scale(1.12);
-        }
-        .ED-General-header__controls {
-            display: flex;
-            align-items: center;
-            gap: 0.65rem;
-            flex-wrap: wrap;
-        }
-        .ED-General-lang-select {
-            padding: 0.48rem 2.1rem 0.48rem 0.9rem;
-            border-radius: 22px;
-            border: 1.5px solid var(--ED-General-color-border);
-            background: var(--ED-General-color-surface);
-            color: var(--ED-General-color-text-primary);
-            cursor: pointer;
-            font-size: 0.82rem;
-            font-weight: 600;
-            font-family: var(--ED-General-font-stack);
-            transition: all 0.22s ease;
-            white-space: nowrap;
-            letter-spacing: 0.01em;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            box-shadow: 0 1px 3px rgba(var(--ED-General-color-shadow-rgb), 0.05);
-            position: relative;
-        }
-        .ED-General-lang-select::after {
-            content: '';
-            position: absolute;
-            right: 0.7rem;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 0;
-            height: 0;
-            border-left: 5px solid transparent;
-            border-right: 5px solid transparent;
-            border-top: 6px solid var(--ED-General-color-text-secondary);
-            pointer-events: none;
-            transition: border-top-color 0.2s ease;
-        }
-        [data-theme="dark"] .ED-General-lang-select::after {
-            border-top-color: var(--ED-General-color-text-secondary);
-        }
-        .ED-General-lang-select:hover {
-            border-color: var(--ED-General-color-accent-default);
-            background-color: var(--ED-General-color-accent-soft);
-            box-shadow: 0 2px 8px rgba(var(--ED-General-color-accent-rgb), 0.12);
-        }
-        .ED-General-lang-select:focus {
-            outline: none;
-            border-color: var(--ED-General-color-accent-default);
-            box-shadow: 0 0 0 3.5px rgba(var(--ED-General-color-accent-rgb), 0.14);
-        }
-        .ED-General-theme-toggle {
-            width: 41px;
-            height: 41px;
-            border-radius: 50%;
-            border: 1.5px solid var(--ED-General-color-border);
-            background: var(--ED-General-color-surface);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
-            color: var(--ED-General-color-text-primary);
-            font-size: 1.2rem;
-            flex-shrink: 0;
-            box-shadow: 0 1px 4px rgba(var(--ED-General-color-shadow-rgb), 0.06);
-            position: relative;
-            overflow: hidden;
-        }
-        .ED-General-theme-toggle::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 50%;
-            background: radial-gradient(circle at center,
-                    var(--ED-General-color-accent-default) 0%,
-                    transparent 70%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .ED-General-theme-toggle:hover::after {
-            opacity: 0.06;
-        }
-        .ED-General-theme-toggle:hover {
-            border-color: var(--ED-General-color-accent-default);
-            background: var(--ED-General-color-accent-soft);
-            box-shadow: 0 4px 16px rgba(var(--ED-General-color-accent-rgb), 0.15);
-            transform: scale(1.06);
-        }
-        .ED-General-theme-toggle:active {
-            transform: scale(0.94);
-            transition: 0.1s ease;
-        }
-        .ED-General-theme-toggle .ED-General-icon-sun,
-        .ED-General-theme-toggle .ED-General-icon-moon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            line-height: 1;
-            transition: all 0.38s cubic-bezier(0.4, 0, 0.2, 1);
-            position: absolute;
-            pointer-events: none;
-        }
-        .ED-General-theme-toggle .ED-General-icon-sun {
-            opacity: 1;
-            transform: rotate(0deg) scale(1);
-            color: var(--ED-General-color-icon-sun);
-            filter: drop-shadow(0 0 3px var(--ED-General-color-icon-sun-glow));
-        }
-        .ED-General-theme-toggle .ED-General-icon-moon {
-            opacity: 0;
-            transform: rotate(-90deg) scale(0.5);
-            color: var(--ED-General-color-icon-moon);
-        }
-        [data-theme="dark"] .ED-General-theme-toggle .ED-General-icon-sun {
-            opacity: 0;
-            transform: rotate(90deg) scale(0.5);
-            filter: none;
-        }
-        [data-theme="dark"] .ED-General-theme-toggle .ED-General-icon-moon {
-            opacity: 1;
-            transform: rotate(0deg) scale(1);
-            color: var(--ED-General-color-icon-moon);
-            filter: drop-shadow(0 0 4px var(--ED-General-color-icon-moon-glow));
-        }
-        .ED-General-header-btn {
-            background: var(--ED-General-color-surface);
-            border: 1.5px solid var(--ED-General-color-border);
-            border-radius: 22px;
-            padding: 0.45rem 1rem;
-            font-size: 0.82rem;
-            font-weight: 600;
-            color: var(--ED-General-color-text-primary);
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.35rem;
-            transition: all 0.22s ease;
-            white-space: nowrap;
-            font-family: var(--ED-General-font-stack);
-            box-shadow: 0 1px 3px rgba(var(--ED-General-color-shadow-rgb), 0.05);
-        }
-        .ED-General-header-btn:hover {
-            border-color: var(--ED-General-color-accent-default);
-            background: var(--ED-General-color-accent-soft);
-            box-shadow: 0 2px 8px rgba(var(--ED-General-color-accent-rgb), 0.12);
-        }
-        .ED-General-header-btn:active {
-            transform: scale(0.96);
-        }
-        /* Connection status dot */
-        #connection-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            font-size: 0.82rem;
-            font-weight: 600;
-            color: var(--ED-General-color-text-secondary);
-            white-space: nowrap;
-        }
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            display: inline-block;
-            background-color: #4caf50;
-            box-shadow: 0 0 6px rgba(76, 175, 80, 0.6);
-            transition: background-color 0.3s, box-shadow 0.3s;
-        }
-        .status-dot.offline {
-            background-color: #f44336;
-            box-shadow: 0 0 6px rgba(244, 67, 54, 0.6);
-        }
-        .ED-General-main {
-            max-width: 1300px;
-            margin: 0 auto;
-            padding: 1.75rem 1.5rem 3rem;
-        }
-        .ED-General-main__subtitle {
-            font-size: 0.9rem;
-            color: var(--ED-General-color-text-tertiary);
-            margin-bottom: 1.5rem;
-            transition: color var(--ED-General-transition-speed) ease;
-            letter-spacing: 0.02em;
-        }
-        .ED-General-card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: var(--ED-General-grid-gap);
-        }
-        .ED-General-card {
-            background: var(--ED-General-color-surface);
-            border: 1px solid var(--ED-General-color-border);
-            border-radius: var(--ED-General-card-radius);
-            padding: var(--ED-General-card-padding);
-            display: flex;
-            flex-direction: column;
-            gap: 0.85rem;
-            transition: all var(--ED-General-transition-speed) ease;
-            box-shadow:
-                0 var(--card-shadow-offset-y, 3px) var(--card-shadow-blur, 10px) rgba(var(--card-accent-r, 60), var(--card-accent-g, 50), var(--card-accent-b, 40), var(--card-shadow-opacity, 0.10)),
-                0 1px 4px rgba(var(--card-accent-r, 60), var(--card-accent-g, 50), var(--card-accent-b, 40), calc(var(--card-shadow-opacity, 0.10) * 0.55));
-            position: relative;
-            overflow: hidden;
-            cursor: default;
-            --card-accent: var(--ED-General-color-accent-default);
-        }
-        .ED-General-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: var(--card-accent);
-            border-radius: 0 0 3px 3px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .ED-General-card:hover {
-            border-color: var(--card-accent);
-            box-shadow:
-                0 var(--card-shadow-offset-y-hover, 8px) var(--card-shadow-blur-hover, 30px) rgba(var(--card-accent-r, 60), var(--card-accent-g, 50), var(--card-accent-b, 40), var(--card-shadow-opacity-hover, 0.22)),
-                0 2px 8px rgba(var(--card-accent-r, 60), var(--card-accent-g, 50), var(--card-accent-b, 40), calc(var(--card-shadow-opacity-hover, 0.22) * 0.45));
-            transform: translateY(-3px);
-            background: var(--ED-General-color-surface-hover);
-        }
-        .ED-General-card:hover::before {
-            opacity: 1;
-        }
-        .ED-General-card__icon-container {
-            width: 52px;
-            height: 52px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--ED-General-card-icon-bg, var(--ED-General-color-icon-container-bg));
-            flex-shrink: 0;
-            transition: background 0.3s ease, transform 0.3s ease;
-            overflow: hidden;
-        }
-        .ED-General-card:hover .ED-General-card__icon-container {
-            transform: scale(1.05);
-        }
-        .ED-General-card__icon-container img {
-            width: 38px;
-            height: 38px;
-            object-fit: contain;
-            border-radius: 6px;
-        }
-        .ED-General-card__icon-letter {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: var(--card-accent);
-            text-transform: uppercase;
-            line-height: 1;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
-        }
-        .ED-General-card__icon-container img[data-error] {
-            display: none;
-        }
-        .ED-General-card__icon-container img[data-error]+.ED-General-card__icon-letter {
-            display: flex;
-        }
-        .ED-General-card__name {
-            font-size: 1.1rem;
-            font-weight: 700;
-            letter-spacing: -0.01em;
-            color: var(--ED-General-color-text-primary);
-        }
-        .ED-General-card__description {
-            font-size: 0.875rem;
-            color: var(--ED-General-color-text-secondary);
-            line-height: 1.55;
-            flex-grow: 1;
-        }
-        .ED-General-card__inside-links {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.4rem;
-            margin-top: 0.1rem;
-        }
-        .ED-General-inside-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-            padding: 0.3rem 0.65rem;
-            border-radius: 14px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            text-decoration: none;
-            background: var(--ED-General-color-badge-bg);
-            color: var(--ED-General-color-badge-text);
-            transition: all 0.2s ease;
-            white-space: nowrap;
-            font-family: var(--ED-General-font-stack);
-        }
-        .ED-General-inside-link:hover {
-            background: var(--card-accent);
-            color: var(--ED-General-color-text-on-accent);
-        }
-        .ED-General-inside-link__arrow {
-            font-size: 0.7rem;
-            opacity: 0.7;
-            transition: transform 0.2s ease;
-        }
-        .ED-General-inside-link:hover .ED-General-inside-link__arrow {
-            opacity: 1;
-            transform: translateX(2px);
-        }
-        .ED-General-card__main-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.4rem;
-            padding: 0.55rem 1.1rem;
-            border-radius: 22px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-decoration: none;
-            border: none;
-            background: var(--card-accent);
-            color: var(--ED-General-color-text-on-accent);
-            transition: all 0.25s ease;
-            font-family: var(--ED-General-font-stack);
-            align-self: flex-start;
-            margin-top: 0.2rem;
-        }
-        .ED-General-card__main-btn:hover {
-            filter: brightness(0.9);
-            box-shadow: 0 4px 14px var(--ED-General-color-btn-shadow);
-            transform: translateY(-1px);
-        }
-        .ED-General-card__main-btn-arrow {
-            display: inline-block;
-            font-size: 1rem;
-            font-weight: 700;
-            transition: transform 0.25s ease;
-            line-height: 1;
-        }
-        .ED-General-card__main-btn:hover .ED-General-card__main-btn-arrow {
-            transform: translateX(3px);
-        }
-        .ED-General-card--education {
-            border-radius: var(--ED-General-card-radius);
-        }
-        .ED-General-card--others {
-            border-radius: 12px 20px 12px 20px;
-        }
-        .ED-General-card--games {
-            border-radius: 20px 5px 20px 5px;
-        }
-        .ED-General-card--news {
-            border-radius: 4px 20px 4px 20px;
-        }
-        .ED-General-card--obsolete {
-            border-radius: 8px 22px 8px 22px;
-            opacity: 0.85;
-            filter: grayscale(0.2);
-        }
-        .ED-General-section-title {
-            font-size: 1.25rem;
-            font-weight: 650;
-            margin: 2rem 0 1rem;
-            padding-bottom: 0.35rem;
-            border-bottom: 1px solid var(--ED-General-color-border);
-            color: var(--ED-General-color-text-primary);
-            transition: color var(--ED-General-transition-speed) ease, border-color var(--ED-General-transition-speed) ease;
-        }
-        .ED-General-footer {
-            border-top: 1px solid var(--ED-General-color-border);
-            padding: 2rem 0 1.75rem;
-            font-size: 0.8rem;
-            color: var(--ED-General-color-text-tertiary);
-            transition: all var(--ED-General-transition-speed) ease;
-            background: linear-gradient(180deg,
-                    var(--ED-General-color-bg-secondary) 0%,
-                    var(--ED-General-color-bg) 60%);
-            box-shadow: 0 -1px 8px rgba(var(--ED-General-color-shadow-rgb), 0.04);
-            position: relative;
-        }
-        [data-theme="dark"] .ED-General-footer {
-            background: linear-gradient(180deg,
-                    var(--ED-General-color-bg-secondary) 0%,
-                    var(--ED-General-color-bg) 55%);
-            box-shadow: 0 -1px 8px rgba(var(--ED-General-color-shadow-rgb), 0.3);
-        }
-        .ED-General-footer::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 55px;
-            height: 3px;
-            background: var(--ED-General-color-accent-default);
-            border-radius: 0 0 3px 3px;
-            opacity: 0.55;
-            transition: width 0.3s ease, opacity 0.3s ease;
-        }
-        .ED-General-footer:hover::before {
-            width: 70px;
-            opacity: 0.75;
-        }
-        .ED-General-footer__grid {
-            display: grid;
-            grid-template-columns: 1fr 1.4fr 1fr;
-            gap: 2rem;
-            padding: 0 1.75rem;
-            max-width: 1300px;
-            margin: 0 auto;
-            align-items: start;
-        }
-        .ED-General-footer__col {
-            display: flex;
-            flex-direction: column;
-            gap: 0.55rem;
-        }
-        .ED-General-footer__col:first-child {
-            font-weight: 550;
-            letter-spacing: 0.015em;
-            color: var(--ED-General-color-text-secondary);
-        }
-        .ED-General-footer__col:nth-child(2) {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-            gap: 0.55rem 1.1rem;
-            align-items: center;
-        }
-        .ED-General-footer__col:last-child {
-            text-align: right;
-            gap: 0.35rem;
-        }
-        [dir="rtl"] .ED-General-footer__col:last-child {
-            text-align: left;
-        }
-        .ED-General-footer a {
-            color: var(--ED-General-color-text-secondary);
-            text-decoration: none;
-            font-weight: 550;
-            transition: all 0.22s ease;
-            position: relative;
-            width: fit-content;
-            padding: 0.2rem 0;
-        }
-        .ED-General-footer a::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            width: 0;
-            height: 1.5px;
-            background: var(--ED-General-color-accent-default);
-            border-radius: 1px;
-            transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .ED-General-footer a:hover {
-            color: var(--ED-General-color-accent-default);
-        }
-        .ED-General-footer a:hover::after {
-            width: 100%;
-        }
-        .ED-General-footer span {
-            display: block;
-            line-height: 1.5;
-        }
-        .ED-General-footer__col:last-child span {
-            font-size: 0.76rem;
-            color: var(--ED-General-color-text-tertiary);
-            letter-spacing: 0.01em;
-        }
-        /* Offline banner */
-        .ED-General-offline-banner {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--ED-General-color-accent-default);
-            color: var(--ED-General-color-text-on-accent);
-            text-align: center;
-            padding: 0.5rem;
-            z-index: 1000;
-            font-weight: 600;
-            font-size: 0.9rem;
-            box-shadow: 0 -2px 8px rgba(var(--ED-General-color-shadow-rgb), 0.3);
-            display: none;
-        }
-        /* update banner */
-.ED-General-update-banner {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: var(--ED-General-color-accent-default);
-    color: var(--ED-General-color-text-on-accent);
-    text-align: center;
-    padding: 0.8rem;
-    z-index: 1000;
+       :root {
+    --ED-General-color-bg: #f5f1eb;
+    --ED-General-color-bg-secondary: #ede7df;
+    --ED-General-color-surface: #ffffff;
+    --ED-General-color-surface-hover: #fafaf8;
+    --ED-General-color-text-primary: #1e293b;
+    --ED-General-color-text-secondary: #5a6c7d;
+    --ED-General-color-text-tertiary: #8b9aab;
+    --ED-General-color-border: #e2dcd4;
+    --ED-General-color-border-hover: #cbc3b8;
+    --ED-General-color-shadow: rgba(60, 50, 40, 0.07);
+    --ED-General-color-shadow-hover: rgba(60, 50, 40, 0.14);
+    --ED-General-color-accent-default: #4a7fd9;
+    --ED-General-color-accent-light: #e8f1fb;
+    --ED-General-color-accent-soft: #f0f5fc;
+    --ED-General-color-header-bg: #ffffff;
+    --ED-General-color-header-border: #e8e2d9;
+    --ED-General-color-toggle-bg: #e8e2d9;
+    --ED-General-color-toggle-text: #4a5568;
+    --ED-General-color-toggle-active-bg: #4a7fd9;
+    --ED-General-color-toggle-active-text: #ffffff;
+    --ED-General-color-badge-bg: #f0ece5;
+    --ED-General-color-badge-text: #5a6c7d;
+    --ED-General-color-badge-hover-bg: #e4ded5;
+    --ED-General-color-btn-primary-bg: #4a7fd9;
+    --ED-General-color-btn-primary-text: #ffffff;
+    --ED-General-color-btn-primary-hover: #3b6ec4;
+    --ED-General-color-btn-shadow: rgba(0, 0, 0, 0.2);
+    --ED-General-color-icon-container-bg: #f0f4f9;
+    --ED-General-card-radius: 16px;
+    --ED-General-card-padding: 1.5rem;
+    --ED-General-transition-speed: 0.3s;
+    --ED-General-grid-gap: 1.25rem;
+    --ED-General-font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+        "Noto Sans", "Noto Sans Arabic", sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    --card-accent-r: 60;
+    --card-accent-g: 50;
+    --card-accent-b: 40;
+    --card-shadow-opacity: 0.10;
+    --card-shadow-opacity-hover: 0.22;
+    --card-shadow-blur: 10px;
+    --card-shadow-blur-hover: 30px;
+    --card-shadow-offset-x: 0px;
+    --card-shadow-offset-y: 3px;
+    --card-shadow-offset-y-hover: 8px;
+    --ED-General-color-header-gradient-start: #fefdfb;
+    --ED-General-color-header-gradient-mid1: #faf8f4;
+    --ED-General-color-header-gradient-mid2: #f6f3ee;
+    --ED-General-color-header-gradient-end: #f2efe8;
+    --ED-General-color-header-accent-gradient-stop: rgba(180, 160, 140, 0.5);
+    --ED-General-color-shadow-rgb: 60, 50, 40;
+    --ED-General-color-accent-rgb: 74, 127, 217;
+    --ED-General-color-icon-sun: #e8a840;
+    --ED-General-color-icon-moon: #7b8cb0;
+    --ED-General-color-icon-sun-glow: rgba(232, 168, 64, 0.3);
+    --ED-General-color-icon-moon-glow: rgba(122, 143, 176, 0.35);
+    --ED-General-color-text-on-accent: #ffffff;
+}
+
+[data-theme="dark"] {
+    --ED-General-color-bg: #171a20;
+    --ED-General-color-bg-secondary: #1e2129;
+    --ED-General-color-surface: #23262f;
+    --ED-General-color-surface-hover: #2a2e38;
+    --ED-General-color-text-primary: #e2e4ea;
+    --ED-General-color-text-secondary: #b0b5c2;
+    --ED-General-color-text-tertiary: #7d8494;
+    --ED-General-color-border: #32353e;
+    --ED-General-color-border-hover: #454952;
+    --ED-General-color-shadow: rgba(0, 0, 0, 0.25);
+    --ED-General-color-shadow-hover: rgba(0, 0, 0, 0.45);
+    --ED-General-color-accent-default: #7aafff;
+    --ED-General-color-accent-light: #1e2d45;
+    --ED-General-color-accent-soft: #1a2535;
+    --ED-General-color-header-bg: #1c1f28;
+    --ED-General-color-header-border: #2a2e38;
+    --ED-General-color-toggle-bg: #2a2e38;
+    --ED-General-color-toggle-text: #b0b5c2;
+    --ED-General-color-toggle-active-bg: #7aafff;
+    --ED-General-color-toggle-active-text: #12151c;
+    --ED-General-color-badge-bg: #2a2e38;
+    --ED-General-color-badge-text: #b0b5c2;
+    --ED-General-color-badge-hover-bg: #353a45;
+    --ED-General-color-btn-primary-bg: #7aafff;
+    --ED-General-color-btn-primary-text: #12151c;
+    --ED-General-color-btn-primary-hover: #6199f0;
+    --ED-General-color-btn-shadow: rgba(0, 0, 0, 0.5);
+    --ED-General-color-icon-container-bg: #252b38;
+    --ED-General-color-header-gradient-start: #1f222d;
+    --ED-General-color-header-gradient-mid1: #1c1f29;
+    --ED-General-color-header-gradient-mid2: #191c24;
+    --ED-General-color-header-gradient-end: #171a20;
+    --ED-General-color-header-accent-gradient-stop: rgba(160, 175, 200, 0.4);
+    --ED-General-color-shadow-rgb: 0, 0, 0;
+    --ED-General-color-accent-rgb: 122, 175, 255;
+    --ED-General-color-icon-sun: #e8a840;
+    --ED-General-color-icon-moon: #c4d0f0;
+    --ED-General-color-icon-sun-glow: rgba(232, 168, 64, 0.3);
+    --ED-General-color-icon-moon-glow: rgba(180, 195, 235, 0.35);
+    --ED-General-color-text-on-accent: #12151c;
+}
+
+[dir="rtl"] {
+    direction: rtl;
+    text-align: right;
+}
+
+[dir="rtl"] .ED-General-card__inside-links {
+    justify-content: flex-end;
+}
+
+[dir="rtl"] .ED-General-card__main-btn .ED-General-card__main-btn-arrow {
+    transform: scaleX(-1);
+}
+
+[dir="rtl"] .ED-General-card__main-btn:hover .ED-General-card__main-btn-arrow {
+    transform: scaleX(-1) translateX(-3px);
+}
+
+[dir="rtl"] .ED-General-inside-link__arrow {
+    transform: scaleX(-1);
+}
+
+.ED-General-main {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 1.75rem 1.5rem 3rem;
+}
+
+.ED-General-main__subtitle {
+    font-size: 0.9rem;
+    color: var(--ED-General-color-text-tertiary);
+    margin-bottom: 1.5rem;
+    transition: color var(--ED-General-transition-speed) ease;
+    letter-spacing: 0.02em;
+}
+
+.ED-General-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--ED-General-grid-gap);
+}
+
+.ED-General-card {
+    background: var(--ED-General-color-surface);
+    border: 1px solid var(--ED-General-color-border);
+    border-radius: var(--ED-General-card-radius);
+    padding: var(--ED-General-card-padding);
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    gap: 0.85rem;
+    transition: all var(--ED-General-transition-speed) ease;
+    box-shadow: 0 var(--card-shadow-offset-y, 3px) var(--card-shadow-blur, 10px)
+                rgba(var(--card-accent-r, 60), var(--card-accent-g, 50), var(--card-accent-b, 40), var(--card-shadow-opacity, 0.10)),
+                0 1px 4px rgba(var(--card-accent-r, 60), var(--card-accent-g, 50), var(--card-accent-b, 40), calc(var(--card-shadow-opacity, 0.10) * 0.55));
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+    --card-accent: var(--ED-General-color-accent-default);
+}
+
+.ED-General-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--card-accent);
+    border-radius: 0 0 3px 3px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.ED-General-card:hover {
+    border-color: var(--card-accent);
+    box-shadow: 0 var(--card-shadow-offset-y-hover, 8px) var(--card-shadow-blur-hover, 30px)
+                rgba(var(--card-accent-r, 60), var(--card-accent-g, 50), var(--card-accent-b, 40), var(--card-shadow-opacity-hover, 0.22)),
+                0 2px 8px rgba(var(--card-accent-r, 60), var(--card-accent-g, 50), var(--card-accent-b, 40), calc(var(--card-shadow-opacity-hover, 0.22) * 0.45));
+    transform: translateY(-3px);
+    background: var(--ED-General-color-surface-hover);
+}
+
+.ED-General-card:hover::before { opacity: 1; }
+
+.ED-General-card__icon-container {
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    display: flex;
     align-items: center;
-    gap: 1rem;
-    font-weight: 600;
-    box-shadow: 0 -2px 10px rgba(var(--ED-General-color-shadow-rgb), 0.3);
+    justify-content: center;
+    background: var(--ED-General-card-icon-bg, var(--ED-General-color-icon-container-bg));
+    flex-shrink: 0;
+    transition: background 0.3s ease, transform 0.3s ease;
+    overflow: hidden;
 }
-.ED-General-update-banner button {
-    background: var(--ED-General-color-text-on-accent);
-    color: var(--ED-General-color-accent-default);
-    border: none;
-    border-radius: 20px;
-    padding: 0.4rem 1.2rem;
-    font-weight: 600;
-    cursor: pointer;
+
+.ED-General-card:hover .ED-General-card__icon-container { transform: scale(1.05); }
+
+.ED-General-card__icon-container img {
+    width: 38px; height: 38px;
+    object-fit: contain;
+    border-radius: 6px;
 }
-/* ========== Footer Buttons Styling ========== */
-.ED-General-footer-btn {
+
+.ED-General-card__icon-letter {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--card-accent);
+    text-transform: uppercase;
+    line-height: 1;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 100%; height: 100%;
+}
+
+.ED-General-card__icon-container img[data-error] { display: none; }
+.ED-General-card__icon-container img[data-error] + .ED-General-card__icon-letter { display: flex; }
+
+.ED-General-card__name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--ED-General-color-text-primary);
+}
+
+.ED-General-card__description {
+    font-size: 0.875rem;
+    color: var(--ED-General-color-text-secondary);
+    line-height: 1.55;
+    flex-grow: 1;
+}
+
+.ED-General-card__inside-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.1rem;
+}
+
+.ED-General-inside-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.3rem 0.65rem;
+    border-radius: 14px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-decoration: none;
+    background: var(--ED-General-color-badge-bg);
+    color: var(--ED-General-color-badge-text);
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    font-family: var(--ED-General-font-stack);
+}
+
+.ED-General-inside-link:hover {
+    background: var(--card-accent);
+    color: var(--ED-General-color-text-on-accent);
+}
+
+.ED-General-inside-link__arrow {
+    font-size: 0.7rem;
+    opacity: 0.7;
+    transition: transform 0.2s ease;
+}
+
+.ED-General-inside-link:hover .ED-General-inside-link__arrow {
+    opacity: 1;
+    transform: translateX(2px);
+}
+
+.ED-General-card__main-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1.1rem;
-    border-radius: 32px;
-    font-size: 0.8rem;
+    gap: 0.4rem;
+    padding: 0.55rem 1.1rem;
+    border-radius: 22px;
+    font-size: 0.85rem;
     font-weight: 600;
+    text-decoration: none;
+    border: none;
+    background: var(--card-accent);
+    color: var(--ED-General-color-text-on-accent);
+    transition: all 0.25s ease;
     font-family: var(--ED-General-font-stack);
-    border: 1.5px solid transparent;
-    background: var(--ED-General-color-surface);
+    align-self: flex-start;
+    margin-top: 0.2rem;
+}
+
+.ED-General-card__main-btn:hover {
+    filter: brightness(0.9);
+    box-shadow: 0 4px 14px var(--ED-General-color-btn-shadow);
+    transform: translateY(-1px);
+}
+
+.ED-General-card__main-btn-arrow {
+    display: inline-block;
+    font-size: 1rem;
+    font-weight: 700;
+    transition: transform 0.25s ease;
+    line-height: 1;
+}
+
+.ED-General-card__main-btn:hover .ED-General-card__main-btn-arrow {
+    transform: translateX(3px);
+}
+
+.ED-General-card--education { border-radius: var(--ED-General-card-radius); }
+.ED-General-card--others    { border-radius: 12px 20px 12px 20px; }
+.ED-General-card--games     { border-radius: 20px 5px 20px 5px; }
+.ED-General-card--news      { border-radius: 4px 20px 4px 20px; }
+.ED-General-card--obsolete  { border-radius: 8px 22px 8px 22px; opacity: 0.85; filter: grayscale(0.2); }
+
+.ED-General-section-title {
+    font-size: 1.25rem;
+    font-weight: 650;
+    margin: 2rem 0 1rem;
+    padding-bottom: 0.35rem;
+    border-bottom: 1px solid var(--ED-General-color-border);
     color: var(--ED-General-color-text-primary);
-    cursor: pointer;
-    transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-    box-shadow: 0 1px 3px rgba(var(--ED-General-color-shadow-rgb), 0.06);
-    white-space: nowrap;
-    letter-spacing: 0.01em;
+    transition: color var(--ED-General-transition-speed) ease,
+                border-color var(--ED-General-transition-speed) ease;
 }
 
-.ED-General-footer-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(var(--ED-General-color-shadow-rgb), 0.12);
-    border-color: var(--ED-General-color-accent-default);
-    background: var(--ED-General-color-accent-soft);
-    color: var(--ED-General-color-accent-default);
-}
-
-.ED-General-footer-btn:active {
-    transform: translateY(1px);
-    transition: 0.05s linear;
-}
-
-/* Sync button (background updates) */
-.ED-General-footer-btn--sync {
-    background: linear-gradient(135deg, var(--ED-General-color-surface) 0%, var(--ED-General-color-bg-secondary) 100%);
-    border-color: var(--ED-General-color-border);
-}
-
-.ED-General-footer-btn--sync:hover {
-    background: var(--ED-General-color-accent-default);
-    border-color: var(--ED-General-color-accent-default);
-    color: var(--ED-General-color-text-on-accent);
-}
-
-/* Notifications button */
-.ED-General-footer-btn--notify {
-    background: var(--ED-General-color-surface);
-    border-color: var(--ED-General-color-accent-default);
-    color: var(--ED-General-color-accent-default);
-}
-
-.ED-General-footer-btn--notify:hover {
-    background: var(--ED-General-color-accent-default);
-    color: var(--ED-General-color-text-on-accent);
-    border-color: var(--ED-General-color-accent-default);
-}
-
-/* Adjust button spacing inside footer columns */
-.ED-General-footer__col {
-    gap: 0.75rem;
-}
-
-.ED-General-footer__col .ED-General-footer-btn {
-    margin-top: 0.15rem;
-}
-
-/* RTL support */
-[dir="rtl"] .ED-General-footer-btn {
-    flex-direction: row-reverse;
-}
-        @media (max-width: 640px) {
-            .ED-General-card-grid { grid-template-columns: 1fr; gap: 1rem; }
-            .ED-General-header__inner { flex-direction: column; align-items: flex-start; gap: 0.6rem; }
-            .ED-General-header__controls { width: 100%; justify-content: flex-start; }
-            .ED-General-main { padding: 1rem 0.75rem 2rem; }
-            .ED-General-card { padding: 1.15rem; }
-            .ED-General-card__icon-container { width: 42px; height: 42px; border-radius: 12px; }
-            .ED-General-card__name { font-size: 1rem; }
-            .ED-General-footer__grid { grid-template-columns: 1fr; text-align: center; gap: 1.25rem; }
-            .ED-General-footer__col { align-items: center; }
-            .ED-General-footer__col:nth-child(2) { justify-content: center; }
-            .ED-General-footer__col:last-child { text-align: center; align-items: center; }
-            .ED-General-footer a::after { left: 50%; transform: translateX(-50%); }
-            .ED-General-footer a:hover::after { width: 55%; }
-    .ED-General-footer-btn {
-        width: 100%;
-        justify-content: center;
-        padding: 0.6rem 1rem;
-        font-size: 0.85rem;
+/* ---------- Responsive (only card‑related parts remain) ---------- */
+@media (max-width: 640px) {
+    .ED-General-card-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
     }
-    .ED-General-footer__col:first-child {
-        align-items: stretch;
+    .ED-General-main {
+        padding: 1rem 0.75rem 2rem;
     }
-        }
-        @media (min-width: 641px) and (max-width: 1024px) {
-            .ED-General-card-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
-            .ED-General-footer__grid { grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-            .ED-General-footer__col:last-child { grid-column: 1 / -1; text-align: center; align-items: center; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 1rem; }
-        }
+    .ED-General-card {
+        padding: 1.15rem;
+    }
+    .ED-General-card__icon-container {
+        width: 42px; height: 42px;
+        border-radius: 12px;
+    }
+    .ED-General-card__name {
+        font-size: 1rem;
+    }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+    .ED-General-card-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+}
     </style>
 </head>
 <body>
