@@ -1,393 +1,394 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light" dir="ltr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Educational Dashboard</title>
-<link rel="icon" type="image/x-icon" href="assets/icons/icon-64x64.png">
-    <link rel="manifest" href="/manifest.json" />
-    <link rel="stylesheet" href="/ED-general-common.css">
-    <style>
-       :root {
-    --ED-General-color-bg: #f5f1eb;
-    --ED-General-color-bg-secondary: #ede7df;
-    --ED-General-color-surface: #ffffff;
-    --ED-General-color-surface-hover: #fafaf8;
-    --ED-General-color-text-primary: #1e293b;
-    --ED-General-color-text-secondary: #5a6c7d;
-    --ED-General-color-text-tertiary: #8b9aab;
-    --ED-General-color-border: #e2dcd4;
-    --ED-General-color-border-hover: #cbc3b8;
-    --ED-General-color-shadow: rgba(60, 50, 40, 0.07);
-    --ED-General-color-shadow-hover: rgba(60, 50, 40, 0.14);
-    --ED-General-color-accent-default: #4a7fd9;
-    --ED-General-color-accent-light: #e8f1fb;
-    --ED-General-color-accent-soft: #f0f5fc;
-    --ED-General-color-header-bg: #ffffff;
-    --ED-General-color-header-border: #e8e2d9;
-    --ED-General-color-toggle-bg: #e8e2d9;
-    --ED-General-color-toggle-text: #4a5568;
-    --ED-General-color-toggle-active-bg: #4a7fd9;
-    --ED-General-color-toggle-active-text: #ffffff;
-    --ED-General-color-badge-bg: #f0ece5;
-    --ED-General-color-badge-text: #5a6c7d;
-    --ED-General-color-badge-hover-bg: #e4ded5;
-    --ED-General-color-btn-primary-bg: #4a7fd9;
-    --ED-General-color-btn-primary-text: #ffffff;
-    --ED-General-color-btn-primary-hover: #3b6ec4;
-    --ED-General-color-btn-shadow: rgba(0, 0, 0, 0.2);
-    --ED-General-color-icon-container-bg: #f0f4f9;
-    --ED-General-card-radius: 16px;
-    --ED-General-card-padding: 1.5rem;
-    --ED-General-transition-speed: 0.3s;
-    --ED-General-grid-gap: 1.25rem;
-    --ED-General-font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
-        "Noto Sans", "Noto Sans Arabic", sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-    --card-accent-r: 60;
-    --card-accent-g: 50;
-    --card-accent-b: 40;
-    --card-shadow-opacity: 0.10;
-    --card-shadow-opacity-hover: 0.22;
-    --card-shadow-blur: 10px;
-    --card-shadow-blur-hover: 30px;
-    --card-shadow-offset-x: 0px;
-    --card-shadow-offset-y: 3px;
-    --card-shadow-offset-y-hover: 8px;
-    --ED-General-color-header-gradient-start: #fefdfb;
-    --ED-General-color-header-gradient-mid1: #faf8f4;
-    --ED-General-color-header-gradient-mid2: #f6f3ee;
-    --ED-General-color-header-gradient-end: #f2efe8;
-    --ED-General-color-header-accent-gradient-stop: rgba(180, 160, 140, 0.5);
-    --ED-General-color-shadow-rgb: 60, 50, 40;
-    --ED-General-color-accent-rgb: 74, 127, 217;
-    --ED-General-color-icon-sun: #e8a840;
-    --ED-General-color-icon-moon: #7b8cb0;
-    --ED-General-color-icon-sun-glow: rgba(232, 168, 64, 0.3);
-    --ED-General-color-icon-moon-glow: rgba(122, 143, 176, 0.35);
-    --ED-General-color-text-on-accent: #ffffff;
-}
-
-[data-theme="dark"] {
-    --ED-General-color-bg: #171a20;
-    --ED-General-color-bg-secondary: #1e2129;
-    --ED-General-color-surface: #23262f;
-    --ED-General-color-surface-hover: #2a2e38;
-    --ED-General-color-text-primary: #e2e4ea;
-    --ED-General-color-text-secondary: #b0b5c2;
-    --ED-General-color-text-tertiary: #7d8494;
-    --ED-General-color-border: #32353e;
-    --ED-General-color-border-hover: #454952;
-    --ED-General-color-shadow: rgba(0, 0, 0, 0.25);
-    --ED-General-color-shadow-hover: rgba(0, 0, 0, 0.45);
-    --ED-General-color-accent-default: #7aafff;
-    --ED-General-color-accent-light: #1e2d45;
-    --ED-General-color-accent-soft: #1a2535;
-    --ED-General-color-header-bg: #1c1f28;
-    --ED-General-color-header-border: #2a2e38;
-    --ED-General-color-toggle-bg: #2a2e38;
-    --ED-General-color-toggle-text: #b0b5c2;
-    --ED-General-color-toggle-active-bg: #7aafff;
-    --ED-General-color-toggle-active-text: #12151c;
-    --ED-General-color-badge-bg: #2a2e38;
-    --ED-General-color-badge-text: #b0b5c2;
-    --ED-General-color-badge-hover-bg: #353a45;
-    --ED-General-color-btn-primary-bg: #7aafff;
-    --ED-General-color-btn-primary-text: #12151c;
-    --ED-General-color-btn-primary-hover: #6199f0;
-    --ED-General-color-btn-shadow: rgba(0, 0, 0, 0.5);
-    --ED-General-color-icon-container-bg: #252b38;
-    --ED-General-color-header-gradient-start: #1f222d;
-    --ED-General-color-header-gradient-mid1: #1c1f29;
-    --ED-General-color-header-gradient-mid2: #191c24;
-    --ED-General-color-header-gradient-end: #171a20;
-    --ED-General-color-header-accent-gradient-stop: rgba(160, 175, 200, 0.4);
-    --ED-General-color-shadow-rgb: 0, 0, 0;
-    --ED-General-color-accent-rgb: 122, 175, 255;
-    --ED-General-color-icon-sun: #e8a840;
-    --ED-General-color-icon-moon: #c4d0f0;
-    --ED-General-color-icon-sun-glow: rgba(232, 168, 64, 0.3);
-    --ED-General-color-icon-moon-glow: rgba(180, 195, 235, 0.35);
-    --ED-General-color-text-on-accent: #12151c;
-}
-
-[dir="rtl"] {
-    direction: rtl;
-    text-align: right;
-}
-
-[dir="rtl"] .ED-General-card__inside-links {
-    justify-content: flex-end;
-}
-
-[dir="rtl"] .ED-General-card__main-btn .ED-General-card__main-btn-arrow {
-    transform: scaleX(-1);
-}
-
-[dir="rtl"] .ED-General-card__main-btn:hover .ED-General-card__main-btn-arrow {
-    transform: scaleX(-1) translateX(-3px);
-}
-
-[dir="rtl"] .ED-General-inside-link__arrow {
-    transform: scaleX(-1);
-}
-
-.ED-General-main {
-    max-width: 1300px;
-    margin: 0 auto;
-    padding: 1.75rem 1.5rem 3rem;
-}
-
-.ED-General-main__subtitle {
-    font-size: 0.9rem;
-    color: var(--ED-General-color-text-tertiary);
-    margin-bottom: 1.5rem;
-    transition: color var(--ED-General-transition-speed) ease;
-    letter-spacing: 0.02em;
-}
-
-.ED-General-card-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: var(--ED-General-grid-gap);
-}
-
-.ED-General-card {
-    background: var(--ED-General-color-surface);
-    border: 1px solid var(--ED-General-color-border);
-    border-radius: var(--ED-General-card-radius);
-    padding: var(--ED-General-card-padding);
-    display: flex;
-    flex-direction: column;
-    gap: 0.85rem;
-    transition: all var(--ED-General-transition-speed) ease;
-    box-shadow: 0 var(--card-shadow-offset-y, 3px) var(--card-shadow-blur, 10px)
-                rgba(var(--card-accent-r, 60), var(--card-accent-g, 50), var(--card-accent-b, 40), var(--card-shadow-opacity, 0.10)),
-                0 1px 4px rgba(var(--card-accent-r, 60), var(--card-accent-g, 50), var(--card-accent-b, 40), calc(var(--card-shadow-opacity, 0.10) * 0.55));
-    position: relative;
-    overflow: hidden;
-    cursor: default;
-    --card-accent: var(--ED-General-color-accent-default);
-}
-
-.ED-General-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: var(--card-accent);
-    border-radius: 0 0 3px 3px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.ED-General-card:hover {
-    border-color: var(--card-accent);
-    box-shadow: 0 var(--card-shadow-offset-y-hover, 8px) var(--card-shadow-blur-hover, 30px)
-                rgba(var(--card-accent-r, 60), var(--card-accent-g, 50), var(--card-accent-b, 40), var(--card-shadow-opacity-hover, 0.22)),
-                0 2px 8px rgba(var(--card-accent-r, 60), var(--card-accent-g, 50), var(--card-accent-b, 40), calc(var(--card-shadow-opacity-hover, 0.22) * 0.45));
-    transform: translateY(-3px);
-    background: var(--ED-General-color-surface-hover);
-}
-
-.ED-General-card:hover::before { opacity: 1; }
-
-.ED-General-card__icon-container {
-    width: 52px; height: 52px;
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--ED-General-card-icon-bg, var(--ED-General-color-icon-container-bg));
-    flex-shrink: 0;
-    transition: background 0.3s ease, transform 0.3s ease;
-    overflow: hidden;
-}
-
-.ED-General-card:hover .ED-General-card__icon-container { transform: scale(1.05); }
-
-.ED-General-card__icon-container img {
-    width: 38px; height: 38px;
-    object-fit: contain;
-    border-radius: 6px;
-}
-
-.ED-General-card__icon-letter {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: var(--card-accent);
-    text-transform: uppercase;
-    line-height: 1;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    width: 100%; height: 100%;
-}
-
-.ED-General-card__icon-container img[data-error] { display: none; }
-.ED-General-card__icon-container img[data-error] + .ED-General-card__icon-letter { display: flex; }
-
-.ED-General-card__name {
-    font-size: 1.1rem;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    color: var(--ED-General-color-text-primary);
-}
-
-.ED-General-card__description {
-    font-size: 0.875rem;
-    color: var(--ED-General-color-text-secondary);
-    line-height: 1.55;
-    flex-grow: 1;
-}
-
-.ED-General-card__inside-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    margin-top: 0.1rem;
-}
-
-.ED-General-inside-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0.3rem 0.65rem;
-    border-radius: 14px;
-    font-size: 0.75rem;
-    font-weight: 500;
-    text-decoration: none;
-    background: var(--ED-General-color-badge-bg);
-    color: var(--ED-General-color-badge-text);
-    transition: all 0.2s ease;
-    white-space: nowrap;
-    font-family: var(--ED-General-font-stack);
-}
-
-.ED-General-inside-link:hover {
-    background: var(--card-accent);
-    color: var(--ED-General-color-text-on-accent);
-}
-
-.ED-General-inside-link__arrow {
-    font-size: 0.7rem;
-    opacity: 0.7;
-    transition: transform 0.2s ease;
-}
-
-.ED-General-inside-link:hover .ED-General-inside-link__arrow {
-    opacity: 1;
-    transform: translateX(2px);
-}
-
-.ED-General-card__main-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-    padding: 0.55rem 1.1rem;
-    border-radius: 22px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-decoration: none;
-    border: none;
-    background: var(--card-accent);
-    color: var(--ED-General-color-text-on-accent);
-    transition: all 0.25s ease;
-    font-family: var(--ED-General-font-stack);
-    align-self: flex-start;
-    margin-top: 0.2rem;
-}
-
-.ED-General-card__main-btn:hover {
-    filter: brightness(0.9);
-    box-shadow: 0 4px 14px var(--ED-General-color-btn-shadow);
-    transform: translateY(-1px);
-}
-
-.ED-General-card__main-btn-arrow {
-    display: inline-block;
-    font-size: 1rem;
-    font-weight: 700;
-    transition: transform 0.25s ease;
-    line-height: 1;
-}
-
-.ED-General-card__main-btn:hover .ED-General-card__main-btn-arrow {
-    transform: translateX(3px);
-}
-
-.ED-General-card--education { border-radius: var(--ED-General-card-radius); }
-.ED-General-card--others    { border-radius: 12px 20px 12px 20px; }
-.ED-General-card--games     { border-radius: 20px 5px 20px 5px; }
-.ED-General-card--news      { border-radius: 4px 20px 4px 20px; }
-.ED-General-card--obsolete  { border-radius: 8px 22px 8px 22px; opacity: 0.85; filter: grayscale(0.2); }
-
-.ED-General-section-title {
-    font-size: 1.25rem;
-    font-weight: 650;
-    margin: 2rem 0 1rem;
-    padding-bottom: 0.35rem;
-    border-bottom: 1px solid var(--ED-General-color-border);
-    color: var(--ED-General-color-text-primary);
-    transition: color var(--ED-General-transition-speed) ease,
-                border-color var(--ED-General-transition-speed) ease;
-}
-
-/* ---------- Responsive (only card‑related parts remain) ---------- */
-@media (max-width: 640px) {
-    .ED-General-card-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-    .ED-General-main {
-        padding: 1rem 0.75rem 2rem;
-    }
-    .ED-General-card {
-        padding: 1.15rem;
-    }
-    .ED-General-card__icon-container {
-        width: 42px; height: 42px;
-        border-radius: 12px;
-    }
-    .ED-General-card__name {
-        font-size: 1rem;
-    }
-}
-
-@media (min-width: 641px) and (max-width: 1024px) {
-    .ED-General-card-grid {
-        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    }
-}
-    </style>
-</head>
-<body>
-    <header id="header-container"></header>
-    <main class="ED-General-main">
-        <p class="ED-General-main__subtitle" data-i18n="subtitle">Your learning hubs</p>
-        <div class="ED-General-card-grid" id="cardGrid"></div>
-        <h2 class="ED-General-section-title" data-i18n="othersTitle">Others</h2>
-        <div class="ED-General-card-grid" id="othersGrid"></div>
-        <h2 class="ED-General-section-title" data-i18n="gamesTitle">Games</h2>
-        <div class="ED-General-card-grid" id="gamesGrid"></div>
-        <h2 class="ED-General-section-title" data-i18n="newsTitle">News</h2>
-        <div class="ED-General-card-grid" id="newsGrid"></div>
-        <h2 class="ED-General-section-title" data-i18n="obsoleteTitle">Obsolete & unused</h2>
-        <div class="ED-General-card-grid" id="obsoleteGrid"></div>
-    </main>
-    <footer id="footer-container"></footer>
-    <!-- Offline banner -->
-    <div id="offline-banner" class="ED-General-offline-banner" data-i18n="offlineBanner">You are offline. Some features may be unavailable.</div>
-<div id="update-banner" class="ED-General-update-banner" style="display:none;">
-    <span id="update-banner-text" data-i18n="updateNotification">A new version is available.</span>
-    <button id="update-reload-btn" data-i18n="updateReloadBtn">Reload</button>
-</div>
-    <!-- External data file -->
-    <script src="data_general.js"></script>
-<script src="ED-general-cards.js"></script> 
-<script src="ED-general-shortcuts.js"></script>
-    <script>
-// Catch runtime errors
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Educational Dashboard</title>
+		<link rel="icon" type="image/x-icon" href="assets/icons/icon-64x64.png">
+		<link rel="manifest" href="/manifest.json" />
+		<link rel="stylesheet" href="/ED-general-common.css">
+		<style>
+			:root {
+			--ED-General-color-bg: #f5f1eb;
+			--ED-General-color-bg-secondary: #ede7df;
+			--ED-General-color-surface: #ffffff;
+			--ED-General-color-surface-hover: #fafaf8;
+			--ED-General-color-text-primary: #1e293b;
+			--ED-General-color-text-secondary: #5a6c7d;
+			--ED-General-color-text-tertiary: #8b9aab;
+			--ED-General-color-border: #e2dcd4;
+			--ED-General-color-border-hover: #cbc3b8;
+			--ED-General-color-shadow: rgba(60, 50, 40, 0.07);
+			--ED-General-color-shadow-hover: rgba(60, 50, 40, 0.14);
+			--ED-General-color-accent-default: #4a7fd9;
+			--ED-General-color-accent-light: #e8f1fb;
+			--ED-General-color-accent-soft: #f0f5fc;
+			--ED-General-color-header-bg: #ffffff;
+			--ED-General-color-header-border: #e8e2d9;
+			--ED-General-color-toggle-bg: #e8e2d9;
+			--ED-General-color-toggle-text: #4a5568;
+			--ED-General-color-toggle-active-bg: #4a7fd9;
+			--ED-General-color-toggle-active-text: #ffffff;
+			--ED-General-color-badge-bg: #f0ece5;
+			--ED-General-color-badge-text: #5a6c7d;
+			--ED-General-color-badge-hover-bg: #e4ded5;
+			--ED-General-color-btn-primary-bg: #4a7fd9;
+			--ED-General-color-btn-primary-text: #ffffff;
+			--ED-General-color-btn-primary-hover: #3b6ec4;
+			--ED-General-color-btn-shadow: rgba(0, 0, 0, 0.2);
+			--ED-General-color-icon-container-bg: #f0f4f9;
+			--ED-General-card-radius: 16px;
+			--ED-General-card-padding: 1.5rem;
+			--ED-General-transition-speed: 0.3s;
+			--ED-General-grid-gap: 1.25rem;
+			--ED-General-font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+			"Noto Sans", "Noto Sans Arabic", sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+			--card-accent-r: 60;
+			--card-accent-g: 50;
+			--card-accent-b: 40;
+			--card-shadow-opacity: 0.10;
+			--card-shadow-opacity-hover: 0.22;
+			--card-shadow-blur: 10px;
+			--card-shadow-blur-hover: 30px;
+			--card-shadow-offset-x: 0px;
+			--card-shadow-offset-y: 3px;
+			--card-shadow-offset-y-hover: 8px;
+			--ED-General-color-header-gradient-start: #fefdfb;
+			--ED-General-color-header-gradient-mid1: #faf8f4;
+			--ED-General-color-header-gradient-mid2: #f6f3ee;
+			--ED-General-color-header-gradient-end: #f2efe8;
+			--ED-General-color-header-accent-gradient-stop: rgba(180, 160, 140, 0.5);
+			--ED-General-color-shadow-rgb: 60, 50, 40;
+			--ED-General-color-accent-rgb: 74, 127, 217;
+			--ED-General-color-icon-sun: #e8a840;
+			--ED-General-color-icon-moon: #7b8cb0;
+			--ED-General-color-icon-sun-glow: rgba(232, 168, 64, 0.3);
+			--ED-General-color-icon-moon-glow: rgba(122, 143, 176, 0.35);
+			--ED-General-color-text-on-accent: #ffffff;
+			}
+			
+			[data-theme="dark"] {
+			--ED-General-color-bg: #171a20;
+			--ED-General-color-bg-secondary: #1e2129;
+			--ED-General-color-surface: #23262f;
+			--ED-General-color-surface-hover: #2a2e38;
+			--ED-General-color-text-primary: #e2e4ea;
+			--ED-General-color-text-secondary: #b0b5c2;
+			--ED-General-color-text-tertiary: #7d8494;
+			--ED-General-color-border: #32353e;
+			--ED-General-color-border-hover: #454952;
+			--ED-General-color-shadow: rgba(0, 0, 0, 0.25);
+			--ED-General-color-shadow-hover: rgba(0, 0, 0, 0.45);
+			--ED-General-color-accent-default: #7aafff;
+			--ED-General-color-accent-light: #1e2d45;
+			--ED-General-color-accent-soft: #1a2535;
+			--ED-General-color-header-bg: #1c1f28;
+			--ED-General-color-header-border: #2a2e38;
+			--ED-General-color-toggle-bg: #2a2e38;
+			--ED-General-color-toggle-text: #b0b5c2;
+			--ED-General-color-toggle-active-bg: #7aafff;
+			--ED-General-color-toggle-active-text: #12151c;
+			--ED-General-color-badge-bg: #2a2e38;
+			--ED-General-color-badge-text: #b0b5c2;
+			--ED-General-color-badge-hover-bg: #353a45;
+			--ED-General-color-btn-primary-bg: #7aafff;
+			--ED-General-color-btn-primary-text: #12151c;
+			--ED-General-color-btn-primary-hover: #6199f0;
+			--ED-General-color-btn-shadow: rgba(0, 0, 0, 0.5);
+			--ED-General-color-icon-container-bg: #252b38;
+			--ED-General-color-header-gradient-start: #1f222d;
+			--ED-General-color-header-gradient-mid1: #1c1f29;
+			--ED-General-color-header-gradient-mid2: #191c24;
+			--ED-General-color-header-gradient-end: #171a20;
+			--ED-General-color-header-accent-gradient-stop: rgba(160, 175, 200, 0.4);
+			--ED-General-color-shadow-rgb: 0, 0, 0;
+			--ED-General-color-accent-rgb: 122, 175, 255;
+			--ED-General-color-icon-sun: #e8a840;
+			--ED-General-color-icon-moon: #c4d0f0;
+			--ED-General-color-icon-sun-glow: rgba(232, 168, 64, 0.3);
+			--ED-General-color-icon-moon-glow: rgba(180, 195, 235, 0.35);
+			--ED-General-color-text-on-accent: #12151c;
+			}
+			
+			[dir="rtl"] {
+			direction: rtl;
+			text-align: right;
+			}
+			
+			[dir="rtl"] .ED-General-card__inside-links {
+			justify-content: flex-end;
+			}
+			
+			[dir="rtl"] .ED-General-card__main-btn .ED-General-card__main-btn-arrow {
+			transform: scaleX(-1);
+			}
+			
+			[dir="rtl"] .ED-General-card__main-btn:hover .ED-General-card__main-btn-arrow {
+			transform: scaleX(-1) translateX(-3px);
+			}
+			
+			[dir="rtl"] .ED-General-inside-link__arrow {
+			transform: scaleX(-1);
+			}
+			
+			.ED-General-main {
+			max-width: 1300px;
+			margin: 0 auto;
+			padding: 1.75rem 1.5rem 3rem;
+			}
+			
+			.ED-General-main__subtitle {
+			font-size: 0.9rem;
+			color: var(--ED-General-color-text-tertiary);
+			margin-bottom: 1.5rem;
+			transition: color var(--ED-General-transition-speed) ease;
+			letter-spacing: 0.02em;
+			}
+			
+			.ED-General-card-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+			gap: var(--ED-General-grid-gap);
+			}
+			
+			.ED-General-card {
+			background: var(--ED-General-color-surface);
+			border: 1px solid var(--ED-General-color-border);
+			border-radius: var(--ED-General-card-radius);
+			padding: var(--ED-General-card-padding);
+			display: flex;
+			flex-direction: column;
+			gap: 0.85rem;
+			transition: all var(--ED-General-transition-speed) ease;
+			box-shadow: 0 var(--card-shadow-offset-y, 3px) var(--card-shadow-blur, 10px)
+			rgba(var(--card-accent-r, 60), var(--card-accent-g, 50), var(--card-accent-b, 40), var(--card-shadow-opacity, 0.10)),
+			0 1px 4px rgba(var(--card-accent-r, 60), var(--card-accent-g, 50), var(--card-accent-b, 40), calc(var(--card-shadow-opacity, 0.10) * 0.55));
+			position: relative;
+			overflow: hidden;
+			cursor: default;
+			--card-accent: var(--ED-General-color-accent-default);
+			}
+			
+			.ED-General-card::before {
+			content: '';
+			position: absolute;
+			top: 0; left: 0; right: 0;
+			height: 3px;
+			background: var(--card-accent);
+			border-radius: 0 0 3px 3px;
+			opacity: 0;
+			transition: opacity 0.3s ease;
+			}
+			
+			.ED-General-card:hover {
+			border-color: var(--card-accent);
+			box-shadow: 0 var(--card-shadow-offset-y-hover, 8px) var(--card-shadow-blur-hover, 30px)
+			rgba(var(--card-accent-r, 60), var(--card-accent-g, 50), var(--card-accent-b, 40), var(--card-shadow-opacity-hover, 0.22)),
+			0 2px 8px rgba(var(--card-accent-r, 60), var(--card-accent-g, 50), var(--card-accent-b, 40), calc(var(--card-shadow-opacity-hover, 0.22) * 0.45));
+			transform: translateY(-3px);
+			background: var(--ED-General-color-surface-hover);
+			}
+			
+			.ED-General-card:hover::before { opacity: 1; }
+			
+			.ED-General-card__icon-container {
+			width: 52px; height: 52px;
+			border-radius: 14px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: var(--ED-General-card-icon-bg, var(--ED-General-color-icon-container-bg));
+			flex-shrink: 0;
+			transition: background 0.3s ease, transform 0.3s ease;
+			overflow: hidden;
+			}
+			
+			.ED-General-card:hover .ED-General-card__icon-container { transform: scale(1.05); }
+			
+			.ED-General-card__icon-container img {
+			width: 38px; height: 38px;
+			object-fit: contain;
+			border-radius: 6px;
+			}
+			
+			.ED-General-card__icon-letter {
+			font-size: 1.6rem;
+			font-weight: 700;
+			color: var(--card-accent);
+			text-transform: uppercase;
+			line-height: 1;
+			display: none;
+			align-items: center;
+			justify-content: center;
+			width: 100%; height: 100%;
+			}
+			
+			.ED-General-card__icon-container img[data-error] { display: none; }
+			.ED-General-card__icon-container img[data-error] + .ED-General-card__icon-letter { display: flex; }
+			
+			.ED-General-card__name {
+			font-size: 1.1rem;
+			font-weight: 700;
+			letter-spacing: -0.01em;
+			color: var(--ED-General-color-text-primary);
+			}
+			
+			.ED-General-card__description {
+			font-size: 0.875rem;
+			color: var(--ED-General-color-text-secondary);
+			line-height: 1.55;
+			flex-grow: 1;
+			}
+			
+			.ED-General-card__inside-links {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.4rem;
+			margin-top: 0.1rem;
+			}
+			
+			.ED-General-inside-link {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.25rem;
+			padding: 0.3rem 0.65rem;
+			border-radius: 14px;
+			font-size: 0.75rem;
+			font-weight: 500;
+			text-decoration: none;
+			background: var(--ED-General-color-badge-bg);
+			color: var(--ED-General-color-badge-text);
+			transition: all 0.2s ease;
+			white-space: nowrap;
+			font-family: var(--ED-General-font-stack);
+			}
+			
+			.ED-General-inside-link:hover {
+			background: var(--card-accent);
+			color: var(--ED-General-color-text-on-accent);
+			}
+			
+			.ED-General-inside-link__arrow {
+			font-size: 0.7rem;
+			opacity: 0.7;
+			transition: transform 0.2s ease;
+			}
+			
+			.ED-General-inside-link:hover .ED-General-inside-link__arrow {
+			opacity: 1;
+			transform: translateX(2px);
+			}
+			
+			.ED-General-card__main-btn {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: 0.4rem;
+			padding: 0.55rem 1.1rem;
+			border-radius: 22px;
+			font-size: 0.85rem;
+			font-weight: 600;
+			text-decoration: none;
+			border: none;
+			background: var(--card-accent);
+			color: var(--ED-General-color-text-on-accent);
+			transition: all 0.25s ease;
+			font-family: var(--ED-General-font-stack);
+			align-self: flex-start;
+			margin-top: 0.2rem;
+			}
+			
+			.ED-General-card__main-btn:hover {
+			filter: brightness(0.9);
+			box-shadow: 0 4px 14px var(--ED-General-color-btn-shadow);
+			transform: translateY(-1px);
+			}
+			
+			.ED-General-card__main-btn-arrow {
+			display: inline-block;
+			font-size: 1rem;
+			font-weight: 700;
+			transition: transform 0.25s ease;
+			line-height: 1;
+			}
+			
+			.ED-General-card__main-btn:hover .ED-General-card__main-btn-arrow {
+			transform: translateX(3px);
+			}
+			
+			.ED-General-card--education { border-radius: var(--ED-General-card-radius); }
+			.ED-General-card--others    { border-radius: 12px 20px 12px 20px; }
+			.ED-General-card--games     { border-radius: 20px 5px 20px 5px; }
+			.ED-General-card--news      { border-radius: 4px 20px 4px 20px; }
+			.ED-General-card--obsolete  { border-radius: 8px 22px 8px 22px; opacity: 0.85; filter: grayscale(0.2); }
+			
+			.ED-General-section-title {
+			font-size: 1.25rem;
+			font-weight: 650;
+			margin: 2rem 0 1rem;
+			padding-bottom: 0.35rem;
+			border-bottom: 1px solid var(--ED-General-color-border);
+			color: var(--ED-General-color-text-primary);
+			transition: color var(--ED-General-transition-speed) ease,
+			border-color var(--ED-General-transition-speed) ease;
+			}
+			
+			/* ---------- Responsive (only card‑related parts remain) ---------- */
+			@media (max-width: 640px) {
+			.ED-General-card-grid {
+			grid-template-columns: 1fr;
+			gap: 1rem;
+			}
+			.ED-General-main {
+			padding: 1rem 0.75rem 2rem;
+			}
+			.ED-General-card {
+			padding: 1.15rem;
+			}
+			.ED-General-card__icon-container {
+			width: 42px; height: 42px;
+			border-radius: 12px;
+			}
+			.ED-General-card__name {
+			font-size: 1rem;
+			}
+			}
+			
+			@media (min-width: 641px) and (max-width: 1024px) {
+			.ED-General-card-grid {
+			grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+			}
+			}
+		</style>
+	</head>
+	<body>
+		<header id="header-container"></header>
+		<main class="ED-General-main">
+			<p class="ED-General-main__subtitle" data-i18n="subtitle">Your learning hubs</p>
+			<div class="ED-General-card-grid" id="cardGrid"></div>
+			<h2 class="ED-General-section-title" data-i18n="othersTitle">Others</h2>
+			<div class="ED-General-card-grid" id="othersGrid"></div>
+			<h2 class="ED-General-section-title" data-i18n="gamesTitle">Games</h2>
+			<div class="ED-General-card-grid" id="gamesGrid"></div>
+			<h2 class="ED-General-section-title" data-i18n="newsTitle">News</h2>
+			<div class="ED-General-card-grid" id="newsGrid"></div>
+			<h2 class="ED-General-section-title" data-i18n="obsoleteTitle">Obsolete & unused</h2>
+			<div class="ED-General-card-grid" id="obsoleteGrid"></div>
+		</main>
+		<footer id="footer-container"></footer>
+		<!-- Offline banner -->
+		<div id="offline-banner" class="ED-General-offline-banner" data-i18n="offlineBanner">You are offline. Some features may be unavailable.</div>
+		<div id="update-banner" class="ED-General-update-banner" style="display:none;">
+			<span id="update-banner-text" data-i18n="updateNotification">A new version is available.</span>
+			<button id="update-reload-btn" data-i18n="updateReloadBtn">Reload</button>
+		</div>
+		<!-- External data file -->
+		<script src="data_general.js"></script>
+		<script src="ED-general-cards.js"></script> 
+		<script src="ED-general-shortcuts.js"></script>
+<script src="ED-general-pwa.js"></script>
+		<script>
+			// Catch runtime errors
 window.addEventListener('error', function(event) {
   const entry = {
     time: new Date().toISOString(),
@@ -396,7 +397,6 @@ window.addEventListener('error', function(event) {
     lineno: event.lineno,
     colno: event.colno,
   };
-  // Append to localStorage (you can read it later via console)
   const errors = JSON.parse(localStorage.getItem('startupErrors') || '[]');
   errors.push(entry);
   localStorage.setItem('startupErrors', JSON.stringify(errors));
@@ -413,413 +413,209 @@ window.addEventListener('unhandledrejection', function(event) {
   localStorage.setItem('startupErrors', JSON.stringify(errors));
 });
 
-
 (async function() {
-    // Load header & footer
-    async function loadComponent(url, targetId) {
-        const resp = await fetch(url);
-        if (!resp.ok) throw new Error(`Failed to load ${url}`);
-        document.getElementById(targetId).innerHTML = await resp.text();
+  // Load header & footer
+  async function loadComponent(url, targetId) {
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error(`Failed to load ${url}`);
+    document.getElementById(targetId).innerHTML = await resp.text();
+  }
+  await Promise.all([
+    loadComponent('header.html', 'header-container'),
+    loadComponent('footer.html', 'footer-container')
+  ]);
+
+  // ========== UI text dictionary ==========
+  const uiText = {
+    en: {
+      dashboardTitle: 'Educational Dashboard',
+      subtitle: 'Your learning hubs',
+      othersTitle: 'Others', gamesTitle: 'Games', newsTitle: 'News', obsoleteTitle: 'Obsolete & unused',
+      visitBtn: 'Visit', noDescription: 'No description available.', imageIconAlt: 'icon',
+      installBtn: '📲 Install App',
+      offlineBanner: 'You are offline. Some features may be unavailable.',
+      onlineStatus: 'Online', offlineStatus: 'Offline',
+      themeToggleTitle: 'Dark/Light Theme',
+      enablePeriodicSyncBtn: 'Enable Background Updates',
+      disablePeriodicSyncBtn: 'Disable Background Updates',
+      periodicSyncEnabled: 'Background updates enabled!',
+      periodicSyncDisabled: 'Background updates disabled!',
+      periodicSyncDenied: 'Permission not granted. Please check site settings.',
+      updateNotification: 'A new version is available.',
+      updateReloadBtn: 'Reload',
+      enableNotificationsBtn: 'Enable Notifications',
+      shortcutPrompt: 'Open in a new tab?',
+      launchBtn: 'Launch',
+      footer: {
+        confidentiality: 'Confidentiality Politics', terms: 'Terms of Use', contact: 'Contact',
+        version: "version '0.0.1'", developer: 'developed by: Mejri Ziad.', hosted: 'Hosted on Github and Netlify.'
+      }
+    },
+    fr: {
+      dashboardTitle: 'Tableau de Bord Éducatif',
+      subtitle: 'Vos plateformes d\'apprentissage',
+      othersTitle: 'Autres', gamesTitle: 'Jeux', newsTitle: 'Actualités', obsoleteTitle: 'Obsolète & inutilisé',
+      visitBtn: 'Visiter', noDescription: 'Aucune description disponible.', imageIconAlt: 'icône',
+      installBtn: '📲 Installer l\'app',
+      offlineBanner: 'Vous êtes hors ligne. Certaines fonctionnalités peuvent être indisponibles.',
+      onlineStatus: 'En ligne', offlineStatus: 'Hors ligne',
+      themeToggleTitle: 'Thème clair/sombre',
+      enablePeriodicSyncBtn: 'Activer les mises à jour en arrière-plan',
+      disablePeriodicSyncBtn: 'Désactiver les mises à jour en arrière-plan',
+      periodicSyncEnabled: 'Mises à jour en arrière-plan activées !',
+      periodicSyncDisabled: 'Mises à jour en arrière-plan désactivées !',
+      periodicSyncDenied: 'Permission non accordée. Veuillez vérifier les paramètres du site.',
+      updateNotification: 'Une nouvelle version est disponible.',
+      updateReloadBtn: 'Recharger',
+      enableNotificationsBtn: 'Activer les Notifications',
+      shortcutPrompt: 'Ouvrir dans un nouvel onglet ?',
+      launchBtn: 'Lancer',
+      footer: {
+        confidentiality: 'Politique de confidentialité', terms: 'Conditions d\'utilisation', contact: 'Contact',
+        version: "version '0.0.1'", developer: 'développé par : Mejri Ziad.', hosted: 'Hébergé sur Github et Netlify.'
+      }
+    },
+    ar: {
+      dashboardTitle: 'لوحة التحكم التعليمية',
+      subtitle: 'منصات التعلم الخاصة بك',
+      othersTitle: 'أخرى', gamesTitle: 'ألعاب', newsTitle: 'أخبار', obsoleteTitle: 'قديم وغير مستخدم',
+      visitBtn: 'زيارة', noDescription: 'لا يوجد وصف متاح.', imageIconAlt: 'أيقونة',
+      installBtn: '📲 تثبيت التطبيق',
+      offlineBanner: 'أنت غير متصل بالإنترنت. قد لا تتوفر بعض الميزات.',
+      onlineStatus: 'متصل', offlineStatus: 'غير متصل',
+      themeToggleTitle: 'وضع داكن/فاتح',
+      enablePeriodicSyncBtn: 'تفعيل التحديثات في الخلفية',
+      disablePeriodicSyncBtn: 'تعطيل التحديثات في الخلفية',
+      periodicSyncEnabled: 'تم تفعيل التحديثات في الخلفية!',
+      periodicSyncDisabled: 'تم تعطيل التحديثات في الخلفية!',
+      periodicSyncDenied: 'لم يتم منح الإذن. يرجى التحقق من إعدادات الموقع.',
+      updateNotification: 'نسخة جديدة متاحة.',
+      updateReloadBtn: 'إعادة التحميل',
+      enableNotificationsBtn: 'تفعيل الاشعارات',
+      shortcutPrompt: 'فتح في علامة تبويب جديدة؟',
+      launchBtn: 'إطلاق',
+      footer: {
+        confidentiality: 'سياسة الخصوصية', terms: 'شروط الاستخدام', contact: 'اتصل بنا',
+        version: "الإصدار '0.0.1'", developer: 'طور بواسطة: ماجري زياد.', hosted: 'مستضاف على Github و Netlify.'
+      }
     }
-    await Promise.all([
-        loadComponent('header.html', 'header-container'),
-        loadComponent('footer.html', 'footer-container')
-    ]);
+  };
 
-    // ========== UI text dictionary ==========
-    const uiText = {
-        en: {
-            dashboardTitle: 'Educational Dashboard',
-            subtitle: 'Your learning hubs',
-            othersTitle: 'Others', gamesTitle: 'Games', newsTitle: 'News', obsoleteTitle: 'Obsolete & unused',
-            visitBtn: 'Visit', noDescription: 'No description available.', imageIconAlt: 'icon',
-            installBtn: '📲 Install App',
-            offlineBanner: 'You are offline. Some features may be unavailable.',
-            onlineStatus: 'Online', offlineStatus: 'Offline',
-            themeToggleTitle: 'Dark/Light Theme',
-            enablePeriodicSyncBtn: 'Enable Background Updates',
-            disablePeriodicSyncBtn: 'Disable Background Updates',
-            periodicSyncEnabled: 'Background updates enabled!',
-            periodicSyncDisabled: 'Background updates disabled!',
-            periodicSyncDenied: 'Permission not granted. Please check site settings.',
-            updateNotification: 'A new version is available.',
-            updateReloadBtn: 'Reload',
-    enableNotificationsBtn: 'Enable Notifications',
-shortcutPrompt: 'Open in a new tab?',
-launchBtn: 'Launch',
-            footer: {
-                confidentiality: 'Confidentiality Politics', terms: 'Terms of Use', contact: 'Contact',
-                version: "version '0.0.1'", developer: 'developed by: Mejri Ziad.', hosted: 'Hosted on Github and Netlify.'
-            }
-        },
-        fr: {
-            dashboardTitle: 'Tableau de Bord Éducatif',
-            subtitle: 'Vos plateformes d\'apprentissage',
-            othersTitle: 'Autres', gamesTitle: 'Jeux', newsTitle: 'Actualités', obsoleteTitle: 'Obsolète & inutilisé',
-            visitBtn: 'Visiter', noDescription: 'Aucune description disponible.', imageIconAlt: 'icône',
-            installBtn: '📲 Installer l\'app',
-            offlineBanner: 'Vous êtes hors ligne. Certaines fonctionnalités peuvent être indisponibles.',
-            onlineStatus: 'En ligne', offlineStatus: 'Hors ligne',
-            themeToggleTitle: 'Thème clair/sombre',
-            enablePeriodicSyncBtn: 'Activer les mises à jour en arrière-plan',
-            disablePeriodicSyncBtn: 'Désactiver les mises à jour en arrière-plan',
-            periodicSyncEnabled: 'Mises à jour en arrière-plan activées !',
-            periodicSyncDisabled: 'Mises à jour en arrière-plan désactivées !',
-            periodicSyncDenied: 'Permission non accordée. Veuillez vérifier les paramètres du site.',
-            updateNotification: 'Une nouvelle version est disponible.',
-            updateReloadBtn: 'Recharger',
-    enableNotificationsBtn: 'Activer les Notifications',
-shortcutPrompt: 'Ouvrir dans un nouvel onglet ?',
-launchBtn: 'Lancer',
-            footer: {
-                confidentiality: 'Politique de confidentialité', terms: 'Conditions d\'utilisation', contact: 'Contact',
-                version: "version '0.0.1'", developer: 'développé par : Mejri Ziad.', hosted: 'Hébergé sur Github et Netlify.'
-            }
-        },
-        ar: {
-            dashboardTitle: 'لوحة التحكم التعليمية',
-            subtitle: 'منصات التعلم الخاصة بك',
-            othersTitle: 'أخرى', gamesTitle: 'ألعاب', newsTitle: 'أخبار', obsoleteTitle: 'قديم وغير مستخدم',
-            visitBtn: 'زيارة', noDescription: 'لا يوجد وصف متاح.', imageIconAlt: 'أيقونة',
-            installBtn: '📲 تثبيت التطبيق',
-            offlineBanner: 'أنت غير متصل بالإنترنت. قد لا تتوفر بعض الميزات.',
-            onlineStatus: 'متصل', offlineStatus: 'غير متصل',
-            themeToggleTitle: 'وضع داكن/فاتح',
-            enablePeriodicSyncBtn: 'تفعيل التحديثات في الخلفية',
-            disablePeriodicSyncBtn: 'تعطيل التحديثات في الخلفية',
-            periodicSyncEnabled: 'تم تفعيل التحديثات في الخلفية!',
-            periodicSyncDisabled: 'تم تعطيل التحديثات في الخلفية!',
-            periodicSyncDenied: 'لم يتم منح الإذن. يرجى التحقق من إعدادات الموقع.',
-            updateNotification: 'نسخة جديدة متاحة.',
-            updateReloadBtn: 'إعادة التحميل',
-    enableNotificationsBtn: 'تفعيل الاشعارات',
-shortcutPrompt: 'فتح في علامة تبويب جديدة؟',
-launchBtn: 'إطلاق',
-            footer: {
-                confidentiality: 'سياسة الخصوصية', terms: 'شروط الاستخدام', contact: 'اتصل بنا',
-                version: "الإصدار '0.0.1'", developer: 'طور بواسطة: ماجري زياد.', hosted: 'مستضاف على Github و Netlify.'
-            }
-        }
-    };
+  let currentLang = localStorage.getItem('dashboardLang') || 'en';
+  let currentTheme = localStorage.getItem('dashboardTheme') || 'light';
 
-    let currentLang = localStorage.getItem('dashboardLang') || 'en';
-    let currentTheme = localStorage.getItem('dashboardTheme') || 'light';
+  function getNestedValue(obj, path) {
+    return path.split('.').reduce((o, k) => (o && o[k] !== undefined ? o[k] : undefined), obj) || '';
+  }
 
-    function getNestedValue(obj, path) {
-        return path.split('.').reduce((o, k) => (o && o[k] !== undefined ? o[k] : undefined), obj) || '';
-    }
+  function translatePage() {
+    const lang = currentLang;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      const text = getNestedValue(uiText[lang], key);
+      if (text) el.textContent = text;
+    });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+      const key = el.getAttribute('data-i18n-title');
+      const text = getNestedValue(uiText[lang], key);
+      if (text) el.setAttribute('title', text);
+    });
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.lang = lang;
+    const langSelect = document.getElementById('langSelect');
+    if (langSelect) langSelect.value = lang;
+    if (window.updatePeriodicSyncButton) window.updatePeriodicSyncButton();
+  }
 
-    function translatePage() {
-        const lang = currentLang;
-        document.querySelectorAll('[data-i18n]').forEach(el => {
-            const key = el.getAttribute('data-i18n');
-            const text = getNestedValue(uiText[lang], key);
-            if (text) el.textContent = text;
-        });
-        document.querySelectorAll('[data-i18n-title]').forEach(el => {
-            const key = el.getAttribute('data-i18n-title');
-            const text = getNestedValue(uiText[lang], key);
-            if (text) el.setAttribute('title', text);
-        });
-        document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-        document.documentElement.lang = lang;
-        const langSelect = document.getElementById('langSelect');
-        if (langSelect) langSelect.value = lang;
-        if (window.updatePeriodicSyncButton) window.updatePeriodicSyncButton();
-    }
-	
-function applyTheme() {
+  function applyTheme() {
     document.documentElement.setAttribute('data-theme', currentTheme);
     localStorage.setItem('dashboardTheme', currentTheme);
-    applyCardPalettes(currentTheme);   // was: applyCardPalettes();
-}
-    function toggleTheme() {
-        currentTheme = currentTheme === 'light' ? 'dark' : 'light';
-        applyTheme();
-    }
-    function updateInstallButtonText() {
-        const installBtn = document.getElementById('installBtn');
-        if (installBtn) installBtn.textContent = getNestedValue(uiText[currentLang], 'installBtn') || '📲 Install App';
-    }
-    function updateConnectionStatus() {
-        const dot = document.getElementById('status-dot');
-        const label = document.getElementById('connection-status-label');
-        const statusSpan = document.getElementById('connection-status');
-        if (!dot || !statusSpan) return;
-        const online = navigator.onLine;
-        dot.className = 'status-dot' + (online ? '' : ' offline');
-        if (label) {
-            label.textContent = online
-                ? getNestedValue(uiText[currentLang], 'onlineStatus') || 'Online'
-                : getNestedValue(uiText[currentLang], 'offlineStatus') || 'Offline';
-        }
-        statusSpan.title = online
-            ? (getNestedValue(uiText[currentLang], 'onlineStatus') || 'Online')
-            : (getNestedValue(uiText[currentLang], 'offlineStatus') || 'Offline');
-    }
-    function setupConnectionIndicator() {
-        const statusSpan = document.getElementById('connection-status');
-        if (!statusSpan) return;
-        window.addEventListener('online', updateConnectionStatus);
-        window.addEventListener('offline', updateConnectionStatus);
-        updateConnectionStatus();
-    }
-    function setupOfflineBanner() {
-        const banner = document.getElementById('offline-banner');
-        if (!banner) return;
-        window.addEventListener('offline', () => banner.style.display = 'block');
-        window.addEventListener('online', () => banner.style.display = 'none');
-        if (!navigator.onLine) banner.style.display = 'block';
-    }
-    function setLanguage(lang) {
-        if (lang === currentLang) return;
-        currentLang = lang;
-        localStorage.setItem('dashboardLang', lang);
-        translatePage();
-        updateInstallButtonText();
-        updateConnectionStatus();
-renderAll(currentLang, currentTheme, uiText);
-    }
+    applyCardPalettes(currentTheme);
+  }
 
-    // PWA install
-    let deferredPrompt;
+  function toggleTheme() {
+    currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+    applyTheme();
+  }
+
+  function updateInstallButtonText() {
     const installBtn = document.getElementById('installBtn');
-    window.addEventListener('beforeinstallprompt', (e) => {
+    if (installBtn) installBtn.textContent = getNestedValue(uiText[currentLang], 'installBtn') || '📲 Install App';
+  }
+
+  function updateConnectionStatus() {
+    const dot = document.getElementById('status-dot');
+    const label = document.getElementById('connection-status-label');
+    const statusSpan = document.getElementById('connection-status');
+    if (!dot || !statusSpan) return;
+    const online = navigator.onLine;
+    dot.className = 'status-dot' + (online ? '' : ' offline');
+    if (label) {
+      label.textContent = online
+        ? getNestedValue(uiText[currentLang], 'onlineStatus') || 'Online'
+        : getNestedValue(uiText[currentLang], 'offlineStatus') || 'Offline';
+    }
+    statusSpan.title = online
+      ? (getNestedValue(uiText[currentLang], 'onlineStatus') || 'Online')
+      : (getNestedValue(uiText[currentLang], 'offlineStatus') || 'Offline');
+  }
+
+  function setupConnectionIndicator() {
+    const statusSpan = document.getElementById('connection-status');
+    if (!statusSpan) return;
+    window.addEventListener('online', updateConnectionStatus);
+    window.addEventListener('offline', updateConnectionStatus);
+    updateConnectionStatus();
+  }
+
+  function setLanguage(lang) {
+    if (lang === currentLang) return;
+    currentLang = lang;
+    localStorage.setItem('dashboardLang', lang);
+    translatePage();
+    updateInstallButtonText();
+    updateConnectionStatus();
+    renderAll(currentLang, currentTheme, uiText);
+  }
+
+  // ========== Provide translation helper for PWA module ==========
+  window.t = function (key) {
+    return getNestedValue(uiText[currentLang], key);
+  };
+
+  // ========== Init ==========
+  function init() {
+    currentTheme = localStorage.getItem('dashboardTheme') || 'light';
+    applyTheme();
+    currentLang = localStorage.getItem('dashboardLang') || 'en';
+    translatePage();
+    setupConnectionIndicator();
+
+    // PWA & push all handled by the external module
+    window.EDPWA.init();
+
+    updateInstallButtonText();
+    renderAll(currentLang, currentTheme, uiText);
+
+    // Theme & language toggles
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
+    const langSelect = document.getElementById('langSelect');
+    if (langSelect) langSelect.addEventListener('change', function() { setLanguage(this.value); });
+    document.addEventListener('keydown', function(e) {
+      if (e.ctrlKey && e.shiftKey && e.key === 'T') {
         e.preventDefault();
-        deferredPrompt = e;
-        if (installBtn) {
-            installBtn.style.display = 'inline-flex';
-            updateInstallButtonText();
-        }
+        toggleTheme();
+      }
     });
-    if (installBtn) {
-        installBtn.addEventListener('click', async () => {
-            if (!deferredPrompt) return;
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            console.log('Install outcome:', outcome);
-            deferredPrompt = null;
-            installBtn.style.display = 'none';
-        });
-    }
-    window.addEventListener('appinstalled', () => {
-        deferredPrompt = null;
-        if (installBtn) installBtn.style.display = 'none';
-    });
+  }
 
-    // Convert base64 VAPID public key to Uint8Array
-    function urlBase64ToUint8Array(base64String) {
-        const padding = '='.repeat((4 - base64String.length % 4) % 4);
-        const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-        const rawData = window.atob(base64);
-        const outputArray = new Uint8Array(rawData.length);
-        for (let i = 0; i < rawData.length; ++i) {
-            outputArray[i] = rawData.charCodeAt(i);
-        }
-        return outputArray;
-    }
-
-    // Store subscription in Supabase
-    async function saveSubscription(subscription) {
-  const SUPABASE_URL = 'https://hmjbzzuresgzwzefjpyt.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtamJ6enVyZXNnend6ZWZqcHl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwMjczNDUsImV4cCI6MjA5NTYwMzM0NX0.44Q-Hkl4Rr9LuQhwryrQklFi809xYGteHgsS9nMG0ro';
-  const response = await fetch(`${SUPABASE_URL}/rest/v1/push_subscriptions`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'apikey': SUPABASE_ANON_KEY,
-      'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-      'Prefer': 'return=minimal'
-    },
-    body: JSON.stringify({ subscription })
-  });
-  // 409 means duplicate – that's okay, we can ignore
-  if (response.status === 409) {
-    // subscription already exists – that's fine
-    return;
-}
-if (!response.ok) {
-    console.error('Failed to save subscription:', response.status);
-}
-}
-
-    // Ask for permission and subscribe
-    async function subscribeToPush() {
-        if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-            console.warn('Push not supported');
-            return;
-        }
-        const permission = await Notification.requestPermission();
-        if (permission !== 'granted') {
-            console.warn('Notification permission denied');
-            return;
-        }
-        const registration = await navigator.serviceWorker.ready;
-        const existingSubscription = await registration.pushManager.getSubscription();
-        if (existingSubscription) {
-            await saveSubscription(existingSubscription);
-            return;
-        }
-        const subscription = await registration.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: urlBase64ToUint8Array('BO2xV3C8PcVFX-2SqsAyHZgzyDBaC0N7GzDktpoX2J5Pj5Cz9IazAcybQqxe13xYqGnEpoVmXM2jHFqmjXko1kw')
-        });
-        await saveSubscription(subscription);
-        console.log('Push subscription saved');
-    }
-
-    // --- NEW: UI helper for the notification button ---
-    async function updateNotificationUI() {
-        const btn = document.getElementById('enableNotifications');
-        if (!btn) return;
-        if ('Notification' in window) {
-            if (Notification.permission === 'default') {
-                btn.style.display = 'inline-block';   // show button so user can click
-            } else {
-                btn.style.display = 'none';           // already granted or denied – hide it
-                // If already granted, subscribe automatically
-                if (Notification.permission === 'granted') {
-                    await subscribeToPush();
-                }
-            }
-        } else {
-            btn.style.display = 'none';
-        }
-    }
-
-    // ========== Init ==========
-    function init() {
-        currentTheme = localStorage.getItem('dashboardTheme') || 'light';
-        applyTheme();
-        currentLang = localStorage.getItem('dashboardLang') || 'en';
-        translatePage();
-        setupConnectionIndicator();
-        setupOfflineBanner();
-        updateInstallButtonText();
-renderAll(currentLang, currentTheme, uiText);
-
-        // Service Worker registration
-        if ('serviceWorker' in navigator) {
-            function registerServiceWorker() {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(reg => {
-                        console.log('SW registered:', reg.scope);
-                        if ('SyncManager' in window) {
-                            reg.sync.register('sync-data').catch(() => {});
-                        }
-                    })
-                    .catch(err => console.error('SW registration failed:', err));
-            }
-            if (document.readyState === 'complete') {
-                registerServiceWorker();
-            } else {
-                window.addEventListener('load', registerServiceWorker);
-            }
-        }
-
-        // Notification button click handler (button is in footer, already loaded)
-        const notifBtn = document.getElementById('enableNotifications');
-        if (notifBtn) {
-            notifBtn.addEventListener('click', async () => {
-                await subscribeToPush();
-                updateNotificationUI();
-            });
-        }
-
-        // Show or hide the button (and auto‑subscribe if already allowed)
-        updateNotificationUI();
-
-        // Periodic Sync Toggle Button
-        const periodicBtn = document.getElementById('enablePeriodicSync');
-        if (periodicBtn && 'serviceWorker' in navigator && 'periodicSync' in ServiceWorkerRegistration.prototype) {
-            periodicBtn.style.display = 'inline-block';
-            let isSyncActive = false;
-            async function checkRegistrationState() {
-                try {
-                    const reg = await navigator.serviceWorker.ready;
-                    if ('periodicSync' in reg) {
-                        const tags = await reg.periodicSync.getTags();
-                        isSyncActive = tags.includes('periodic-update');
-                    }
-                } catch (e) {
-                    isSyncActive = localStorage.getItem('periodicSyncActive') === 'true';
-                }
-                updatePeriodicSyncButton();
-            }
-            checkRegistrationState();
-            function updatePeriodicSyncButton() {
-                const key = isSyncActive ? 'disablePeriodicSyncBtn' : 'enablePeriodicSyncBtn';
-                periodicBtn.textContent = getNestedValue(uiText[currentLang], key);
-                localStorage.setItem('periodicSyncActive', isSyncActive);
-            }
-            window.updatePeriodicSyncButton = updatePeriodicSyncButton;
-            periodicBtn.addEventListener('click', async () => {
-                const reg = await navigator.serviceWorker.ready;
-                if (!('periodicSync' in reg)) return;
-                if (isSyncActive) {
-                    try {
-                        await reg.periodicSync.unregister('periodic-update');
-                        isSyncActive = false;
-                        updatePeriodicSyncButton();
-                        alert(getNestedValue(uiText[currentLang], 'periodicSyncDisabled') || 'Background updates disabled.');
-                    } catch (err) {
-                        console.error('Unregister failed:', err);
-                        alert('Could not disable background updates.');
-                    }
-                } else {
-                    try {
-                        const status = await navigator.permissions.query({ name: 'periodic-background-sync' });
-                        if (status.state !== 'granted') {
-                            alert(getNestedValue(uiText[currentLang], 'periodicSyncDenied'));
-                            return;
-                        }
-                        await reg.periodicSync.register('periodic-update', { minInterval: 6 * 60 * 60 * 1000 });
-                        isSyncActive = true;
-                        updatePeriodicSyncButton();
-                        alert(getNestedValue(uiText[currentLang], 'periodicSyncEnabled') || 'Background updates enabled!');
-                    } catch (err) {
-                        console.error('Register failed:', err);
-                        alert(getNestedValue(uiText[currentLang], 'periodicSyncDenied'));
-                    }
-                }
-            });
-        }
-
-        // Listen for NEW_VERSION_READY message from SW (existing update banner)
-        if (navigator.serviceWorker) {
-            navigator.serviceWorker.addEventListener('message', event => {
-                if (event.data && event.data.type === 'NEW_VERSION_READY') {
-                    const banner = document.getElementById('update-banner');
-                    if (banner) {
-                        banner.style.display = 'flex';
-                    }
-                }
-            });
-        }
-
-        document.getElementById('update-reload-btn').addEventListener('click', () => {
-            window.location.reload();
-        });
-
-        // Theme & language toggles
-        const themeToggle = document.getElementById('themeToggle');
-        if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
-        const langSelect = document.getElementById('langSelect');
-        if (langSelect) langSelect.addEventListener('change', function() { setLanguage(this.value); });
-        document.addEventListener('keydown', function(e) {
-            if (e.ctrlKey && e.shiftKey && e.key === 'T') {
-                e.preventDefault();
-                toggleTheme();
-            }
-        });
-    }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-    } else {
-        init();
-    }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 })();
-</script>
-</body>
+		</script>
+	</body>
 </html>
