@@ -1,4 +1,4 @@
-const CACHE_NAME = 'edudash-v78'; // bump version when  deploy
+const CACHE_NAME = 'edudash-v79'; // bump version when  deploy
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
@@ -50,12 +50,18 @@ const PRECACHE_ASSETS = [
 self.addEventListener('install', event => {
   const isUpdate = self.registration.active !== null;
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(PRECACHE_ASSETS))
-      .then(() => {
-        self.skipWaiting();
-        self.isUpdate = isUpdate;
-      })
+    caches.open(CACHE_NAME).then(cache =>
+      // cache each asset individually – ignore failures for missing files
+      Promise.allSettled(
+        PRECACHE_ASSETS.map(url =>
+          cache.add(url).catch(err =>
+            console.warn('Precache missed (ignored):', url)
+          )
+        )
+      )
+    )
+    .then(() => self.skipWaiting())
+    .then(() => { self.isUpdate = isUpdate; })
   );
 });
 
