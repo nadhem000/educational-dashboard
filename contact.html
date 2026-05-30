@@ -574,6 +574,95 @@ function setupConnectionIndicator() {
             applyTheme();
             await loadComponents();
     setupConnectionIndicator();
+	// ================== PERIODIC SYNC BUTTON ==================
+const periodicBtn = document.getElementById('enablePeriodicSync');
+if (periodicBtn && 'serviceWorker' in navigator && 'periodicSync' in ServiceWorkerRegistration.prototype) {
+    periodicBtn.style.display = 'inline-block';
+    let isSyncActive = false;
+
+    async function checkRegistrationState() {
+        try {
+            const reg = await navigator.serviceWorker.ready;
+            if ('periodicSync' in reg) {
+                const tags = await reg.periodicSync.getTags();
+                isSyncActive = tags.includes('periodic-update');
+            }
+        } catch (e) {
+            isSyncActive = localStorage.getItem('periodicSyncActive') === 'true';
+        }
+        updatePeriodicSyncButton();
+    }
+
+    function updatePeriodicSyncButton() {
+        const key = isSyncActive ? 'disablePeriodicSyncBtn' : 'enablePeriodicSyncBtn';
+        periodicBtn.textContent = t(key);
+        localStorage.setItem('periodicSyncActive', isSyncActive);
+    }
+
+    // Make this function globally accessible so translatePage() can call it
+    window.updatePeriodicSyncButton = updatePeriodicSyncButton;
+    checkRegistrationState();
+
+    periodicBtn.addEventListener('click', async () => {
+        const reg = await navigator.serviceWorker.ready;
+        if (!('periodicSync' in reg)) return;
+        if (isSyncActive) {
+            try {
+                await reg.periodicSync.unregister('periodic-update');
+                isSyncActive = false;
+                updatePeriodicSyncButton();
+                alert(t('periodicSyncDisabled'));
+            } catch (err) {
+                console.error('Unregister failed:', err);
+                alert('Could not disable background updates.');
+            }
+        } else {
+            try {
+                const status = await navigator.permissions.query({ name: 'periodic-background-sync' });
+                if (status.state !== 'granted') {
+                    alert(t('periodicSyncDenied'));
+                    return;
+                }
+                await reg.periodicSync.register('periodic-update', { minInterval: 6 * 60 * 60 * 1000 });
+                isSyncActive = true;
+                updatePeriodicSyncButton();
+                alert(t('periodicSyncEnabled'));
+            } catch (err) {
+                console.error('Register failed:', err);
+                alert(t('periodicSyncDenied'));
+            }
+        }
+    });
+}
+
+// ================== NOTIFICATION BUTTON ==================
+const notifBtn = document.getElementById('enableNotifications');
+if (notifBtn) {
+    // Update visibility based on Notification permission
+    if ('Notification' in window) {
+        if (Notification.permission === 'default') {
+            notifBtn.style.display = 'inline-block';
+        } else {
+            notifBtn.style.display = 'none';
+            // If already granted, auto‑subscribe
+            if (Notification.permission === 'granted') {
+                subscribeToPush();
+            }
+        }
+    } else {
+        notifBtn.style.display = 'none';
+    }
+
+    notifBtn.addEventListener('click', async () => {
+        await subscribeToPush();
+        // After the click, update UI (button will hide itself)
+        if ('Notification' in window) {
+            if (Notification.permission !== 'default') {
+                notifBtn.style.display = 'none';
+            }
+        }
+    });
+}
             translatePage();
             setupPWA();
         }
