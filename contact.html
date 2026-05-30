@@ -232,7 +232,7 @@
     <main class="ED-General-contact-container">
         <div class="ED-General-profile-header">
             <div class="ED-General-profile-img-wrapper">
-                <img src="assets/mejri-ziad.jpg" alt="Mejri Ziad" class="ED-General-profile-img" id="profileImg"
+                <img src="assets/contact/mejri-ziad.jpg" alt="Mejri Ziad" class="ED-General-profile-img" id="profileImg"
                      onerror="this.style.display='none'; document.getElementById('profileFallback').style.display='flex';">
                 <div id="profileFallback" style="display:none; width:130px; height:130px; border-radius:50%;
                             background:var(--ED-General-color-accent-default); color:white; align-items:center;
@@ -568,7 +568,66 @@ function setupConnectionIndicator() {
                 });
             }
         }
+// ========== PUSH NOTIFICATIONS (Supabase) ==========
+// Convert VAPID public key to Uint8Array
+function urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+}
 
+// Store subscription in Supabase
+async function saveSubscription(subscription) {
+    const SUPABASE_URL = 'https://hmjbzzuresgzwzefjpyt.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtamJ6enVyZXNnend6ZWZqcHl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwMjczNDUsImV4cCI6MjA5NTYwMzM0NX0.44Q-Hkl4Rr9LuQhwryrQklFi809xYGteHgsS9nMG0ro';
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/push_subscriptions`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ subscription })
+    });
+    // 409 means duplicate – that's okay
+    if (response.status === 409) {
+        return;
+    }
+    if (!response.ok) {
+        console.error('Failed to save subscription:', response.status);
+    }
+}
+
+// Subscribe to push notifications
+async function subscribeToPush() {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+        console.warn('Push not supported');
+        return;
+    }
+    const permission = await Notification.requestPermission();
+    if (permission !== 'granted') {
+        console.warn('Notification permission denied');
+        return;
+    }
+    const registration = await navigator.serviceWorker.ready;
+    const existingSubscription = await registration.pushManager.getSubscription();
+    if (existingSubscription) {
+        await saveSubscription(existingSubscription);
+        return;
+    }
+    const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array('BO2xV3C8PcVFX-2SqsAyHZgzyDBaC0N7GzDktpoX2J5Pj5Cz9IazAcybQqxe13xYqGnEpoVmXM2jHFqmjXko1kw')
+    });
+    await saveSubscription(subscription);
+    console.log('Push subscription saved');
+}
         // ================== INIT ==================
         async function init() {
             applyTheme();
