@@ -7,7 +7,7 @@
     <link rel="icon" type="image/x-icon" href="assets/icons/icon-64x64.png">
     <link rel="manifest" href="/manifest.json">
     <style>
-        /* ========== ALL CSS FROM INDEX (unchanged) ========== */
+        /* ========== ALL CSS FROM INDEX (EXACT COPY) ========== */
         :root {
             --ED-General-color-bg: #f5f1eb;
             --ED-General-color-bg-secondary: #ede7df;
@@ -108,10 +108,18 @@
             --ED-General-color-icon-moon-glow: rgba(180, 195, 235, 0.35);
             --ED-General-color-text-on-accent: #12151c;
         }
-        [dir="rtl"] { direction: rtl; text-align: right; }
+        [dir="rtl"] {
+            direction: rtl;
+            text-align: right;
+        }
+        /* ====== HEADER & FOOTER STYLES FROM INDEX (unchanged) ====== */
         *,
         *::before,
-        *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
         html { font-size: 16px; scroll-behavior: smooth; }
         body {
             font-family: var(--ED-General-font-stack);
@@ -120,8 +128,9 @@
             min-height: 100vh;
             transition: background-color var(--ED-General-transition-speed) ease, color var(--ED-General-transition-speed) ease;
             line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
-        /* ====== HEADER & FOOTER STYLES (identical to index) ====== */
         .ED-General-header {
             background: linear-gradient(175deg,
                     var(--ED-General-color-header-gradient-start) 0%,
@@ -130,58 +139,498 @@
                     var(--ED-General-color-header-gradient-end) 100%);
             border-bottom: 1px solid var(--ED-General-color-header-border);
             padding: 1.05rem 1.75rem;
-            position: sticky; top: 0; z-index: 100;
-            transition: background var(--ED-General-transition-speed) ease, border-color var(--ED-General-transition-speed) ease, box-shadow var(--ED-General-transition-speed) ease;
-            box-shadow: 0 1px 4px rgba(var(--ED-General-color-shadow-rgb), 0.04), 0 2px 10px rgba(var(--ED-General-color-shadow-rgb), 0.03);
-            backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: background var(--ED-General-transition-speed) ease,
+                border-color var(--ED-General-transition-speed) ease,
+                box-shadow var(--ED-General-transition-speed) ease;
+            box-shadow:
+                0 1px 4px rgba(var(--ED-General-color-shadow-rgb), 0.04),
+                0 2px 10px rgba(var(--ED-General-color-shadow-rgb), 0.03);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
         }
         [data-theme="dark"] .ED-General-header {
-            box-shadow: 0 1px 4px rgba(var(--ED-General-color-shadow-rgb), 0.25), 0 2px 10px rgba(var(--ED-General-color-shadow-rgb), 0.18);
+            box-shadow:
+                0 1px 4px rgba(var(--ED-General-color-shadow-rgb), 0.25),
+                0 2px 10px rgba(var(--ED-General-color-shadow-rgb), 0.18);
         }
         .ED-General-header::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-            background: linear-gradient(105deg, var(--ED-General-color-accent-default) 0%, var(--ED-General-color-accent-default) 35%, var(--ED-General-color-header-accent-gradient-stop) 60%, transparent 85%);
-            opacity: 0.75; border-radius: 0 0 1px 0; transition: opacity 0.3s ease;
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(105deg,
+                    var(--ED-General-color-accent-default) 0%,
+                    var(--ED-General-color-accent-default) 35%,
+                    var(--ED-General-color-header-accent-gradient-stop) 60%,
+                    transparent 85%);
+            opacity: 0.75;
+            border-radius: 0 0 1px 0;
+            transition: opacity 0.3s ease;
         }
         .ED-General-header:hover::before { opacity: 0.95; }
         .ED-General-header__inner {
-            max-width: 1300px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between;
-            flex-wrap: wrap; gap: 0.85rem; position: relative; z-index: 1;
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.85rem;
+            position: relative;
+            z-index: 1;
         }
         .ED-General-header__title {
-            font-size: 1.38rem; font-weight: 750; letter-spacing: -0.025em;
-            color: var(--ED-General-color-text-primary); white-space: nowrap;
-            transition: color var(--ED-General-transition-speed) ease, text-shadow 0.3s ease;
-            display: flex; align-items: center; gap: 0.45rem;
+            font-size: 1.38rem;
+            font-weight: 750;
+            letter-spacing: -0.025em;
+            color: var(--ED-General-color-text-primary);
+            white-space: nowrap;
+            transition: color var(--ED-General-transition-speed) ease,
+                text-shadow 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
             text-shadow: 0 1px 2px rgba(var(--ED-General-color-shadow-rgb), 0.03);
         }
-        [data-theme="dark"] .ED-General-header__title { text-shadow: 0 1px 3px rgba(var(--ED-General-color-shadow-rgb), 0.2); }
+        [data-theme="dark"] .ED-General-header__title {
+            text-shadow: 0 1px 3px rgba(var(--ED-General-color-shadow-rgb), 0.2);
+        }
         .ED-General-header__title-icon {
             width: 26px; height: 26px; object-fit: contain;
             transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
             filter: drop-shadow(0 1px 2px rgba(var(--ED-General-color-shadow-rgb), 0.08));
         }
-        .ED-General-header__title:hover .ED-General-header__title-icon { transform: rotate(-5deg) scale(1.12); }
-        .ED-General-header__controls { display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap; }
-        .ED-General-lang-select { /* ... same as index ... */ }
-        /* (I'm omitting the full repetitive styles for brevity – they are unchanged from index) */
-        .ED-General-footer { /* ... same footer styles ... */ }
-        /* ====== Contact‑specific ====== */
-        .ED-General-contact-container { max-width: 900px; margin: 2rem auto; padding: 0 1.5rem; }
-        .ED-General-profile-header { display: flex; align-items: center; gap: 2rem; margin-bottom: 2rem; background: var(--ED-General-color-surface); border: 1px solid var(--ED-General-color-border); border-radius: var(--ED-General-card-radius); padding: 2rem; box-shadow: 0 4px 12px var(--ED-General-color-shadow); }
+        .ED-General-header__title:hover .ED-General-header__title-icon {
+            transform: rotate(-5deg) scale(1.12);
+        }
+        .ED-General-header__controls {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            flex-wrap: wrap;
+        }
+        .ED-General-lang-select {
+            padding: 0.48rem 2.1rem 0.48rem 0.9rem;
+            border-radius: 22px;
+            border: 1.5px solid var(--ED-General-color-border);
+            background: var(--ED-General-color-surface);
+            color: var(--ED-General-color-text-primary);
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-weight: 600;
+            font-family: var(--ED-General-font-stack);
+            transition: all 0.22s ease;
+            white-space: nowrap;
+            letter-spacing: 0.01em;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            box-shadow: 0 1px 3px rgba(var(--ED-General-color-shadow-rgb), 0.05);
+            position: relative;
+        }
+        .ED-General-lang-select::after {
+            content: '';
+            position: absolute;
+            right: 0.7rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 6px solid var(--ED-General-color-text-secondary);
+            pointer-events: none;
+            transition: border-top-color 0.2s ease;
+        }
+        .ED-General-lang-select:hover {
+            border-color: var(--ED-General-color-accent-default);
+            background-color: var(--ED-General-color-accent-soft);
+            box-shadow: 0 2px 8px rgba(var(--ED-General-color-accent-rgb), 0.12);
+        }
+        .ED-General-lang-select:focus {
+            outline: none;
+            border-color: var(--ED-General-color-accent-default);
+            box-shadow: 0 0 0 3.5px rgba(var(--ED-General-color-accent-rgb), 0.14);
+        }
+        .ED-General-theme-toggle {
+            width: 41px;
+            height: 41px;
+            border-radius: 50%;
+            border: 1.5px solid var(--ED-General-color-border);
+            background: var(--ED-General-color-surface);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--ED-General-color-text-primary);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            box-shadow: 0 1px 4px rgba(var(--ED-General-color-shadow-rgb), 0.06);
+            position: relative;
+            overflow: hidden;
+        }
+        .ED-General-theme-toggle::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle at center,
+                    var(--ED-General-color-accent-default) 0%,
+                    transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .ED-General-theme-toggle:hover::after { opacity: 0.06; }
+        .ED-General-theme-toggle:hover {
+            border-color: var(--ED-General-color-accent-default);
+            background: var(--ED-General-color-accent-soft);
+            box-shadow: 0 4px 16px rgba(var(--ED-General-color-accent-rgb), 0.15);
+            transform: scale(1.06);
+        }
+        .ED-General-theme-toggle:active {
+            transform: scale(0.94);
+            transition: 0.1s ease;
+        }
+        .ED-General-theme-toggle .ED-General-icon-sun,
+        .ED-General-theme-toggle .ED-General-icon-moon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            line-height: 1;
+            transition: all 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+            position: absolute;
+            pointer-events: none;
+        }
+        .ED-General-theme-toggle .ED-General-icon-sun {
+            opacity: 1;
+            transform: rotate(0deg) scale(1);
+            color: var(--ED-General-color-icon-sun);
+            filter: drop-shadow(0 0 3px var(--ED-General-color-icon-sun-glow));
+        }
+        .ED-General-theme-toggle .ED-General-icon-moon {
+            opacity: 0;
+            transform: rotate(-90deg) scale(0.5);
+            color: var(--ED-General-color-icon-moon);
+        }
+        [data-theme="dark"] .ED-General-theme-toggle .ED-General-icon-sun {
+            opacity: 0;
+            transform: rotate(90deg) scale(0.5);
+            filter: none;
+        }
+        [data-theme="dark"] .ED-General-theme-toggle .ED-General-icon-moon {
+            opacity: 1;
+            transform: rotate(0deg) scale(1);
+            color: var(--ED-General-color-icon-moon);
+            filter: drop-shadow(0 0 4px var(--ED-General-color-icon-moon-glow));
+        }
+        .ED-General-header-btn {
+            background: var(--ED-General-color-surface);
+            border: 1.5px solid var(--ED-General-color-border);
+            border-radius: 22px;
+            padding: 0.45rem 1rem;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--ED-General-color-text-primary);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: all 0.22s ease;
+            white-space: nowrap;
+            font-family: var(--ED-General-font-stack);
+            box-shadow: 0 1px 3px rgba(var(--ED-General-color-shadow-rgb), 0.05);
+        }
+        .ED-General-header-btn:hover {
+            border-color: var(--ED-General-color-accent-default);
+            background: var(--ED-General-color-accent-soft);
+            box-shadow: 0 2px 8px rgba(var(--ED-General-color-accent-rgb), 0.12);
+        }
+        .ED-General-header-btn:active { transform: scale(0.96); }
+        #connection-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--ED-General-color-text-secondary);
+            white-space: nowrap;
+        }
+        .status-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            display: inline-block;
+            background-color: #4caf50;
+            box-shadow: 0 0 6px rgba(76, 175, 80, 0.6);
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+        .status-dot.offline {
+            background-color: #f44336;
+            box-shadow: 0 0 6px rgba(244, 67, 54, 0.6);
+        }
+        .ED-General-main {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 1.75rem 1.5rem 3rem;
+        }
+        .ED-General-footer {
+            border-top: 1px solid var(--ED-General-color-border);
+            padding: 2rem 0 1.75rem;
+            font-size: 0.8rem;
+            color: var(--ED-General-color-text-tertiary);
+            transition: all var(--ED-General-transition-speed) ease;
+            background: linear-gradient(180deg,
+                    var(--ED-General-color-bg-secondary) 0%,
+                    var(--ED-General-color-bg) 60%);
+            box-shadow: 0 -1px 8px rgba(var(--ED-General-color-shadow-rgb), 0.04);
+            position: relative;
+        }
+        [data-theme="dark"] .ED-General-footer {
+            background: linear-gradient(180deg,
+                    var(--ED-General-color-bg-secondary) 0%,
+                    var(--ED-General-color-bg) 55%);
+            box-shadow: 0 -1px 8px rgba(var(--ED-General-color-shadow-rgb), 0.3);
+        }
+        .ED-General-footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 55px;
+            height: 3px;
+            background: var(--ED-General-color-accent-default);
+            border-radius: 0 0 3px 3px;
+            opacity: 0.55;
+            transition: width 0.3s ease, opacity 0.3s ease;
+        }
+        .ED-General-footer:hover::before { width: 70px; opacity: 0.75; }
+        .ED-General-footer__grid {
+            display: grid;
+            grid-template-columns: 1fr 1.4fr 1fr;
+            gap: 2rem;
+            padding: 0 1.75rem;
+            max-width: 1300px;
+            margin: 0 auto;
+            align-items: start;
+        }
+        .ED-General-footer__col {
+            display: flex;
+            flex-direction: column;
+            gap: 0.55rem;
+        }
+        .ED-General-footer__col:first-child {
+            font-weight: 550;
+            letter-spacing: 0.015em;
+            color: var(--ED-General-color-text-secondary);
+        }
+        .ED-General-footer__col:nth-child(2) {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 0.55rem 1.1rem;
+            align-items: center;
+        }
+        .ED-General-footer__col:last-child {
+            text-align: right;
+            gap: 0.35rem;
+        }
+        [dir="rtl"] .ED-General-footer__col:last-child { text-align: left; }
+        .ED-General-footer a {
+            color: var(--ED-General-color-text-secondary);
+            text-decoration: none;
+            font-weight: 550;
+            transition: all 0.22s ease;
+            position: relative;
+            width: fit-content;
+            padding: 0.2rem 0;
+        }
+        .ED-General-footer a::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 0;
+            height: 1.5px;
+            background: var(--ED-General-color-accent-default);
+            border-radius: 1px;
+            transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .ED-General-footer a:hover { color: var(--ED-General-color-accent-default); }
+        .ED-General-footer a:hover::after { width: 100%; }
+        .ED-General-footer span {
+            display: block;
+            line-height: 1.5;
+        }
+        .ED-General-footer__col:last-child span {
+            font-size: 0.76rem;
+            color: var(--ED-General-color-text-tertiary);
+            letter-spacing: 0.01em;
+        }
+        .ED-General-offline-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--ED-General-color-accent-default);
+            color: var(--ED-General-color-text-on-accent);
+            text-align: center;
+            padding: 0.5rem;
+            z-index: 1000;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 -2px 8px rgba(var(--ED-General-color-shadow-rgb), 0.3);
+            display: none;
+        }
+        .ED-General-update-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--ED-General-color-accent-default);
+            color: var(--ED-General-color-text-on-accent);
+            text-align: center;
+            padding: 0.8rem;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            font-weight: 600;
+            box-shadow: 0 -2px 10px rgba(var(--ED-General-color-shadow-rgb), 0.3);
+            display: none;
+        }
+        .ED-General-update-banner button {
+            background: var(--ED-General-color-text-on-accent);
+            color: var(--ED-General-color-accent-default);
+            border: none;
+            border-radius: 20px;
+            padding: 0.4rem 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .ED-General-footer-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.1rem;
+            border-radius: 32px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            font-family: var(--ED-General-font-stack);
+            border: 1.5px solid transparent;
+            background: var(--ED-General-color-surface);
+            color: var(--ED-General-color-text-primary);
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            box-shadow: 0 1px 3px rgba(var(--ED-General-color-shadow-rgb), 0.06);
+            white-space: nowrap;
+            letter-spacing: 0.01em;
+        }
+        .ED-General-footer-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(var(--ED-General-color-shadow-rgb), 0.12);
+            border-color: var(--ED-General-color-accent-default);
+            background: var(--ED-General-color-accent-soft);
+            color: var(--ED-General-color-accent-default);
+        }
+        .ED-General-footer-btn:active { transform: translateY(1px); transition: 0.05s linear; }
+        .ED-General-footer-btn--sync {
+            background: linear-gradient(135deg, var(--ED-General-color-surface) 0%, var(--ED-General-color-bg-secondary) 100%);
+            border-color: var(--ED-General-color-border);
+        }
+        .ED-General-footer-btn--sync:hover {
+            background: var(--ED-General-color-accent-default);
+            border-color: var(--ED-General-color-accent-default);
+            color: var(--ED-General-color-text-on-accent);
+        }
+        .ED-General-footer-btn--notify {
+            background: var(--ED-General-color-surface);
+            border-color: var(--ED-General-color-accent-default);
+            color: var(--ED-General-color-accent-default);
+        }
+        .ED-General-footer-btn--notify:hover {
+            background: var(--ED-General-color-accent-default);
+            color: var(--ED-General-color-text-on-accent);
+            border-color: var(--ED-General-color-accent-default);
+        }
+        .ED-General-footer__col { gap: 0.75rem; }
+        .ED-General-footer__col .ED-General-footer-btn { margin-top: 0.15rem; }
+        [dir="rtl"] .ED-General-footer-btn { flex-direction: row-reverse; }
+
+        /* ========== Contact‑specific styles (new, but use the same variables) ========== */
+        .ED-General-contact-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+        .ED-General-profile-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            background: var(--ED-General-color-surface);
+            border: 1px solid var(--ED-General-color-border);
+            border-radius: var(--ED-General-card-radius);
+            padding: 2rem;
+            box-shadow: 0 4px 12px var(--ED-General-color-shadow);
+        }
         .ED-General-profile-img-wrapper { flex-shrink: 0; }
-        .ED-General-profile-img { width: 130px; height: 130px; border-radius: 50%; object-fit: cover; border: 3px solid var(--ED-General-color-accent-default); }
+        .ED-General-profile-img {
+            width: 130px; height: 130px; border-radius: 50%; object-fit: cover;
+            border: 3px solid var(--ED-General-color-accent-default);
+        }
         .ED-General-profile-info-block { flex: 1; }
-        .ED-General-profile-name { font-size: 2rem; font-weight: 700; margin-bottom: 0.3rem; }
-        .ED-General-profile-title { font-size: 1.1rem; color: var(--ED-General-color-accent-default); margin-bottom: 0.5rem; font-weight: 600; }
-        .ED-General-profile-bio { color: var(--ED-General-color-text-secondary); line-height: 1.6; margin-bottom: 0.8rem; }
-        .ED-General-profile-details { display: flex; flex-wrap: wrap; gap: 0.5rem 2rem; color: var(--ED-General-color-text-secondary); font-size: 0.95rem; }
-        .ED-General-section-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 1rem; border-bottom: 1px solid var(--ED-General-color-border); padding-bottom: 0.5rem; }
-        .ED-General-social-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 0.8rem; }
-        .ED-General-social-card { display: flex; align-items: center; gap: 0.6rem; background: var(--ED-General-color-surface); border: 1px solid var(--ED-General-color-border); border-radius: 12px; padding: 0.8rem 1rem; text-decoration: none; color: var(--ED-General-color-text-primary); transition: transform 0.2s, background 0.2s, border-color 0.2s; }
-        .ED-General-social-card:hover { background: var(--ED-General-color-accent-default); color: var(--ED-General-color-text-on-accent); border-color: transparent; transform: translateY(-2px); }
+        .ED-General-profile-name {
+            font-size: 2rem; font-weight: 700; margin-bottom: 0.3rem;
+        }
+        .ED-General-profile-title {
+            font-size: 1.1rem; color: var(--ED-General-color-accent-default);
+            margin-bottom: 0.5rem; font-weight: 600;
+        }
+        .ED-General-profile-bio {
+            color: var(--ED-General-color-text-secondary); line-height: 1.6; margin-bottom: 0.8rem;
+        }
+        .ED-General-profile-details {
+            display: flex; flex-wrap: wrap; gap: 0.5rem 2rem;
+            color: var(--ED-General-color-text-secondary); font-size: 0.95rem;
+        }
+        .ED-General-section-title {
+            font-size: 1.4rem; font-weight: 700; margin-bottom: 1rem;
+            border-bottom: 1px solid var(--ED-General-color-border); padding-bottom: 0.5rem;
+        }
+        .ED-General-social-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 0.8rem;
+        }
+        .ED-General-social-card {
+            display: flex; align-items: center; gap: 0.6rem;
+            background: var(--ED-General-color-surface);
+            border: 1px solid var(--ED-General-color-border);
+            border-radius: 12px; padding: 0.8rem 1rem;
+            text-decoration: none; color: var(--ED-General-color-text-primary);
+            transition: transform 0.2s, background 0.2s, border-color 0.2s;
+        }
+        .ED-General-social-card:hover {
+            background: var(--ED-General-color-accent-default);
+            color: var(--ED-General-color-text-on-accent);
+            border-color: transparent;
+            transform: translateY(-2px);
+        }
         .ED-General-social-icon-small { font-size: 1.6rem; width: 28px; text-align: center; }
         .ED-General-social-img { width: 28px; height: 28px; object-fit: contain; }
+
+        @media (max-width: 640px) {
+            .ED-General-profile-header { flex-direction: column; text-align: center; }
+            .ED-General-social-grid { grid-template-columns: 1fr 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -194,7 +643,9 @@
                      onerror="this.style.display='none'; document.getElementById('profileFallback').style.display='flex';">
                 <div id="profileFallback" style="display:none; width:130px; height:130px; border-radius:50%;
                             background:var(--ED-General-color-accent-default); color:white; align-items:center;
-                            justify-content:center; font-size:3rem; margin:0 auto;">MZ</div>
+                            justify-content:center; font-size:3rem; margin:0 auto;">
+                    MZ
+                </div>
             </div>
             <div class="ED-General-profile-info-block">
                 <h1 class="ED-General-profile-name" data-i18n="profile.name">Mejri Ziad</h1>
@@ -214,11 +665,14 @@
 
     <footer id="footer-container"></footer>
 
+    <!-- Offline banner -->
     <div id="offline-banner" class="ED-General-offline-banner" data-i18n="offlineBanner">You are offline.</div>
+    <!-- Update banner -->
     <div id="update-banner" class="ED-General-update-banner" style="display:none;">
         <span data-i18n="updateNotification">A new version is available.</span>
         <button id="update-reload-btn" data-i18n="updateReloadBtn">Reload</button>
     </div>
+    <!-- Install button -->
     <button class="ED-General-header-btn" id="installBtn" style="display:none;" data-i18n="installBtn">📲 Install App</button>
 
     <script>
@@ -238,119 +692,114 @@
             { mediaLink: 'https://stackoverflow.com/users/mejriziad', mediaSmallIcon: '📚', mediaImage: 'assets/icons/stackoverflow.png', en: { mediaName: 'Stack Overflow' }, fr: { mediaName: 'Stack Overflow' }, ar: { mediaName: 'ستاك أوفرفلو' } }
         ];
 
-        // ================== TRANSLATIONS (ALL KEYS FOR HEADER & FOOTER) ==================
+        // ================== TRANSLATIONS (with footer keys and Header keys) ==================
         const uiText = {
-            en: {
-                // Profile page
-                profile: {
-                    name: 'Mejri Ziad',
-                    title: 'Full‑stack Developer & Educator',
-                    bio: 'Passionate about building multilingual learning platforms and open‑source tools. I love turning complex ideas into simple, accessible digital experiences.',
-                    location: 'Tunis, Tunisia',
-                    email: 'contact@mejriziad.tn',
-                    phone: '+216 12 345 678'
-                },
-                social: { title: 'Connect with me' },
-                // PWA / banners
-                installBtn: '📲 Install App',
-                offlineBanner: 'You are offline. Some features may be unavailable.',
-                onlineStatus: 'Online',
-                offlineStatus: 'Offline',
-                themeToggleTitle: 'Dark/Light Theme',
-                updateNotification: 'A new version is available.',
-                updateReloadBtn: 'Reload',
-                imageAlt: 'Profile photo',
-                noLink: '(link not set)',
-                // Header title (used in header.html)
-                dashboardTitle: 'Educational Dashboard',
-                // Footer buttons (from footer.html)
-                enablePeriodicSyncBtn: 'Enable Background Updates',
-                disablePeriodicSyncBtn: 'Disable Background Updates',
-                periodicSyncEnabled: 'Background updates enabled!',
-                periodicSyncDisabled: 'Background updates disabled!',
-                periodicSyncDenied: 'Permission not granted. Please check site settings.',
-                enableNotificationsBtn: 'Enable Notifications',
-                // Footer links & info
-                footer: {
-                    confidentiality: 'Confidentiality Politics',
-                    terms: 'Terms of Use',
-                    contact: 'Contact',
-                    version: "version '0.0.1'",
-                    developer: 'developed by: Mejri Ziad.',
-                    hosted: 'Hosted on Github and Netlify.'
-                }
-            },
-            fr: {
-                profile: {
-                    name: 'Mejri Ziad',
-                    title: 'Développeur Full‑stack & Formateur',
-                    bio: 'Passionné par la création de plateformes d’apprentissage multilingues et d’outils open‑source. J’aime transformer des idées complexes en expériences numériques simples et accessibles.',
-                    location: 'Tunis, Tunisie',
-                    email: 'contact@mejriziad.tn',
-                    phone: '+216 12 345 678'
-                },
-                social: { title: 'Connectez‑vous avec moi' },
-                installBtn: '📲 Installer l’application',
-                offlineBanner: 'Vous êtes hors ligne. Certaines fonctionnalités peuvent être indisponibles.',
-                onlineStatus: 'En ligne',
-                offlineStatus: 'Hors ligne',
-                themeToggleTitle: 'Thème clair/sombre',
-                updateNotification: 'Une nouvelle version est disponible.',
-                updateReloadBtn: 'Recharger',
-                imageAlt: 'Photo de profil',
-                noLink: '(lien non défini)',
-                dashboardTitle: 'Tableau de Bord Éducatif',
-                enablePeriodicSyncBtn: 'Activer les mises à jour en arrière-plan',
-                disablePeriodicSyncBtn: 'Désactiver les mises à jour en arrière-plan',
-                periodicSyncEnabled: 'Mises à jour en arrière-plan activées !',
-                periodicSyncDisabled: 'Mises à jour en arrière-plan désactivées !',
-                periodicSyncDenied: 'Permission non accordée. Veuillez vérifier les paramètres du site.',
-                enableNotificationsBtn: 'Activer les Notifications',
-                footer: {
-                    confidentiality: 'Politique de confidentialité',
-                    terms: 'Conditions d’utilisation',
-                    contact: 'Contact',
-                    version: "version '0.0.1'",
-                    developer: 'développé par : Mejri Ziad.',
-                    hosted: 'Hébergé sur Github et Netlify.'
-                }
-            },
-            ar: {
-                profile: {
-                    name: 'ماجري زياد',
-                    title: 'مطور شامل ومعلم',
-                    bio: 'شغوف ببناء منصات تعليمية متعددة اللغات وأدوات مفتوحة المصدر. أحب تحويل الأفكار المعقدة إلى تجارب رقمية بسيطة ومتاحة.',
-                    location: 'تونس العاصمة، تونس',
-                    email: 'contact@mejriziad.tn',
-                    phone: '+216 12 345 678'
-                },
-                social: { title: 'تواصل معي' },
-                installBtn: '📲 تثبيت التطبيق',
-                offlineBanner: 'أنت غير متصل. قد لا تتوفر بعض الميزات.',
-                onlineStatus: 'متصل',
-                offlineStatus: 'غير متصل',
-                themeToggleTitle: 'وضع داكن/فاتح',
-                updateNotification: 'نسخة جديدة متاحة.',
-                updateReloadBtn: 'إعادة التحميل',
-                imageAlt: 'صورة الملف الشخصي',
-                noLink: '(الرابط غير محدد)',
-                dashboardTitle: 'لوحة التحكم التعليمية',
-                enablePeriodicSyncBtn: 'تفعيل التحديثات في الخلفية',
-                disablePeriodicSyncBtn: 'تعطيل التحديثات في الخلفية',
-                periodicSyncEnabled: 'تم تفعيل التحديثات في الخلفية!',
-                periodicSyncDisabled: 'تم تعطيل التحديثات في الخلفية!',
-                periodicSyncDenied: 'لم يتم منح الإذن. يرجى التحقق من إعدادات الموقع.',
-                enableNotificationsBtn: 'تفعيل الاشعارات',
-                footer: {
-                    confidentiality: 'سياسة الخصوصية',
-                    terms: 'شروط الاستخدام',
-                    contact: 'اتصل بنا',
-                    version: "الإصدار '0.0.1'",
-                    developer: 'طور بواسطة: ماجري زياد.',
-                    hosted: 'مستضاف على Github و Netlify.'
-                }
-            }
-        };
+    en: {
+        dashboardTitle: 'Educational Dashboard',
+        themeToggleTitle: 'Dark/Light Theme',
+        onlineStatus: 'Online',
+        offlineStatus: 'Offline',
+        installBtn: '📲 Install App',
+        profile: {
+            name: 'Mejri Ziad',
+            title: 'Full‑stack Developer & Educator',
+            bio: 'Passionate about building multilingual learning platforms and open‑source tools. I love turning complex ideas into simple, accessible digital experiences.',
+            location: 'Tunis, Tunisia',
+            email: 'contact@mejriziad.tn',
+            phone: '+216 12 345 678'
+        },
+        social: { title: 'Connect with me' },
+        offlineBanner: 'You are offline. Some features may be unavailable.',
+        updateNotification: 'A new version is available.',
+        updateReloadBtn: 'Reload',
+        imageAlt: 'Profile photo',
+        noLink: '(link not set)',
+        footer: {
+            version: "version '0.0.1'",
+            confidentiality: 'Confidentiality Politics',
+            terms: 'Terms of Use',
+            contact: 'Contact',
+            developer: 'developed by: Mejri Ziad.',
+            hosted: 'Hosted on Github and Netlify.'
+        },
+        enablePeriodicSyncBtn: 'Enable Background Updates',
+        disablePeriodicSyncBtn: 'Disable Background Updates',
+        periodicSyncEnabled: 'Background updates enabled!',
+        periodicSyncDisabled: 'Background updates disabled!',
+        periodicSyncDenied: 'Permission not granted. Please check site settings.',
+        enableNotificationsBtn: 'Enable Notifications'
+    },
+    fr: {
+        dashboardTitle: 'Tableau de Bord Éducatif',
+        themeToggleTitle: 'Thème clair/sombre',
+        onlineStatus: 'En ligne',
+        offlineStatus: 'Hors ligne',
+        installBtn: '📲 Installer l’application',
+        profile: {
+            name: 'Mejri Ziad',
+            title: 'Développeur Full‑stack & Formateur',
+            bio: 'Passionné par la création de plateformes d’apprentissage multilingues et d’outils open‑source. J’aime transformer des idées complexes en expériences numériques simples et accessibles.',
+            location: 'Tunis, Tunisie',
+            email: 'contact@mejriziad.tn',
+            phone: '+216 12 345 678'
+        },
+        social: { title: 'Connectez‑vous avec moi' },
+        offlineBanner: 'Vous êtes hors ligne. Certaines fonctionnalités peuvent être indisponibles.',
+        updateNotification: 'Une nouvelle version est disponible.',
+        updateReloadBtn: 'Recharger',
+        imageAlt: 'Photo de profil',
+        noLink: '(lien non défini)',
+        footer: {
+            version: "version '0.0.1'",
+            confidentiality: 'Politique de confidentialité',
+            terms: 'Conditions d’utilisation',
+            contact: 'Contact',
+            developer: 'développé par : Mejri Ziad.',
+            hosted: 'Hébergé sur Github et Netlify.'
+        },
+        enablePeriodicSyncBtn: 'Activer les mises à jour en arrière-plan',
+        disablePeriodicSyncBtn: 'Désactiver les mises à jour en arrière-plan',
+        periodicSyncEnabled: 'Mises à jour en arrière-plan activées !',
+        periodicSyncDisabled: 'Mises à jour en arrière-plan désactivées !',
+        periodicSyncDenied: 'Permission non accordée. Veuillez vérifier les paramètres du site.',
+        enableNotificationsBtn: 'Activer les Notifications'
+    },
+    ar: {
+        dashboardTitle: 'لوحة التحكم التعليمية',
+        themeToggleTitle: 'وضع داكن/فاتح',
+        onlineStatus: 'متصل',
+        offlineStatus: 'غير متصل',
+        installBtn: '📲 تثبيت التطبيق',
+        profile: {
+            name: 'ماجري زياد',
+            title: 'مطور شامل ومعلم',
+            bio: 'شغوف ببناء منصات تعليمية متعددة اللغات وأدوات مفتوحة المصدر. أحب تحويل الأفكار المعقدة إلى تجارب رقمية بسيطة ومتاحة.',
+            location: 'تونس العاصمة، تونس',
+            email: 'contact@mejriziad.tn',
+            phone: '+216 12 345 678'
+        },
+        social: { title: 'تواصل معي' },
+        offlineBanner: 'أنت غير متصل. قد لا تتوفر بعض الميزات.',
+        updateNotification: 'نسخة جديدة متاحة.',
+        updateReloadBtn: 'إعادة التحميل',
+        imageAlt: 'صورة الملف الشخصي',
+        noLink: '(الرابط غير محدد)',
+        footer: {
+            version: "الإصدار '0.0.1'",
+            confidentiality: 'سياسة الخصوصية',
+            terms: 'شروط الاستخدام',
+            contact: 'اتصل بنا',
+            developer: 'طور بواسطة: ماجري زياد.',
+            hosted: 'مستضاف على Github و Netlify.'
+        },
+        enablePeriodicSyncBtn: 'تفعيل التحديثات في الخلفية',
+        disablePeriodicSyncBtn: 'تعطيل التحديثات في الخلفية',
+        periodicSyncEnabled: 'تم تفعيل التحديثات في الخلفية!',
+        periodicSyncDisabled: 'تم تعطيل التحديثات في الخلفية!',
+        periodicSyncDenied: 'لم يتم منح الإذن. يرجى التحقق من إعدادات الموقع.',
+        enableNotificationsBtn: 'تفعيل الاشعارات'
+    }
+};
 
         // ================== STATE ==================
         let currentLang = localStorage.getItem('dashboardLang') || 'en';
@@ -388,32 +837,19 @@
         }
 
         function translatePage() {
-            const lang = currentLang;
-            // Handle data-i18n
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 const text = t(key);
                 if (text) el.textContent = text;
             });
-            // Handle data-i18n-title (theme toggle title)
-            document.querySelectorAll('[data-i18n-title]').forEach(el => {
-                const key = el.getAttribute('data-i18n-title');
-                const text = t(key);
-                if (text) el.setAttribute('title', text);
-            });
-            document.documentElement.lang = lang;
-            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
             const langSelect = document.getElementById('langSelect');
-            if (langSelect) langSelect.value = lang;
+            if (langSelect) langSelect.value = currentLang;
             renderSocialGrid();
             document.getElementById('profileImg').alt = t('profile.imageAlt');
             const installBtn = document.getElementById('installBtn');
             if (installBtn) installBtn.textContent = t('installBtn');
-            // Update connection status label if present
-            const statusLabel = document.getElementById('connection-status-label');
-            if (statusLabel) {
-                statusLabel.textContent = navigator.onLine ? t('onlineStatus') : t('offlineStatus');
-            }
         }
 
         // ================== PWA ==================
