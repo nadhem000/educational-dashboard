@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terms of Use — Educational Dashboard</title>
+    <title>Terms of Use – Mejri Ziad</title>
+    <link rel="icon" type="image/x-icon" href="assets/icons/icon-64x64.png">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="stylesheet" href="/ED-general-common.css">
     <style>
         :root {
             --ED-General-color-bg: #f5f1eb;
@@ -16,26 +19,19 @@
             --ED-General-color-border: #e2dcd4;
             --ED-General-color-border-hover: #cbc3b8;
             --ED-General-color-shadow: rgba(60, 50, 40, 0.07);
+            --ED-General-color-shadow-hover: rgba(60, 50, 40, 0.14);
             --ED-General-color-accent-default: #4a7fd9;
             --ED-General-color-accent-light: #e8f1fb;
             --ED-General-color-accent-soft: #f0f5fc;
             --ED-General-color-header-bg: #ffffff;
             --ED-General-color-header-border: #e8e2d9;
-            --ED-General-color-header-bg-start: #fefdfb;
-            --ED-General-color-header-bg-mid1: #faf8f4;
-            --ED-General-color-header-bg-mid2: #f6f3ee;
-            --ED-General-color-header-bg-end: #f2efe8;
-            --ED-General-color-header-accent-line: rgba(180,160,140,0.5);
-            --ED-General-color-icon-sun: #e8a840;
-            --ED-General-color-icon-sun-glow: rgba(232,168,64,0.3);
-            --ED-General-color-icon-moon: #7b8cb0;
-            --ED-General-color-icon-moon-glow: rgba(180,195,235,0.0);
             --ED-General-color-toggle-bg: #e8e2d9;
             --ED-General-color-toggle-text: #4a5568;
             --ED-General-color-toggle-active-bg: #4a7fd9;
             --ED-General-color-toggle-active-text: #ffffff;
             --ED-General-color-badge-bg: #f0ece5;
             --ED-General-color-badge-text: #5a6c7d;
+            --ED-General-color-badge-hover-bg: #e4ded5;
             --ED-General-color-btn-primary-bg: #4a7fd9;
             --ED-General-color-btn-primary-text: #ffffff;
             --ED-General-color-btn-primary-hover: #3b6ec4;
@@ -44,9 +40,31 @@
             --ED-General-card-radius: 16px;
             --ED-General-card-padding: 1.5rem;
             --ED-General-transition-speed: 0.3s;
-            --ED-General-font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Noto Sans Arabic", sans-serif;
-            --ED-General-select-arrow-color: #5a6c7d;
-            --ED-General-select-wrapper-bg: var(--ED-General-color-surface);
+            --ED-General-grid-gap: 1.25rem;
+            --ED-General-font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+                "Noto Sans", "Noto Sans Arabic", sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+            --card-accent-r: 60;
+            --card-accent-g: 50;
+            --card-accent-b: 40;
+            --card-shadow-opacity: 0.10;
+            --card-shadow-opacity-hover: 0.22;
+            --card-shadow-blur: 10px;
+            --card-shadow-blur-hover: 30px;
+            --card-shadow-offset-x: 0px;
+            --card-shadow-offset-y: 3px;
+            --card-shadow-offset-y-hover: 8px;
+            --ED-General-color-header-gradient-start: #fefdfb;
+            --ED-General-color-header-gradient-mid1: #faf8f4;
+            --ED-General-color-header-gradient-mid2: #f6f3ee;
+            --ED-General-color-header-gradient-end: #f2efe8;
+            --ED-General-color-header-accent-gradient-stop: rgba(180, 160, 140, 0.5);
+            --ED-General-color-shadow-rgb: 60, 50, 40;
+            --ED-General-color-accent-rgb: 74, 127, 217;
+            --ED-General-color-icon-sun: #e8a840;
+            --ED-General-color-icon-moon: #7b8cb0;
+            --ED-General-color-icon-sun-glow: rgba(232, 168, 64, 0.3);
+            --ED-General-color-icon-moon-glow: rgba(122, 143, 176, 0.35);
+            --ED-General-color-text-on-accent: #ffffff;
         }
         [data-theme="dark"] {
             --ED-General-color-bg: #171a20;
@@ -59,424 +77,221 @@
             --ED-General-color-border: #32353e;
             --ED-General-color-border-hover: #454952;
             --ED-General-color-shadow: rgba(0, 0, 0, 0.25);
+            --ED-General-color-shadow-hover: rgba(0, 0, 0, 0.45);
             --ED-General-color-accent-default: #7aafff;
             --ED-General-color-accent-light: #1e2d45;
             --ED-General-color-accent-soft: #1a2535;
             --ED-General-color-header-bg: #1c1f28;
             --ED-General-color-header-border: #2a2e38;
-            --ED-General-color-header-bg-start: #1f222d;
-            --ED-General-color-header-bg-mid1: #1c1f29;
-            --ED-General-color-header-bg-mid2: #191c24;
-            --ED-General-color-header-bg-end: #171a20;
-            --ED-General-color-header-accent-line: rgba(60,50,40,0.0);
-            --ED-General-color-icon-sun: #e8a840;
-            --ED-General-color-icon-sun-glow: rgba(232,168,64,0.0);
-            --ED-General-color-icon-moon: #c4d0f0;
-            --ED-General-color-icon-moon-glow: rgba(180,195,235,0.35);
             --ED-General-color-toggle-bg: #2a2e38;
             --ED-General-color-toggle-text: #b0b5c2;
             --ED-General-color-toggle-active-bg: #7aafff;
             --ED-General-color-toggle-active-text: #12151c;
             --ED-General-color-badge-bg: #2a2e38;
             --ED-General-color-badge-text: #b0b5c2;
+            --ED-General-color-badge-hover-bg: #353a45;
             --ED-General-color-btn-primary-bg: #7aafff;
             --ED-General-color-btn-primary-text: #12151c;
             --ED-General-color-btn-primary-hover: #6199f0;
             --ED-General-color-btn-shadow: rgba(0, 0, 0, 0.5);
             --ED-General-color-icon-container-bg: #252b38;
-            --ED-General-select-arrow-color: #b0b5c2;
-            --ED-General-select-wrapper-bg: var(--ED-General-color-surface);
+            --ED-General-color-header-gradient-start: #1f222d;
+            --ED-General-color-header-gradient-mid1: #1c1f29;
+            --ED-General-color-header-gradient-mid2: #191c24;
+            --ED-General-color-header-gradient-end: #171a20;
+            --ED-General-color-header-accent-gradient-stop: rgba(160, 175, 200, 0.4);
+            --ED-General-color-shadow-rgb: 0, 0, 0;
+            --ED-General-color-accent-rgb: 122, 175, 255;
+            --ED-General-color-icon-sun: #e8a840;
+            --ED-General-color-icon-moon: #c4d0f0;
+            --ED-General-color-icon-sun-glow: rgba(232, 168, 64, 0.3);
+            --ED-General-color-icon-moon-glow: rgba(180, 195, 235, 0.35);
+            --ED-General-color-text-on-accent: #12151c;
         }
-        [dir="rtl"] { direction: rtl; text-align: right; }
-        [dir="rtl"] .ED-General-header__controls { flex-direction: row-reverse; }
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        [dir="rtl"] {
+            direction: rtl;
+            text-align: right;
         }
-        html { font-size: 16px; scroll-behavior: smooth; }
-        body {
-            font-family: var(--ED-General-font-stack);
-            background-color: var(--ED-General-color-bg);
-            color: var(--ED-General-color-text-primary);
-            min-height: 100vh;
-            transition: background-color var(--ED-General-transition-speed) ease, color var(--ED-General-transition-speed) ease;
-            line-height: 1.65;
-            -webkit-font-smoothing: antialiased;
+
+        /* ---------- Terms‑specific styles ---------- */
+        .ED-General-terms-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
         }
-        .ED-General-header {
-            background: linear-gradient(175deg, var(--ED-General-color-header-bg-start) 0%, var(--ED-General-color-header-bg-mid1) 25%, var(--ED-General-color-header-bg-mid2) 60%, var(--ED-General-color-header-bg-end) 100%);
-            border-bottom: 1px solid var(--ED-General-color-header-border);
-            padding: 1.05rem 1.75rem;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            transition: background var(--ED-General-transition-speed) ease, border-color var(--ED-General-transition-speed) ease, box-shadow var(--ED-General-transition-speed) ease;
-            box-shadow: 0 1px 4px var(--ED-General-color-shadow), 0 2px 10px var(--ED-General-color-shadow);
-            backdrop-filter: blur(2px);
-            -webkit-backdrop-filter: blur(2px);
+
+        .ED-General-back-home-wrapper {
+            margin-bottom: 1.5rem;
+            text-align: left;
         }
-        .ED-General-header::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 3px;
-            background: linear-gradient(105deg, var(--ED-General-color-accent-default) 0%, var(--ED-General-color-accent-default) 35%, var(--ED-General-color-header-accent-line) 60%, transparent 85%);
-            opacity: 0.75;
-            border-radius: 0 0 1px 0;
-            transition: opacity 0.3s ease;
+        [dir="rtl"] .ED-General-back-home-wrapper {
+            text-align: right;
         }
-        .ED-General-header:hover::before { opacity: 0.95; }
-        .ED-General-header__inner {
-            max-width: 1300px;
-            margin: 0 auto;
-            display: flex;
+        .ED-General-back-home-wrapper .ED-General-header-btn {
+            display: inline-flex;
             align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 0.85rem;
-            position: relative;
-            z-index: 1;
-        }
-        .ED-General-header__title {
-            font-size: 1.38rem;
-            font-weight: 750;
-            letter-spacing: -0.025em;
-            color: var(--ED-General-color-text-primary);
-            white-space: nowrap;
-            transition: color var(--ED-General-transition-speed) ease;
-            display: flex;
-            align-items: center;
-            gap: 0.45rem;
-        }
-        .ED-General-header__title-icon {
-            width: 26px;
-            height: 26px;
-            object-fit: contain;
-            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.08));
-        }
-        .ED-General-header__title:hover .ED-General-header__title-icon { transform: rotate(-5deg) scale(1.12); }
-        .ED-General-header__controls {
-            display: flex;
-            align-items: center;
-            gap: 0.65rem;
-            flex-wrap: wrap;
-        }
-        .ED-General-lang-select-container {
-            position: relative;
-            display: inline-block;
-        }
-        .ED-General-lang-select {
-            padding: 0.48rem 2.1rem 0.48rem 0.9rem;
-            border-radius: 22px;
-            border: 1.5px solid var(--ED-General-color-border);
-            background: var(--ED-General-select-wrapper-bg);
-            color: var(--ED-General-color-text-primary);
-            cursor: pointer;
-            font-size: 0.82rem;
-            font-weight: 600;
-            font-family: var(--ED-General-font-stack);
-            transition: all 0.22s ease;
-            white-space: nowrap;
-            appearance: none;
-            -webkit-appearance: none;
-            box-shadow: 0 1px 3px var(--ED-General-color-shadow);
-        }
-        .ED-General-lang-select::-ms-expand { display: none; }
-        .ED-General-lang-select option {
-            background: var(--ED-General-select-wrapper-bg);
-            color: var(--ED-General-color-text-primary);
-        }
-        .ED-General-lang-select-container::after {
-            content: '▾';
-            position: absolute;
-            top: 50%;
-            right: 0.7rem;
-            transform: translateY(-50%);
-            pointer-events: none;
-            font-size: 0.9rem;
-            color: var(--ED-General-select-arrow-color);
-            transition: color 0.22s ease;
-        }
-        .ED-General-lang-select:hover {
-            border-color: var(--ED-General-color-accent-default);
-            background-color: var(--ED-General-color-accent-soft);
-        }
-        .ED-General-theme-toggle {
-            width: 41px; height: 41px;
-            border-radius: 50%;
-            border: 1.5px solid var(--ED-General-color-border);
+            gap: 0.4rem;
             background: var(--ED-General-color-surface);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1.5px solid var(--ED-General-color-border);
+            border-radius: 32px;
+            padding: 0.5rem 1.2rem;
+            font-weight: 600;
+            transition: all 0.22s ease;
+            text-decoration: none;
             color: var(--ED-General-color-text-primary);
-            font-size: 1.2rem;
-            flex-shrink: 0;
-            box-shadow: 0 1px 4px var(--ED-General-color-shadow);
-            position: relative;
-            overflow: hidden;
+            font-family: var(--ED-General-font-stack);
+            font-size: 0.85rem;
         }
-        .ED-General-theme-toggle::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 50%;
-            background: radial-gradient(circle at center, var(--ED-General-color-accent-default) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .ED-General-theme-toggle:hover::after { opacity: 0.06; }
-        .ED-General-theme-toggle:hover {
+        .ED-General-back-home-wrapper .ED-General-header-btn:hover {
             border-color: var(--ED-General-color-accent-default);
             background: var(--ED-General-color-accent-soft);
-            box-shadow: 0 4px 16px rgba(74,127,217,0.15);
-            transform: scale(1.06);
+            box-shadow: 0 2px 8px rgba(var(--ED-General-color-accent-rgb), 0.12);
+            transform: translateY(-1px);
         }
-        .ED-General-theme-toggle .ED-General-icon-sun,
-        .ED-General-theme-toggle .ED-General-icon-moon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            line-height: 1;
-            transition: all 0.38s cubic-bezier(0.4, 0, 0.2, 1);
-            position: absolute;
-            pointer-events: none;
+        .ED-General-back-home-wrapper .ED-General-header-btn:active {
+            transform: scale(0.96);
         }
-        .ED-General-theme-toggle .ED-General-icon-sun {
-            opacity: 1; transform: rotate(0deg) scale(1);
-            color: var(--ED-General-color-icon-sun);
-            filter: drop-shadow(0 0 3px var(--ED-General-color-icon-sun-glow));
-        }
-        .ED-General-theme-toggle .ED-General-icon-moon {
-            opacity: 0; transform: rotate(-90deg) scale(0.5);
-            color: var(--ED-General-color-icon-moon);
-            filter: drop-shadow(0 0 4px var(--ED-General-color-icon-moon-glow));
-        }
-        [data-theme="dark"] .ED-General-theme-toggle .ED-General-icon-sun {
-            opacity: 0; transform: rotate(90deg) scale(0.5);
-        }
-        [data-theme="dark"] .ED-General-theme-toggle .ED-General-icon-moon {
-            opacity: 1; transform: rotate(0deg) scale(1);
-        }
-        .ED-General-main {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 2rem 1.5rem 3rem;
-        }
-        .ED-General-legal-content {
-            background: var(--ED-General-color-surface);
-            border: 1px solid var(--ED-General-color-border);
-            border-radius: var(--ED-General-card-radius);
-            padding: 2rem;
-            transition: all var(--ED-General-transition-speed) ease;
-            box-shadow: 0 1px 4px var(--ED-General-color-shadow);
-        }
-        .ED-General-legal-content h2 {
-            font-size: 1.6rem;
-            margin-bottom: 1rem;
+
+        .ED-General-terms-content h2 {
+            font-size: 1.4rem;
+            margin-top: 2rem;
             color: var(--ED-General-color-text-primary);
         }
-        .ED-General-legal-content h3 {
-            font-size: 1.2rem;
-            margin: 1.5rem 0 0.75rem;
-            color: var(--ED-General-color-text-primary);
-        }
-        .ED-General-legal-content p {
-            margin-bottom: 1rem;
+        .ED-General-terms-content p {
             color: var(--ED-General-color-text-secondary);
+            line-height: 1.7;
+            margin: 0.8rem 0;
         }
-        .ED-General-legal-content strong { color: var(--ED-General-color-text-primary); }
-        .ED-General-footer {
-            border-top: 1px solid var(--ED-General-color-border);
-            padding: 2rem 0 1.75rem;
-            font-size: 0.8rem;
-            color: var(--ED-General-color-text-tertiary);
-            transition: all var(--ED-General-transition-speed) ease;
-            background: linear-gradient(180deg, var(--ED-General-color-bg-secondary) 0%, var(--ED-General-color-bg) 60%);
-            box-shadow: 0 -1px 8px var(--ED-General-color-shadow);
-            position: relative;
-        }
-        .ED-General-footer::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 50%;
-            transform: translateX(-50%);
-            width: 55px; height: 3px;
-            background: var(--ED-General-color-accent-default);
-            border-radius: 0 0 3px 3px;
-            opacity: 0.55;
-            transition: width 0.3s ease, opacity 0.3s ease;
-        }
-        .ED-General-footer:hover::before { width: 70px; opacity: 0.75; }
-        .ED-General-footer__grid {
-            display: grid;
-            grid-template-columns: 1fr 1.4fr 1fr;
-            gap: 2rem;
-            padding: 0 1.75rem;
-            max-width: 1300px;
-            margin: 0 auto;
-            align-items: start;
-        }
-        .ED-General-footer__col { display: flex; flex-direction: column; gap: 0.55rem; }
-        .ED-General-footer__col:first-child {
-            font-weight: 550;
-            letter-spacing: 0.015em;
-            color: var(--ED-General-color-text-secondary);
-        }
-        .ED-General-footer__col:nth-child(2) {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-            gap: 0.55rem 1.1rem;
-            align-items: center;
-        }
-        .ED-General-footer__col:last-child { text-align: right; gap: 0.35rem; }
-        [dir="rtl"] .ED-General-footer__col:last-child { text-align: left; }
-        .ED-General-footer a {
-            color: var(--ED-General-color-text-secondary);
-            text-decoration: none;
-            font-weight: 550;
-            transition: all 0.22s ease;
-            position: relative;
-            padding: 0.2rem 0;
-        }
-        .ED-General-footer a::after {
-            content: '';
-            position: absolute;
-            bottom: -1px; left: 0;
-            width: 0; height: 1.5px;
-            background: var(--ED-General-color-accent-default);
-            border-radius: 1px;
-            transition: width 0.25s cubic-bezier(0.4,0,0.2,1);
-        }
-        .ED-General-footer a:hover { color: var(--ED-General-color-accent-default); }
-        .ED-General-footer a:hover::after { width: 100%; }
+
         @media (max-width: 640px) {
-            .ED-General-header__inner { flex-direction: column; align-items: flex-start; }
-            .ED-General-header__controls { width: 100%; justify-content: flex-start; }
-            .ED-General-main { padding: 1rem 0.75rem 2rem; }
-            .ED-General-legal-content { padding: 1.25rem; }
-            .ED-General-footer__grid { grid-template-columns: 1fr; text-align: center; gap: 1.25rem; }
-            .ED-General-footer__col { align-items: center; }
-            .ED-General-footer__col:nth-child(2) { justify-content: center; }
-            .ED-General-footer__col:last-child { text-align: center; align-items: center; }
-            .ED-General-footer a::after { left: 50%; transform: translateX(-50%); }
-            .ED-General-footer a:hover::after { width: 55%; }
+            .ED-General-terms-container {
+                padding: 0 1rem;
+            }
+            .ED-General-back-home-wrapper .ED-General-header-btn {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
-    <header class="ED-General-header">
-        <div class="ED-General-header__inner">
-            <h1 class="ED-General-header__title">
-                <a href="index.html" style="display: inline-flex; align-items: center; text-decoration: none;">
-                    <img src="assets/icons/icon-96x96.png" alt="Dashboard icon" class="ED-General-header__title-icon" width="26" height="26">
-                </a>
-                <span id="dashboardTitleText"></span>
-            </h1>
-            <div class="ED-General-header__controls">
-                <div class="ED-General-lang-select-container">
-                    <select class="ED-General-lang-select" id="langSelect" aria-label="Choose language">
-                        <option value="en">English</option>
-                        <option value="fr">Français</option>
-                        <option value="ar">العربية</option>
-                    </select>
-                </div>
-                <button class="ED-General-theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
-                    <span class="ED-General-icon-sun" aria-hidden="true">☀</span>
-                    <span class="ED-General-icon-moon" aria-hidden="true">☽</span>
-                </button>
-            </div>
+    <header id="header-container"></header>
+
+    <main class="ED-General-terms-container">
+
+        <h1 data-i18n="termsTitle">Terms of Use</h1>
+
+        <div class="ED-General-terms-content">
+            <section>
+                <h2 data-i18n="termsSection1Heading">1. Acceptance of Terms</h2>
+                <p data-i18n="termsSection1Text">By accessing this Educational Dashboard and any linked platforms, you agree to be bound by these Terms of Use. If you do not agree with any part of the terms, you are not authorised to use the services.</p>
+            </section>
+            <section>
+                <h2 data-i18n="termsSection2Heading">2. Use License</h2>
+                <p data-i18n="termsSection2Text">Permission is granted to temporarily use the materials (information, software, learning content) on the dashboard for personal, non‑commercial educational purposes. This is a grant of license, not a transfer of title. Under this license you may not: modify or copy the materials; use them for any commercial purpose; attempt to decompile or reverse engineer any software; remove any copyright or proprietary notations; or transfer the materials to another person or “mirror” the materials on any other server.</p>
+            </section>
+            <section>
+                <h2 data-i18n="termsSection3Heading">3. Disclaimer</h2>
+                <p data-i18n="termsSection3Text">The materials on the dashboard are provided “as is”. The developer makes no warranties, expressed or implied, and disclaims all other warranties. The developer does not warrant or make any representations concerning the accuracy, likely results, or reliability of the use of the materials on its websites or otherwise relating to such materials or on any sites linked to this site.</p>
+            </section>
+            <section>
+                <h2 data-i18n="termsSection4Heading">4. Limitations</h2>
+                <p data-i18n="termsSection4Text">In no event shall the developer or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on the dashboard, even if the developer has been notified orally or in writing of the possibility of such damage.</p>
+            </section>
+            <section>
+                <h2 data-i18n="termsSection5Heading">5. Revisions and Errata</h2>
+                <p data-i18n="termsSection5Text">The materials appearing on the dashboard could include technical, typographical, or photographic errors. The developer does not warrant that any of the materials are accurate, complete, or current. The developer may make changes to the materials at any time without notice.</p>
+            </section>
+            <section>
+                <h2 data-i18n="termsSection6Heading">6. Contact Information</h2>
+                <p data-i18n="termsSection6Text">If you have any questions about these Terms of Use, please contact us via the Contact page.</p>
+            </section>
         </div>
-    </header>
-    <main class="ED-General-main">
-        <div class="ED-General-legal-content" id="legalContent"></div>
     </main>
-    <footer class="ED-General-footer">
-        <div class="ED-General-footer__grid">
-            <div class="ED-General-footer__col"><span id="footerVersion"></span></div>
-            <div class="ED-General-footer__col">
-                <a href="privacyPolicy.html" id="footerConfidentiality"></a>
-                <a href="termsOfUse.html" id="footerTerms"></a>
-                <a href="contact.html" id="footerContact"></a>
-            </div>
-            <div class="ED-General-footer__col">
-                <span id="footerDeveloper"></span>
-                <span id="footerHosted"></span>
-            </div>
+
+        <!-- Back to Dashboard button -->
+        <div class="ED-General-back-home-wrapper">
+            <a href="index.html" class="ED-General-header-btn" data-i18n="backToHome">← Back to Dashboard</a>
         </div>
-    </footer>
+    <footer id="footer-container"></footer>
+
+		<!-- Offline banner -->
+		<div id="offline-banner" class="ED-General-offline-banner" data-i18n="offlineBanner">You are offline. Some features may be unavailable.</div>
+		<div id="update-banner" class="ED-General-update-banner" style="display:none;">
+			<span id="update-banner-text" data-i18n="updateNotification">A new version is available.</span>
+			<button id="update-reload-btn" data-i18n="updateReloadBtn">Reload</button>
+		</div>
+
+    <!-- Load shared translation data (common header/footer/banners) -->
+    <script src="ED-general-translations-data.js"></script>
+    <script src="data_general.js"></script>
+    <script src="ED-general-cards.js"></script>
+    <script src="ED-general-shortcuts.js"></script>
+    <script src="ED-general-pwa.js"></script>
+
+    <!-- ========== TRANSLATION DICTIONARY ========== -->
     <script>
-        (function() {
-            const uiText = {
-                en: {
-                    dashboardTitle: 'Educational Dashboard',
-                    legalContent: '<h2>Terms of Use</h2><p><strong>GNU General Public License v3.0</strong></p><p>This software is distributed under the terms of the GNU General Public License version 3. You are free to use, study, modify, and redistribute this software under the conditions of the GPL v3.</p><h3>1. License</h3><p>Full license text: GNU General Public License v3.0</p><h3>2. Disclaimer</h3><p>This software is provided "as is" without warranty of any kind. In no event shall the authors be liable for any damages arising from its use.</p><h3>3. Modifications</h3><p>You may modify the source code as long as you retain the same license and make the modified source available under the GPL.</p>',
-                    footer: {
-                        confidentiality: 'Confidentiality Politics',
-                        terms: 'Terms of Use',
-                        contact: 'Contact',
-                        version: "version '0.0.1'",
-                        developer: 'developed by: Mejri Ziad.',
-                        hosted: 'Hosted on Github and Netlify.'
-                    }
-                },
-                fr: {
-                    dashboardTitle: 'Tableau de Bord Éducatif',
-                    legalContent: '<h2>Conditions d\'utilisation</h2><p><strong>Licence Publique Générale GNU v3.0</strong></p><p>Ce logiciel est distribué sous les termes de la Licence Publique Générale GNU version 3. Vous êtes libre d\'utiliser, étudier, modifier et redistribuer ce logiciel dans les conditions de la GPL v3.</p><h3>1. Licence</h3><p>Texte complet de la licence : GNU General Public License v3.0</p><h3>2. Avertissement</h3><p>Ce logiciel est fourni "tel quel" sans garantie d\'aucune sorte. Les auteurs ne pourront être tenus responsables d\'aucun dommage résultant de son utilisation.</p><h3>3. Modifications</h3><p>Vous pouvez modifier le code source à condition de conserver la même licence et de rendre le code source modifié disponible sous la GPL.</p>',
-                    footer: {
-                        confidentiality: 'Politique de confidentialité',
-                        terms: 'Conditions d\'utilisation',
-                        contact: 'Contact',
-                        version: "version '0.0.1'",
-                        developer: 'développé par : Mejri Ziad.',
-                        hosted: 'Hébergé sur Github et Netlify.'
-                    }
-                },
-                ar: {
-                    dashboardTitle: 'لوحة التحكم التعليمية',
-                    legalContent: '<h2>شروط الاستخدام</h2><p><strong>رخصة جنو العمومية الإصدار 3.0</strong></p><p>يتم توزيع هذا البرنامج بموجب شروط رخصة جنو العمومية الإصدار 3. يحق لك استخدام ودراسة وتعديل وإعادة توزيع هذا البرنامج وفقًا لشروط GPL v3.</p><h3>1. الرخصة</h3><p>النص الكامل للرخصة: GNU General Public License v3.0</p><h3>2. إخلاء المسؤولية</h3><p>يتم توفير هذا البرنامج "كما هو" دون أي ضمان من أي نوع. لا يتحمل المؤلفون أي مسؤولية عن أي أضرار ناتجة عن استخدامه.</p><h3>3. التعديلات</h3><p>يمكنك تعديل الشفرة المصدرية شريطة الاحتفاظ بنفس الرخصة وإتاحة الشفرة المعدلة بموجب GPL.</p>',
-                    footer: {
-                        confidentiality: 'سياسة الخصوصية',
-                        terms: 'شروط الاستخدام',
-                        contact: 'اتصل بنا',
-                        version: "الإصدار '0.0.1'",
-                        developer: 'طور بواسطة: ماجري زياد.',
-                        hosted: 'مستضاف على Github و Netlify.'
-                    }
-                }
-            };
-            let currentLang = localStorage.getItem('dashboardLang') || 'en';
-            let currentTheme = localStorage.getItem('dashboardTheme') || 'light';
-            function applyTheme() { document.documentElement.setAttribute('data-theme', currentTheme); localStorage.setItem('dashboardTheme', currentTheme); }
-            function updateUI() {
-                const lang = currentLang;
-                document.getElementById('dashboardTitleText').textContent = uiText[lang].dashboardTitle;
-                document.getElementById('legalContent').innerHTML = uiText[lang].legalContent;
-                const f = uiText[lang].footer;
-                document.getElementById('footerConfidentiality').textContent = f.confidentiality;
-                document.getElementById('footerTerms').textContent = f.terms;
-                document.getElementById('footerContact').textContent = f.contact;
-                document.getElementById('footerVersion').textContent = f.version;
-                document.getElementById('footerDeveloper').textContent = f.developer;
-                document.getElementById('footerHosted').textContent = f.hosted;
-                document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
-                document.documentElement.setAttribute('lang', lang);
-                document.getElementById('langSelect').value = lang;
+        const PAGE_UI_TEXT = {
+            en: {
+                termsTitle: "Terms of Use",
+                termsSection1Heading: "1. Acceptance of Terms",
+                termsSection1Text: "By accessing this Educational Dashboard and any linked platforms, you agree to be bound by these Terms of Use. If you do not agree with any part of the terms, you are not authorised to use the services.",
+                termsSection2Heading: "2. Use License",
+                termsSection2Text: "Permission is granted to temporarily use the materials (information, software, learning content) on the dashboard for personal, non‑commercial educational purposes. This is a grant of license, not a transfer of title. Under this license you may not: modify or copy the materials; use them for any commercial purpose; attempt to decompile or reverse engineer any software; remove any copyright or proprietary notations; or transfer the materials to another person or “mirror” the materials on any other server.",
+                termsSection3Heading: "3. Disclaimer",
+                termsSection3Text: "The materials on the dashboard are provided “as is”. The developer makes no warranties, expressed or implied, and disclaims all other warranties. The developer does not warrant or make any representations concerning the accuracy, likely results, or reliability of the use of the materials on its websites or otherwise relating to such materials or on any sites linked to this site.",
+                termsSection4Heading: "4. Limitations",
+                termsSection4Text: "In no event shall the developer or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on the dashboard, even if the developer has been notified orally or in writing of the possibility of such damage.",
+                termsSection5Heading: "5. Revisions and Errata",
+                termsSection5Text: "The materials appearing on the dashboard could include technical, typographical, or photographic errors. The developer does not warrant that any of the materials are accurate, complete, or current. The developer may make changes to the materials at any time without notice.",
+                termsSection6Heading: "6. Contact Information",
+                termsSection6Text: "If you have any questions about these Terms of Use, please contact us via the Contact page.",
+                backToHome: "← Back to Dashboard"
+            },
+            fr: {
+                termsTitle: "Conditions d’utilisation",
+                termsSection1Heading: "1. Acceptation des conditions",
+                termsSection1Text: "En accédant à ce tableau de bord éducatif et aux plateformes liées, vous acceptez d’être lié par les présentes conditions d’utilisation. Si vous n’acceptez pas une partie quelconque de ces conditions, vous n’êtes pas autorisé à utiliser les services.",
+                termsSection2Heading: "2. Licence d’utilisation",
+                termsSection2Text: "Une autorisation vous est accordée pour utiliser temporairement les documents (informations, logiciels, contenu pédagogique) du tableau de bord à des fins éducatives personnelles et non commerciales. Il s’agit d’une licence, non d’un transfert de titre. En vertu de cette licence, vous ne pouvez pas : modifier ou copier les documents ; les utiliser à des fins commerciales ; tenter de décompiler ou de rétro‑concevoir un logiciel ; supprimer les mentions de droits d’auteur ou de propriété ; transférer les documents à une autre personne ou les « miroiter » sur un autre serveur.",
+                termsSection3Heading: "3. Avertissement",
+                termsSection3Text: "Les documents du tableau de bord sont fournis « en l’état ». Le développeur ne donne aucune garantie, expresse ou implicite, et décline toute autre garantie. Le développeur ne garantit ni ne fait aucune déclaration concernant l’exactitude, les résultats probables ou la fiabilité de l’utilisation des documents sur ses sites web ou autrement liés à ces documents ou à tout site lié à ce site.",
+                termsSection4Heading: "4. Limitations de responsabilité",
+                termsSection4Text: "En aucun cas le développeur ou ses fournisseurs ne pourra être tenu responsable des dommages (y compris, sans limitation, les dommages pour perte de données ou de bénéfices, ou en raison d’une interruption d’activité) découlant de l’utilisation ou de l’impossibilité d’utiliser les documents du tableau de bord, même si le développeur a été informé oralement ou par écrit de la possibilité de tels dommages.",
+                termsSection5Heading: "5. Révisions et errata",
+                termsSection5Text: "Les documents apparaissant sur le tableau de bord peuvent contenir des erreurs techniques, typographiques ou photographiques. Le développeur ne garantit pas que les documents soient exacts, complets ou à jour. Le développeur peut modifier les documents à tout moment sans préavis.",
+                termsSection6Heading: "6. Informations de contact",
+                termsSection6Text: "Si vous avez des questions concernant ces conditions d’utilisation, veuillez nous contacter via la page Contact.",
+                backToHome: "← Retour au tableau de bord"
+            },
+            ar: {
+                termsTitle: "شروط الاستخدام",
+                termsSection1Heading: "1. قبول الشروط",
+                termsSection1Text: "بدخولك إلى لوحة التحكم التعليمية هذه وأي منصات مرتبطة بها، فإنك توافق على الالتزام بشروط الاستخدام هذه. إذا كنت لا توافق على أي جزء من الشروط، فأنت غير مخوّل باستخدام الخدمات.",
+                termsSection2Heading: "2. ترخيص الاستخدام",
+                termsSection2Text: "يُمنح الإذن لاستخدام المواد (معلومات، برمجيات، محتوى تعليمي) الموجودة على لوحة التحكم بشكل مؤقت لأغراض تعليمية شخصية وغير تجارية. هذا ترخيص وليس نقل ملكية. بموجب هذا الترخيص لا يجوز لك: تعديل المواد أو نسخها؛ استخدامها لأي غرض تجاري؛ محاولة فك تشفير أو عكس هندسة أي برنامج؛ إزالة أي إشعارات حقوق طبع أو ملكية؛ أو نقل المواد إلى شخص آخر أو “نسخها” على أي خادم آخر.",
+                termsSection3Heading: "3. إخلاء المسؤولية",
+                termsSection3Text: "المواد الموجودة على لوحة التحكم تُقدم “كما هي”. المطور لا يقدم أي ضمانات، صريحة أو ضمنية، ويُخلي مسؤوليته عن جميع الضمانات الأخرى. لا يضمن المطور أو يقدم أي تصريحات بشأن دقة النتائج أو موثوقية استخدام المواد على مواقعه أو فيما يتعلق بهذه المواد أو أي مواقع مرتبطة بهذا الموقع.",
+                termsSection4Heading: "4. حدود المسؤولية",
+                termsSection4Text: "لن يكون المطور أو مورديه مسؤولين بأي حال من الأحوال عن أي أضرار (بما في ذلك، على سبيل المثال لا الحصر، الأضرار الناتجة عن فقدان البيانات أو الربح، أو بسبب انقطاع العمل) الناشئة عن استخدام أو عدم القدرة على استخدام المواد الموجودة على لوحة التحكم، حتى لو تم إخطار المطور شفوياً أو كتابياً بإمكانية حدوث مثل هذه الأضرار.",
+                termsSection5Heading: "5. المراجعات والأخطاء",
+                termsSection5Text: "قد تحتوي المواد التي تظهر على لوحة التحكم على أخطاء تقنية أو مطبعية أو فوتوغرافية. لا يضمن المطور أن أيًا من المواد دقيقة أو كاملة أو حديثة. يجوز للمطور إجراء تغييرات على المواد في أي وقت دون إشعار.",
+                termsSection6Heading: "6. معلومات الاتصال",
+                termsSection6Text: "إذا كانت لديك أي أسئلة حول شروط الاستخدام هذه، يُرجى الاتصال بنا عبر صفحة الاتصال.",
+                backToHome: "→ العودة إلى الرئيسية"
             }
-            function toggleTheme() { currentTheme = currentTheme === 'light' ? 'dark' : 'light'; applyTheme(); }
-            function setLanguage(lang) { if (lang === currentLang) return; currentLang = lang; localStorage.setItem('dashboardLang', lang); updateUI(); }
-            function init() { applyTheme(); updateUI(); document.getElementById('themeToggle').addEventListener('click', toggleTheme); document.getElementById('langSelect').addEventListener('change', function() { setLanguage(this.value); }); }
-            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-            else init();
-        })();
+        };
+
+        // Merge shared + page‑specific into the final UI_TEXT
+        window.UI_TEXT = {
+            en: { ...SHARED_UI_TEXT.en, ...PAGE_UI_TEXT.en },
+            fr: { ...SHARED_UI_TEXT.fr, ...PAGE_UI_TEXT.fr },
+            ar: { ...SHARED_UI_TEXT.ar, ...PAGE_UI_TEXT.ar }
+        };
     </script>
+
+    <!-- Translation engine and shared init -->
+    <script src="ED-general-translation.js"></script>
+    <script src="ED-general-init.js"></script>
 </body>
 </html>

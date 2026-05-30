@@ -122,6 +122,39 @@
 			padding: 0 1.5rem;
 			}
 			
+			/* Back to dashboard button wrapper */
+			.ED-General-back-home-wrapper {
+				margin-bottom: 1.5rem;
+				text-align: left;
+			}
+			[dir="rtl"] .ED-General-back-home-wrapper {
+				text-align: right;
+			}
+			.ED-General-back-home-wrapper .ED-General-header-btn {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.4rem;
+				background: var(--ED-General-color-surface);
+				border: 1.5px solid var(--ED-General-color-border);
+				border-radius: 32px;
+				padding: 0.5rem 1.2rem;
+				font-weight: 600;
+				transition: all 0.22s ease;
+				text-decoration: none;
+				color: var(--ED-General-color-text-primary);
+				font-family: var(--ED-General-font-stack);
+				font-size: 0.85rem;
+			}
+			.ED-General-back-home-wrapper .ED-General-header-btn:hover {
+				border-color: var(--ED-General-color-accent-default);
+				background: var(--ED-General-color-accent-soft);
+				box-shadow: 0 2px 8px rgba(var(--ED-General-color-accent-rgb), 0.12);
+				transform: translateY(-1px);
+			}
+			.ED-General-back-home-wrapper .ED-General-header-btn:active {
+				transform: scale(0.96);
+			}
+			
 			.ED-General-profile-header {
 			display: flex;
 			align-items: center;
@@ -223,6 +256,13 @@
 			.ED-General-social-grid {
 			grid-template-columns: 1fr 1fr;
 			}
+			.ED-General-back-home-wrapper {
+				margin-bottom: 1rem;
+			}
+			.ED-General-back-home-wrapper .ED-General-header-btn {
+				width: 100%;
+				justify-content: center;
+			}
 			}
 		</style>
 	</head>
@@ -230,6 +270,7 @@
 		<header id="header-container"></header>
 		
 		<main class="ED-General-contact-container">
+			
 			<div class="ED-General-profile-header">
 				<div class="ED-General-profile-img-wrapper">
 					<img src="assets/contact/mejri-ziad.jpg" alt="Mejri Ziad" class="ED-General-profile-img" id="profileImg"
@@ -255,14 +296,19 @@
 			<h2 class="ED-General-section-title" data-i18n="social.title">Connect with me</h2>
 			<div class="ED-General-social-grid" id="socialGrid"></div>
 		</main>
+			<!-- Back to Dashboard button  -->
+			<div class="ED-General-back-home-wrapper">
+				<a href="index.html" class="ED-General-header-btn" data-i18n="backToHome">
+					← Back to Dashboard
+				</a>
+			</div>
 		
 		<footer id="footer-container"></footer>
 		
 		<!-- Offline banner -->
-		<div id="offline-banner" class="ED-General-offline-banner" data-i18n="offlineBanner">You are offline.</div>
-		<!-- Update banner -->
+		<div id="offline-banner" class="ED-General-offline-banner" data-i18n="offlineBanner">You are offline. Some features may be unavailable.</div>
 		<div id="update-banner" class="ED-General-update-banner" style="display:none;">
-			<span data-i18n="updateNotification">A new version is available.</span>
+			<span id="update-banner-text" data-i18n="updateNotification">A new version is available.</span>
 			<button id="update-reload-btn" data-i18n="updateReloadBtn">Reload</button>
 		</div>
 		
@@ -289,7 +335,8 @@
 						title: 'Connect with me'
 					},
 					imageAlt: 'Profile photo',
-					noLink: '(link not set)'
+					noLink: '(link not set)',
+					backToHome: '← Back to Dashboard'
 				},
 				fr: {
 					profile: {
@@ -304,7 +351,8 @@
 						title: 'Connectez‑vous avec moi'
 					},
 					imageAlt: 'Photo de profil',
-					noLink: '(lien non défini)'
+					noLink: '(lien non défini)',
+					backToHome: '← Retour au tableau de bord'
 				},
 				ar: {
 					profile: {
@@ -319,7 +367,8 @@
 						title: 'تواصل معي'
 					},
 					imageAlt: 'صورة الملف الشخصي',
-					noLink: '(الرابط غير محدد)'
+					noLink: '(الرابط غير محدد)',
+					backToHome: '→ العودة إلى الرئيسية'
 				}
 			};
 			
