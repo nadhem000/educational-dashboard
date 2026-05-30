@@ -268,6 +268,8 @@
     <!-- Install button -->
     <button class="ED-General-header-btn" id="installBtn" style="display:none;" data-i18n="installBtn">📲 Install App</button>
 
+<!-- Load shared translation data (common header/footer/banners) -->
+<script src="ED-general-translations-data.js"></script>
 <script src="data_general.js"></script>
     <script src="ED-general-cards.js"></script>
     <script src="ED-general-shortcuts.js"></script>
@@ -275,113 +277,60 @@
 
     <!-- ========== TRANSLATION DICTIONARY ========== -->
     <script>
-    window.UI_TEXT = {
-      en: {
-        dashboardTitle: 'Educational Dashboard',
-        themeToggleTitle: 'Dark/Light Theme',
-        onlineStatus: 'Online',
-        offlineStatus: 'Offline',
-        installBtn: '📲 Install App',
-        profile: {
-          name: 'Mejri Ziad',
-          title: 'Full‑stack Developer & Educator',
-          bio: 'Passionate about building multilingual learning platforms and open‑source tools. I love turning complex ideas into simple, accessible digital experiences.',
-          location: 'Tunis, Tunisia',
-          email: 'contact@mejriziad.tn',
-          phone: '+216 12 345 678'
-        },
-        social: { title: 'Connect with me' },
-        offlineBanner: 'You are offline. Some features may be unavailable.',
-        updateNotification: 'A new version is available.',
-        updateReloadBtn: 'Reload',
-        imageAlt: 'Profile photo',
-        noLink: '(link not set)',
-        footer: {
-          version: "version '0.0.1'",
-          confidentiality: 'Confidentiality Politics',
-          terms: 'Terms of Use',
-          contact: 'Contact',
-          developer: 'developed by: Mejri Ziad.',
-          hosted: 'Hosted on Github and Netlify.'
-        },
-        enablePeriodicSyncBtn: 'Enable Background Updates',
-        disablePeriodicSyncBtn: 'Disable Background Updates',
-        periodicSyncEnabled: 'Background updates enabled!',
-        periodicSyncDisabled: 'Background updates disabled!',
-        periodicSyncDenied: 'Permission not granted. Please check site settings.',
-        enableNotificationsBtn: 'Enable Notifications'
-      },
-      fr: {
-        dashboardTitle: 'Tableau de Bord Éducatif',
-        themeToggleTitle: 'Thème clair/sombre',
-        onlineStatus: 'En ligne',
-        offlineStatus: 'Hors ligne',
-        installBtn: '📲 Installer l’application',
-        profile: {
-          name: 'Mejri Ziad',
-          title: 'Développeur Full‑stack & Formateur',
-          bio: 'Passionné par la création de plateformes d’apprentissage multilingues et d’outils open‑source. J’aime transformer des idées complexes en expériences numériques simples et accessibles.',
-          location: 'Tunis, Tunisie',
-          email: 'contact@mejriziad.tn',
-          phone: '+216 12 345 678'
-        },
-        social: { title: 'Connectez‑vous avec moi' },
-        offlineBanner: 'Vous êtes hors ligne. Certaines fonctionnalités peuvent être indisponibles.',
-        updateNotification: 'Une nouvelle version est disponible.',
-        updateReloadBtn: 'Recharger',
-        imageAlt: 'Photo de profil',
-        noLink: '(lien non défini)',
-        footer: {
-          version: "version '0.0.1'",
-          confidentiality: 'Politique de confidentialité',
-          terms: 'Conditions d’utilisation',
-          contact: 'Contact',
-          developer: 'développé par : Mejri Ziad.',
-          hosted: 'Hébergé sur Github et Netlify.'
-        },
-        enablePeriodicSyncBtn: 'Activer les mises à jour en arrière-plan',
-        disablePeriodicSyncBtn: 'Désactiver les mises à jour en arrière-plan',
-        periodicSyncEnabled: 'Mises à jour en arrière-plan activées !',
-        periodicSyncDisabled: 'Mises à jour en arrière-plan désactivées !',
-        periodicSyncDenied: 'Permission non accordée. Veuillez vérifier les paramètres du site.',
-        enableNotificationsBtn: 'Activer les Notifications'
-      },
-      ar: {
-        dashboardTitle: 'لوحة التحكم التعليمية',
-        themeToggleTitle: 'وضع داكن/فاتح',
-        onlineStatus: 'متصل',
-        offlineStatus: 'غير متصل',
-        installBtn: '📲 تثبيت التطبيق',
-        profile: {
-          name: 'ماجري زياد',
-          title: 'مطور شامل ومعلم',
-          bio: 'شغوف ببناء منصات تعليمية متعددة اللغات وأدوات مفتوحة المصدر. أحب تحويل الأفكار المعقدة إلى تجارب رقمية بسيطة ومتاحة.',
-          location: 'تونس العاصمة، تونس',
-          email: 'contact@mejriziad.tn',
-          phone: '+216 12 345 678'
-        },
-        social: { title: 'تواصل معي' },
-        offlineBanner: 'أنت غير متصل. قد لا تتوفر بعض الميزات.',
-        updateNotification: 'نسخة جديدة متاحة.',
-        updateReloadBtn: 'إعادة التحميل',
-        imageAlt: 'صورة الملف الشخصي',
-        noLink: '(الرابط غير محدد)',
-        footer: {
-          version: "الإصدار '0.0.1'",
-          confidentiality: 'سياسة الخصوصية',
-          terms: 'شروط الاستخدام',
-          contact: 'اتصل بنا',
-          developer: 'طور بواسطة: ماجري زياد.',
-          hosted: 'مستضاف على Github و Netlify.'
-        },
-        enablePeriodicSyncBtn: 'تفعيل التحديثات في الخلفية',
-        disablePeriodicSyncBtn: 'تعطيل التحديثات في الخلفية',
-        periodicSyncEnabled: 'تم تفعيل التحديثات في الخلفية!',
-        periodicSyncDisabled: 'تم تعطيل التحديثات في الخلفية!',
-        periodicSyncDenied: 'لم يتم منح الإذن. يرجى التحقق من إعدادات الموقع.',
-        enableNotificationsBtn: 'تفعيل الاشعارات'
-      }
-    };
+    const PAGE_UI_TEXT = {
+  en: {
+    profile: {
+      name: 'Mejri Ziad',
+      title: 'Full‑stack Developer & Educator',
+      bio: 'Passionate about building multilingual learning platforms and open‑source tools. I love turning complex ideas into simple, accessible digital experiences.',
+      location: 'Tunis, Tunisia',
+      email: 'contact@mejriziad.tn',
+      phone: '+216 12 345 678'
+    },
+    social: {
+      title: 'Connect with me'
+    },
+    imageAlt: 'Profile photo',
+    noLink: '(link not set)'
+  },
+  fr: {
+    profile: {
+      name: 'Mejri Ziad',
+      title: 'Développeur Full‑stack & Formateur',
+      bio: 'Passionné par la création de plateformes d’apprentissage multilingues et d’outils open‑source. J’aime transformer des idées complexes en expériences numériques simples et accessibles.',
+      location: 'Tunis, Tunisie',
+      email: 'contact@mejriziad.tn',
+      phone: '+216 12 345 678'
+    },
+    social: {
+      title: 'Connectez‑vous avec moi'
+    },
+    imageAlt: 'Photo de profil',
+    noLink: '(lien non défini)'
+  },
+  ar: {
+    profile: {
+      name: 'ماجري زياد',
+      title: 'مطور شامل ومعلم',
+      bio: 'شغوف ببناء منصات تعليمية متعددة اللغات وأدوات مفتوحة المصدر. أحب تحويل الأفكار المعقدة إلى تجارب رقمية بسيطة ومتاحة.',
+      location: 'تونس العاصمة، تونس',
+      email: 'contact@mejriziad.tn',
+      phone: '+216 12 345 678'
+    },
+    social: {
+      title: 'تواصل معي'
+    },
+    imageAlt: 'صورة الملف الشخصي',
+    noLink: '(الرابط غير محدد)'
+  }
+};
+
+// Merge shared + page‑specific into the final UI_TEXT
+window.UI_TEXT = {
+  en: { ...SHARED_UI_TEXT.en, ...PAGE_UI_TEXT.en },
+  fr: { ...SHARED_UI_TEXT.fr, ...PAGE_UI_TEXT.fr },
+  ar: { ...SHARED_UI_TEXT.ar, ...PAGE_UI_TEXT.ar }
+};
     </script>
 
     <!-- Translation engine and shared init -->

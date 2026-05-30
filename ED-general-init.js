@@ -53,6 +53,8 @@
   }
   window.addEventListener('online', updateConnectionStatus);
   window.addEventListener('offline', updateConnectionStatus);
+  // Also re‑translate the status text when the language changes
+  document.addEventListener('translationsApplied', updateConnectionStatus);
 
   // --- Load header & footer ---
   async function loadComponent(url, targetId) {

@@ -383,6 +383,8 @@
 			<button id="update-reload-btn" data-i18n="updateReloadBtn">Reload</button>
 		</div>
 		<!-- External data file -->
+<!-- Load shared translation data (common header/footer/banners) -->
+<script src="ED-general-translations-data.js"></script>
 		<script src="data_general.js"></script>
     <script src="ED-general-cards.js"></script>
     <script src="ED-general-shortcuts.js"></script>
@@ -390,80 +392,45 @@
 
     <!-- ========== TRANSLATION DICTIONARY ========== -->
     <script>
-    window.UI_TEXT = {
-      en: {
-        dashboardTitle: 'Educational Dashboard',
-        subtitle: 'Your learning hubs',
-        othersTitle: 'Others', gamesTitle: 'Games', newsTitle: 'News', obsoleteTitle: 'Obsolete & unused',
-        visitBtn: 'Visit', noDescription: 'No description available.', imageIconAlt: 'icon',
-        installBtn: '📲 Install App',
-        offlineBanner: 'You are offline. Some features may be unavailable.',
-        onlineStatus: 'Online', offlineStatus: 'Offline',
-        themeToggleTitle: 'Dark/Light Theme',
-        enablePeriodicSyncBtn: 'Enable Background Updates',
-        disablePeriodicSyncBtn: 'Disable Background Updates',
-        periodicSyncEnabled: 'Background updates enabled!',
-        periodicSyncDisabled: 'Background updates disabled!',
-        periodicSyncDenied: 'Permission not granted. Please check site settings.',
-        updateNotification: 'A new version is available.',
-        updateReloadBtn: 'Reload',
-        enableNotificationsBtn: 'Enable Notifications',
-        shortcutPrompt: 'Open in a new tab?',
-        launchBtn: 'Launch',
-        footer: {
-          confidentiality: 'Confidentiality Politics', terms: 'Terms of Use', contact: 'Contact',
-          version: "version '0.0.1'", developer: 'developed by: Mejri Ziad.', hosted: 'Hosted on Github and Netlify.'
-        }
-      },
-      fr: {
-        dashboardTitle: 'Tableau de Bord Éducatif',
-        subtitle: 'Vos plateformes d\'apprentissage',
-        othersTitle: 'Autres', gamesTitle: 'Jeux', newsTitle: 'Actualités', obsoleteTitle: 'Obsolète & inutilisé',
-        visitBtn: 'Visiter', noDescription: 'Aucune description disponible.', imageIconAlt: 'icône',
-        installBtn: '📲 Installer l\'app',
-        offlineBanner: 'Vous êtes hors ligne. Certaines fonctionnalités peuvent être indisponibles.',
-        onlineStatus: 'En ligne', offlineStatus: 'Hors ligne',
-        themeToggleTitle: 'Thème clair/sombre',
-        enablePeriodicSyncBtn: 'Activer les mises à jour en arrière-plan',
-        disablePeriodicSyncBtn: 'Désactiver les mises à jour en arrière-plan',
-        periodicSyncEnabled: 'Mises à jour en arrière-plan activées !',
-        periodicSyncDisabled: 'Mises à jour en arrière-plan désactivées !',
-        periodicSyncDenied: 'Permission non accordée. Veuillez vérifier les paramètres du site.',
-        updateNotification: 'Une nouvelle version est disponible.',
-        updateReloadBtn: 'Recharger',
-        enableNotificationsBtn: 'Activer les Notifications',
-        shortcutPrompt: 'Ouvrir dans un nouvel onglet ?',
-        launchBtn: 'Lancer',
-        footer: {
-          confidentiality: 'Politique de confidentialité', terms: 'Conditions d\'utilisation', contact: 'Contact',
-          version: "version '0.0.1'", developer: 'développé par : Mejri Ziad.', hosted: 'Hébergé sur Github et Netlify.'
-        }
-      },
-      ar: {
-        dashboardTitle: 'لوحة التحكم التعليمية',
-        subtitle: 'منصات التعلم الخاصة بك',
-        othersTitle: 'أخرى', gamesTitle: 'ألعاب', newsTitle: 'أخبار', obsoleteTitle: 'قديم وغير مستخدم',
-        visitBtn: 'زيارة', noDescription: 'لا يوجد وصف متاح.', imageIconAlt: 'أيقونة',
-        installBtn: '📲 تثبيت التطبيق',
-        offlineBanner: 'أنت غير متصل بالإنترنت. قد لا تتوفر بعض الميزات.',
-        onlineStatus: 'متصل', offlineStatus: 'غير متصل',
-        themeToggleTitle: 'وضع داكن/فاتح',
-        enablePeriodicSyncBtn: 'تفعيل التحديثات في الخلفية',
-        disablePeriodicSyncBtn: 'تعطيل التحديثات في الخلفية',
-        periodicSyncEnabled: 'تم تفعيل التحديثات في الخلفية!',
-        periodicSyncDisabled: 'تم تعطيل التحديثات في الخلفية!',
-        periodicSyncDenied: 'لم يتم منح الإذن. يرجى التحقق من إعدادات الموقع.',
-        updateNotification: 'نسخة جديدة متاحة.',
-        updateReloadBtn: 'إعادة التحميل',
-        enableNotificationsBtn: 'تفعيل الاشعارات',
-        shortcutPrompt: 'فتح في علامة تبويب جديدة؟',
-        launchBtn: 'إطلاق',
-        footer: {
-          confidentiality: 'سياسة الخصوصية', terms: 'شروط الاستخدام', contact: 'اتصل بنا',
-          version: "الإصدار '0.0.1'", developer: 'طور بواسطة: ماجري زياد.', hosted: 'مستضاف على Github و Netlify.'
-        }
-      }
-    };
+    const PAGE_UI_TEXT = {
+  en: {
+    subtitle: 'Your learning hubs',
+    othersTitle: 'Others',
+    gamesTitle: 'Games',
+    newsTitle: 'News',
+    obsoleteTitle: 'Obsolete & unused',
+    visitBtn: 'Visit',
+    noDescription: 'No description available.',
+    imageIconAlt: 'icon'
+  },
+  fr: {
+    subtitle: 'Vos plateformes d\'apprentissage',
+    othersTitle: 'Autres',
+    gamesTitle: 'Jeux',
+    newsTitle: 'Actualités',
+    obsoleteTitle: 'Obsolète & inutilisé',
+    visitBtn: 'Visiter',
+    noDescription: 'Aucune description disponible.',
+    imageIconAlt: 'icône'
+  },
+  ar: {
+    subtitle: 'منصات التعلم الخاصة بك',
+    othersTitle: 'أخرى',
+    gamesTitle: 'ألعاب',
+    newsTitle: 'أخبار',
+    obsoleteTitle: 'قديم وغير مستخدم',
+    visitBtn: 'زيارة',
+    noDescription: 'لا يوجد وصف متاح.',
+    imageIconAlt: 'أيقونة'
+  }
+};
+
+// Merge shared + page‑specific into the final UI_TEXT
+window.UI_TEXT = {
+  en: { ...SHARED_UI_TEXT.en, ...PAGE_UI_TEXT.en },
+  fr: { ...SHARED_UI_TEXT.fr, ...PAGE_UI_TEXT.fr },
+  ar: { ...SHARED_UI_TEXT.ar, ...PAGE_UI_TEXT.ar }
+};
     </script>
 
     <!-- Translation engine and shared init -->
