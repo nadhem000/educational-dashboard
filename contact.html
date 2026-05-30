@@ -271,19 +271,175 @@
     <script>
         // ================== SOCIAL MEDIA DATA ==================
         const socialMedias = [
-            { mediaLink: 'https://linkedin.com/in/mejriziad', mediaSmallIcon: '🔗', mediaImage: 'assets/icons/linkedin.png', en: { mediaName: 'LinkedIn' }, fr: { mediaName: 'LinkedIn' }, ar: { mediaName: 'لينكد إن' } },
-            { mediaLink: 'https://github.com/mejriziad', mediaSmallIcon: '🐙', mediaImage: 'assets/icons/github.png', en: { mediaName: 'GitHub' }, fr: { mediaName: 'GitHub' }, ar: { mediaName: 'غيت هاب' } },
-            { mediaLink: 'https://twitter.com/mejriziad', mediaSmallIcon: '𝕏', mediaImage: 'assets/icons/x-twitter.png', en: { mediaName: 'X (Twitter)' }, fr: { mediaName: 'X (Twitter)' }, ar: { mediaName: 'إكس (تويتر)' } },
-            { mediaLink: 'https://facebook.com/mejriziad', mediaSmallIcon: '📘', mediaImage: 'assets/icons/facebook.png', en: { mediaName: 'Facebook' }, fr: { mediaName: 'Facebook' }, ar: { mediaName: 'فيسبوك' } },
-            { mediaLink: 'https://youtube.com/@mejriziad', mediaSmallIcon: '▶️', mediaImage: 'assets/icons/youtube.png', en: { mediaName: 'YouTube' }, fr: { mediaName: 'YouTube' }, ar: { mediaName: 'يوتيوب' } },
-            { mediaLink: 'https://instagram.com/mejriziad', mediaSmallIcon: '📷', mediaImage: 'assets/icons/instagram.png', en: { mediaName: 'Instagram' }, fr: { mediaName: 'Instagram' }, ar: { mediaName: 'انستغرام' } },
-            { mediaLink: 'https://tiktok.com/@mejriziad', mediaSmallIcon: '🎵', mediaImage: 'assets/icons/tiktok.png', en: { mediaName: 'TikTok' }, fr: { mediaName: 'TikTok' }, ar: { mediaName: 'تيك توك' } },
-            { mediaLink: 'https://medium.com/@mejriziad', mediaSmallIcon: '📝', mediaImage: 'assets/icons/medium.png', en: { mediaName: 'Medium' }, fr: { mediaName: 'Medium' }, ar: { mediaName: 'ميديوم' } },
-            { mediaLink: 'https://wa.me/21612345678', mediaSmallIcon: '💬', mediaImage: 'assets/icons/whatsapp.png', en: { mediaName: 'WhatsApp' }, fr: { mediaName: 'WhatsApp' }, ar: { mediaName: 'واتساب' } },
-            { mediaLink: 'https://t.me/mejriziad', mediaSmallIcon: '✈️', mediaImage: 'assets/icons/telegram.png', en: { mediaName: 'Telegram' }, fr: { mediaName: 'Telegram' }, ar: { mediaName: 'تيليغرام' } },
-            { mediaLink: 'https://discord.gg/mejriziad', mediaSmallIcon: '🎮', mediaImage: 'assets/icons/discord.png', en: { mediaName: 'Discord' }, fr: { mediaName: 'Discord' }, ar: { mediaName: 'ديسكورد' } },
-            { mediaLink: 'https://stackoverflow.com/users/mejriziad', mediaSmallIcon: '📚', mediaImage: 'assets/icons/stackoverflow.png', en: { mediaName: 'Stack Overflow' }, fr: { mediaName: 'Stack Overflow' }, ar: { mediaName: 'ستاك أوفرفلو' } }
-        ];
+	{
+		mediaLink: 'https://linkedin.com/in/mejriziad',
+		mediaSmallIcon: '🔗',
+		mediaImage: 'assets/contact/icons/linkedin.png',
+		en: {
+			mediaName: 'LinkedIn'
+		},
+		fr: {
+			mediaName: 'LinkedIn'
+		},
+		ar: {
+			mediaName: 'لينكد إن'
+		}
+	},
+	{
+		mediaLink: 'https://github.com/mejriziad',
+		mediaSmallIcon: '🐙',
+		mediaImage: 'assets/contact/icons/github.png',
+		en: {
+			mediaName: 'GitHub'
+		},
+		fr: {
+			mediaName: 'GitHub'
+		},
+		ar: {
+			mediaName: 'غيت هاب'
+		}
+	},
+	{
+		mediaLink: 'https://twitter.com/mejriziad',
+		mediaSmallIcon: '𝕏',
+		mediaImage: 'assets/contact/icons/x-twitter.png',
+		en: {
+			mediaName: 'X (Twitter)'
+		},
+		fr: {
+			mediaName: 'X (Twitter)'
+		},
+		ar: {
+			mediaName: 'إكس (تويتر)'
+		}
+	},
+	{
+		mediaLink: 'https://facebook.com/mejriziad',
+		mediaSmallIcon: '📘',
+		mediaImage: 'assets/contact/icons/facebook.png',
+		en: {
+			mediaName: 'Facebook'
+		},
+		fr: {
+			mediaName: 'Facebook'
+		},
+		ar: {
+			mediaName: 'فيسبوك'
+		}
+	},
+	{
+		mediaLink: 'https://youtube.com/@mejriziad',
+		mediaSmallIcon: '▶️',
+		mediaImage: 'assets/contact/icons/youtube.png',
+		en: {
+			mediaName: 'YouTube'
+		},
+		fr: {
+			mediaName: 'YouTube'
+		},
+		ar: {
+			mediaName: 'يوتيوب'
+		}
+	},
+	{
+		mediaLink: 'https://instagram.com/mejriziad',
+		mediaSmallIcon: '📷',
+		mediaImage: 'assets/contact/icons/instagram.png',
+		en: {
+			mediaName: 'Instagram'
+		},
+		fr: {
+			mediaName: 'Instagram'
+		},
+		ar: {
+			mediaName: 'انستغرام'
+		}
+	},
+	{
+		mediaLink: 'https://tiktok.com/@mejriziad',
+		mediaSmallIcon: '🎵',
+		mediaImage: 'assets/contact/icons/tiktok.png',
+		en: {
+			mediaName: 'TikTok'
+		},
+		fr: {
+			mediaName: 'TikTok'
+		},
+		ar: {
+			mediaName: 'تيك توك'
+		}
+	},
+	{
+		mediaLink: 'https://medium.com/@mejriziad',
+		mediaSmallIcon: '📝',
+		mediaImage: 'assets/contact/icons/medium.png',
+		en: {
+			mediaName: 'Medium'
+		},
+		fr: {
+			mediaName: 'Medium'
+		},
+		ar: {
+			mediaName: 'ميديوم'
+		}
+	},
+	{
+		mediaLink: 'https://wa.me/21612345678',
+		mediaSmallIcon: '💬',
+		mediaImage: 'assets/contact/icons/whatsapp.png',
+		en: {
+			mediaName: 'WhatsApp'
+		},
+		fr: {
+			mediaName: 'WhatsApp'
+		},
+		ar: {
+			mediaName: 'واتساب'
+		}
+	},
+	{
+		mediaLink: 'https://t.me/mejriziad',
+		mediaSmallIcon: '✈️',
+		mediaImage: 'assets/contact/icons/telegram.png',
+		en: {
+			mediaName: 'Telegram'
+		},
+		fr: {
+			mediaName: 'Telegram'
+		},
+		ar: {
+			mediaName: 'تيليغرام'
+		}
+	},
+	{
+		mediaLink: 'https://discord.gg/mejriziad',
+		mediaSmallIcon: '🎮',
+		mediaImage: 'assets/contact/icons/discord.png',
+		en: {
+			mediaName: 'Discord'
+		},
+		fr: {
+			mediaName: 'Discord'
+		},
+		ar: {
+			mediaName: 'ديسكورد'
+		}
+	},
+	{
+		mediaLink: 'https://stackoverflow.com/users/mejriziad',
+		mediaSmallIcon: '📚',
+		mediaImage: 'assets/contact/icons/stackoverflow.png',
+		en: {
+			mediaName: 'Stack Overflow'
+		},
+		fr: {
+			mediaName: 'Stack Overflow'
+		},
+		ar: {
+			mediaName: 'ستاك أوفرفلو'
+		}
+	}
+];
 
         // ================== TRANSLATIONS (with footer keys and Header keys) ==================
         const uiText = {
