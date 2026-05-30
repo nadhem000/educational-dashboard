@@ -294,3 +294,102 @@ const categoryConfig = {
 	news: { gridId: 'newsGrid', cssClass: 'ED-General-card--news' },
 	obsolete: { gridId: 'obsoleteGrid', cssClass: 'ED-General-card--obsolete' }
 };
+       // ================== SOCIAL MEDIA DATA ==================
+const socialMedias = [
+  {
+    mediaLink: 'https://linkedin.com/in/mejriziad',
+    mediaSmallIcon: '🔗',
+    mediaImage: 'assets/contact/linkedin.png',
+    en: { mediaName: 'LinkedIn' },
+    fr: { mediaName: 'LinkedIn' },
+    ar: { mediaName: 'لينكد إن' }
+  },
+  {
+    mediaLink: 'https://github.com/mejriziad',
+    mediaSmallIcon: '🐙',
+    mediaImage: 'assets/contact/github.png',
+    en: { mediaName: 'GitHub' },
+    fr: { mediaName: 'GitHub' },
+    ar: { mediaName: 'غيت هاب' }
+  },
+  {
+    mediaLink: 'https://twitter.com/mejriziad',
+    mediaSmallIcon: '𝕏',
+    mediaImage: 'assets/contact/x-twitter.png',
+    en: { mediaName: 'X (Twitter)' },
+    fr: { mediaName: 'X (Twitter)' },
+    ar: { mediaName: 'إكس (تويتر)' }
+  },
+  {
+    mediaLink: 'https://facebook.com/mejriziad',
+    mediaSmallIcon: '📘',
+    mediaImage: 'assets/contact/facebook.png',
+    en: { mediaName: 'Facebook' },
+    fr: { mediaName: 'Facebook' },
+    ar: { mediaName: 'فيسبوك' }
+  },
+  {
+    mediaLink: 'https://youtube.com/@mejriziad',
+    mediaSmallIcon: '▶️',
+    mediaImage: 'assets/contact/youtube.png',
+    en: { mediaName: 'YouTube' },
+    fr: { mediaName: 'YouTube' },
+    ar: { mediaName: 'يوتيوب' }
+  },
+  {
+    mediaLink: 'https://instagram.com/mejriziad',
+    mediaSmallIcon: '📷',
+    mediaImage: 'assets/contact/instagram.png',
+    en: { mediaName: 'Instagram' },
+    fr: { mediaName: 'Instagram' },
+    ar: { mediaName: 'انستغرام' }
+  },
+  {
+    mediaLink: 'https://tiktok.com/@mejriziad',
+    mediaSmallIcon: '🎵',
+    mediaImage: 'assets/contact/tiktok.png',
+    en: { mediaName: 'TikTok' },
+    fr: { mediaName: 'TikTok' },
+    ar: { mediaName: 'تيك توك' }
+  },
+  {
+    mediaLink: 'https://medium.com/@mejriziad',
+    mediaSmallIcon: '📝',
+    mediaImage: 'assets/contact/medium.png',
+    en: { mediaName: 'Medium' },
+    fr: { mediaName: 'Medium' },
+    ar: { mediaName: 'ميديوم' }
+  },
+  {
+    mediaLink: 'https://wa.me/21612345678',
+    mediaSmallIcon: '💬',
+    mediaImage: 'assets/contact/whatsapp.png',
+    en: { mediaName: 'WhatsApp' },
+    fr: { mediaName: 'WhatsApp' },
+    ar: { mediaName: 'واتساب' }
+  },
+  {
+    mediaLink: 'https://t.me/mejriziad',
+    mediaSmallIcon: '✈️',
+    mediaImage: 'assets/contact/telegram.png',
+    en: { mediaName: 'Telegram' },
+    fr: { mediaName: 'Telegram' },
+    ar: { mediaName: 'تيليغرام' }
+  },
+  {
+    mediaLink: 'https://discord.gg/mejriziad',
+    mediaSmallIcon: '🎮',
+    mediaImage: 'assets/contact/discord.png',
+    en: { mediaName: 'Discord' },
+    fr: { mediaName: 'Discord' },
+    ar: { mediaName: 'ديسكورد' }
+  },
+  {
+    mediaLink: 'https://stackoverflow.com/users/mejriziad',
+    mediaSmallIcon: '📚',
+    mediaImage: 'assets/contact/stackoverflow.png',
+    en: { mediaName: 'Stack Overflow' },
+    fr: { mediaName: 'Stack Overflow' },
+    ar: { mediaName: 'ستاك أوفرفلو' }
+  }
+];

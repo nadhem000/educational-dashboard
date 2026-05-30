@@ -1,8 +1,10 @@
-const CACHE_NAME = 'edudash-v84'; // bump version when  deploy
+const CACHE_NAME = 'edudash-v85'; // bump version when  deploy
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
   '/data_general.js',
+  '/ED-general-pwa.js',
+  '/ED-general-cards.js',
   '/ED-general-shortcuts.js',
   '/ED-general-common.css',
   '/header.html',
