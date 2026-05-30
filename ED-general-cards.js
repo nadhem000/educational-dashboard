@@ -13,7 +13,7 @@ function getLuminance(r, g, b) {
     const linearize = (c) => {
         c = c / 255;
         return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
-    };
+	};
     return 0.2126 * linearize(r) + 0.7152 * linearize(g) + 0.0722 * linearize(b);
 }
 
@@ -67,7 +67,7 @@ function applyCardPalettes(theme) {
         cardEl.style.setProperty('--card-shadow-offset-x', offsetX + 'px');
         cardEl.style.setProperty('--card-shadow-offset-y', '3px');
         cardEl.style.setProperty('--card-shadow-offset-y-hover', (6 + Math.abs(offsetX)) + 'px');
-    });
+	});
 }
 
 function escapeHTML(str) {
@@ -89,28 +89,28 @@ function renderCardGrid(cards, targetId, categoryClass, lang, uiText) {
         let iconHTML = '';
         if (card.imageIcon && card.imageIcon.trim() !== '') {
             iconHTML = `<img src="${escapeHTML(card.imageIcon)}" alt="${escapeHTML(uiText[lang].imageIconAlt)}" onerror="this.setAttribute('data-error','1');this.nextElementSibling.style.display='flex';" loading="lazy"><span class="ED-General-card__icon-letter">${escapeHTML(firstLetter)}</span>`;
-        } else {
+			} else {
             iconHTML = `<span class="ED-General-card__icon-letter" style="display:flex;">${escapeHTML(firstLetter)}</span>`;
-        }
+		}
         let insideLinksHTML = '';
         if (card.insideLinks && card.insideLinks.length > 0) {
             insideLinksHTML = '<div class="ED-General-card__inside-links">' +
-                card.insideLinks.map(il => {
-                    const linkLang = il[lang] || il['en'] || {};
-                    const linkName = linkLang.name || 'Link';
-                    return `<a href="${escapeHTML(il.url)}" class="ED-General-inside-link" target="_blank" rel="noopener noreferrer" title="${escapeHTML(linkName)}">${escapeHTML(linkName)}<span class="ED-General-inside-link__arrow">↗</span></a>`;
-                }).join('') + '</div>';
-        }
+			card.insideLinks.map(il => {
+				const linkLang = il[lang] || il['en'] || {};
+				const linkName = linkLang.name || 'Link';
+				return `<a href="${escapeHTML(il.url)}" class="ED-General-inside-link" target="_blank" rel="noopener noreferrer" title="${escapeHTML(linkName)}">${escapeHTML(linkName)}<span class="ED-General-inside-link__arrow">↗</span></a>`;
+			}).join('') + '</div>';
+		}
         grid.insertAdjacentHTML('beforeend', `
             <div class="ED-General-card ${categoryClass}" data-card-id="${escapeHTML(card.id)}">
-                <div class="ED-General-card__icon-container">${iconHTML}</div>
-                <h3 class="ED-General-card__name">${escapeHTML(cardName)}</h3>
-                <p class="ED-General-card__description">${escapeHTML(cardDesc)}</p>
-                ${insideLinksHTML}
-                <a href="${escapeHTML(card.link)}" class="ED-General-card__main-btn" target="_blank" rel="noopener noreferrer">${escapeHTML(uiText[lang].visitBtn)}<span class="ED-General-card__main-btn-arrow">→</span></a>
+			<div class="ED-General-card__icon-container">${iconHTML}</div>
+			<h3 class="ED-General-card__name">${escapeHTML(cardName)}</h3>
+			<p class="ED-General-card__description">${escapeHTML(cardDesc)}</p>
+			${insideLinksHTML}
+			<a href="${escapeHTML(card.link)}" class="ED-General-card__main-btn" target="_blank" rel="noopener noreferrer">${escapeHTML(uiText[lang].visitBtn)}<span class="ED-General-card__main-btn-arrow">→</span></a>
             </div>
-        `);
-    });
+		`);
+	});
 }
 
 function renderAll(lang, theme, uiText) {
@@ -121,49 +121,63 @@ function renderAll(lang, theme, uiText) {
             config.cssClass,
             lang,
             uiText
-        );
-    }
+		);
+	}
     applyCardPalettes(theme);
 }
 /**
- * Render the social media cards into a grid container.
- * @param {string} gridId - ID of the container element (e.g. 'socialGrid')
- * @param {string} lang - Current language code ('en', 'fr', 'ar')
- * @param {function} t - Translation function (key → localized string)
- */
+	* Render the social media cards into a grid container.
+	* @param {string} gridId - ID of the container element (e.g. 'socialGrid')
+	* @param {string} lang - Current language code ('en', 'fr', 'ar')
+	* @param {function} t - Translation function (key → localized string)
+*/
 function renderSocialCards(gridId, lang, t) {
-  const grid = document.getElementById(gridId);
-  if (!grid) return;
-
-  grid.innerHTML = socialMedias.map(sm => {
-    const name = sm[lang]?.mediaName || sm.en.mediaName;
-    const link = sm.mediaLink || '#';
-    const disabled = !sm.mediaLink;
-
-    // Small icon (emoji) – hidden if an image is used
-    const smallIconHidden = sm.mediaImage ? ' style="display:none;"' : '';
-    const smallIcon = `<span class="ED-General-social-icon-small"${smallIconHidden}>${sm.mediaSmallIcon}</span>`;
-
-    // Image with fallback to the small icon
-    const imgTag = sm.mediaImage
-      ? `<img src="${sm.mediaImage}" class="ED-General-social-img" alt="${name}"
-           onerror="this.style.display='none'; this.previousElementSibling.style.display='inline-block';">`
-      : '';
-
-    const titleAttr = disabled ? ` title="${t('noLink')}"` : '';
-    const disabledAttr = disabled
-      ? `style="opacity:0.6; pointer-events:none;" ${titleAttr}`
-      : '';
-
-    return `<a href="${link}" class="ED-General-social-card" target="_blank" rel="noopener" ${disabledAttr}>
-              ${sm.mediaImage ? smallIcon + imgTag : smallIcon}
-              <span>${name}</span>
-            </a>`;
-  }).join('');
+	const grid = document.getElementById(gridId);
+	if (!grid) return;
+	
+	grid.innerHTML = socialMedias.map(sm => {
+		const name = sm[lang]?.mediaName || sm.en.mediaName;
+		const link = sm.mediaLink || '#';
+		const disabled = !sm.mediaLink;
+		
+		// Small icon (emoji) – hidden if an image is used
+		const smallIconHidden = sm.mediaImage ? ' style="display:none;"' : '';
+		const smallIcon = `<span class="ED-General-social-icon-small"${smallIconHidden}>${sm.mediaSmallIcon}</span>`;
+		
+		// Image with fallback to the small icon
+		const imgTag = sm.mediaImage
+		? `<img src="${sm.mediaImage}" class="ED-General-social-img" alt="${name}"
+		onerror="this.style.display='none'; this.previousElementSibling.style.display='inline-block';">`
+		: '';
+		
+		const titleAttr = disabled ? ` title="${t('noLink')}"` : '';
+		const disabledAttr = disabled
+		? `style="opacity:0.6; pointer-events:none;" ${titleAttr}`
+		: '';
+		
+		return `<a href="${link}" class="ED-General-social-card" target="_blank" rel="noopener" ${disabledAttr}>
+		${sm.mediaImage ? smallIcon + imgTag : smallIcon}
+		<span>${name}</span>
+		</a>`;
+	}).join('');
 }
 document.addEventListener('translationsApplied', function() {
-  const theme = localStorage.getItem('dashboardTheme') || 'light';
-  if (typeof renderAll === 'function' && window.UI_TEXT) {
-    renderAll(EDTranslation.getCurrentLang(), theme, window.UI_TEXT);
-  }
+	const lang = EDTranslation.getCurrentLang();
+	const theme = localStorage.getItem('dashboardTheme') || 'light';
+	
+	// Render dashboard cards (if present)
+	if (typeof renderAll === 'function' && window.UI_TEXT) {
+		renderAll(lang, theme, window.UI_TEXT);
+	}
+	
+	// Render social media cards (contact page)
+	if (document.getElementById('socialGrid')) {
+		renderSocialCards('socialGrid', lang, EDTranslation.getText);
+	}
+	
+	// Update profile image alt (contact page)
+	const profileImg = document.getElementById('profileImg');
+	if (profileImg) {
+		profileImg.alt = EDTranslation.getText('imageAlt');
+	}
 });

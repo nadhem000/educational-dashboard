@@ -1,350 +1,339 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light" dir="ltr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact – Mejri Ziad</title>
-    <link rel="icon" type="image/x-icon" href="assets/icons/icon-64x64.png">
-    <link rel="manifest" href="/manifest.json">
-    <link rel="stylesheet" href="/ED-general-common.css">
-    <style>
-       :root {
-    --ED-General-color-bg: #f5f1eb;
-    --ED-General-color-bg-secondary: #ede7df;
-    --ED-General-color-surface: #ffffff;
-    --ED-General-color-surface-hover: #fafaf8;
-    --ED-General-color-text-primary: #1e293b;
-    --ED-General-color-text-secondary: #5a6c7d;
-    --ED-General-color-text-tertiary: #8b9aab;
-    --ED-General-color-border: #e2dcd4;
-    --ED-General-color-border-hover: #cbc3b8;
-    --ED-General-color-shadow: rgba(60, 50, 40, 0.07);
-    --ED-General-color-shadow-hover: rgba(60, 50, 40, 0.14);
-    --ED-General-color-accent-default: #4a7fd9;
-    --ED-General-color-accent-light: #e8f1fb;
-    --ED-General-color-accent-soft: #f0f5fc;
-    --ED-General-color-header-bg: #ffffff;
-    --ED-General-color-header-border: #e8e2d9;
-    --ED-General-color-toggle-bg: #e8e2d9;
-    --ED-General-color-toggle-text: #4a5568;
-    --ED-General-color-toggle-active-bg: #4a7fd9;
-    --ED-General-color-toggle-active-text: #ffffff;
-    --ED-General-color-badge-bg: #f0ece5;
-    --ED-General-color-badge-text: #5a6c7d;
-    --ED-General-color-badge-hover-bg: #e4ded5;
-    --ED-General-color-btn-primary-bg: #4a7fd9;
-    --ED-General-color-btn-primary-text: #ffffff;
-    --ED-General-color-btn-primary-hover: #3b6ec4;
-    --ED-General-color-btn-shadow: rgba(0, 0, 0, 0.2);
-    --ED-General-color-icon-container-bg: #f0f4f9;
-    --ED-General-card-radius: 16px;
-    --ED-General-card-padding: 1.5rem;
-    --ED-General-transition-speed: 0.3s;
-    --ED-General-grid-gap: 1.25rem;
-    --ED-General-font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
-        "Noto Sans", "Noto Sans Arabic", sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-    --card-accent-r: 60;
-    --card-accent-g: 50;
-    --card-accent-b: 40;
-    --card-shadow-opacity: 0.10;
-    --card-shadow-opacity-hover: 0.22;
-    --card-shadow-blur: 10px;
-    --card-shadow-blur-hover: 30px;
-    --card-shadow-offset-x: 0px;
-    --card-shadow-offset-y: 3px;
-    --card-shadow-offset-y-hover: 8px;
-    --ED-General-color-header-gradient-start: #fefdfb;
-    --ED-General-color-header-gradient-mid1: #faf8f4;
-    --ED-General-color-header-gradient-mid2: #f6f3ee;
-    --ED-General-color-header-gradient-end: #f2efe8;
-    --ED-General-color-header-accent-gradient-stop: rgba(180, 160, 140, 0.5);
-    --ED-General-color-shadow-rgb: 60, 50, 40;
-    --ED-General-color-accent-rgb: 74, 127, 217;
-    --ED-General-color-icon-sun: #e8a840;
-    --ED-General-color-icon-moon: #7b8cb0;
-    --ED-General-color-icon-sun-glow: rgba(232, 168, 64, 0.3);
-    --ED-General-color-icon-moon-glow: rgba(122, 143, 176, 0.35);
-    --ED-General-color-text-on-accent: #ffffff;
-}
-
-[data-theme="dark"] {
-    --ED-General-color-bg: #171a20;
-    --ED-General-color-bg-secondary: #1e2129;
-    --ED-General-color-surface: #23262f;
-    --ED-General-color-surface-hover: #2a2e38;
-    --ED-General-color-text-primary: #e2e4ea;
-    --ED-General-color-text-secondary: #b0b5c2;
-    --ED-General-color-text-tertiary: #7d8494;
-    --ED-General-color-border: #32353e;
-    --ED-General-color-border-hover: #454952;
-    --ED-General-color-shadow: rgba(0, 0, 0, 0.25);
-    --ED-General-color-shadow-hover: rgba(0, 0, 0, 0.45);
-    --ED-General-color-accent-default: #7aafff;
-    --ED-General-color-accent-light: #1e2d45;
-    --ED-General-color-accent-soft: #1a2535;
-    --ED-General-color-header-bg: #1c1f28;
-    --ED-General-color-header-border: #2a2e38;
-    --ED-General-color-toggle-bg: #2a2e38;
-    --ED-General-color-toggle-text: #b0b5c2;
-    --ED-General-color-toggle-active-bg: #7aafff;
-    --ED-General-color-toggle-active-text: #12151c;
-    --ED-General-color-badge-bg: #2a2e38;
-    --ED-General-color-badge-text: #b0b5c2;
-    --ED-General-color-badge-hover-bg: #353a45;
-    --ED-General-color-btn-primary-bg: #7aafff;
-    --ED-General-color-btn-primary-text: #12151c;
-    --ED-General-color-btn-primary-hover: #6199f0;
-    --ED-General-color-btn-shadow: rgba(0, 0, 0, 0.5);
-    --ED-General-color-icon-container-bg: #252b38;
-    --ED-General-color-header-gradient-start: #1f222d;
-    --ED-General-color-header-gradient-mid1: #1c1f29;
-    --ED-General-color-header-gradient-mid2: #191c24;
-    --ED-General-color-header-gradient-end: #171a20;
-    --ED-General-color-header-accent-gradient-stop: rgba(160, 175, 200, 0.4);
-    --ED-General-color-shadow-rgb: 0, 0, 0;
-    --ED-General-color-accent-rgb: 122, 175, 255;
-    --ED-General-color-icon-sun: #e8a840;
-    --ED-General-color-icon-moon: #c4d0f0;
-    --ED-General-color-icon-sun-glow: rgba(232, 168, 64, 0.3);
-    --ED-General-color-icon-moon-glow: rgba(180, 195, 235, 0.35);
-    --ED-General-color-text-on-accent: #12151c;
-}
-
-[dir="rtl"] {
-    direction: rtl;
-    text-align: right;
-}
-
-/* ========== Contact‑specific styles ========== */
-.ED-General-contact-container {
-    max-width: 900px;
-    margin: 2rem auto;
-    padding: 0 1.5rem;
-}
-
-.ED-General-profile-header {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-    margin-bottom: 2rem;
-    background: var(--ED-General-color-surface);
-    border: 1px solid var(--ED-General-color-border);
-    border-radius: var(--ED-General-card-radius);
-    padding: 2rem;
-    box-shadow: 0 4px 12px var(--ED-General-color-shadow);
-}
-
-.ED-General-profile-img-wrapper { flex-shrink: 0; }
-
-.ED-General-profile-img {
-    width: 130px; height: 130px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid var(--ED-General-color-accent-default);
-}
-
-.ED-General-profile-info-block { flex: 1; }
-
-.ED-General-profile-name {
-    font-size: 2rem; font-weight: 700; margin-bottom: 0.3rem;
-}
-
-.ED-General-profile-title {
-    font-size: 1.1rem;
-    color: var(--ED-General-color-accent-default);
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-}
-
-.ED-General-profile-bio {
-    color: var(--ED-General-color-text-secondary);
-    line-height: 1.6;
-    margin-bottom: 0.8rem;
-}
-
-.ED-General-profile-details {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem 2rem;
-    color: var(--ED-General-color-text-secondary);
-    font-size: 0.95rem;
-}
-
-.ED-General-section-title {
-    font-size: 1.4rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    border-bottom: 1px solid var(--ED-General-color-border);
-    padding-bottom: 0.5rem;
-}
-
-.ED-General-social-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 0.8rem;
-}
-
-.ED-General-social-card {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    background: var(--ED-General-color-surface);
-    border: 1px solid var(--ED-General-color-border);
-    border-radius: 12px;
-    padding: 0.8rem 1rem;
-    text-decoration: none;
-    color: var(--ED-General-color-text-primary);
-    transition: transform 0.2s, background 0.2s, border-color 0.2s;
-}
-
-.ED-General-social-card:hover {
-    background: var(--ED-General-color-accent-default);
-    color: var(--ED-General-color-text-on-accent);
-    border-color: transparent;
-    transform: translateY(-2px);
-}
-
-.ED-General-social-icon-small {
-    font-size: 1.6rem;
-    width: 28px;
-    text-align: center;
-}
-
-.ED-General-social-img {
-    width: 28px; height: 28px;
-    object-fit: contain;
-}
-
-@media (max-width: 640px) {
-    .ED-General-profile-header {
-        flex-direction: column;
-        text-align: center;
-    }
-    .ED-General-social-grid {
-        grid-template-columns: 1fr 1fr;
-    }
-}
-    </style>
-</head>
-<body>
-    <header id="header-container"></header>
-
-    <main class="ED-General-contact-container">
-        <div class="ED-General-profile-header">
-            <div class="ED-General-profile-img-wrapper">
-                <img src="assets/contact/mejri-ziad.jpg" alt="Mejri Ziad" class="ED-General-profile-img" id="profileImg"
-                     onerror="this.style.display='none'; document.getElementById('profileFallback').style.display='flex';">
-                <div id="profileFallback" style="display:none; width:130px; height:130px; border-radius:50%;
-                            background:var(--ED-General-color-accent-default); color:white; align-items:center;
-                            justify-content:center; font-size:3rem; margin:0 auto;">
-                    MZ
-                </div>
-            </div>
-            <div class="ED-General-profile-info-block">
-                <h1 class="ED-General-profile-name" data-i18n="profile.name">Mejri Ziad</h1>
-                <div class="ED-General-profile-title" data-i18n="profile.title">Full‑stack Developer & Educator</div>
-                <p class="ED-General-profile-bio" data-i18n="profile.bio"></p>
-                <div class="ED-General-profile-details">
-                    <span>📍 <span data-i18n="profile.location">Tunis, Tunisia</span></span>
-                    <span>✉️ <span data-i18n="profile.email">contact@mejriziad.tn</span></span>
-                    <span>📱 <span data-i18n="profile.phone" dir="ltr">+216 12 345 678</span></span>
-                </div>
-            </div>
-        </div>
-
-        <h2 class="ED-General-section-title" data-i18n="social.title">Connect with me</h2>
-        <div class="ED-General-social-grid" id="socialGrid"></div>
-    </main>
-
-    <footer id="footer-container"></footer>
-
-    <!-- Offline banner -->
-    <div id="offline-banner" class="ED-General-offline-banner" data-i18n="offlineBanner">You are offline.</div>
-    <!-- Update banner -->
-    <div id="update-banner" class="ED-General-update-banner" style="display:none;">
-        <span data-i18n="updateNotification">A new version is available.</span>
-        <button id="update-reload-btn" data-i18n="updateReloadBtn">Reload</button>
-    </div>
-    <!-- Install button -->
-    <button class="ED-General-header-btn" id="installBtn" style="display:none;" data-i18n="installBtn">📲 Install App</button>
-
-<!-- Load shared translation data (common header/footer/banners) -->
-<script src="ED-general-translations-data.js"></script>
-<script src="data_general.js"></script>
-    <script src="ED-general-cards.js"></script>
-    <script src="ED-general-shortcuts.js"></script>
-    <script src="ED-general-pwa.js"></script>
-
-    <!-- ========== TRANSLATION DICTIONARY ========== -->
-    <script>
-    const PAGE_UI_TEXT = {
-  en: {
-    profile: {
-      name: 'Mejri Ziad',
-      title: 'Full‑stack Developer & Educator',
-      bio: 'Passionate about building multilingual learning platforms and open‑source tools. I love turning complex ideas into simple, accessible digital experiences.',
-      location: 'Tunis, Tunisia',
-      email: 'contact@mejriziad.tn',
-      phone: '+216 12 345 678'
-    },
-    social: {
-      title: 'Connect with me'
-    },
-    imageAlt: 'Profile photo',
-    noLink: '(link not set)'
-  },
-  fr: {
-    profile: {
-      name: 'Mejri Ziad',
-      title: 'Développeur Full‑stack & Formateur',
-      bio: 'Passionné par la création de plateformes d’apprentissage multilingues et d’outils open‑source. J’aime transformer des idées complexes en expériences numériques simples et accessibles.',
-      location: 'Tunis, Tunisie',
-      email: 'contact@mejriziad.tn',
-      phone: '+216 12 345 678'
-    },
-    social: {
-      title: 'Connectez‑vous avec moi'
-    },
-    imageAlt: 'Photo de profil',
-    noLink: '(lien non défini)'
-  },
-  ar: {
-    profile: {
-      name: 'ماجري زياد',
-      title: 'مطور شامل ومعلم',
-      bio: 'شغوف ببناء منصات تعليمية متعددة اللغات وأدوات مفتوحة المصدر. أحب تحويل الأفكار المعقدة إلى تجارب رقمية بسيطة ومتاحة.',
-      location: 'تونس العاصمة، تونس',
-      email: 'contact@mejriziad.tn',
-      phone: '+216 12 345 678'
-    },
-    social: {
-      title: 'تواصل معي'
-    },
-    imageAlt: 'صورة الملف الشخصي',
-    noLink: '(الرابط غير محدد)'
-  }
-};
-
-// Merge shared + page‑specific into the final UI_TEXT
-window.UI_TEXT = {
-  en: { ...SHARED_UI_TEXT.en, ...PAGE_UI_TEXT.en },
-  fr: { ...SHARED_UI_TEXT.fr, ...PAGE_UI_TEXT.fr },
-  ar: { ...SHARED_UI_TEXT.ar, ...PAGE_UI_TEXT.ar }
-};
-    </script>
-
-    <!-- Translation engine and shared init -->
-    <script src="ED-general-translation.js"></script>
-    <script src="ED-general-init.js"></script>
-
-    <!-- Page‑specific dynamic content (social cards, image alt, install button) -->
-    <script>
-    document.addEventListener('translationsApplied', function() {
-      renderSocialCards('socialGrid', EDTranslation.getCurrentLang(), EDTranslation.getText);
-      document.getElementById('profileImg').alt = EDTranslation.getText('imageAlt');
-      const installBtn = document.getElementById('installBtn');
-      if (installBtn) installBtn.textContent = EDTranslation.getText('installBtn');
-    });
-    </script>
-</body>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Contact – Mejri Ziad</title>
+		<link rel="icon" type="image/x-icon" href="assets/icons/icon-64x64.png">
+		<link rel="manifest" href="/manifest.json">
+		<link rel="stylesheet" href="/ED-general-common.css">
+		<style>
+			:root {
+			--ED-General-color-bg: #f5f1eb;
+			--ED-General-color-bg-secondary: #ede7df;
+			--ED-General-color-surface: #ffffff;
+			--ED-General-color-surface-hover: #fafaf8;
+			--ED-General-color-text-primary: #1e293b;
+			--ED-General-color-text-secondary: #5a6c7d;
+			--ED-General-color-text-tertiary: #8b9aab;
+			--ED-General-color-border: #e2dcd4;
+			--ED-General-color-border-hover: #cbc3b8;
+			--ED-General-color-shadow: rgba(60, 50, 40, 0.07);
+			--ED-General-color-shadow-hover: rgba(60, 50, 40, 0.14);
+			--ED-General-color-accent-default: #4a7fd9;
+			--ED-General-color-accent-light: #e8f1fb;
+			--ED-General-color-accent-soft: #f0f5fc;
+			--ED-General-color-header-bg: #ffffff;
+			--ED-General-color-header-border: #e8e2d9;
+			--ED-General-color-toggle-bg: #e8e2d9;
+			--ED-General-color-toggle-text: #4a5568;
+			--ED-General-color-toggle-active-bg: #4a7fd9;
+			--ED-General-color-toggle-active-text: #ffffff;
+			--ED-General-color-badge-bg: #f0ece5;
+			--ED-General-color-badge-text: #5a6c7d;
+			--ED-General-color-badge-hover-bg: #e4ded5;
+			--ED-General-color-btn-primary-bg: #4a7fd9;
+			--ED-General-color-btn-primary-text: #ffffff;
+			--ED-General-color-btn-primary-hover: #3b6ec4;
+			--ED-General-color-btn-shadow: rgba(0, 0, 0, 0.2);
+			--ED-General-color-icon-container-bg: #f0f4f9;
+			--ED-General-card-radius: 16px;
+			--ED-General-card-padding: 1.5rem;
+			--ED-General-transition-speed: 0.3s;
+			--ED-General-grid-gap: 1.25rem;
+			--ED-General-font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+			"Noto Sans", "Noto Sans Arabic", sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+			--card-accent-r: 60;
+			--card-accent-g: 50;
+			--card-accent-b: 40;
+			--card-shadow-opacity: 0.10;
+			--card-shadow-opacity-hover: 0.22;
+			--card-shadow-blur: 10px;
+			--card-shadow-blur-hover: 30px;
+			--card-shadow-offset-x: 0px;
+			--card-shadow-offset-y: 3px;
+			--card-shadow-offset-y-hover: 8px;
+			--ED-General-color-header-gradient-start: #fefdfb;
+			--ED-General-color-header-gradient-mid1: #faf8f4;
+			--ED-General-color-header-gradient-mid2: #f6f3ee;
+			--ED-General-color-header-gradient-end: #f2efe8;
+			--ED-General-color-header-accent-gradient-stop: rgba(180, 160, 140, 0.5);
+			--ED-General-color-shadow-rgb: 60, 50, 40;
+			--ED-General-color-accent-rgb: 74, 127, 217;
+			--ED-General-color-icon-sun: #e8a840;
+			--ED-General-color-icon-moon: #7b8cb0;
+			--ED-General-color-icon-sun-glow: rgba(232, 168, 64, 0.3);
+			--ED-General-color-icon-moon-glow: rgba(122, 143, 176, 0.35);
+			--ED-General-color-text-on-accent: #ffffff;
+			}
+			
+			[data-theme="dark"] {
+			--ED-General-color-bg: #171a20;
+			--ED-General-color-bg-secondary: #1e2129;
+			--ED-General-color-surface: #23262f;
+			--ED-General-color-surface-hover: #2a2e38;
+			--ED-General-color-text-primary: #e2e4ea;
+			--ED-General-color-text-secondary: #b0b5c2;
+			--ED-General-color-text-tertiary: #7d8494;
+			--ED-General-color-border: #32353e;
+			--ED-General-color-border-hover: #454952;
+			--ED-General-color-shadow: rgba(0, 0, 0, 0.25);
+			--ED-General-color-shadow-hover: rgba(0, 0, 0, 0.45);
+			--ED-General-color-accent-default: #7aafff;
+			--ED-General-color-accent-light: #1e2d45;
+			--ED-General-color-accent-soft: #1a2535;
+			--ED-General-color-header-bg: #1c1f28;
+			--ED-General-color-header-border: #2a2e38;
+			--ED-General-color-toggle-bg: #2a2e38;
+			--ED-General-color-toggle-text: #b0b5c2;
+			--ED-General-color-toggle-active-bg: #7aafff;
+			--ED-General-color-toggle-active-text: #12151c;
+			--ED-General-color-badge-bg: #2a2e38;
+			--ED-General-color-badge-text: #b0b5c2;
+			--ED-General-color-badge-hover-bg: #353a45;
+			--ED-General-color-btn-primary-bg: #7aafff;
+			--ED-General-color-btn-primary-text: #12151c;
+			--ED-General-color-btn-primary-hover: #6199f0;
+			--ED-General-color-btn-shadow: rgba(0, 0, 0, 0.5);
+			--ED-General-color-icon-container-bg: #252b38;
+			--ED-General-color-header-gradient-start: #1f222d;
+			--ED-General-color-header-gradient-mid1: #1c1f29;
+			--ED-General-color-header-gradient-mid2: #191c24;
+			--ED-General-color-header-gradient-end: #171a20;
+			--ED-General-color-header-accent-gradient-stop: rgba(160, 175, 200, 0.4);
+			--ED-General-color-shadow-rgb: 0, 0, 0;
+			--ED-General-color-accent-rgb: 122, 175, 255;
+			--ED-General-color-icon-sun: #e8a840;
+			--ED-General-color-icon-moon: #c4d0f0;
+			--ED-General-color-icon-sun-glow: rgba(232, 168, 64, 0.3);
+			--ED-General-color-icon-moon-glow: rgba(180, 195, 235, 0.35);
+			--ED-General-color-text-on-accent: #12151c;
+			}
+			
+			[dir="rtl"] {
+			direction: rtl;
+			text-align: right;
+			}
+			
+			/* ========== Contact‑specific styles ========== */
+			.ED-General-contact-container {
+			max-width: 900px;
+			margin: 2rem auto;
+			padding: 0 1.5rem;
+			}
+			
+			.ED-General-profile-header {
+			display: flex;
+			align-items: center;
+			gap: 2rem;
+			margin-bottom: 2rem;
+			background: var(--ED-General-color-surface);
+			border: 1px solid var(--ED-General-color-border);
+			border-radius: var(--ED-General-card-radius);
+			padding: 2rem;
+			box-shadow: 0 4px 12px var(--ED-General-color-shadow);
+			}
+			
+			.ED-General-profile-img-wrapper { flex-shrink: 0; }
+			
+			.ED-General-profile-img {
+			width: 130px; height: 130px;
+			border-radius: 50%;
+			object-fit: cover;
+			border: 3px solid var(--ED-General-color-accent-default);
+			}
+			
+			.ED-General-profile-info-block { flex: 1; }
+			
+			.ED-General-profile-name {
+			font-size: 2rem; font-weight: 700; margin-bottom: 0.3rem;
+			}
+			
+			.ED-General-profile-title {
+			font-size: 1.1rem;
+			color: var(--ED-General-color-accent-default);
+			margin-bottom: 0.5rem;
+			font-weight: 600;
+			}
+			
+			.ED-General-profile-bio {
+			color: var(--ED-General-color-text-secondary);
+			line-height: 1.6;
+			margin-bottom: 0.8rem;
+			}
+			
+			.ED-General-profile-details {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem 2rem;
+			color: var(--ED-General-color-text-secondary);
+			font-size: 0.95rem;
+			}
+			
+			.ED-General-section-title {
+			font-size: 1.4rem;
+			font-weight: 700;
+			margin-bottom: 1rem;
+			border-bottom: 1px solid var(--ED-General-color-border);
+			padding-bottom: 0.5rem;
+			}
+			
+			.ED-General-social-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+			gap: 0.8rem;
+			}
+			
+			.ED-General-social-card {
+			display: flex;
+			align-items: center;
+			gap: 0.6rem;
+			background: var(--ED-General-color-surface);
+			border: 1px solid var(--ED-General-color-border);
+			border-radius: 12px;
+			padding: 0.8rem 1rem;
+			text-decoration: none;
+			color: var(--ED-General-color-text-primary);
+			transition: transform 0.2s, background 0.2s, border-color 0.2s;
+			}
+			
+			.ED-General-social-card:hover {
+			background: var(--ED-General-color-accent-default);
+			color: var(--ED-General-color-text-on-accent);
+			border-color: transparent;
+			transform: translateY(-2px);
+			}
+			
+			.ED-General-social-icon-small {
+			font-size: 1.6rem;
+			width: 28px;
+			text-align: center;
+			}
+			
+			.ED-General-social-img {
+			width: 28px; height: 28px;
+			object-fit: contain;
+			}
+			
+			@media (max-width: 640px) {
+			.ED-General-profile-header {
+			flex-direction: column;
+			text-align: center;
+			}
+			.ED-General-social-grid {
+			grid-template-columns: 1fr 1fr;
+			}
+			}
+		</style>
+	</head>
+	<body>
+		<header id="header-container"></header>
+		
+		<main class="ED-General-contact-container">
+			<div class="ED-General-profile-header">
+				<div class="ED-General-profile-img-wrapper">
+					<img src="assets/contact/mejri-ziad.jpg" alt="Mejri Ziad" class="ED-General-profile-img" id="profileImg"
+					onerror="this.style.display='none'; document.getElementById('profileFallback').style.display='flex';">
+					<div id="profileFallback" style="display:none; width:130px; height:130px; border-radius:50%;
+					background:var(--ED-General-color-accent-default); color:white; align-items:center;
+					justify-content:center; font-size:3rem; margin:0 auto;">
+						MZ
+					</div>
+				</div>
+				<div class="ED-General-profile-info-block">
+					<h1 class="ED-General-profile-name" data-i18n="profile.name">Mejri Ziad</h1>
+					<div class="ED-General-profile-title" data-i18n="profile.title">Full‑stack Developer & Educator</div>
+					<p class="ED-General-profile-bio" data-i18n="profile.bio"></p>
+					<div class="ED-General-profile-details">
+						<span>📍 <span data-i18n="profile.location">Tunis, Tunisia</span></span>
+						<span>✉️ <span data-i18n="profile.email">contact@mejriziad.tn</span></span>
+						<span>📱 <span data-i18n="profile.phone" dir="ltr">+216 12 345 678</span></span>
+					</div>
+				</div>
+			</div>
+			
+			<h2 class="ED-General-section-title" data-i18n="social.title">Connect with me</h2>
+			<div class="ED-General-social-grid" id="socialGrid"></div>
+		</main>
+		
+		<footer id="footer-container"></footer>
+		
+		<!-- Offline banner -->
+		<div id="offline-banner" class="ED-General-offline-banner" data-i18n="offlineBanner">You are offline.</div>
+		<!-- Update banner -->
+		<div id="update-banner" class="ED-General-update-banner" style="display:none;">
+			<span data-i18n="updateNotification">A new version is available.</span>
+			<button id="update-reload-btn" data-i18n="updateReloadBtn">Reload</button>
+		</div>
+		
+		<!-- Load shared translation data (common header/footer/banners) -->
+		<script src="ED-general-translations-data.js"></script>
+		<script src="data_general.js"></script>
+		<script src="ED-general-cards.js"></script>
+		<script src="ED-general-shortcuts.js"></script>
+		<script src="ED-general-pwa.js"></script>
+		
+		<!-- ========== TRANSLATION DICTIONARY ========== -->
+		<script>
+			const PAGE_UI_TEXT = {
+				en: {
+					profile: {
+						name: 'Mejri Ziad',
+						title: 'Full‑stack Developer & Educator',
+						bio: 'Passionate about building multilingual learning platforms and open‑source tools. I love turning complex ideas into simple, accessible digital experiences.',
+						location: 'Tunis, Tunisia',
+						email: 'contact@mejriziad.tn',
+						phone: '+216 12 345 678'
+					},
+					social: {
+						title: 'Connect with me'
+					},
+					imageAlt: 'Profile photo',
+					noLink: '(link not set)'
+				},
+				fr: {
+					profile: {
+						name: 'Mejri Ziad',
+						title: 'Développeur Full‑stack & Formateur',
+						bio: 'Passionné par la création de plateformes d’apprentissage multilingues et d’outils open‑source. J’aime transformer des idées complexes en expériences numériques simples et accessibles.',
+						location: 'Tunis, Tunisie',
+						email: 'contact@mejriziad.tn',
+						phone: '+216 12 345 678'
+					},
+					social: {
+						title: 'Connectez‑vous avec moi'
+					},
+					imageAlt: 'Photo de profil',
+					noLink: '(lien non défini)'
+				},
+				ar: {
+					profile: {
+						name: 'ماجري زياد',
+						title: 'مطور شامل ومعلم',
+						bio: 'شغوف ببناء منصات تعليمية متعددة اللغات وأدوات مفتوحة المصدر. أحب تحويل الأفكار المعقدة إلى تجارب رقمية بسيطة ومتاحة.',
+						location: 'تونس العاصمة، تونس',
+						email: 'contact@mejriziad.tn',
+						phone: '+216 12 345 678'
+					},
+					social: {
+						title: 'تواصل معي'
+					},
+					imageAlt: 'صورة الملف الشخصي',
+					noLink: '(الرابط غير محدد)'
+				}
+			};
+			
+			// Merge shared + page‑specific into the final UI_TEXT
+			window.UI_TEXT = {
+				en: { ...SHARED_UI_TEXT.en, ...PAGE_UI_TEXT.en },
+				fr: { ...SHARED_UI_TEXT.fr, ...PAGE_UI_TEXT.fr },
+				ar: { ...SHARED_UI_TEXT.ar, ...PAGE_UI_TEXT.ar }
+			};
+		</script>
+		
+		<!-- Translation engine and shared init -->
+		<script src="ED-general-translation.js"></script>
+		<script src="ED-general-init.js"></script>
+		
+	</body>
 </html>

@@ -383,59 +383,59 @@
 			<button id="update-reload-btn" data-i18n="updateReloadBtn">Reload</button>
 		</div>
 		<!-- External data file -->
-<!-- Load shared translation data (common header/footer/banners) -->
-<script src="ED-general-translations-data.js"></script>
+		<!-- Load shared translation data (common header/footer/banners) -->
+		<script src="ED-general-translations-data.js"></script>
 		<script src="data_general.js"></script>
-    <script src="ED-general-cards.js"></script>
-    <script src="ED-general-shortcuts.js"></script>
-    <script src="ED-general-pwa.js"></script>
-
-    <!-- ========== TRANSLATION DICTIONARY ========== -->
-    <script>
-    const PAGE_UI_TEXT = {
-  en: {
-    subtitle: 'Your learning hubs',
-    othersTitle: 'Others',
-    gamesTitle: 'Games',
-    newsTitle: 'News',
-    obsoleteTitle: 'Obsolete & unused',
-    visitBtn: 'Visit',
-    noDescription: 'No description available.',
-    imageIconAlt: 'icon'
-  },
-  fr: {
-    subtitle: 'Vos plateformes d\'apprentissage',
-    othersTitle: 'Autres',
-    gamesTitle: 'Jeux',
-    newsTitle: 'Actualités',
-    obsoleteTitle: 'Obsolète & inutilisé',
-    visitBtn: 'Visiter',
-    noDescription: 'Aucune description disponible.',
-    imageIconAlt: 'icône'
-  },
-  ar: {
-    subtitle: 'منصات التعلم الخاصة بك',
-    othersTitle: 'أخرى',
-    gamesTitle: 'ألعاب',
-    newsTitle: 'أخبار',
-    obsoleteTitle: 'قديم وغير مستخدم',
-    visitBtn: 'زيارة',
-    noDescription: 'لا يوجد وصف متاح.',
-    imageIconAlt: 'أيقونة'
-  }
-};
-
-// Merge shared + page‑specific into the final UI_TEXT
-window.UI_TEXT = {
-  en: { ...SHARED_UI_TEXT.en, ...PAGE_UI_TEXT.en },
-  fr: { ...SHARED_UI_TEXT.fr, ...PAGE_UI_TEXT.fr },
-  ar: { ...SHARED_UI_TEXT.ar, ...PAGE_UI_TEXT.ar }
-};
-    </script>
-
-    <!-- Translation engine and shared init -->
-    <script src="ED-general-translation.js"></script>
-    <script src="ED-general-init.js"></script>
-
+		<script src="ED-general-cards.js"></script>
+		<script src="ED-general-shortcuts.js"></script>
+		<script src="ED-general-pwa.js"></script>
+		
+		<!-- ========== TRANSLATION DICTIONARY ========== -->
+		<script>
+			const PAGE_UI_TEXT = {
+				en: {
+					subtitle: 'Your learning hubs',
+					othersTitle: 'Others',
+					gamesTitle: 'Games',
+					newsTitle: 'News',
+					obsoleteTitle: 'Obsolete & unused',
+					visitBtn: 'Visit',
+					noDescription: 'No description available.',
+					imageIconAlt: 'icon'
+				},
+				fr: {
+					subtitle: 'Vos plateformes d\'apprentissage',
+					othersTitle: 'Autres',
+					gamesTitle: 'Jeux',
+					newsTitle: 'Actualités',
+					obsoleteTitle: 'Obsolète & inutilisé',
+					visitBtn: 'Visiter',
+					noDescription: 'Aucune description disponible.',
+					imageIconAlt: 'icône'
+				},
+				ar: {
+					subtitle: 'منصات التعلم الخاصة بك',
+					othersTitle: 'أخرى',
+					gamesTitle: 'ألعاب',
+					newsTitle: 'أخبار',
+					obsoleteTitle: 'قديم وغير مستخدم',
+					visitBtn: 'زيارة',
+					noDescription: 'لا يوجد وصف متاح.',
+					imageIconAlt: 'أيقونة'
+				}
+			};
+			
+			// Merge shared + page‑specific into the final UI_TEXT
+			window.UI_TEXT = {
+				en: { ...SHARED_UI_TEXT.en, ...PAGE_UI_TEXT.en },
+				fr: { ...SHARED_UI_TEXT.fr, ...PAGE_UI_TEXT.fr },
+				ar: { ...SHARED_UI_TEXT.ar, ...PAGE_UI_TEXT.ar }
+			};
+		</script>
+		
+		<!-- Translation engine and shared init -->
+		<script src="ED-general-translation.js"></script>
+		<script src="ED-general-init.js"></script>
+		
 	</body>
 </html>
