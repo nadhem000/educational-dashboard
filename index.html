@@ -382,6 +382,9 @@
 			<span id="update-banner-text" data-i18n="updateNotification">A new version is available.</span>
 			<button id="update-reload-btn" data-i18n="updateReloadBtn">Reload</button>
 		</div>
+		<script>
+if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');
+</script>
 		<!-- External data file -->
 		<!-- Load shared translation data (common header/footer/banners) -->
 		<script src="ED-general-translations-data.js"></script>
