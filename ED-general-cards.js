@@ -125,3 +125,39 @@ function renderAll(lang, theme, uiText) {
     }
     applyCardPalettes(theme);
 }
+/**
+ * Render the social media cards into a grid container.
+ * @param {string} gridId - ID of the container element (e.g. 'socialGrid')
+ * @param {string} lang - Current language code ('en', 'fr', 'ar')
+ * @param {function} t - Translation function (key → localized string)
+ */
+function renderSocialCards(gridId, lang, t) {
+  const grid = document.getElementById(gridId);
+  if (!grid) return;
+
+  grid.innerHTML = socialMedias.map(sm => {
+    const name = sm[lang]?.mediaName || sm.en.mediaName;
+    const link = sm.mediaLink || '#';
+    const disabled = !sm.mediaLink;
+
+    // Small icon (emoji) – hidden if an image is used
+    const smallIconHidden = sm.mediaImage ? ' style="display:none;"' : '';
+    const smallIcon = `<span class="ED-General-social-icon-small"${smallIconHidden}>${sm.mediaSmallIcon}</span>`;
+
+    // Image with fallback to the small icon
+    const imgTag = sm.mediaImage
+      ? `<img src="${sm.mediaImage}" class="ED-General-social-img" alt="${name}"
+           onerror="this.style.display='none'; this.previousElementSibling.style.display='inline-block';">`
+      : '';
+
+    const titleAttr = disabled ? ` title="${t('noLink')}"` : '';
+    const disabledAttr = disabled
+      ? `style="opacity:0.6; pointer-events:none;" ${titleAttr}`
+      : '';
+
+    return `<a href="${link}" class="ED-General-social-card" target="_blank" rel="noopener" ${disabledAttr}>
+              ${sm.mediaImage ? smallIcon + imgTag : smallIcon}
+              <span>${name}</span>
+            </a>`;
+  }).join('');
+}

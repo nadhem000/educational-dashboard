@@ -269,6 +269,7 @@
     <button class="ED-General-header-btn" id="installBtn" style="display:none;" data-i18n="installBtn">📲 Install App</button>
 
 <script src="data_general.js"></script>
+<script src="ED-general-cards.js"></script> 
 		<script src="ED-general-shortcuts.js"></script>
 <script src="ED-general-pwa.js"></script>
     <script>
@@ -395,27 +396,7 @@ function applyTheme() {
   localStorage.setItem('dashboardTheme', currentTheme);
 }
 
-function renderSocialGrid() {
-  const grid = document.getElementById('socialGrid');
-  if (!grid) return;
-  grid.innerHTML = socialMedias.map(sm => {
-    const name = sm[currentLang]?.mediaName || sm.en.mediaName;
-    const link = sm.mediaLink || '#';
-    const disabled = !sm.mediaLink;
-    const smallIconHidden = sm.mediaImage ? ' style="display:none;"' : '';
-    const smallIcon = `<span class="ED-General-social-icon-small"${smallIconHidden}>${sm.mediaSmallIcon}</span>`;
-    const imgTag = sm.mediaImage
-      ? `<img src="${sm.mediaImage}" class="ED-General-social-img" alt="${name}"
-           onerror="this.style.display='none'; this.previousElementSibling.style.display='inline-block';">`
-      : '';
-    const titleAttr = disabled ? ` title="${t('noLink')}"` : '';
-    return `<a href="${link}" class="ED-General-social-card" target="_blank" rel="noopener"
-               ${disabled ? 'style="opacity:0.6; pointer-events:none;"' + titleAttr : ''}>
-                ${sm.mediaImage ? smallIcon + imgTag : smallIcon}
-                <span>${name}</span>
-            </a>`;
-  }).join('');
-}
+
 
 function updateConnectionStatus() {
   const dot = document.getElementById('status-dot');
@@ -453,7 +434,7 @@ function translatePage() {
   document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
   const langSelect = document.getElementById('langSelect');
   if (langSelect) langSelect.value = currentLang;
-  renderSocialGrid();
+renderSocialCards('socialGrid', currentLang, t);
   document.getElementById('profileImg').alt = t('imageAlt');
   const installBtn = document.getElementById('installBtn');
   if (installBtn) installBtn.textContent = t('installBtn');
