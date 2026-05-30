@@ -1,11 +1,16 @@
-const CACHE_NAME = 'edudash-v77'; // bump version when  deploy
+const CACHE_NAME = 'edudash-v78'; // bump version when  deploy
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
   '/data_general.js',
+  '/ED-general-shortcuts.js',
+  '/ED-general-common.css',
   '/header.html',
   '/footer.html',
+  '/contact.html',
   '/manifest.json',
+  '/widgets/dashboard-widgets.json',
+  '/widgets/dashboard-template.json',
   '/assets/icons/arabicHub.png',
   '/assets/icons/englishHub.png',
   '/assets/icons/mathematicsHub.png',
@@ -37,6 +42,7 @@ const PRECACHE_ASSETS = [
   '/assets/icons/mathematicsHubOld.png',
   '/assets/icons/simpleTestAppOld.png',
   '/assets/icons/newsTestTestingShares.png',
+  '/assets/icons/icon-192x192.png',
   '/assets/icons/icon-96x96.png'
 ];
 
@@ -96,6 +102,11 @@ self.addEventListener('fetch', event => {
     event.respondWith(
       fetch(event.request)
         .catch(() => caches.match('/index.html') || caches.match('/'))
+        // 👇 FAKE FALLBACK – only hits when network + cache are both empty
+        .catch(() => new Response(
+          '<!DOCTYPE html><html><body><h1>Offline</h1></body></html>',
+          { headers: { 'Content-Type': 'text/html' } }
+        ))
     );
     return;
   }
