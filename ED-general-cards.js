@@ -161,3 +161,9 @@ function renderSocialCards(gridId, lang, t) {
             </a>`;
   }).join('');
 }
+document.addEventListener('translationsApplied', function() {
+  const theme = localStorage.getItem('dashboardTheme') || 'light';
+  if (typeof renderAll === 'function' && window.UI_TEXT) {
+    renderAll(EDTranslation.getCurrentLang(), theme, window.UI_TEXT);
+  }
+});
