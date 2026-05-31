@@ -155,7 +155,8 @@ function renderSocialCards(gridId, lang, t) {
 		? `style="opacity:0.6; pointer-events:none;" ${titleAttr}`
 		: '';
 		
-		return `<a href="${link}" class="ED-General-social-card" target="_blank" rel="noopener" ${disabledAttr}>
+		return `<a href="${link}" class="ED-General-social-card" target="_blank" rel="noopener"
+  data-social-id="${sm.en.mediaName}" ${disabledAttr}>
 		${sm.mediaImage ? smallIcon + imgTag : smallIcon}
 		<span>${name}</span>
 		</a>`;

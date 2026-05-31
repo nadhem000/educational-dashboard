@@ -382,9 +382,9 @@
 			<span id="update-banner-text" data-i18n="updateNotification">A new version is available.</span>
 			<button id="update-reload-btn" data-i18n="updateReloadBtn">Reload</button>
 		</div>
-		<script>
+		<!-- <script>
 if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');
-</script>
+</script> -->
 		<!-- External data file -->
 		<!-- Load shared translation data (common header/footer/banners) -->
 		<script src="ED-general-translations-data.js"></script>
@@ -438,6 +438,7 @@ if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');
 		
 		<!-- Translation engine and shared init -->
 		<script src="ED-general-translation.js"></script>
+<script src="ED-general-analytics.js"></script>
 		<script src="ED-general-init.js"></script>
 		
 	</body>
