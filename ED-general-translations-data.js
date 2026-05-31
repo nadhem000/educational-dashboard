@@ -21,7 +21,8 @@ const SHARED_UI_TEXT = {
       terms: 'Terms of Use',
       contact: 'Contact',
       developer: 'developed by: Mejri Ziad.',
-      hosted: 'Hosted on Github and Netlify.'
+      hosted: 'Hosted on Github and Netlify.',
+    rateLabel: 'Rate this app'
     },
     shortcutPrompt: 'Open in a new tab?',
     launchBtn: 'Launch'
@@ -47,7 +48,8 @@ const SHARED_UI_TEXT = {
       terms: 'Conditions d’utilisation',
       contact: 'Contact',
       developer: 'développé par : Mejri Ziad.',
-      hosted: 'Hébergé sur Github et Netlify.'
+      hosted: 'Hébergé sur Github et Netlify.',
+    rateLabel: 'Noter cette app'
     },
     shortcutPrompt: 'Ouvrir dans un nouvel onglet ?',
     launchBtn: 'Lancer'
@@ -73,7 +75,8 @@ const SHARED_UI_TEXT = {
       terms: 'شروط الاستخدام',
       contact: 'اتصل بنا',
       developer: 'طور بواسطة: ماجري زياد.',
-      hosted: 'مستضاف على Github و Netlify.'
+      hosted: 'مستضاف على Github و Netlify.',
+    rateLabel: 'قيّم هذا التطبيق'
     },
     shortcutPrompt: 'فتح في علامة تبويب جديدة؟',
     launchBtn: 'إطلاق'

@@ -577,3 +577,34 @@ body {
         gap: 1rem;
     }
 }
+        /* --- Rating hearts (inside footer) --- */
+        .ED-General-footer__rate-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            margin-top: 1rem;
+            padding-top: 0.8rem;
+            border-top: 1px solid var(--ED-General-color-border, #e2dcd4);
+            font-size: 0.9rem;
+            color: var(--ED-General-color-text-secondary, #5a6c7d);
+        }
+        .ED-General-footer__hearts {
+            display: flex;
+            gap: 0.2rem;
+        }
+        .ED-General-footer__hearts .heart {
+            cursor: pointer;
+            font-size: 1.4rem;
+            user-select: none;
+            transition: transform 0.15s;
+            display: inline-block;
+            color: var(--ED-General-color-text-tertiary, #8b9aab);
+        }
+        .ED-General-footer__hearts .heart.active {
+            color: var(--ED-General-color-accent-default, #4a7fd9);
+            text-shadow: 0 0 4px rgba(var(--ED-General-color-accent-rgb, 74,127,217), 0.4);
+        }
+        .ED-General-footer__hearts .heart:hover {
+            transform: scale(1.25);
+        }

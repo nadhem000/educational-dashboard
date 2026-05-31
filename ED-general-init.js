@@ -78,6 +78,46 @@
     }
   }
 
+// ------ Rating hearts (footer) ------
+function setupRating() {
+    const heartsContainer = document.getElementById('rateHearts');
+    if (!heartsContainer) return;
+
+    const hearts = heartsContainer.querySelectorAll('.heart');
+    const STORAGE_KEY = 'appRating';   // local storage key
+
+    // Load saved rating
+    let currentRating = parseInt(localStorage.getItem(STORAGE_KEY), 10) || 0;
+
+    function updateHearts() {
+        hearts.forEach(heart => {
+            const rating = parseInt(heart.getAttribute('data-rating'), 10);
+            if (rating <= currentRating) {
+                heart.classList.add('active');
+            } else {
+                heart.classList.remove('active');
+            }
+        });
+    }
+
+    // Click handler
+    hearts.forEach(heart => {
+        heart.addEventListener('click', () => {
+            const rating = parseInt(heart.getAttribute('data-rating'), 10);
+            // If the same heart is clicked again, clear the rating; otherwise set it
+            if (currentRating === rating) {
+                currentRating = 0;
+            } else {
+                currentRating = rating;
+            }
+            localStorage.setItem(STORAGE_KEY, currentRating);
+            updateHearts();
+        });
+    });
+
+    // Show saved rating on page load
+    updateHearts();
+}
   // --- Init sequence ---
   async function init() {
     applyTheme();
@@ -89,6 +129,8 @@
 
     updateConnectionStatus();
     window.EDPWA.init();
+    // ♥ Activate the rating hearts after footer is present
+    setupRating();
 
     // Theme toggle
     const themeToggle = document.getElementById('themeToggle');
