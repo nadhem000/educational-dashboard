@@ -84,38 +84,65 @@ function setupRating() {
     if (!heartsContainer) return;
 
     const hearts = heartsContainer.querySelectorAll('.heart');
-    const STORAGE_KEY = 'appRating';   // local storage key
+    const STORAGE_KEY = 'appRating';
 
-    // Load saved rating
     let currentRating = parseInt(localStorage.getItem(STORAGE_KEY), 10) || 0;
 
     function updateHearts() {
         hearts.forEach(heart => {
             const rating = parseInt(heart.getAttribute('data-rating'), 10);
-            if (rating <= currentRating) {
-                heart.classList.add('active');
-            } else {
-                heart.classList.remove('active');
-            }
+            heart.classList.toggle('active', rating <= currentRating);
         });
+    }
+
+    // --- Helper: log rating to Supabase ---
+    async function logRatingToSupabase(rating) {
+        const SUPABASE_FUNCTION_URL =
+            'https://hmjbzzuresgzwzefjpyt.supabase.co/functions/v1/log-interaction';
+
+        try {
+            const response = await fetch(SUPABASE_FUNCTION_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // No Authorization needed, this endpoint is public
+                },
+                body: JSON.stringify({
+                    entity_type: 'app_rating',
+                    entity_id: String(rating)   // "1", "2", etc.
+                })
+            });
+            if (!response.ok) {
+                console.warn('Failed to log rating:', response.status);
+            }
+        } catch (err) {
+            console.warn('Could not send rating to Supabase:', err);
+        }
     }
 
     // Click handler
     hearts.forEach(heart => {
         heart.addEventListener('click', () => {
             const rating = parseInt(heart.getAttribute('data-rating'), 10);
-            // If the same heart is clicked again, clear the rating; otherwise set it
+
             if (currentRating === rating) {
-                currentRating = 0;
+                currentRating = 0;   // clear rating
             } else {
                 currentRating = rating;
             }
+
             localStorage.setItem(STORAGE_KEY, currentRating);
             updateHearts();
+
+            // Send new rating to Supabase (only if > 0)
+            if (currentRating > 0) {
+                logRatingToSupabase(currentRating);
+            }
+            // (If rating is cleared, we don't send a “0” event.
+            //  You could log a "removed" event with entity_type "app_rating_removed" if needed.)
         });
     });
 
-    // Show saved rating on page load
     updateHearts();
 }
   // --- Init sequence ---
