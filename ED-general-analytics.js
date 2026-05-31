@@ -1,9 +1,8 @@
-// ED-general-analytics.js – self‑contained tracker with client‑side throttle
+// ED-general-analytics.js – self‑contained tracker with throttle + Edge Function
 (function () {
   'use strict';
 
-  const SUPABASE_URL = 'https://hmjbzzuresgzwzefjpyt.supabase.co/functions/v1/log-interaction';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtamJ6enVyZXNnend6ZWZqcHl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwMjczNDUsImV4cCI6MjA5NTYwMzM0NX0.44Q-Hkl4Rr9LuQhwryrQklFi809xYGteHgsS9nMG0ro';
+  const FUNCTION_URL = 'https://hmjbzzuresgzwzefjpyt.supabase.co/functions/v1/log-interaction';
 
   // Throttle: allow only one event per (entityType + entityId) every 3 seconds
   const lastSent = {};
@@ -17,19 +16,19 @@
     return false;
   }
 
- function trackInteraction(entityType, entityId) {
-  if (shouldThrottle(entityType, entityId)) return;
-  fetch(FUNCTION_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      entity_type: entityType,
-      entity_id: entityId,
-    }),
-  }).catch(() => {});
-}
+  function trackInteraction(entityType, entityId) {
+    if (shouldThrottle(entityType, entityId)) return;
+    fetch(FUNCTION_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        entity_type: entityType,
+        entity_id: entityId,
+      }),
+    }).catch(() => {}); // silently ignore errors
+  }
 
-  // ---------- track page visits ----------
+  // ---------- Track page visits (footer pages) ----------
   function trackPageView() {
     const path = location.pathname.replace(/^\//, '').replace('.html', '');
     const footerPages = ['contact', 'privacyPolicy', 'termsOfUse'];
@@ -38,9 +37,10 @@
     }
   }
 
-  // ---------- card clicks (dashboard + social) ----------
+  // ---------- Track card clicks (dashboard + social) ----------
   function setupCardTracking() {
     document.addEventListener('click', function (e) {
+      // Dashboard "Visit" buttons
       const mainBtn = e.target.closest('.ED-General-card__main-btn');
       if (mainBtn) {
         const card = mainBtn.closest('.ED-General-card');
@@ -49,6 +49,7 @@
         return;
       }
 
+      // Social media cards (contact page)
       const socialCard = e.target.closest('.ED-General-social-card');
       if (socialCard) {
         const socialId = socialCard.getAttribute('data-social-id');
@@ -58,14 +59,14 @@
     });
   }
 
-  // ---------- PWA install ----------
+  // ---------- Track PWA installation ----------
   function setupInstallTracking() {
     window.addEventListener('appinstalled', function () {
       trackInteraction('install', 'app');
     });
   }
 
-  // ---------- init ----------
+  // ---------- Initialise ----------
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function () {
       trackPageView();
