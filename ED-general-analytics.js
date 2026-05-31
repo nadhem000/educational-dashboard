@@ -1,80 +1,83 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+// ED-general-analytics.js – self-contained tracker with throttle + Edge Function
+(function () {
+  'use strict';
 
-const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  // ============================================================
+  // Edge Function URL – copy from Supabase dashboard
+  // ============================================================
+  const FUNCTION_URL = 'https://hmjbzzuresgzwzefjpyt.supabase.co/functions/v1/log-interaction';
 
-const supabase = createClient(supabaseUrl, supabaseKey);
-
-const DEDUP_WINDOW_MS = 10000;
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-  "Access-Control-Max-Age": "86400",
-};
-
-Deno.serve(async (req) => {
-  // Handle CORS preflight
-  if (req.method === "OPTIONS") {
-    return new Response(null, { status: 204, headers: corsHeaders });
+  // Throttle: allow only one event per (entityType + entityId) every 3 seconds
+  const lastSent = {};
+  function shouldThrottle(entityType, entityId) {
+    const key = `${entityType}::${entityId}`;
+    const now = Date.now();
+    if (lastSent[key] && now - lastSent[key] < 3000) {
+      return true; // too soon, block it
+    }
+    lastSent[key] = now;
+    return false;
   }
 
-  if (req.method !== "POST") {
-    return new Response("Method not allowed", { status: 405, headers: corsHeaders });
+  function trackInteraction(entityType, entityId) {
+    if (shouldThrottle(entityType, entityId)) return;
+    fetch(FUNCTION_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        entity_type: entityType,
+        entity_id: entityId,
+      }),
+    }).catch(() => {}); // silently ignore errors
   }
 
-  let body: { entity_type?: string; entity_id?: string };
-  try {
-    body = await req.json();
-  } catch {
-    return new Response("Invalid JSON", { status: 400, headers: corsHeaders });
-  }
-
-  const { entity_type, entity_id } = body;
-  if (!entity_type || !entity_id) {
-    return new Response("Missing entity_type or entity_id", { status: 400, headers: corsHeaders });
-  }
-
-  // 1. Check dedup window
-  const { data: lastEntry, error: selectError } = await supabase
-    .from("interaction_logs")
-    .select("created_at")
-    .eq("entity_type", entity_type)
-    .eq("entity_id", entity_id)
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  if (selectError) {
-    return new Response(`Select error: ${selectError.message}`, { status: 500, headers: corsHeaders });
-  }
-
-  if (lastEntry) {
-    const lastTime = new Date(lastEntry.created_at).getTime();
-    if (Date.now() - lastTime < DEDUP_WINDOW_MS) {
-      return new Response("Too many requests", { status: 429, headers: corsHeaders });
+  // ---------- Track page visits (footer pages) ----------
+  function trackPageView() {
+    const path = location.pathname.replace(/^\//, '').replace('.html', '');
+    const footerPages = ['contact', 'privacyPolicy', 'termsOfUse'];
+    if (footerPages.includes(path)) {
+      trackInteraction('page', path);
     }
   }
 
-  // 2. Log the request
-  const { error: insertError } = await supabase
-    .from("interaction_logs")
-    .insert({ entity_type, entity_id });
+  // ---------- Track card clicks (dashboard + social) ----------
+  function setupCardTracking() {
+    document.addEventListener('click', function (e) {
+      // Dashboard "Visit" buttons
+      const mainBtn = e.target.closest('.ED-General-card__main-btn');
+      if (mainBtn) {
+        const card = mainBtn.closest('.ED-General-card');
+        const cardId = card && card.getAttribute('data-card-id');
+        if (cardId) trackInteraction('card', cardId);
+        return;
+      }
 
-  if (insertError) {
-    return new Response(`Insert error: ${insertError.message}`, { status: 500, headers: corsHeaders });
+      // Social media cards (contact page)
+      const socialCard = e.target.closest('.ED-General-social-card');
+      if (socialCard) {
+        const socialId = socialCard.getAttribute('data-social-id');
+        if (socialId) trackInteraction('card', 'social-' + socialId);
+        return;
+      }
+    });
   }
 
-  // 3. Increment the counter
-  const { error: rpcError } = await supabase.rpc("increment_interaction", {
-    p_entity_type: entity_type,
-    p_entity_id: entity_id,
-  });
-
-  if (rpcError) {
-    return new Response(`RPC error: ${rpcError.message}`, { status: 500, headers: corsHeaders });
+  // ---------- Track PWA installation ----------
+  function setupInstallTracking() {
+    window.addEventListener('appinstalled', function () {
+      trackInteraction('install', 'app');
+    });
   }
 
-  return new Response("OK", { status: 200, headers: corsHeaders });
-});
+  // ---------- Initialise ----------
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () {
+      trackPageView();
+      setupCardTracking();
+    });
+  } else {
+    trackPageView();
+    setupCardTracking();
+  }
+  setupInstallTracking();
+})();
