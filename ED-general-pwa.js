@@ -139,7 +139,7 @@
   if (!('serviceWorker' in navigator)) return;
 
   function registerSW() {
-    // Wait until the document is fully active
+    // Only register when the document is completely loaded
     if (document.readyState !== 'complete') {
       window.addEventListener('load', registerSW);
       return;
@@ -148,7 +148,19 @@
     navigator.serviceWorker
       .register('/sw.js')
       .then((reg) => {
-        // … rest remains identical
+        console.log('SW registered:', reg.scope);
+        reg.addEventListener('updatefound', () => {
+          const installingWorker = reg.installing;
+          installingWorker.addEventListener('statechange', () => {
+            if (
+              installingWorker.state === 'installed' &&
+              navigator.serviceWorker.controller
+            ) {
+              const updateBanner = document.getElementById('update-banner');
+              if (updateBanner) updateBanner.style.display = 'flex';
+            }
+          });
+        });
       })
       .catch((err) => {
         // Log but don't break the page
@@ -156,7 +168,7 @@
       });
   }
 
-  // Small safety delay to avoid any transitional state
+  // Small delay to avoid any transitional state (e.g., in iframe)
   setTimeout(registerSW, 0);
 }
 
