@@ -608,3 +608,94 @@ body {
         .ED-General-footer__hearts .heart:hover {
             transform: scale(1.25);
         }
+
+/* ---------- Sign‑in / Sign‑up Modal ---------- */
+.ED-General-auth-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.ED-General-auth-modal-box {
+  background: var(--ED-General-color-surface);
+  padding: 2rem;
+  border-radius: 16px;
+  max-width: 380px;
+  width: 90%;
+  box-shadow: 0 8px 30px rgba(var(--ED-General-color-shadow-rgb), 0.3);
+  color: var(--ED-General-color-text-primary);
+}
+
+.ED-General-auth-modal-title {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.ED-General-auth-modal-input {
+  display: block;
+  width: 100%;
+  margin: 0.8rem 0;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--ED-General-color-border);
+  border-radius: 8px;
+  background: var(--ED-General-color-bg);
+  color: var(--ED-General-color-text-primary);
+  font-family: var(--ED-General-font-stack);
+  font-size: 0.9rem;
+}
+
+.ED-General-auth-modal-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.ED-General-auth-btn-cancel {
+  background: var(--ED-General-color-bg-secondary) !important;
+  border-color: var(--ED-General-color-border) !important;
+}
+
+.ED-General-auth-btn-primary {
+  background: var(--ED-General-color-accent-default) !important;
+  color: var(--ED-General-color-text-on-accent) !important;
+  border-color: var(--ED-General-color-accent-default) !important;
+}
+
+.ED-General-auth-modal-switch {
+  margin-top: 0.8rem;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.ED-General-auth-modal-switch a {
+  color: var(--ED-General-color-accent-default);
+  text-decoration: none;
+}
+
+.ED-General-auth-modal-switch a:hover {
+  text-decoration: underline;
+}
+
+.ED-General-auth-error-msg {
+  color: #f44336;
+  display: none;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+}
+
+/* Optional: make "Cancel" and "Continue" buttons consistent with your design */
+.ED-General-auth-btn-cancel:hover {
+  background: var(--ED-General-color-bg-secondary) !important;
+  border-color: var(--ED-General-color-border-hover) !important;
+}
+
+.ED-General-auth-btn-primary:hover {
+  background: var(--ED-General-color-btn-primary-hover) !important;
+}

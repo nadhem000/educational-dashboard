@@ -27,6 +27,9 @@ const SHARED_UI_TEXT = {
 auth: {
   signIn: 'Sign in',
   signOut: 'Sign out',
+  forgotPassword: 'Forgot password?',
+  forgotPasswordSent: 'Password reset email sent. Please check your inbox.',
+  forgotPasswordError: 'Failed to send reset email.'
 },
     shortcutPrompt: 'Open in a new tab?',
     launchBtn: 'Launch'
@@ -58,6 +61,9 @@ auth: {
 auth: {
   signIn: 'Se connecter',
   signOut: 'Se déconnecter',
+  forgotPassword: 'Mot de passe oublié ?',
+  forgotPasswordSent: 'E‑mail de réinitialisation envoyé. Veuillez vérifier votre boîte de réception.',
+  forgotPasswordError: 'Échec de l’envoi de l’e‑mail de réinitialisation.'
 },
     shortcutPrompt: 'Ouvrir dans un nouvel onglet ?',
     launchBtn: 'Lancer'
@@ -89,6 +95,11 @@ auth: {
 auth: {
   signIn: 'تسجيل الدخول',
   signOut: 'تسجيل الخروج',
+  signIn: 'تسجيل الدخول',
+  signOut: 'تسجيل الخروج',
+  forgotPassword: 'نسيت كلمة المرور؟',
+  forgotPasswordSent: 'تم إرسال بريد إعادة تعيين كلمة المرور. يرجى التحقق من صندوق الوارد.',
+  forgotPasswordError: 'فشل إرسال بريد إعادة التعيين.'
 },
     shortcutPrompt: 'فتح في علامة تبويب جديدة؟',
     launchBtn: 'إطلاق'

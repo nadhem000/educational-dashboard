@@ -1,0 +1,42 @@
+<!-- signin.html -->
+<div id="ED-General-auth-modal" class="ED-General-auth-modal-backdrop">
+  <div class="ED-General-auth-modal-box">
+    <h3 class="ED-General-auth-modal-title" id="ED-General-auth-modal-title">Sign in</h3>
+
+    <form id="ED-General-auth-form">
+      <input
+        id="ED-General-auth-email"
+        type="email"
+        placeholder="Email"
+        required
+        class="ED-General-auth-modal-input"
+      />
+      <input
+        id="ED-General-auth-password"
+        type="password"
+        placeholder="Password"
+        required
+        class="ED-General-auth-modal-input"
+      />
+
+      <div class="ED-General-auth-modal-actions">
+        <button type="button" id="ED-General-auth-cancel-btn" class="ED-General-header-btn ED-General-auth-btn-cancel">
+          Cancel
+        </button>
+        <button type="submit" class="ED-General-header-btn ED-General-auth-btn-primary">
+          Continue
+        </button>
+      </div>
+    </form>
+
+    <p class="ED-General-auth-modal-switch">
+      <a href="#" id="ED-General-auth-toggle-mode">Create an account</a>
+    </p>
+
+    <p class="ED-General-auth-modal-switch">
+      <a href="#" id="ED-General-auth-forgot-password">Forgot password?</a>
+    </p>
+
+    <p id="ED-General-auth-error" class="ED-General-auth-error-msg"></p>
+  </div>
+</div>

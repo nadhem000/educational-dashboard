@@ -6,9 +6,7 @@
   const SUPABASE_ANON_KEY =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtamJ6enVyZXNnend6ZWZqcHl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwMjczNDUsImV4cCI6MjA5NTYwMzM0NX0.44Q-Hkl4Rr9LuQhwryrQklFi809xYGteHgsS9nMG0ro';
 
-  // ----------------------------------------------------------------
-  // 1. Ensure Supabase client is loaded (from CDN if needed)
-  // ----------------------------------------------------------------
+  // ---------- 1. Load Supabase client dynamically ----------
   function loadSupabaseClient() {
     return new Promise((resolve, reject) => {
       if (window.supabase) {
@@ -23,28 +21,39 @@
     });
   }
 
-  // ----------------------------------------------------------------
-  // 2. Initialise everything once the client is ready
-  // ----------------------------------------------------------------
+  // ---------- 2. Load the modal HTML (signin.html) ----------
+  let modalHTMLPromise = null;
+  function loadModalHTML() {
+    if (!modalHTMLPromise) {
+      modalHTMLPromise = fetch('signin.html')
+        .then(response => {
+          if (!response.ok) throw new Error('Could not load signin.html');
+          return response.text();
+        });
+    }
+    return modalHTMLPromise;
+  }
+
+  // ---------- 3. Initialise everything ----------
   async function init() {
     try {
       const Supabase = await loadSupabaseClient();
       const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-      // ---- Auth UI button (placed in header) ----
+      // ---------- Auth UI button (header) ----------
       function insertAuthButton() {
         const controls = document.querySelector('.ED-General-header__controls');
-        if (!controls || document.getElementById('auth-btn-container')) return;
+        if (!controls || document.getElementById('ED-General-auth-btn-container')) return;
 
         const btnContainer = document.createElement('span');
-        btnContainer.id = 'auth-btn-container';
+        btnContainer.id = 'ED-General-auth-btn-container';
         btnContainer.style.display = 'inline-flex';
-        btnContainer.innerHTML = `<button id="auth-btn" class="ED-General-header-btn" style="display:none;">Loading…</button>`;
+        btnContainer.innerHTML = `<button id="ED-General-auth-btn" class="ED-General-header-btn" style="display:none;">Loading…</button>`;
         controls.appendChild(btnContainer);
       }
 
       function updateAuthUI(user) {
-        const btn = document.getElementById('auth-btn');
+        const btn = document.getElementById('ED-General-auth-btn');
         if (!btn) return;
 
         const t = window.EDTranslation?.getText || ((k) => k);
@@ -59,112 +68,111 @@
         } else {
           btn.textContent = t('auth.signIn') || 'Sign in';
           btn.title = '';
-          btn.onclick = () => showAuthModal(supabase);
+          btn.onclick = showAuthModal;
           btn.style.display = 'inline-flex';
         }
       }
 
-      // Listen to auth state changes
       supabase.auth.onAuthStateChange((event, session) => {
         updateAuthUI(session?.user ?? null);
       });
 
-      // Initial state
       insertAuthButton();
       const { data: { session } } = await supabase.auth.getSession();
       updateAuthUI(session?.user ?? null);
 
-      // ---- Modal for sign‑in / sign‑up ----
-      function showAuthModal(supabaseClient) {
-        const existing = document.getElementById('auth-modal');
+      // ---------- 4. Show the sign‑in modal ----------
+      async function showAuthModal() {
+        // Remove any existing modal
+        const existing = document.getElementById('ED-General-auth-modal');
         if (existing) existing.remove();
 
-        const modal = document.createElement('div');
-        modal.id = 'auth-modal';
-        modal.innerHTML = `
-          <div style="position:fixed; inset:0; background:rgba(0,0,0,0.5); display:flex;
-                      align-items:center; justify-content:center; z-index:9999;">
-            <div style="background:var(--ED-General-color-surface,#fff); padding:2rem;
-                        border-radius:16px; max-width:380px; width:90%;
-                        box-shadow:0 8px 30px rgba(0,0,0,0.3);
-                        color:var(--ED-General-color-text-primary,#1e293b);">
-              <h3 id="auth-modal-title" style="margin-top:0;">Sign in</h3>
-              <form id="auth-form">
-                <input id="auth-email" type="email" placeholder="Email" required
-                  style="display:block; width:100%; margin:0.8rem 0; padding:0.5rem;
-                         border:1px solid var(--ED-General-color-border,#ccc);
-                         border-radius:8px; background:var(--ED-General-color-bg,#fff);
-                         color:var(--ED-General-color-text-primary,#1e293b);">
-                <input id="auth-password" type="password" placeholder="Password" required
-                  style="display:block; width:100%; margin:0.8rem 0; padding:0.5rem;
-                         border:1px solid var(--ED-General-color-border,#ccc);
-                         border-radius:8px; background:var(--ED-General-color-bg,#fff);
-                         color:var(--ED-General-color-text-primary,#1e293b);">
-                <div style="display:flex; gap:0.5rem; justify-content:flex-end; margin-top:1rem;">
-                  <button type="button" id="auth-cancel-btn" class="ED-General-header-btn"
-                    style="background:var(--ED-General-color-bg-secondary);">Cancel</button>
-                  <button type="submit" class="ED-General-header-btn"
-                    style="background:var(--ED-General-color-accent-default); color:var(--ED-General-color-text-on-accent);">
-                    Continue
-                  </button>
-                </div>
-              </form>
-              <p style="margin-top:1rem; font-size:0.85rem; text-align:center;">
-                <a href="#" id="auth-toggle-mode" style="color:var(--ED-General-color-accent-default);">Create an account</a>
-              </p>
-              <p id="auth-error" style="color:red; display:none; margin-top:0.5rem;"></p>
-            </div>
-          </div>
-        `;
-
-        document.body.appendChild(modal);
+        const html = await loadModalHTML();
+        document.body.insertAdjacentHTML('beforeend', html);
+        const modal = document.getElementById('ED-General-auth-modal');
 
         let mode = 'signIn';
 
-        const form = document.getElementById('auth-form');
-        const emailInput = document.getElementById('auth-email');
-        const passwordInput = document.getElementById('auth-password');
-        const errorEl = document.getElementById('auth-error');
-        const modeLink = document.getElementById('auth-toggle-mode');
-        const titleEl = document.getElementById('auth-modal-title');
+        // Element references – all with ED-General prefix
+        const form = document.getElementById('ED-General-auth-form');
+        const emailInput = document.getElementById('ED-General-auth-email');
+        const passwordInput = document.getElementById('ED-General-auth-password');
+        const errorEl = document.getElementById('ED-General-auth-error');
+        const modeLink = document.getElementById('ED-General-auth-toggle-mode');
+        const titleEl = document.getElementById('ED-General-auth-modal-title');
+        const forgotLink = document.getElementById('ED-General-auth-forgot-password');
+        const cancelBtn = document.getElementById('ED-General-auth-cancel-btn');
+
+        const t = window.EDTranslation?.getText || ((k) => k);
 
         function setMode(newMode) {
           mode = newMode;
-          titleEl.textContent = mode === 'signIn' ? 'Sign in' : 'Create account';
-          modeLink.textContent = mode === 'signIn' ? 'Create an account' : 'Already have an account? Sign in';
+          titleEl.textContent = mode === 'signIn' ? (t('auth.signIn') || 'Sign in') : (t('auth.signUp') || 'Create account');
+          modeLink.textContent = mode === 'signIn' ? (t('auth.switchToSignUp') || 'Create an account') : (t('auth.switchToSignIn') || 'Already have an account? Sign in');
+          if (forgotLink) {
+            forgotLink.style.display = mode === 'signIn' ? '' : 'none';
+          }
+          errorEl.style.display = 'none';
         }
+
+        setMode(mode);
 
         modeLink.addEventListener('click', (e) => {
           e.preventDefault();
           setMode(mode === 'signIn' ? 'signUp' : 'signIn');
-          errorEl.style.display = 'none';
         });
+
+        if (forgotLink) {
+          forgotLink.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const email = emailInput.value.trim();
+            if (!email) {
+              errorEl.textContent = 'Please enter your email first.';
+              errorEl.style.display = 'block';
+              return;
+            }
+            try {
+              const { error } = await supabase.auth.resetPasswordForEmail(email);
+              if (error) throw error;
+              errorEl.textContent = t('auth.forgotPasswordSent') || 'Password reset email sent.';
+              errorEl.style.color = 'var(--ED-General-color-accent-default)';
+              errorEl.style.display = 'block';
+            } catch (err) {
+              errorEl.textContent = (t('auth.forgotPasswordError') || 'Failed to send reset email.') + ' ' + err.message;
+              errorEl.style.color = '#f44336';
+              errorEl.style.display = 'block';
+            }
+          });
+        }
 
         form.addEventListener('submit', async (e) => {
           e.preventDefault();
           errorEl.style.display = 'none';
+          errorEl.style.color = '#f44336';
           const email = emailInput.value.trim();
           const password = passwordInput.value;
 
           try {
             if (mode === 'signIn') {
-              const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+              const { error } = await supabase.auth.signInWithPassword({ email, password });
               if (error) throw error;
             } else {
-              const { error } = await supabaseClient.auth.signUp({ email, password });
+              const { error } = await supabase.auth.signUp({ email, password });
               if (error) throw error;
               alert('Check your email for a confirmation link (if email confirmation is enabled).');
             }
-            modal.remove(); // success
+            modal.remove();
           } catch (err) {
             errorEl.textContent = err.message;
             errorEl.style.display = 'block';
           }
         });
 
-        document.getElementById('auth-cancel-btn').addEventListener('click', () => modal.remove());
-        modal.firstElementChild.addEventListener('click', (e) => e.stopPropagation());
-        modal.addEventListener('click', () => modal.remove());
+        cancelBtn.addEventListener('click', () => modal.remove());
+
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) modal.remove();
+        });
       }
 
     } catch (err) {
@@ -172,7 +180,6 @@
     }
   }
 
-  // Run after DOM is ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
