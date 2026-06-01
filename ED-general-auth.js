@@ -35,6 +35,7 @@
   }
 
   // ---------- 3. Wait until header controls exist ----------
+  // ---------- 3. Wait until header controls exist ----------
   function waitForHeaderControls() {
     return new Promise(resolve => {
       const controls = document.querySelector('.ED-General-header__controls');
@@ -53,7 +54,7 @@
         });
         observer.observe(headerContainer, { childList: true, subtree: true });
       } else {
-        // header-container not yet in DOM – retry
+        // header-container not yet in DOM – retry every 100ms
         const checkInterval = setInterval(() => {
           const c = document.querySelector('.ED-General-header__controls');
           if (c) {

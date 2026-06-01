@@ -138,38 +138,60 @@
   function setupServiceWorker() {
   if (!('serviceWorker' in navigator)) return;
 
-  function registerSW() {
-    // Only register when the document is completely loaded
-    if (document.readyState !== 'complete') {
-      window.addEventListener('load', registerSW);
+  async function attemptRegister(attempt = 1) {
+    if (attempt > 3) {
+      console.warn('SW registration failed after 3 attempts');
       return;
     }
 
-    navigator.serviceWorker
-      .register('/sw.js')
-      .then((reg) => {
-        console.log('SW registered:', reg.scope);
-        reg.addEventListener('updatefound', () => {
-          const installingWorker = reg.installing;
+    // Ensure we are in a secure context and the document is fully active
+    if (document.readyState !== 'complete' || !window.isSecureContext) {
+      window.addEventListener('load', () => attemptRegister(attempt));
+      return;
+    }
+
+    try {
+      // If there's already a registration, use it instead of creating a new one
+      const existingReg = await navigator.serviceWorker.getRegistration();
+      if (existingReg) {
+        console.log('Using existing SW registration:', existingReg.scope);
+        // Listen for updates
+        existingReg.addEventListener('updatefound', () => {
+          const installingWorker = existingReg.installing;
           installingWorker.addEventListener('statechange', () => {
-            if (
-              installingWorker.state === 'installed' &&
-              navigator.serviceWorker.controller
-            ) {
+            if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
               const updateBanner = document.getElementById('update-banner');
               if (updateBanner) updateBanner.style.display = 'flex';
             }
           });
         });
-      })
-      .catch((err) => {
-        // Log but don't break the page
-        console.warn('SW registration skipped:', err.message);
+        return;
+      }
+
+      const reg = await navigator.serviceWorker.register('/sw.js');
+      console.log('SW registered:', reg.scope);
+      reg.addEventListener('updatefound', () => {
+        const installingWorker = reg.installing;
+        installingWorker.addEventListener('statechange', () => {
+          if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            const updateBanner = document.getElementById('update-banner');
+            if (updateBanner) updateBanner.style.display = 'flex';
+          }
+        });
       });
+    } catch (err) {
+      if (err.name === 'InvalidStateError') {
+        // Retry after 1 second
+        console.warn('SW registration in invalid state, retrying...');
+        setTimeout(() => attemptRegister(attempt + 1), 1000);
+      } else {
+        console.warn('SW registration skipped:', err.message);
+      }
+    }
   }
 
-  // Small delay to avoid any transitional state (e.g., in iframe)
-  setTimeout(registerSW, 500);
+  // Start registration after a tiny delay to let the document settle
+  setTimeout(() => attemptRegister(), 0);
 }
 
   function setupUpdateBanner() {
