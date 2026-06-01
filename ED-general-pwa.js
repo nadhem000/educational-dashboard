@@ -169,7 +169,7 @@
   }
 
   // Small delay to avoid any transitional state (e.g., in iframe)
-  setTimeout(registerSW, 0);
+  setTimeout(registerSW, 500);
 }
 
   function setupUpdateBanner() {

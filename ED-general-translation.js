@@ -24,6 +24,11 @@
       const text = getNestedValue(langObj, key);
       if (text !== undefined) el.setAttribute('title', text);
     });
+	document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+  const key = el.getAttribute('data-i18n-placeholder');
+  const text = getNestedValue(langObj, key);
+  if (text !== undefined) el.setAttribute('placeholder', text);
+});
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
 
