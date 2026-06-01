@@ -24,6 +24,10 @@ const SHARED_UI_TEXT = {
       hosted: 'Hosted on Github and Netlify.',
     rateLabel: 'Rate this app'
     },
+auth: {
+  signIn: 'Sign in',
+  signOut: 'Sign out',
+},
     shortcutPrompt: 'Open in a new tab?',
     launchBtn: 'Launch'
   },
@@ -51,6 +55,10 @@ const SHARED_UI_TEXT = {
       hosted: 'Hébergé sur Github et Netlify.',
     rateLabel: 'Noter cette app'
     },
+auth: {
+  signIn: 'Se connecter',
+  signOut: 'Se déconnecter',
+},
     shortcutPrompt: 'Ouvrir dans un nouvel onglet ?',
     launchBtn: 'Lancer'
   },
@@ -78,6 +86,10 @@ const SHARED_UI_TEXT = {
       hosted: 'مستضاف على Github و Netlify.',
     rateLabel: 'قيّم هذا التطبيق'
     },
+auth: {
+  signIn: 'تسجيل الدخول',
+  signOut: 'تسجيل الخروج',
+},
     shortcutPrompt: 'فتح في علامة تبويب جديدة؟',
     launchBtn: 'إطلاق'
   }

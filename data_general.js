@@ -297,7 +297,7 @@ const categoryConfig = {
        // ================== SOCIAL MEDIA DATA ==================
 const socialMedias = [
   {
-    mediaLink: 'https://linkedin.com/in/mejriziad',
+    mediaLink: 'https://linkedin.com/in/zied-mejri-6a786835a',
     mediaSmallIcon: '🔗',
     mediaImage: 'assets/contact/linkedin.png',
     en: { mediaName: 'LinkedIn' },
@@ -305,7 +305,7 @@ const socialMedias = [
     ar: { mediaName: 'لينكد إن' }
   },
   {
-    mediaLink: 'https://github.com/mejriziad',
+    mediaLink: 'https://github.com/nadhem000',
     mediaSmallIcon: '🐙',
     mediaImage: 'assets/contact/github.png',
     en: { mediaName: 'GitHub' },
@@ -313,7 +313,7 @@ const socialMedias = [
     ar: { mediaName: 'غيت هاب' }
   },
   {
-    mediaLink: 'https://twitter.com/mejriziad',
+    mediaLink: 'https://x.com/MejriZiad1',
     mediaSmallIcon: '𝕏',
     mediaImage: 'assets/contact/x-twitter.png',
     en: { mediaName: 'X (Twitter)' },
@@ -321,7 +321,7 @@ const socialMedias = [
     ar: { mediaName: 'إكس (تويتر)' }
   },
   {
-    mediaLink: 'https://facebook.com/mejriziad',
+    mediaLink: 'https://www.facebook.com/mejri.ziad.1',
     mediaSmallIcon: '📘',
     mediaImage: 'assets/contact/facebook.png',
     en: { mediaName: 'Facebook' },
@@ -329,7 +329,7 @@ const socialMedias = [
     ar: { mediaName: 'فيسبوك' }
   },
   {
-    mediaLink: 'https://youtube.com/@mejriziad',
+    mediaLink: 'https://www.youtube.com/@ziedmejri2497',
     mediaSmallIcon: '▶️',
     mediaImage: 'assets/contact/youtube.png',
     en: { mediaName: 'YouTube' },
@@ -337,7 +337,7 @@ const socialMedias = [
     ar: { mediaName: 'يوتيوب' }
   },
   {
-    mediaLink: 'https://instagram.com/mejriziad',
+    mediaLink: 'https://www.instagram.com/mejriziad/',
     mediaSmallIcon: '📷',
     mediaImage: 'assets/contact/instagram.png',
     en: { mediaName: 'Instagram' },
@@ -345,7 +345,7 @@ const socialMedias = [
     ar: { mediaName: 'انستغرام' }
   },
   {
-    mediaLink: 'https://tiktok.com/@mejriziad',
+    mediaLink: 'https://www.tiktok.com/@mejriziad',
     mediaSmallIcon: '🎵',
     mediaImage: 'assets/contact/tiktok.png',
     en: { mediaName: 'TikTok' },
@@ -361,7 +361,7 @@ const socialMedias = [
     ar: { mediaName: 'ميديوم' }
   },
   {
-    mediaLink: 'https://wa.me/21612345678',
+    mediaLink: 'https://wa.me/21626021287',
     mediaSmallIcon: '💬',
     mediaImage: 'assets/contact/whatsapp.png',
     en: { mediaName: 'WhatsApp' },
@@ -369,7 +369,7 @@ const socialMedias = [
     ar: { mediaName: 'واتساب' }
   },
   {
-    mediaLink: 'https://t.me/mejriziad',
+    mediaLink: 'https://t.me/MmejriZiad',
     mediaSmallIcon: '✈️',
     mediaImage: 'assets/contact/telegram.png',
     en: { mediaName: 'Telegram' },
@@ -377,7 +377,7 @@ const socialMedias = [
     ar: { mediaName: 'تيليغرام' }
   },
   {
-    mediaLink: 'https://discord.gg/mejriziad',
+    mediaLink: 'https://discord.gg/hermes052',
     mediaSmallIcon: '🎮',
     mediaImage: 'assets/contact/discord.png',
     en: { mediaName: 'Discord' },
@@ -385,11 +385,59 @@ const socialMedias = [
     ar: { mediaName: 'ديسكورد' }
   },
   {
-    mediaLink: 'https://stackoverflow.com/users/mejriziad',
+    mediaLink: 'https://stackoverflowteams.com/c/astromed/',
     mediaSmallIcon: '📚',
     mediaImage: 'assets/contact/stackoverflow.png',
     en: { mediaName: 'Stack Overflow' },
     fr: { mediaName: 'Stack Overflow' },
     ar: { mediaName: 'ستاك أوفرفلو' }
+  },
+  {
+    mediaLink: 'https://soundcloud.com/zied-herm-s-mejri',
+    mediaSmallIcon: '🎮',
+    mediaImage: 'assets/contact/soundcloud.png',
+    en: { mediaName: 'Soundcloud' },
+    fr: { mediaName: 'Soundcloud' },
+    ar: { mediaName: 'سوندكلود' }
+  },
+  {
+    mediaLink: 'https://www.pinterest.com/ziedmejri735/',
+    mediaSmallIcon: '🎮',
+    mediaImage: 'assets/contact/pinterest.png',
+    en: { mediaName: 'Pinterest' },
+    fr: { mediaName: 'Pinterest' },
+    ar: { mediaName: 'بنتيرست' }
+  },
+  {
+    mediaLink: 'https://www.tumblr.com/blog/yeshermes-blog1',
+    mediaSmallIcon: '🎮',
+    mediaImage: 'assets/contact/tumblr.png',
+    en: { mediaName: 'Tumblr' },
+    fr: { mediaName: 'Tumblr' },
+    ar: { mediaName: 'تمبلر' }
+  },
+  {
+    mediaLink: 'https://hermapolis.wordpress.com/',
+    mediaSmallIcon: '🎮',
+    mediaImage: 'assets/contact/wordpress.png',
+    en: { mediaName: 'Wordpress' },
+    fr: { mediaName: 'Wordpress' },
+    ar: { mediaName: 'ووردبريس' }
+  },
+  {
+    mediaLink: 'https://mejriziad.wordpress.com/',
+    mediaSmallIcon: '🎮',
+    mediaImage: 'assets/contact/wordpress.png',
+    en: { mediaName: 'Wordpress' },
+    fr: { mediaName: 'Wordpress' },
+    ar: { mediaName: 'ووردبريس' }
+  },
+  {
+    mediaLink: 'https://www.ahewar.net/m.asp?i=14883',
+    mediaSmallIcon: '🎮',
+    mediaImage: 'assets/contact/ahewar.png',
+    en: { mediaName: 'ahewar' },
+    fr: { mediaName: 'ahewar' },
+    ar: { mediaName: 'الحوار المتمدن' }
   }
 ];
