@@ -36,7 +36,17 @@ const SHARED_UI_TEXT = {
 			switchToSignIn: 'Already have an account? Sign in',
 			forgotPassword: 'Forgot password?',
 			forgotPasswordSent: 'Password reset email sent. Please check your inbox.',
-			forgotPasswordError: 'Failed to send reset email.'
+			forgotPasswordError: 'Failed to send reset email.',
+resetPasswordTitle: 'Reset Password – Educational Dashboard',
+setNewPassword: 'Set new password',
+verifyingLink: 'Verifying your link…',
+newPasswordPlaceholder: 'New password (min. 6 characters)',
+updatePassword: 'Update password',
+invalidResetLink: 'This password reset link is invalid or has already been used.',
+expiredLink: 'This link has expired or is invalid. Please request a new password reset.',
+passwordTooShort: 'Password must be at least 6 characters.',
+passwordUpdated: 'Password updated successfully! Redirecting to dashboard…',
+updateFailed: 'Could not update password: '
 		},
 		shortcutPrompt: 'Open in a new tab?',
 		launchBtn: 'Launch'
@@ -77,7 +87,17 @@ const SHARED_UI_TEXT = {
 			switchToSignIn: 'Déjà un compte ? Se connecter',
 			forgotPassword: 'Mot de passe oublié ?',
 			forgotPasswordSent: 'E‑mail de réinitialisation envoyé. Veuillez vérifier votre boîte de réception.',
-			forgotPasswordError: 'Échec de l’envoi de l’e‑mail de réinitialisation.'
+			forgotPasswordError: 'Échec de l’envoi de l’e‑mail de réinitialisation.',
+resetPasswordTitle: 'Réinitialiser le mot de passe – Tableau de Bord Éducatif',
+setNewPassword: 'Définir un nouveau mot de passe',
+verifyingLink: 'Vérification de votre lien…',
+newPasswordPlaceholder: 'Nouveau mot de passe (min. 6 caractères)',
+updatePassword: 'Mettre à jour le mot de passe',
+invalidResetLink: 'Ce lien de réinitialisation est invalide ou a déjà été utilisé.',
+expiredLink: 'Ce lien a expiré ou est invalide. Veuillez demander une nouvelle réinitialisation.',
+passwordTooShort: 'Le mot de passe doit comporter au moins 6 caractères.',
+passwordUpdated: 'Mot de passe mis à jour avec succès ! Redirection vers le tableau de bord…',
+updateFailed: 'Échec de la mise à jour du mot de passe : '
 		},
 		shortcutPrompt: 'Ouvrir dans un nouvel onglet ?',
 		launchBtn: 'Lancer'
@@ -118,7 +138,17 @@ const SHARED_UI_TEXT = {
 			switchToSignIn: 'هل لديك حساب بالفعل؟ تسجيل الدخول',
 			forgotPassword: 'نسيت كلمة المرور؟',
 			forgotPasswordSent: 'تم إرسال بريد إعادة تعيين كلمة المرور. يرجى التحقق من صندوق الوارد.',
-			forgotPasswordError: 'فشل إرسال بريد إعادة التعيين.'
+			forgotPasswordError: 'فشل إرسال بريد إعادة التعيين.',
+resetPasswordTitle: 'إعادة تعيين كلمة المرور – لوحة التحكم التعليمية',
+setNewPassword: 'تعيين كلمة مرور جديدة',
+verifyingLink: 'جارٍ التحقق من الرابط…',
+newPasswordPlaceholder: 'كلمة المرور الجديدة (6 أحرف على الأقل)',
+updatePassword: 'تحديث كلمة المرور',
+invalidResetLink: 'رابط إعادة التعيين غير صالح أو تم استخدامه بالفعل.',
+expiredLink: 'انتهت صلاحية هذا الرابط أو أنه غير صالح. يرجى طلب إعادة تعيين جديدة.',
+passwordTooShort: 'يجب أن تتكون كلمة المرور من 6 أحرف على الأقل.',
+passwordUpdated: 'تم تحديث كلمة المرور بنجاح! جارٍ التوجيه إلى لوحة التحكم…',
+updateFailed: 'فشل تحديث كلمة المرور: '
 		},
 		shortcutPrompt: 'فتح في علامة تبويب جديدة؟',
 		launchBtn: 'إطلاق'
