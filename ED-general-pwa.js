@@ -138,60 +138,37 @@
   function setupServiceWorker() {
   if (!('serviceWorker' in navigator)) return;
 
-  async function attemptRegister(attempt = 1) {
-    if (attempt > 3) {
-      console.warn('SW registration failed after 3 attempts');
-      return;
-    }
-
-    // Ensure we are in a secure context and the document is fully active
+  // Only register after the page is really fully loaded and we are in a secure context
+  function tryRegister() {
     if (document.readyState !== 'complete' || !window.isSecureContext) {
-      window.addEventListener('load', () => attemptRegister(attempt));
+      setTimeout(tryRegister, 500);
       return;
     }
-
-    try {
-      // If there's already a registration, use it instead of creating a new one
-      const existingReg = await navigator.serviceWorker.getRegistration();
-      if (existingReg) {
-        console.log('Using existing SW registration:', existingReg.scope);
-        // Listen for updates
-        existingReg.addEventListener('updatefound', () => {
-          const installingWorker = existingReg.installing;
-          installingWorker.addEventListener('statechange', () => {
-            if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              const updateBanner = document.getElementById('update-banner');
-              if (updateBanner) updateBanner.style.display = 'flex';
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => {
+        console.log('SW registered:', reg.scope);
+        reg.addEventListener('updatefound', () => {
+          const installing = reg.installing;
+          installing.addEventListener('statechange', () => {
+            if (installing.state === 'installed' && navigator.serviceWorker.controller) {
+              const banner = document.getElementById('update-banner');
+              if (banner) banner.style.display = 'flex';
             }
           });
         });
-        return;
-      }
-
-      const reg = await navigator.serviceWorker.register('/sw.js');
-      console.log('SW registered:', reg.scope);
-      reg.addEventListener('updatefound', () => {
-        const installingWorker = reg.installing;
-        installingWorker.addEventListener('statechange', () => {
-          if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            const updateBanner = document.getElementById('update-banner');
-            if (updateBanner) updateBanner.style.display = 'flex';
-          }
-        });
+      })
+      .catch(err => {
+        // Only log if it's not the common InvalidStateError (which we ignore safely)
+        if (err.name !== 'InvalidStateError') console.warn('SW could not be registered:', err.message);
       });
-    } catch (err) {
-      if (err.name === 'InvalidStateError') {
-        // Retry after 1 second
-        console.warn('SW registration in invalid state, retrying...');
-        setTimeout(() => attemptRegister(attempt + 1), 1000);
-      } else {
-        console.warn('SW registration skipped:', err.message);
-      }
-    }
   }
 
-  // Start registration after a tiny delay to let the document settle
-  setTimeout(() => attemptRegister(), 0);
+  // Wait for a user click or 5 seconds, whichever comes first
+  let registered = false;
+  const doRegister = () => { if (!registered) { registered = true; tryRegister(); } };
+  window.addEventListener('click', doRegister, { once: true });
+  window.addEventListener('keydown', doRegister, { once: true });
+  setTimeout(doRegister, 5000); // fallback
 }
 
   function setupUpdateBanner() {
