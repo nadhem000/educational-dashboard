@@ -38,7 +38,11 @@
       },
       body: JSON.stringify({ subscription }),
     });
-    if (response.status === 409) return; // duplicate – ok
+   if (response.status === 409) {
+  // Already saved – suppress the console error
+  console.debug('Push subscription already exists (expected).');
+  return;
+}
     if (!response.ok) console.error('Failed to save subscription:', response.status);
   }
 
