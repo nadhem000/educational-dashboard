@@ -45,6 +45,7 @@
       display: flex;
       gap: 10px;
       align-items: center;
+      flex-wrap: wrap;
     }
     .log-container {
       flex: 1;
@@ -71,8 +72,11 @@
       padding: 5px 12px;
       border-radius: 4px;
       cursor: pointer;
+      font-size: 13px;
     }
     .btn:hover { background: #1c5fa8; }
+    .btn.pause { background: #d94a2a; }
+    .btn.pause:hover { background: #a8381f; }
     .status { font-size: 12px; color: #aaa; margin-left: auto; }
   </style>
 </head>
@@ -87,24 +91,46 @@
   </div>
   <div class="main">
     <div class="toolbar">
-      <button class="btn" onclick="clearLogs()">🗑 Clear All</button>
-      <button class="btn" onclick="exportLogs()">📥 Export JSON</button>
-      <span class="status" id="status">Monitoring inactive</span>
+      <button class="btn" id="pauseBtn" onclick="togglePause()">⏸️ Pause</button>
+      <button class="btn" onclick="clearLogs()">🗑 Clear</button>
+      <button class="btn" onclick="showAsText()">📄 Show as TXT</button>
+      <button class="btn" onclick="exportJSON()">📥 Export JSON</button>
+      <span class="status" id="status">🟢 Monitoring active</span>
     </div>
     <div class="log-container" id="logContainer"></div>
   </div>
 
   <script>
     const STORAGE_KEY = '__admin_logs__';
+    const PAUSE_KEY = '__monitor_paused__';
     const container = document.getElementById('logContainer');
     const statusEl = document.getElementById('status');
+    const pauseBtn = document.getElementById('pauseBtn');
     let currentFilter = 'all';
 
-    function updateStatus() {
-      const active = localStorage.getItem('__monitor_active__') === 'true';
-      statusEl.textContent = active ? '🟢 Monitoring active' : '🔴 Monitoring inactive';
-      statusEl.style.color = active ? '#4f4' : '#f44';
+    function isPaused() {
+      return localStorage.getItem(PAUSE_KEY) === 'true';
     }
+
+    function updatePauseUI() {
+      const paused = isPaused();
+      pauseBtn.textContent = paused ? '▶️ Resume' : '⏸️ Pause';
+      pauseBtn.className = paused ? 'btn' : 'btn pause';
+      statusEl.textContent = paused ? '🔴 Monitoring paused' : '🟢 Monitoring active';
+      statusEl.style.color = paused ? '#f44' : '#4f4';
+    }
+
+    window.togglePause = function() {
+      const paused = isPaused();
+      if (paused) {
+        localStorage.removeItem(PAUSE_KEY);
+      } else {
+        localStorage.setItem(PAUSE_KEY, 'true');
+      }
+      updatePauseUI();
+      // Notify other tabs (they will re-render and check pause flag)
+      window.dispatchEvent(new Event('storage'));
+    };
 
     function getLogs() {
       try {
@@ -147,7 +173,7 @@
       render();
     };
 
-    window.exportLogs = () => {
+    window.exportJSON = () => {
       const logs = getLogs();
       const blob = new Blob([JSON.stringify(logs, null, 2)], { type: 'application/json' });
       const a = document.createElement('a');
@@ -156,15 +182,30 @@
       a.click();
     };
 
-    // Update on storage change (cross-tab)
+    window.showAsText = () => {
+      const logs = getLogs();
+      const text = logs.map(l => {
+        let line = `[${l.time}] [${l.level.toUpperCase()}] ${l.message}`;
+        if (l.url) line += ` (${l.method || ''} ${l.url}, ${l.duration}ms)`;
+        if (l.stack) line += '\n' + l.stack;
+        return line;
+      }).join('\n');
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank');
+    };
+
+    // Sync across tabs
     window.addEventListener('storage', e => {
-      if (e.key === STORAGE_KEY) render();
-      if (e.key === '__monitor_active__') updateStatus();
+      if (e.key === STORAGE_KEY || e.key === PAUSE_KEY) {
+        render();
+        updatePauseUI();
+      }
     });
 
-    // Periodic refresh (just in case)
-    setInterval(() => { render(); updateStatus(); }, 1000);
-    updateStatus();
+    // Periodic refresh
+    setInterval(() => { render(); updatePauseUI(); }, 1000);
+    updatePauseUI();
     render();
   </script>
 </body>
