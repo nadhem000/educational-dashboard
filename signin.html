@@ -11,14 +11,26 @@
         required
         class="ED-General-auth-modal-input"
       />
-      <input
-        id="ED-General-auth-password"
-        type="password"
-        data-i18n-placeholder="auth.passwordPlaceholder"
-        placeholder="Password"
-        required
-        class="ED-General-auth-modal-input"
-      />
+
+      <!-- Password row: two separate divs for input and eye -->
+      <div style="display: flex; gap: 0.5rem; align-items: center; margin: 0.8rem 0;">
+        <div style="flex: 1;">
+          <input
+            id="ED-General-auth-password"
+            type="password"
+            autocomplete="current-password"
+            data-i18n-placeholder="auth.passwordPlaceholder"
+            placeholder="Password"
+            required
+            class="ED-General-auth-modal-input"
+          />
+        </div>
+        <div>
+          <button type="button" class="ED-General-password-eye"
+                  onclick="var p=document.getElementById('ED-General-auth-password');p.type=p.type==='password'?'text':'password';this.textContent=p.type==='password'?'👁️':'🙈';"
+                  title="Show password">👁️</button>
+        </div>
+      </div>
 
       <div class="ED-General-auth-modal-actions">
         <button type="button" id="ED-General-auth-cancel-btn" class="ED-General-header-btn ED-General-auth-btn-cancel" data-i18n="auth.cancel">Cancel</button>

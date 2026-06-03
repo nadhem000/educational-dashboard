@@ -699,3 +699,16 @@ body {
 .ED-General-auth-btn-primary:hover {
   background: var(--ED-General-color-btn-primary-hover) !important;
 }
+.ED-General-password-eye {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.4rem;
+  line-height: 1;
+  color: var(--ED-General-color-text-secondary);
+  padding: 0.25rem;
+}
+
+.ED-General-password-eye:hover {
+  color: var(--ED-General-color-accent-default);
+}
