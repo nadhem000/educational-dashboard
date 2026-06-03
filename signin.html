@@ -1,3 +1,4 @@
+<!-- signin.html -->
 <div id="ED-General-auth-modal" class="ED-General-auth-modal-backdrop">
   <div class="ED-General-auth-modal-box">
     <h3 class="ED-General-auth-modal-title" id="ED-General-auth-modal-title" data-i18n="auth.signIn">Sign in</h3>
@@ -6,13 +7,14 @@
       <input
         id="ED-General-auth-email"
         type="email"
+        autocomplete="username"
         data-i18n-placeholder="auth.emailPlaceholder"
         placeholder="Email"
         required
         class="ED-General-auth-modal-input"
       />
 
-      <!-- Password row: two separate divs for input and eye -->
+      <!-- Password row: two separate divs -->
       <div style="display: flex; gap: 0.5rem; align-items: center; margin: 0.8rem 0;">
         <div style="flex: 1;">
           <input
