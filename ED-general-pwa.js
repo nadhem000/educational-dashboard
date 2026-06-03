@@ -142,37 +142,52 @@
   function setupServiceWorker() {
   if (!('serviceWorker' in navigator)) return;
 
-  // Only register after the page is really fully loaded and we are in a secure context
-  function tryRegister() {
-    if (document.readyState !== 'complete' || !window.isSecureContext) {
-      setTimeout(tryRegister, 500);
+  function showUpdateBanner() {
+    const banner = document.getElementById('update-banner');
+    if (banner) banner.style.display = 'flex';
+  }
+
+  function handleUpdate(reg) {
+    // A new SW is being installed – show the banner when it's ready
+    const installing = reg.installing;
+    if (installing) {
+      installing.addEventListener('statechange', () => {
+        if (installing.state === 'installed' && navigator.serviceWorker.controller) {
+          showUpdateBanner();
+        }
+      });
+    }
+  }
+
+  function registerSW() {
+    if (document.readyState !== 'complete') {
+      window.addEventListener('load', registerSW);
       return;
     }
-    navigator.serviceWorker.register('/sw.js')
-      .then(reg => {
+
+    navigator.serviceWorker
+      .register('/sw.js')
+      .then((reg) => {
         console.log('SW registered:', reg.scope);
+
+        // 1. Handle an update that is already installing (e.g. after a refresh)
+        handleUpdate(reg);
+
+        // 2. Listen for future updates
         reg.addEventListener('updatefound', () => {
-          const installing = reg.installing;
-          installing.addEventListener('statechange', () => {
-            if (installing.state === 'installed' && navigator.serviceWorker.controller) {
-              const banner = document.getElementById('update-banner');
-              if (banner) banner.style.display = 'flex';
-            }
-          });
+          handleUpdate(reg);
         });
       })
-      .catch(err => {
-        // Only log if it's not the common InvalidStateError (which we ignore safely)
-        if (err.name !== 'InvalidStateError') console.warn('SW could not be registered:', err.message);
+      .catch((err) => {
+        // Ignore the InvalidStateError – the SW is already registered
+        if (err.name !== 'InvalidStateError') {
+          console.warn('SW registration failed:', err.message);
+        }
       });
   }
 
-  // Wait for a user click or 5 seconds, whichever comes first
-  let registered = false;
-  const doRegister = () => { if (!registered) { registered = true; tryRegister(); } };
-  window.addEventListener('click', doRegister, { once: true });
-  window.addEventListener('keydown', doRegister, { once: true });
-  setTimeout(doRegister, 5000); // fallback
+  // Small delay to avoid transitional states
+  setTimeout(registerSW, 0);
 }
 
   function setupUpdateBanner() {
