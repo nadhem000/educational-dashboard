@@ -1,4 +1,4 @@
-const CACHE_NAME = 'edudash-v131'; // bump version when  deploy
+const CACHE_NAME = 'edudash-v132'; // bump version when  deploy
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
@@ -47,7 +47,21 @@ const PRECACHE_ASSETS = [
   '/assets/icons/icon-192x192.png',
   '/assets/icons/icon-96x96.png'
 ];
-
+// Forward all SW console output to the client
+const swConsole = {};
+['log','warn','error','info','debug'].forEach(m => {
+  swConsole[m] = console[m];
+  console[m] = function(...args) {
+    swConsole[m].apply(console, args);                       // still show in SW DevTools
+    self.clients.matchAll().then(clients => {
+      clients.forEach(client => client.postMessage({
+        type: 'SW_LOG',
+        level: m,
+        message: args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ')
+      }));
+    });
+  };
+});
 // ---------- Install ----------
 self.addEventListener('install', event => {
   const isUpdate = self.registration.active !== null;

@@ -1,4 +1,4 @@
-// monitor.js – Early-loading debug monitor
+// monitor.js – Full capture (console, network, errors, resource errors, unhandled rejections)
 (function () {
   if (window.__monitorInjected) return;
   window.__monitorInjected = true;
@@ -6,7 +6,6 @@
   const STORAGE_KEY = '__admin_logs__';
   const MAX_ENTRIES = 2000;
 
-  // Load existing logs
   let logs = [];
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -21,17 +20,11 @@
   }
 
   function add(level, message, extra = {}) {
-    const entry = {
-      time: new Date().toISOString(),
-      level,
-      message,
-      ...extra
-    };
-    logs.push(entry);
+    logs.push({ time: new Date().toISOString(), level, message, ...extra });
     save();
   }
 
-  // ---- Console override ----
+  // Override console methods
   const orig = {};
   ['log', 'warn', 'error', 'info', 'debug'].forEach(m => {
     orig[m] = console[m];
@@ -47,21 +40,37 @@
       add(m, text);
     };
   });
-
-  // ---- Global errors ----
+// Inside the monitor.js IIFE, after the other listeners
+navigator.serviceWorker?.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SW_LOG') {
+    add(event.data.level, event.data.message);
+  }
+});
+  // Global errors (bubble phase)
   window.addEventListener('error', e => {
     add('error', `${e.message} at ${e.filename}:${e.lineno}`, {
       stack: e.error ? e.error.stack : undefined
     });
   });
 
+  // ***** Resource loading errors (capture phase) *****
+  window.addEventListener('error', e => {
+    // Only act if it's a resource error (no message property and target is an element)
+    if (!e.message && e.target && e.target !== window) {
+      const tag = e.target.tagName || 'resource';
+      const src = e.target.src || e.target.href || '';
+      add('error', `Failed to load ${tag}: ${src}`);
+    }
+  }, true);   // <--- true = capture phase
+
+  // Unhandled promise rejections
   window.addEventListener('unhandledrejection', e => {
     add('unhandledrejection', String(e.reason), {
       stack: e.reason && e.reason.stack ? e.reason.stack : undefined
     });
   });
 
-  // ---- Network monitoring (fetch) ----
+  // Network monitoring (fetch & XHR) – unchanged
   const origFetch = window.fetch;
   window.fetch = function (...args) {
     const start = performance.now();
@@ -69,10 +78,7 @@
     return origFetch.apply(this, args).then(response => {
       const duration = (performance.now() - start).toFixed(1);
       add('network', `${response.status} ${args[1]?.method || 'GET'} ${url} (${duration}ms)`, {
-        status: response.status,
-        url,
-        method: args[1]?.method || 'GET',
-        duration
+        status: response.status, url, method: args[1]?.method || 'GET', duration
       });
       return response;
     }).catch(err => {
@@ -81,7 +87,6 @@
     });
   };
 
-  // ---- Network monitoring (XMLHttpRequest) ----
   const OrigXHR = window.XMLHttpRequest;
   window.XMLHttpRequest = function () {
     const xhr = new OrigXHR();
@@ -89,17 +94,13 @@
     let method, url;
     const origOpen = xhr.open;
     xhr.open = function (m, u) {
-      method = m;
-      url = u;
+      method = m; url = u;
       return origOpen.apply(xhr, arguments);
     };
     xhr.addEventListener('loadend', () => {
       const duration = (performance.now() - start).toFixed(1);
       add('network', `${xhr.status} ${method} ${url} (${duration}ms)`, {
-        status: xhr.status,
-        url,
-        method,
-        duration
+        status: xhr.status, url, method, duration
       });
     });
     xhr.addEventListener('error', () => {
@@ -107,11 +108,9 @@
     });
     return xhr;
   };
-  // Copy static properties
   Object.keys(OrigXHR).forEach(key => { window.XMLHttpRequest[key] = OrigXHR[key]; });
   window.XMLHttpRequest.prototype = OrigXHR.prototype;
 
-  // Signal that monitoring is active (so admin can show status)
   localStorage.setItem('__monitor_active__', 'true');
   console.log('%c🔍 Advanced monitoring active – open /admin to view', 'color:#0f0; font-size:14px');
 })();
