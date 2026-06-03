@@ -1,4 +1,4 @@
-const CACHE_NAME = 'edudash-v123'; // bump version when  deploy
+const CACHE_NAME = 'edudash-v125'; // bump version when  deploy
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
@@ -49,17 +49,24 @@ const PRECACHE_ASSETS = [
 ];
 
 // ---------- Install ----------
-self.addEventListener('install', event => {
-  const isUpdate = self.registration.active !== null;
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(PRECACHE_ASSETS))
-      .then(() => {
-        self.skipWaiting();
-        self.isUpdate = isUpdate;
-      })
-  );
-});
+function setupUpdateBanner() {
+  const reloadBtn = document.getElementById('update-reload-btn');
+  if (reloadBtn) {
+    reloadBtn.addEventListener('click', () => {
+      // Tell the waiting SW to activate
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistration().then(reg => {
+          if (reg && reg.waiting) {
+            reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+          }
+          window.location.reload();
+        });
+      } else {
+        window.location.reload();
+      }
+    });
+  }
+}
 
 // ---------- Activate ----------
 self.addEventListener('activate', event => {
