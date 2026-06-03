@@ -147,17 +147,12 @@
     if (banner) banner.style.display = 'flex';
   }
 
-  function handleUpdate(reg) {
-    // A new SW is being installed – show the banner when it's ready
-    const installing = reg.installing;
-    if (installing) {
-      installing.addEventListener('statechange', () => {
-        if (installing.state === 'installed' && navigator.serviceWorker.controller) {
-          showUpdateBanner();
-        }
-      });
+  // Listen for the message the SW sends when it activates after an update
+  navigator.serviceWorker.addEventListener('message', event => {
+    if (event.data && event.data.type === 'NEW_VERSION_READY') {
+      showUpdateBanner();
     }
-  }
+  });
 
   function registerSW() {
     if (document.readyState !== 'complete') {
@@ -169,35 +164,26 @@
       .register('/sw.js')
       .then((reg) => {
         console.log('SW registered:', reg.scope);
-
-        // 1. Handle an update that is already installing (e.g. after a refresh)
-        handleUpdate(reg);
-
-        // 2. Listen for future updates
-        reg.addEventListener('updatefound', () => {
-          handleUpdate(reg);
-        });
+        // No need for handleUpdate – the message listener covers everything
       })
       .catch((err) => {
-        // Ignore the InvalidStateError – the SW is already registered
         if (err.name !== 'InvalidStateError') {
           console.warn('SW registration failed:', err.message);
         }
       });
   }
 
-  // Small delay to avoid transitional states
   setTimeout(registerSW, 0);
 }
 
   function setupUpdateBanner() {
-    const reloadBtn = document.getElementById('update-reload-btn');
-    if (reloadBtn) {
-      reloadBtn.addEventListener('click', () => {
-        window.location.reload();
-      });
-    }
+  const reloadBtn = document.getElementById('update-reload-btn');
+  if (reloadBtn) {
+    reloadBtn.addEventListener('click', () => {
+      window.location.reload();
+    });
   }
+}
 
   /* ============================================================
      Periodic Background Sync
