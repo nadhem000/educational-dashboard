@@ -4,50 +4,160 @@
     <h3 class="ED-General-auth-modal-title" id="ED-General-auth-modal-title" data-i18n="auth.signIn">Sign in</h3>
 
     <form id="ED-General-auth-form">
-      <input
-        id="ED-General-auth-email"
-        type="email"
-        autocomplete="username"
-        data-i18n-placeholder="auth.emailPlaceholder"
-        placeholder="Email"
-        required
-        class="ED-General-auth-modal-input"
-      />
+      <!-- ========== STEP 1 – Email & Password ========== -->
+      <div id="auth-step-1">
+        <input
+          id="ED-General-auth-email"
+          type="email"
+          autocomplete="username"
+          data-i18n-placeholder="auth.emailPlaceholder"
+          placeholder="Email"
+          required
+          class="ED-General-auth-modal-input"
+        />
 
-      <!-- Password row: two separate divs -->
-      <div style="display: flex; gap: 0.5rem; align-items: center; margin: 0.8rem 0;">
-        <div style="flex: 1;">
-          <input
-            id="ED-General-auth-password"
-            type="password"
-            autocomplete="current-password"
-            data-i18n-placeholder="auth.passwordPlaceholder"
-            placeholder="Password"
-            required
-            class="ED-General-auth-modal-input"
-          />
+        <div style="display: flex; gap: 0.5rem; align-items: center; margin: 0.8rem 0;">
+          <div style="flex: 1;">
+            <input
+              id="ED-General-auth-password"
+              type="password"
+              autocomplete="current-password"
+              data-i18n-placeholder="auth.passwordPlaceholder"
+              placeholder="Password"
+              required
+              class="ED-General-auth-modal-input"
+            />
+          </div>
+          <div>
+            <button type="button" class="ED-General-password-eye"
+                    onclick="var p=document.getElementById('ED-General-auth-password');p.type=p.type==='password'?'text':'password';this.textContent=p.type==='password'?'👁️':'🙈';"
+                    title="Show password">👁️</button>
+          </div>
         </div>
-        <div>
-          <button type="button" class="ED-General-password-eye"
-                  onclick="var p=document.getElementById('ED-General-auth-password');p.type=p.type==='password'?'text':'password';this.textContent=p.type==='password'?'👁️':'🙈';"
-                  title="Show password">👁️</button>
+
+        <div class="ED-General-auth-modal-actions">
+          <button type="button" id="ED-General-auth-cancel-btn"
+                  class="ED-General-header-btn ED-General-auth-btn-cancel"
+                  data-i18n="auth.cancel">Cancel</button>
+          <button type="submit" class="ED-General-header-btn ED-General-auth-btn-primary"
+                  data-i18n="auth.continue">Continue</button>
         </div>
       </div>
 
-      <div class="ED-General-auth-modal-actions">
-        <button type="button" id="ED-General-auth-cancel-btn" class="ED-General-header-btn ED-General-auth-btn-cancel" data-i18n="auth.cancel">Cancel</button>
-        <button type="submit" class="ED-General-header-btn ED-General-auth-btn-primary" data-i18n="auth.continue">Continue</button>
+      <!-- ========== STEP 2 – Profile Questions (hidden by default) ========== -->
+      <div id="auth-step-2" style="display: none;">
+        <h4 data-i18n="auth.profile.completeTitle"
+            style="margin-top: 0.5rem; margin-bottom: 0.8rem; font-weight: 650;">
+          Complete your profile
+        </h4>
+
+        <!-- Username -->
+        <input
+          type="text"
+          id="prof-username"
+          data-i18n-placeholder="auth.profile.usernamePlaceholder"
+          placeholder="Username"
+          required
+          class="ED-General-auth-modal-input"
+        />
+
+        <!-- Avatar choice (radio buttons with emoji) -->
+        <fieldset style="margin: 0.8rem 0; border: none; padding: 0;">
+          <legend data-i18n="auth.profile.avatarLabel"
+                  style="font-size: 0.85rem; margin-bottom: 0.25rem;">
+            Choose an avatar
+          </legend>
+          <label style="cursor: pointer;">
+            <input type="radio" name="avatar" value="🦊" /> 🦊
+          </label>
+          <label style="cursor: pointer;">
+            <input type="radio" name="avatar" value="🐼" /> 🐼
+          </label>
+          <label style="cursor: pointer;">
+            <input type="radio" name="avatar" value="🦉" checked /> 🦉
+          </label>
+          <label style="cursor: pointer;">
+            <input type="radio" name="avatar" value="🐨" /> 🐨
+          </label>
+        </fieldset>
+
+        <!-- Profession -->
+        <label for="prof-profession" data-i18n="auth.profile.professionLabel"
+               style="display: block; font-size: 0.85rem; margin-top: 0.5rem;">
+          Profession
+        </label>
+        <select id="prof-profession" required class="ED-General-auth-modal-input">
+          <!-- Options will be translated by JavaScript -->
+        </select>
+
+        <!-- Class (visible only when student) -->
+        <div id="student-class-group" style="display: none;">
+          <label for="prof-class" data-i18n="auth.profile.classLabel"
+                 style="display: block; font-size: 0.85rem; margin-top: 0.5rem;">
+            Class / Grade
+          </label>
+          <select id="prof-class" class="ED-General-auth-modal-input">
+            <!-- Options will be translated by JavaScript -->
+          </select>
+        </div>
+
+        <!-- Birthday -->
+        <label for="prof-birthday" data-i18n="auth.profile.birthdayLabel"
+               style="display: block; font-size: 0.85rem; margin-top: 0.5rem;">
+          Birthday
+        </label>
+        <input
+          type="date"
+          id="prof-birthday"
+          class="ED-General-auth-modal-input"
+        />
+
+        <!-- Preferred language -->
+        <label for="prof-language" data-i18n="auth.profile.languageLabel"
+               style="display: block; font-size: 0.85rem; margin-top: 0.5rem;">
+          Preferred language
+        </label>
+        <select id="prof-language" class="ED-General-auth-modal-input">
+          <option value="en" data-i18n="auth.profile.langEnglish">English</option>
+          <option value="fr" data-i18n="auth.profile.langFrench">Français</option>
+          <option value="ar" data-i18n="auth.profile.langArabic">العربية</option>
+        </select>
+
+        <!-- Preferred mode -->
+        <label for="prof-mode" data-i18n="auth.profile.modeLabel"
+               style="display: block; font-size: 0.85rem; margin-top: 0.5rem;">
+          Preferred mode
+        </label>
+        <select id="prof-mode" class="ED-General-auth-modal-input">
+          <option value="light" data-i18n="auth.profile.modeLight">Light</option>
+          <option value="dark" data-i18n="auth.profile.modeDark">Dark</option>
+        </select>
+
+        <!-- How did you get to know the site? -->
+        <label for="prof-how-know" data-i18n="auth.profile.howKnowLabel"
+               style="display: block; font-size: 0.85rem; margin-top: 0.5rem;">
+          How did you get to know the site?
+        </label>
+        <select id="prof-how-know" class="ED-General-auth-modal-input">
+          <!-- Options will be translated by JavaScript -->
+        </select>
+
+        <div class="ED-General-auth-modal-actions" style="margin-top: 1.2rem;">
+          <button type="button" id="auth-step-2-back"
+                  class="ED-General-header-btn ED-General-auth-btn-cancel"
+                  data-i18n="auth.profile.back">Back</button>
+          <button type="submit" class="ED-General-header-btn ED-General-auth-btn-primary"
+                  data-i18n="auth.profile.saveContinue">Save & Continue</button>
+        </div>
       </div>
     </form>
 
     <p class="ED-General-auth-modal-switch">
       <a href="#" id="ED-General-auth-toggle-mode" data-i18n="auth.switchToSignUp">Create an account</a>
     </p>
-
     <p class="ED-General-auth-modal-switch">
       <a href="#" id="ED-General-auth-forgot-password" data-i18n="auth.forgotPassword">Forgot password?</a>
     </p>
-
     <p id="ED-General-auth-error" class="ED-General-auth-error-msg"></p>
   </div>
 </div>

@@ -1,4 +1,4 @@
-// ED-general-auth.js – Sign in / up / out, no extra script tags needed
+// ED-general-auth.js – Sign in / up / out, with profile questionnaire on sign‑up
 (function () {
   'use strict';
 
@@ -55,7 +55,7 @@
       const Supabase = await loadSupabaseClient();
       const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-      await waitForHeaderControls();           // <-- THIS IS THE FIX
+      await waitForHeaderControls();
 
       function insertAuthButton() {
         const controls = document.querySelector('.ED-General-header__controls');
@@ -89,13 +89,65 @@
       const { data: { session } } = await supabase.auth.getSession();
       updateAuthUI(session?.user ?? null);
 
-      // ---------- Modal logic (unchanged) ----------
+      // ---------- Helper: translate profile <select> options ----------
+      function translateProfileOptions() {
+        const t = window.EDTranslation?.getText || ((k) => k);
+
+        // Profession
+        const profSelect = document.getElementById('prof-profession');
+        if (profSelect) {
+          profSelect.innerHTML = '';
+          ['', 'student', 'teacher', 'other'].forEach(value => {
+            const opt = document.createElement('option');
+            opt.value = value;
+            if (value) {
+              const key = 'auth.profile.' + value + 'Option'; // e.g. auth.profile.studentOption
+              opt.textContent = t(key) || value;
+            }
+            profSelect.appendChild(opt);
+          });
+        }
+
+        // Class (grades)
+        const classSelect = document.getElementById('prof-class');
+        if (classSelect) {
+          classSelect.innerHTML = '';
+          const grades = ['', '7', '8', '9', '10', '11', '12']; // adjust as needed
+          grades.forEach(value => {
+            const opt = document.createElement('option');
+            opt.value = value;
+            if (value) {
+              const key = 'auth.profile.grade' + value; // e.g. auth.profile.grade7
+              opt.textContent = t(key) || value;
+            }
+            classSelect.appendChild(opt);
+          });
+        }
+
+        // How did you know
+        const howSelect = document.getElementById('prof-how-know');
+        if (howSelect) {
+          howSelect.innerHTML = '';
+          ['', 'friend', 'social_media', 'search', 'other'].forEach(value => {
+            const opt = document.createElement('option');
+            opt.value = value;
+            if (value) {
+              const key = 'auth.profile.how' + value.charAt(0).toUpperCase() + value.slice(1); // e.g. howFriend
+              opt.textContent = t(key) || value;
+            }
+            howSelect.appendChild(opt);
+          });
+        }
+      }
+
+      // ---------- Modal logic ----------
       async function showAuthModal() {
         const existing = document.getElementById('ED-General-auth-modal');
         if (existing) existing.remove();
         const html = await loadModalHTML();
         document.body.insertAdjacentHTML('beforeend', html);
         if (window.EDTranslation) EDTranslation.translatePage();
+        translateProfileOptions(); // fill selects with translated texts
 
         const modal = document.getElementById('ED-General-auth-modal');
         let mode = 'signIn';
@@ -109,22 +161,65 @@
         const cancelBtn = document.getElementById('ED-General-auth-cancel-btn');
         const t = window.EDTranslation?.getText || ((k) => k);
 
+        // Step containers
+        const step1 = document.getElementById('auth-step-1');
+        const step2 = document.getElementById('auth-step-2');
+        const backBtn = document.getElementById('auth-step-2-back');
+        const professionSelect = document.getElementById('prof-profession');
+        const classGroup = document.getElementById('student-class-group');
+
+        let currentUser = null; // store the user after sign‑up
+
         function setMode(newMode) {
           mode = newMode;
           titleEl.textContent = mode === 'signIn' ? t('auth.signIn') : t('auth.signUp');
           modeLink.textContent = mode === 'signIn' ? t('auth.switchToSignUp') : t('auth.switchToSignIn');
           if (forgotLink) forgotLink.style.display = mode === 'signIn' ? '' : 'none';
           errorEl.style.display = 'none';
+          // Always start on step 1 when mode changes
+          showStep(1);
         }
+
+        function showStep(step) {
+          if (!step1 || !step2) return;
+          step1.style.display = step === 1 ? 'block' : 'none';
+          step2.style.display = step === 2 ? 'block' : 'none';
+          // Update modal title for step 2 (if in sign‑up mode)
+          if (step === 2 && mode === 'signUp') {
+            titleEl.textContent = t('auth.profile.completeTitle') || 'Complete your profile';
+          } else if (step === 1) {
+            titleEl.textContent = mode === 'signIn' ? t('auth.signIn') : t('auth.signUp');
+          }
+        }
+
+        // Toggle class field when profession changes
+        if (professionSelect && classGroup) {
+          professionSelect.addEventListener('change', () => {
+            classGroup.style.display = professionSelect.value === 'student' ? 'block' : 'none';
+          });
+        }
+
+        // Back button
+        if (backBtn) {
+          backBtn.addEventListener('click', () => showStep(1));
+        }
+
         setMode(mode);
-        modeLink.addEventListener('click', e => { e.preventDefault(); setMode(mode === 'signIn' ? 'signUp' : 'signIn'); });
+
+        // Forgot password logic
         if (forgotLink) {
           forgotLink.addEventListener('click', async e => {
             e.preventDefault();
             const email = emailInput.value.trim();
-            if (!email) { errorEl.textContent = t('auth.enterEmail') || 'Please enter your email first.'; errorEl.style.display = 'block'; return; }
+            if (!email) {
+              errorEl.textContent = t('auth.enterEmail') || 'Please enter your email first.';
+              errorEl.style.display = 'block';
+              return;
+            }
             try {
-              const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: 'https://educational-general-dashboard.netlify.app/reset-password.html' });
+              const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: 'https://educational-general-dashboard.netlify.app/reset-password.html'
+              });
               if (error) throw error;
               errorEl.textContent = t('auth.forgotPasswordSent');
               errorEl.style.color = 'var(--ED-General-color-accent-default)';
@@ -136,24 +231,93 @@
             }
           });
         }
+
+        // Mode toggle
+        modeLink.addEventListener('click', e => {
+          e.preventDefault();
+          setMode(mode === 'signIn' ? 'signUp' : 'signIn');
+        });
+
+        // Main form submit handler – handles both steps
         form.addEventListener('submit', async e => {
           e.preventDefault();
-          errorEl.style.display = 'none'; errorEl.style.color = '#f44336';
-          const email = emailInput.value.trim(), password = passwordInput.value;
+          errorEl.style.display = 'none';
+          errorEl.style.color = '#f44336';
+
+          // ----- Step 2 visible → save profile -----
+          if (step2 && step2.style.display !== 'none' && mode === 'signUp') {
+            if (!currentUser) {
+              errorEl.textContent = 'User not found. Please try again.';
+              errorEl.style.display = 'block';
+              return;
+            }
+
+            const username = document.getElementById('prof-username')?.value.trim() || '';
+            const avatarEl = document.querySelector('input[name="avatar"]:checked');
+            const avatar = avatarEl ? avatarEl.value : '🦉';
+            const profession = document.getElementById('prof-profession')?.value || '';
+            const classGrade = profession === 'student' ? document.getElementById('prof-class')?.value || null : null;
+            const birthday = document.getElementById('prof-birthday')?.value || null;
+            const prefLanguage = document.getElementById('prof-language')?.value || '';
+            const prefMode = document.getElementById('prof-mode')?.value || '';
+            const howKnow = document.getElementById('prof-how-know')?.value || '';
+
+            const { error: profileError } = await supabase.from('profiles').insert({
+              id: currentUser.id,
+              username,
+              avatar,
+              profession,
+              class: classGrade,
+              birthday,
+              preferred_language: prefLanguage,
+              preferred_mode: prefMode,
+              how_did_you_know: howKnow
+            });
+
+            if (profileError) {
+              errorEl.textContent = (t('auth.profile.saveFailed') || 'Failed to save profile.') + ' ' + profileError.message;
+              errorEl.style.display = 'block';
+              return;
+            }
+
+            // Success – close modal
+            modal.remove();
+            return;
+          }
+
+          // ----- Step 1: sign in or sign up (initial) -----
+          const email = emailInput.value.trim();
+          const password = passwordInput.value;
+
           try {
             if (mode === 'signIn') {
               const { error } = await supabase.auth.signInWithPassword({ email, password });
               if (error) throw error;
+              modal.remove();
             } else {
-              const { error } = await supabase.auth.signUp({ email, password });
+              // Sign Up – create user, then show step 2
+              const { data: signUpData, error } = await supabase.auth.signUp({ email, password });
               if (error) throw error;
-              alert('Check your email for a confirmation link (if email confirmation is enabled).');
+
+              currentUser = signUpData.user;
+              if (!currentUser) {
+                errorEl.textContent = 'Sign‑up succeeded but user data is missing.';
+                errorEl.style.display = 'block';
+                return;
+              }
+              // Proceed to profile questionnaire
+              showStep(2);
             }
-            modal.remove();
-          } catch (err) { errorEl.textContent = err.message; errorEl.style.display = 'block'; }
+          } catch (err) {
+            errorEl.textContent = err.message;
+            errorEl.style.display = 'block';
+          }
         });
+
         cancelBtn.addEventListener('click', () => modal.remove());
-        modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+        modal.addEventListener('click', e => {
+          if (e.target === modal) modal.remove();
+        });
       }
 
     } catch (err) {
