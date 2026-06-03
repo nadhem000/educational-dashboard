@@ -246,44 +246,57 @@
 
           // ----- Step 2 visible → save profile -----
           if (step2 && step2.style.display !== 'none' && mode === 'signUp') {
-            if (!currentUser) {
-              errorEl.textContent = 'User not found. Please try again.';
-              errorEl.style.display = 'block';
-              return;
-            }
+  if (!currentUser) {
+    errorEl.textContent = 'User not found. Please try again.';
+    errorEl.style.display = 'block';
+    return;
+  }
 
-            const username = document.getElementById('prof-username')?.value.trim() || '';
-            const avatarEl = document.querySelector('input[name="avatar"]:checked');
-            const avatar = avatarEl ? avatarEl.value : '🦉';
-            const profession = document.getElementById('prof-profession')?.value || '';
-            const classGrade = profession === 'student' ? document.getElementById('prof-class')?.value || null : null;
-            const birthday = document.getElementById('prof-birthday')?.value || null;
-            const prefLanguage = document.getElementById('prof-language')?.value || '';
-            const prefMode = document.getElementById('prof-mode')?.value || '';
-            const howKnow = document.getElementById('prof-how-know')?.value || '';
+  // --- Manual validation ---
+  const username = document.getElementById('prof-username')?.value.trim() || '';
+  const profession = document.getElementById('prof-profession')?.value || '';
 
-            const { error: profileError } = await supabase.from('profiles').insert({
-              id: currentUser.id,
-              username,
-              avatar,
-              profession,
-              class: classGrade,
-              birthday,
-              preferred_language: prefLanguage,
-              preferred_mode: prefMode,
-              how_did_you_know: howKnow
-            });
+  if (!username) {
+    errorEl.textContent = t('auth.profile.usernameRequired') || 'Please enter a username.';
+    errorEl.style.display = 'block';
+    return;
+  }
+  if (!profession) {
+    errorEl.textContent = t('auth.profile.professionRequired') || 'Please select a profession.';
+    errorEl.style.display = 'block';
+    return;
+  }
 
-            if (profileError) {
-              errorEl.textContent = (t('auth.profile.saveFailed') || 'Failed to save profile.') + ' ' + profileError.message;
-              errorEl.style.display = 'block';
-              return;
-            }
+  const avatarEl = document.querySelector('input[name="avatar"]:checked');
+  const avatar = avatarEl ? avatarEl.value : '🦉';
+  const classGrade = profession === 'student' ? document.getElementById('prof-class')?.value || null : null;
+  const birthday = document.getElementById('prof-birthday')?.value || null;
+  const prefLanguage = document.getElementById('prof-language')?.value || '';
+  const prefMode = document.getElementById('prof-mode')?.value || '';
+  const howKnow = document.getElementById('prof-how-know')?.value || '';
 
-            // Success – close modal
-            modal.remove();
-            return;
-          }
+  const { error: profileError } = await supabase.from('profiles').insert({
+    id: currentUser.id,
+    username,
+    avatar,
+    profession,
+    class: classGrade,
+    birthday,
+    preferred_language: prefLanguage,
+    preferred_mode: prefMode,
+    how_did_you_know: howKnow
+  });
+
+  if (profileError) {
+    errorEl.textContent = (t('auth.profile.saveFailed') || 'Failed to save profile.') + ' ' + profileError.message;
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  // Success – close modal
+  modal.remove();
+  return;
+}
 
           // ----- Step 1: sign in or sign up (initial) -----
           const email = emailInput.value.trim();
