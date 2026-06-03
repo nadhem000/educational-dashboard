@@ -126,18 +126,22 @@
 
         // How did you know
         const howSelect = document.getElementById('prof-how-know');
-        if (howSelect) {
-          howSelect.innerHTML = '';
-          ['', 'friend', 'social_media', 'search', 'other'].forEach(value => {
-            const opt = document.createElement('option');
-            opt.value = value;
-            if (value) {
-              const key = 'auth.profile.how' + value.charAt(0).toUpperCase() + value.slice(1); // e.g. howFriend
-              opt.textContent = t(key) || value;
-            }
-            howSelect.appendChild(opt);
-          });
-        }
+if (howSelect) {
+  howSelect.innerHTML = '';
+  const howOptions = [
+    { value: '',         key: '' },
+    { value: 'friend',   key: 'auth.profile.howFriend' },
+    { value: 'social_media', key: 'auth.profile.howSocial' },
+    { value: 'search',   key: 'auth.profile.howSearch' },
+    { value: 'other',    key: 'auth.profile.howOther' }
+  ];
+  howOptions.forEach(opt => {
+    const el = document.createElement('option');
+    el.value = opt.value;
+    el.textContent = opt.value ? (t(opt.key) || opt.value) : '';
+    howSelect.appendChild(el);
+  });
+}
       }
 
       // ---------- Modal logic ----------

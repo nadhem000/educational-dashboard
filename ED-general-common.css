@@ -628,6 +628,8 @@ body {
   width: 90%;
   box-shadow: 0 8px 30px rgba(var(--ED-General-color-shadow-rgb), 0.3);
   color: var(--ED-General-color-text-primary);
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .ED-General-auth-modal-title {
