@@ -117,11 +117,11 @@
     const modalHTML = `
     <div id="ED-General-profile-modal" class="ED-General-auth-modal-backdrop">
       <div class="ED-General-auth-modal-box" style="max-width: 480px;">
-        <h3 class="ED-General-auth-modal-title" id="profile-modal-title">${t('profile.title', 'My Profile')}</h3>
+        <h3 class="ED-General-auth-modal-title" id="profile-modal-title">${t('auth.profile.title', 'My Profile')}</h3>
 
         <!-- Loading indicator -->
         <div id="profile-loading" style="text-align:center; padding:2rem; color:var(--ED-General-color-text-secondary);">
-          ${t('profile.loading', 'Loading profile…')}
+          ${t('auth.profile.loading', 'Loading profile…')}
         </div>
 
         <!-- Profile form (hidden until data loads) -->
@@ -239,7 +239,7 @@
               ${t('auth.cancel', 'Cancel')}
             </button>
             <button type="submit" class="ED-General-header-btn ED-General-auth-btn-primary">
-              ${t('profile.saveChanges', 'Save Changes')}
+              ${t('auth.profile.saveChanges', 'Save Changes')}
             </button>
           </div>
 
@@ -265,25 +265,21 @@
     const uploadBtn = document.getElementById('profile-avatar-upload-btn');
     const removeBtn = document.getElementById('profile-avatar-remove-btn');
     let uploadedFile = null;
-    let avatarBase64 = null;       // new base64 image (data URL)
-    let currentAvatarUrl = null;   // existing avatar_url from DB
-    let currentAvatarEmoji = '🦉'; // existing emoji from DB
-    let avatarRemoved = false;     // user explicitly removed custom avatar
-
+    let avatarBase64 = null;
+    let currentAvatarUrl = null;
+    let currentAvatarEmoji = '🦉';
+    let avatarRemoved = false;
     const MAX_AVATAR_SIZE_MB = 5;
 
-    // ── Helper: update avatar display ──
     function updateAvatarDisplay() {
       avatarDisplay.innerHTML = '';
       if (avatarRemoved) {
-        // Show selected emoji
         const selectedEmoji = document.querySelector('input[name="profile-avatar-emoji"]:checked');
         const emoji = selectedEmoji ? selectedEmoji.value : currentAvatarEmoji;
         avatarDisplay.textContent = emoji;
         avatarDisplay.style.fontSize = '2.5rem';
         avatarDisplay.style.background = 'var(--ED-General-color-bg-secondary)';
       } else if (avatarBase64) {
-        // Show newly uploaded image
         const img = document.createElement('img');
         img.src = avatarBase64;
         img.style.width = '100%';
@@ -291,7 +287,6 @@
         img.style.objectFit = 'cover';
         avatarDisplay.appendChild(img);
       } else if (currentAvatarUrl) {
-        // Show existing image from DB
         const img = document.createElement('img');
         img.src = currentAvatarUrl;
         img.style.width = '100%';
@@ -299,21 +294,18 @@
         img.style.objectFit = 'cover';
         avatarDisplay.appendChild(img);
       } else {
-        // Show emoji
         avatarDisplay.textContent = currentAvatarEmoji;
         avatarDisplay.style.fontSize = '2.5rem';
         avatarDisplay.style.background = 'var(--ED-General-color-bg-secondary)';
       }
     }
 
-    // ── Toggle class field ──
     if (professionSelect && classGroup) {
       professionSelect.addEventListener('change', () => {
         classGroup.style.display = professionSelect.value === 'student' ? 'block' : 'none';
       });
     }
 
-    // ── Upload button ──
     if (uploadBtn) {
       uploadBtn.addEventListener('click', () => fileInput.click());
     }
@@ -322,15 +314,14 @@
         const file = e.target.files[0];
         if (!file) return;
         if (file.size > MAX_AVATAR_SIZE_MB * 1024 * 1024) {
-          showMessage(t('profile.imageTooLarge', 'Image must be smaller than 5 MB.'), 'error');
+          showMessage(t('auth.profile.imageTooLarge', 'Image must be smaller than 5 MB.'), 'error');
           fileInput.value = '';
           return;
         }
         uploadedFile = file;
-        // Preview before compression
         const reader = new FileReader();
         reader.onload = (ev) => {
-          avatarBase64 = ev.target.result; // temporary preview
+          avatarBase64 = ev.target.result;
           avatarRemoved = false;
           updateAvatarDisplay();
         };
@@ -340,7 +331,6 @@
       });
     }
 
-    // ── Remove button ──
     if (removeBtn) {
       removeBtn.addEventListener('click', () => {
         uploadedFile = null;
@@ -353,20 +343,18 @@
       });
     }
 
-    // ── Emoji radio change ──
     document.querySelectorAll('input[name="profile-avatar-emoji"]').forEach(radio => {
       radio.addEventListener('change', () => {
         if (radio.checked) {
           uploadedFile = null;
           avatarBase64 = null;
-          avatarRemoved = true; // using emoji means no custom image
+          avatarRemoved = true;
           updateAvatarDisplay();
           clearMessage();
         }
       });
     });
 
-    // ── Message helpers ──
     function showMessage(text, type) {
       if (!messageEl) return;
       messageEl.textContent = text;
@@ -377,14 +365,12 @@
       if (messageEl) messageEl.style.display = 'none';
     }
 
-    // ── Close modal helpers ──
     function closeModal() { modal.remove(); }
     cancelBtn.addEventListener('click', closeModal);
     modal.addEventListener('click', e => {
       if (e.target === modal) closeModal();
     });
 
-    // ── Fetch profile data ──
     try {
       const { data: profile, error } = await supabase
         .from('profiles')
@@ -394,12 +380,10 @@
 
       if (error) throw error;
 
-      // Hide loading, show form
       loadingEl.style.display = 'none';
       formEl.style.display = 'block';
 
       if (profile) {
-        // Populate fields
         document.getElementById('profile-username').value = profile.username || '';
         document.getElementById('profile-profession').value = profile.profession || 'student';
         classGroup.style.display = profile.profession === 'student' ? 'block' : 'none';
@@ -409,16 +393,13 @@
         document.getElementById('profile-mode').value = profile.preferred_mode || 'light';
         document.getElementById('profile-how-know').value = profile.how_did_you_know || 'friend';
 
-        // Avatar
         currentAvatarUrl = profile.avatar_url || null;
         currentAvatarEmoji = profile.avatar || '🦉';
-        avatarRemoved = !currentAvatarUrl; // if no custom image, we're in emoji mode
-        // Check matching emoji radio
+        avatarRemoved = !currentAvatarUrl;
         const emojiRadio = document.querySelector(`input[name="profile-avatar-emoji"][value="${currentAvatarEmoji}"]`);
         if (emojiRadio) emojiRadio.checked = true;
         updateAvatarDisplay();
       } else {
-        // No profile yet – show defaults
         document.getElementById('profile-username').value = '';
         document.getElementById('profile-profession').value = 'student';
         classGroup.style.display = 'block';
@@ -436,10 +417,9 @@
     } catch (err) {
       loadingEl.style.display = 'none';
       formEl.style.display = 'block';
-      showMessage(t('profile.loadError', 'Failed to load profile.') + ' ' + err.message, 'error');
+      showMessage(t('auth.profile.loadError', 'Failed to load profile.') + ' ' + err.message, 'error');
     }
 
-    // ── Form submit – save changes ──
     formEl.addEventListener('submit', async (e) => {
       e.preventDefault();
       clearMessage();
@@ -457,32 +437,27 @@
         return;
       }
 
-      // Determine final avatar values
       let finalAvatarUrl = null;
       let finalAvatarEmoji = document.querySelector('input[name="profile-avatar-emoji"]:checked')?.value || currentAvatarEmoji;
 
       if (avatarRemoved) {
-        // User wants emoji only, no custom image
         finalAvatarUrl = null;
       } else if (uploadedFile) {
-        // Compress new upload
         try {
           finalAvatarUrl = await resizeAndCompressImage(uploadedFile, 200, 200, 0.6);
           uploadedFile = null;
           fileInput.value = '';
         } catch (err) {
-          showMessage(t('profile.imageProcessError', 'Failed to process image. Please try a different one.'), 'error');
+          showMessage(t('auth.profile.imageProcessError', 'Failed to process image. Please try a different one.'), 'error');
           return;
         }
       } else {
-        // Keep existing image
         finalAvatarUrl = currentAvatarUrl;
       }
 
-      // Show saving state
       const submitBtn = formEl.querySelector('button[type="submit"]');
       const originalText = submitBtn.textContent;
-      submitBtn.textContent = t('profile.saving', 'Saving…');
+      submitBtn.textContent = t('auth.profile.saving', 'Saving…');
       submitBtn.disabled = true;
 
       try {
@@ -503,20 +478,18 @@
 
         if (error) throw error;
 
-        showMessage(t('profile.saveSuccess', 'Profile saved successfully!'), 'success');
+        showMessage(t('auth.profile.saveSuccess', 'Profile saved successfully!'), 'success');
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
 
-        // Update local state
         currentAvatarUrl = finalAvatarUrl;
         currentAvatarEmoji = finalAvatarEmoji;
         if (finalAvatarUrl) avatarRemoved = false;
         updateAvatarDisplay();
 
-        // Close after a short delay
         setTimeout(closeModal, 1500);
       } catch (err) {
-        showMessage(t('profile.saveError', 'Failed to save profile.') + ' ' + err.message, 'error');
+        showMessage(t('auth.profile.saveError', 'Failed to save profile.') + ' ' + err.message, 'error');
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
       }
@@ -533,9 +506,8 @@
     const btnContainer = document.createElement('span');
     btnContainer.id = 'ED-General-profile-btn-container';
     btnContainer.style.display = 'inline-flex';
-    btnContainer.innerHTML = `<button id="ED-General-profile-btn" class="ED-General-header-btn" style="display:none;" title="${t('profile.buttonTitle', 'View and edit your profile')}">${t('profile.button', 'Profile')}</button>`;
+    btnContainer.innerHTML = `<button id="ED-General-profile-btn" class="ED-General-header-btn" style="display:none;" title="${t('auth.profile.buttonTitle', 'View and edit your profile')}">${t('auth.profile.button', 'Profile')}</button>`;
 
-    // Insert before the auth button if it exists, otherwise append
     const authContainer = document.getElementById('ED-General-auth-btn-container');
     if (authContainer) {
       controls.insertBefore(btnContainer, authContainer);
@@ -544,15 +516,12 @@
     }
   }
 
-  // ──────────────────────────────────────────────
-  // 7. Update profile button visibility
-  // ──────────────────────────────────────────────
   function updateProfileButton(user) {
     const btn = document.getElementById('ED-General-profile-btn');
     if (!btn) return;
     if (user) {
-      btn.textContent = t('profile.button', 'Profile');
-      btn.title = t('profile.buttonTitle', 'View and edit your profile');
+      btn.textContent = t('auth.profile.button', 'Profile');
+      btn.title = t('auth.profile.buttonTitle', 'View and edit your profile');
       btn.onclick = () => showProfileModal(user);
       btn.style.display = 'inline-flex';
     } else {
@@ -561,9 +530,6 @@
     }
   }
 
-  // ──────────────────────────────────────────────
-  // 8. Main init
-  // ──────────────────────────────────────────────
   async function init() {
     try {
       const Supabase = await loadSupabaseClient();
@@ -572,20 +538,14 @@
 
       insertProfileButton();
 
-      // Listen for auth state changes
       supabase.auth.onAuthStateChange((event, session) => {
         updateProfileButton(session?.user ?? null);
       });
 
-      // Check initial session
       const { data: { session } } = await supabase.auth.getSession();
       updateProfileButton(session?.user ?? null);
 
-      // Re-translate button text when language changes
       document.addEventListener('translationsApplied', () => {
-        const { data: { session: s } } = supabase.auth.getSession();
-        // supabase.auth.getSession() returns a Promise but in event handlers
-        // we'll just re-read. Since we can't easily await here, we schedule a microtask.
         supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
           updateProfileButton(currentSession?.user ?? null);
         });
@@ -595,7 +555,6 @@
     }
   }
 
-  // ── Start ──
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
