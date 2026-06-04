@@ -61,24 +61,41 @@
         />
 
         <!-- Avatar choice (radio buttons with emoji) -->
-        <fieldset style="margin: 0.8rem 0; border: none; padding: 0;">
-          <legend data-i18n="auth.profile.avatarLabel"
-                  style="font-size: 0.85rem; margin-bottom: 0.25rem;">
-            Choose an avatar
-          </legend>
-          <label style="cursor: pointer;">
-            <input type="radio" name="avatar" value="🦊" /> 🦊
-          </label>
-          <label style="cursor: pointer;">
-            <input type="radio" name="avatar" value="🐼" /> 🐼
-          </label>
-          <label style="cursor: pointer;">
-            <input type="radio" name="avatar" value="🦉" checked /> 🦉
-          </label>
-          <label style="cursor: pointer;">
-            <input type="radio" name="avatar" value="🐨" /> 🐨
-          </label>
-        </fieldset>
+        <!-- ========== Avatar choice (radio emoji + custom upload) ========== -->
+<fieldset style="margin: 0.8rem 0; border: none; padding: 0;">
+  <legend data-i18n="auth.profile.avatarLabel"
+          style="font-size: 0.85rem; margin-bottom: 0.25rem;">
+    Choose an avatar
+  </legend>
+  <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+    <!-- Emoji selection (fallback) -->
+    <label style="cursor: pointer;">
+      <input type="radio" name="avatar" value="🦊" /> 🦊
+    </label>
+    <label style="cursor: pointer;">
+      <input type="radio" name="avatar" value="🐼" /> 🐼
+    </label>
+    <label style="cursor: pointer;">
+      <input type="radio" name="avatar" value="🦉" checked /> 🦉
+    </label>
+    <label style="cursor: pointer;">
+      <input type="radio" name="avatar" value="🐨" /> 🐨
+    </label>
+    <!-- Upload custom image -->
+    <label style="cursor: pointer; margin-left: 1rem;">
+      <input type="file" id="prof-avatar-upload" accept="image/*" style="display:none;" />
+      <span id="prof-avatar-upload-btn" class="ED-General-header-btn"
+            data-i18n="auth.profile.uploadAvatar">📷 Upload</span>
+    </label>
+  </div>
+  <!-- Image preview & remove button -->
+  <div id="prof-avatar-preview" style="margin-top: 0.5rem; display: none;">
+    <img id="prof-avatar-preview-img" src="" alt="Avatar preview"
+         style="max-width: 80px; max-height: 80px; border-radius: 50%; object-fit: cover;" />
+    <button type="button" id="prof-avatar-remove" style="font-size: 0.8rem; margin-left: 0.5rem;"
+            data-i18n="auth.profile.removeAvatar">✕ Remove</button>
+  </div>
+</fieldset>
 
         <!-- Profession -->
         <label for="prof-profession" data-i18n="auth.profile.professionLabel"

@@ -1,4 +1,5 @@
 // ED-general-auth.js – Sign in / up / out, with profile questionnaire on sign‑up
+// MODIFIED: now supports custom avatar upload via base64 (resized & compressed)
 (function () {
   'use strict';
 
@@ -54,7 +55,6 @@
     try {
       const Supabase = await loadSupabaseClient();
       const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
       await waitForHeaderControls();
 
       function insertAuthButton() {
@@ -92,7 +92,6 @@
       // ---------- Helper: translate profile <select> options ----------
       function translateProfileOptions() {
         const t = window.EDTranslation?.getText || ((k) => k);
-
         // Profession
         const profSelect = document.getElementById('prof-profession');
         if (profSelect) {
@@ -101,47 +100,45 @@
             const opt = document.createElement('option');
             opt.value = value;
             if (value) {
-              const key = 'auth.profile.' + value + 'Option'; // e.g. auth.profile.studentOption
+              const key = 'auth.profile.' + value + 'Option';
               opt.textContent = t(key) || value;
             }
             profSelect.appendChild(opt);
           });
         }
-
         // Class (grades)
         const classSelect = document.getElementById('prof-class');
         if (classSelect) {
           classSelect.innerHTML = '';
-          const grades = ['', '7', '8', '9', '10', '11', '12']; // adjust as needed
+          const grades = ['', '7', '8', '9', '10', '11', '12'];
           grades.forEach(value => {
             const opt = document.createElement('option');
             opt.value = value;
             if (value) {
-              const key = 'auth.profile.grade' + value; // e.g. auth.profile.grade7
+              const key = 'auth.profile.grade' + value;
               opt.textContent = t(key) || value;
             }
             classSelect.appendChild(opt);
           });
         }
-
         // How did you know
         const howSelect = document.getElementById('prof-how-know');
-if (howSelect) {
-  howSelect.innerHTML = '';
-  const howOptions = [
-    { value: '',         key: '' },
-    { value: 'friend',   key: 'auth.profile.howFriend' },
-    { value: 'social_media', key: 'auth.profile.howSocial' },
-    { value: 'search',   key: 'auth.profile.howSearch' },
-    { value: 'other',    key: 'auth.profile.howOther' }
-  ];
-  howOptions.forEach(opt => {
-    const el = document.createElement('option');
-    el.value = opt.value;
-    el.textContent = opt.value ? (t(opt.key) || opt.value) : '';
-    howSelect.appendChild(el);
-  });
-}
+        if (howSelect) {
+          howSelect.innerHTML = '';
+          const howOptions = [
+            { value: '',         key: '' },
+            { value: 'friend',   key: 'auth.profile.howFriend' },
+            { value: 'social_media', key: 'auth.profile.howSocial' },
+            { value: 'search',   key: 'auth.profile.howSearch' },
+            { value: 'other',    key: 'auth.profile.howOther' }
+          ];
+          howOptions.forEach(opt => {
+            const el = document.createElement('option');
+            el.value = opt.value;
+            el.textContent = opt.value ? (t(opt.key) || opt.value) : '';
+            howSelect.appendChild(el);
+          });
+        }
       }
 
       // ---------- Modal logic ----------
@@ -151,7 +148,7 @@ if (howSelect) {
         const html = await loadModalHTML();
         document.body.insertAdjacentHTML('beforeend', html);
         if (window.EDTranslation) EDTranslation.translatePage();
-        translateProfileOptions(); // fill selects with translated texts
+        translateProfileOptions();
 
         const modal = document.getElementById('ED-General-auth-modal');
         let mode = 'signIn';
@@ -171,8 +168,17 @@ if (howSelect) {
         const backBtn = document.getElementById('auth-step-2-back');
         const professionSelect = document.getElementById('prof-profession');
         const classGroup = document.getElementById('student-class-group');
+        let currentUser = null;
 
-        let currentUser = null; // store the user after sign‑up
+        // --- NEW: avatar upload state ---
+        const fileInput = document.getElementById('prof-avatar-upload');
+        const uploadBtn = document.getElementById('prof-avatar-upload-btn');
+        const previewDiv = document.getElementById('prof-avatar-preview');
+        const previewImg = document.getElementById('prof-avatar-preview-img');
+        const removeBtn = document.getElementById('prof-avatar-remove');
+        let uploadedFile = null;          // File object selected by user
+        let avatarBase64 = null;          // final compressed base64 string (data URL)
+        const MAX_AVATAR_SIZE_MB = 5;     // limit raw file size before compression
 
         function setMode(newMode) {
           mode = newMode;
@@ -180,7 +186,6 @@ if (howSelect) {
           modeLink.textContent = mode === 'signIn' ? t('auth.switchToSignUp') : t('auth.switchToSignIn');
           if (forgotLink) forgotLink.style.display = mode === 'signIn' ? '' : 'none';
           errorEl.style.display = 'none';
-          // Always start on step 1 when mode changes
           showStep(1);
         }
 
@@ -188,7 +193,6 @@ if (howSelect) {
           if (!step1 || !step2) return;
           step1.style.display = step === 1 ? 'block' : 'none';
           step2.style.display = step === 2 ? 'block' : 'none';
-          // Update modal title for step 2 (if in sign‑up mode)
           if (step === 2 && mode === 'signUp') {
             titleEl.textContent = t('auth.profile.completeTitle') || 'Complete your profile';
           } else if (step === 1) {
@@ -206,6 +210,47 @@ if (howSelect) {
         // Back button
         if (backBtn) {
           backBtn.addEventListener('click', () => showStep(1));
+        }
+
+        // --- NEW: Avatar upload handlers ---
+        if (uploadBtn) {
+          uploadBtn.addEventListener('click', () => fileInput.click());
+        }
+        if (fileInput) {
+          fileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            // check file size
+            if (file.size > MAX_AVATAR_SIZE_MB * 1024 * 1024) {
+              errorEl.textContent = `Image must be smaller than ${MAX_AVATAR_SIZE_MB} MB.`;
+              errorEl.style.display = 'block';
+              fileInput.value = '';
+              return;
+            }
+            uploadedFile = file;
+            // show a quick preview (before compression, using FileReader)
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+              previewImg.src = ev.target.result;
+              previewDiv.style.display = 'flex';
+            };
+            reader.readAsDataURL(file);
+            // uncheck all emoji radios
+            document.querySelectorAll('input[name="avatar"]').forEach(r => r.checked = false);
+            // remove any previous error
+            errorEl.style.display = 'none';
+          });
+        }
+        if (removeBtn) {
+          removeBtn.addEventListener('click', () => {
+            uploadedFile = null;
+            avatarBase64 = null;
+            fileInput.value = '';
+            previewDiv.style.display = 'none';
+            // re-select the default emoji
+            const defaultEmoji = document.querySelector('input[name="avatar"][value="🦉"]');
+            if (defaultEmoji) defaultEmoji.checked = true;
+          });
         }
 
         setMode(mode);
@@ -250,62 +295,79 @@ if (howSelect) {
 
           // ----- Step 2 visible → save profile -----
           if (step2 && step2.style.display !== 'none' && mode === 'signUp') {
-  if (!currentUser) {
-    errorEl.textContent = 'User not found. Please try again.';
-    errorEl.style.display = 'block';
-    return;
-  }
+            if (!currentUser) {
+              errorEl.textContent = 'User not found. Please try again.';
+              errorEl.style.display = 'block';
+              return;
+            }
 
-  // --- Manual validation ---
-  const username = document.getElementById('prof-username')?.value.trim() || '';
-  const profession = document.getElementById('prof-profession')?.value || '';
+            // --- Manual validation ---
+            const username = document.getElementById('prof-username')?.value.trim() || '';
+            const profession = document.getElementById('prof-profession')?.value || '';
+            if (!username) {
+              errorEl.textContent = t('auth.profile.usernameRequired') || 'Please enter a username.';
+              errorEl.style.display = 'block';
+              return;
+            }
+            if (!profession) {
+              errorEl.textContent = t('auth.profile.professionRequired') || 'Please select a profession.';
+              errorEl.style.display = 'block';
+              return;
+            }
 
-  if (!username) {
-    errorEl.textContent = t('auth.profile.usernameRequired') || 'Please enter a username.';
-    errorEl.style.display = 'block';
-    return;
-  }
-  if (!profession) {
-    errorEl.textContent = t('auth.profile.professionRequired') || 'Please select a profession.';
-    errorEl.style.display = 'block';
-    return;
-  }
+            // --- Determine avatar values ---
+            // Emoji fallback (always stored in `avatar` column)
+            const avatarEmoji = document.querySelector('input[name="avatar"]:checked')?.value || '🦉';
 
-  const avatarEl = document.querySelector('input[name="avatar"]:checked');
-  const avatar = avatarEl ? avatarEl.value : '🦉';
-  const classGrade = profession === 'student' ? document.getElementById('prof-class')?.value || null : null;
-  const birthday = document.getElementById('prof-birthday')?.value || null;
-  const prefLanguage = document.getElementById('prof-language')?.value || '';
-  const prefMode = document.getElementById('prof-mode')?.value || '';
-  const howKnow = document.getElementById('prof-how-know')?.value || '';
+            // If a custom image was selected, compress it now
+            if (uploadedFile) {
+              try {
+                // resize and compress to max 200x200 px, JPEG quality 0.6
+                avatarBase64 = await resizeAndCompressImage(uploadedFile, 200, 200, 0.6);
+                // Reset the file input so it's clear for next time
+                uploadedFile = null;
+                fileInput.value = '';
+              } catch (err) {
+                errorEl.textContent = 'Failed to process the image. Please try a different one.';
+                errorEl.style.display = 'block';
+                return;
+              }
+            }
 
-  const { error: profileError } = await supabase.from('profiles').insert({
-    id: currentUser.id,
-    username,
-    avatar,
-    profession,
-    class: classGrade,
-    birthday,
-    preferred_language: prefLanguage,
-    preferred_mode: prefMode,
-    how_did_you_know: howKnow
-  });
+            const classGrade = profession === 'student' ? document.getElementById('prof-class')?.value || null : null;
+            const birthday = document.getElementById('prof-birthday')?.value || null;
+            const prefLanguage = document.getElementById('prof-language')?.value || '';
+            const prefMode = document.getElementById('prof-mode')?.value || '';
+            const howKnow = document.getElementById('prof-how-know')?.value || '';
 
-  if (profileError) {
-    errorEl.textContent = (t('auth.profile.saveFailed') || 'Failed to save profile.') + ' ' + profileError.message;
-    errorEl.style.display = 'block';
-    return;
-  }
+            // --- Insert profile ---
+            const { error: profileError } = await supabase.from('profiles').insert({
+              id: currentUser.id,
+              username,
+              avatar: avatarEmoji,                          // always save emoji fallback
+              avatar_url: avatarBase64 || null,             // base64 data URL (null if none)
+              profession,
+              class: classGrade,
+              birthday,
+              preferred_language: prefLanguage,
+              preferred_mode: prefMode,
+              how_did_you_know: howKnow
+            });
 
-  // Success – close modal
-  modal.remove();
-  return;
-}
+            if (profileError) {
+              errorEl.textContent = (t('auth.profile.saveFailed') || 'Failed to save profile.') + ' ' + profileError.message;
+              errorEl.style.display = 'block';
+              return;
+            }
+
+            // Success – close modal
+            modal.remove();
+            return;
+          }
 
           // ----- Step 1: sign in or sign up (initial) -----
           const email = emailInput.value.trim();
           const password = passwordInput.value;
-
           try {
             if (mode === 'signIn') {
               const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -315,7 +377,6 @@ if (howSelect) {
               // Sign Up – create user, then show step 2
               const { data: signUpData, error } = await supabase.auth.signUp({ email, password });
               if (error) throw error;
-
               currentUser = signUpData.user;
               if (!currentUser) {
                 errorEl.textContent = 'Sign‑up succeeded but user data is missing.';
@@ -341,6 +402,55 @@ if (howSelect) {
       console.error('ED-auth initialisation failed:', err);
     }
   }
+
+  // ========== NEW: Helper to resize & compress image to base64 ==========
+  /**
+   * Resize an image file to fit within a bounding box, convert to JPEG at given quality,
+   * and return a base64 data URL string.
+   * @param {File} file - The original image file.
+   * @param {number} maxWidth - Maximum width in pixels.
+   * @param {number} maxHeight - Maximum height in pixels.
+   * @param {number} quality - JPEG quality between 0 and 1.
+   * @returns {Promise<string>} - data:image/jpeg;base64,...
+   */
+  function resizeAndCompressImage(file, maxWidth, maxHeight, quality) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          // Calculate new dimensions while maintaining aspect ratio
+          let width = img.width;
+          let height = img.height;
+          if (width > height) {
+            if (width > maxWidth) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width = Math.round((width * maxHeight) / height);
+              height = maxHeight;
+            }
+          }
+          // Draw on canvas
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          // Output as JPEG base64
+          const dataUrl = canvas.toDataURL('image/jpeg', quality);
+          resolve(dataUrl);
+        };
+        img.onerror = () => reject(new Error('Failed to load image for resizing.'));
+        img.src = e.target.result;
+      };
+      reader.onerror = () => reject(new Error('Failed to read file.'));
+      reader.readAsDataURL(file);
+    });
+  }
+  // ==================================================================
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
