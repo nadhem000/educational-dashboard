@@ -714,3 +714,51 @@ body {
 .ED-General-password-eye:hover {
   color: var(--ED-General-color-accent-default);
 }
+/* ---------- Avatar upload inside auth modal ---------- */
+#prof-avatar-upload-btn {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.4rem 0.9rem;             /* match .ED-General-header-btn */
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: 22px;
+  border: 1.5px solid var(--ED-General-color-border);
+  background: var(--ED-General-color-surface);
+  color: var(--ED-General-color-text-primary);
+  transition: all 0.22s ease;
+}
+#prof-avatar-upload-btn:hover {
+  border-color: var(--ED-General-color-accent-default);
+  background: var(--ED-General-color-accent-soft);
+  box-shadow: 0 2px 8px rgba(var(--ED-General-color-accent-rgb), 0.12);
+}
+#prof-avatar-preview {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+#prof-avatar-preview-img {
+  max-width: 80px;
+  max-height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--ED-General-color-border);
+}
+#prof-avatar-remove {
+  font-size: 0.8rem;
+  padding: 0.15rem 0.5rem;
+  border: 1px solid var(--ED-General-color-border);
+  background: var(--ED-General-color-bg-secondary);
+  color: var(--ED-General-color-text-secondary);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+#prof-avatar-remove:hover {
+  background: var(--ED-General-color-accent-default);
+  color: var(--ED-General-color-text-on-accent);
+  border-color: var(--ED-General-color-accent-default);
+}

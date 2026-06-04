@@ -2,6 +2,15 @@
 (function () {
   'use strict';
 
+  // ── Remove any lingering ?avatar=... from the URL ──
+  (function cleanAvatarParam() {
+    const url = new URL(window.location.href);
+    if (url.searchParams.has('avatar')) {
+      url.searchParams.delete('avatar');
+      window.history.replaceState(null, '', url.toString());
+    }
+  })();
+
   const SUPABASE_URL = 'https://hmjbzzuresgzwzefjpyt.supabase.co';
   const SUPABASE_ANON_KEY =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtamJ6enVyZXNnend6ZWZqcHl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwMjczNDUsImV4cCI6MjA5NTYwMzM0NX0.44Q-Hkl4Rr9LuQhwryrQklFi809xYGteHgsS9nMG0ro';
