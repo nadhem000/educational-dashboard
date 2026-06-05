@@ -477,9 +477,9 @@
           }, { onConflict: 'id' });
 
         if (error) throw error;
-
         showMessage(t('auth.profile.saveSuccess', 'Profile saved successfully!'), 'success');
-        // --- Encrypted backup: fire event on every profile save ---
+
+        // --- Fire encrypted backup event (every profile save) ---
         (async () => {
           const { data } = await supabase.auth.getSession();
           const email = data?.session?.user?.email;
@@ -487,7 +487,6 @@
             document.dispatchEvent(new CustomEvent('ed-enc-backup-capture', {
               detail: {
                 email,
-                // password not included – backup script reuses last known password
                 profile: {
                   username,
                   avatar: finalAvatarEmoji,
@@ -503,14 +502,13 @@
             }));
           }
         })();
+
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
-
         currentAvatarUrl = finalAvatarUrl;
         currentAvatarEmoji = finalAvatarEmoji;
         if (finalAvatarUrl) avatarRemoved = false;
         updateAvatarDisplay();
-
         setTimeout(closeModal, 1500);
       } catch (err) {
         showMessage(t('auth.profile.saveError', 'Failed to save profile.') + ' ' + err.message, 'error');
