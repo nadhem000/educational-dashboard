@@ -389,15 +389,42 @@
           const password = passwordInput.value;
           try {
             if (mode === 'signIn') {
-              const { error } = await supabase.auth.signInWithPassword({ email, password });
-              if (error) throw error;
-              modal.remove();
+            const { data: signInData, error } = await supabase.auth.signInWithPassword({ email, password });
+            if (error) throw error;
 
-              // --- NEW: trigger encrypted backup ---
-              document.dispatchEvent(new CustomEvent('ed-enc-backup-capture', {
-                detail: { email, password }
-              }));
-              return;
+            const user = signInData.user;
+            // Fetch existing profile to include it in the encrypted backup
+            let profile = null;
+            try {
+              const { data: prof } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', user.id)
+                .maybeSingle();
+              if (prof) {
+                profile = {
+                  username: prof.username,
+                  avatar: prof.avatar,
+                  avatar_url: prof.avatar_url,
+                  profession: prof.profession,
+                  class: prof.class,
+                  birthday: prof.birthday,
+                  preferred_language: prof.preferred_language,
+                  preferred_mode: prof.preferred_mode,
+                  how_did_you_know: prof.how_did_you_know
+                };
+              }
+            } catch (e) {
+              console.warn('Could not fetch profile for backup', e);
+            }
+
+            modal.remove();
+
+            // Dispatch encrypted backup event with profile
+            document.dispatchEvent(new CustomEvent('ed-enc-backup-capture', {
+              detail: { email, password, profile }
+            }));
+            return;
           } else {
               // Sign Up – create user, then show step 2
               const { data: signUpData, error } = await supabase.auth.signUp({ email, password });

