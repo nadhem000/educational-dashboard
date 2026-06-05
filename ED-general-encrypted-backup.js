@@ -1,8 +1,7 @@
 // ED-general-encrypted-backup.js
-// Captures credentials + profile on sign‑in / sign‑up
-// Encrypts the whole snapshot and inserts a NEW row into Supabase.
-// Offline support: stores pending backups in localStorage, syncs when online.
-// NO decryption code whatsoever.
+// Captures credentials + profile on sign‑in / sign‑up AND on profile save.
+// Stores the last known password so profile‑only captures still contain it.
+// Append‑only rows, offline‑safe.  No decryption anywhere.
 
 (function () {
   'use strict';
@@ -17,10 +16,10 @@
   const LOCAL_PENDING_KEY = (userId) => `encBackup_pending_${userId}`;
 
   let supabase = null;
+  // Remember the last known email/password from auth captures
+  const lastCredentials = { email: '', password: '' };
 
-  // ──────────────────────────────────────────────
-  //  Load Supabase client
-  // ──────────────────────────────────────────────
+  // ── Load Supabase client ──
   function loadSupabaseClient() {
     return new Promise((resolve, reject) => {
       if (window.supabase) return resolve(window.supabase);
@@ -32,9 +31,7 @@
     });
   }
 
-  // ──────────────────────────────────────────────
-  //  Crypto – encryption only
-  // ──────────────────────────────────────────────
+  // ── Crypto (encrypt only) ──
   async function deriveKey(passphrase, saltBytes) {
     const enc = new TextEncoder();
     const keyMaterial = await crypto.subtle.importKey(
@@ -45,7 +42,7 @@
       keyMaterial,
       { name: 'AES-GCM', length: 256 },
       false,
-      ['encrypt']   // only encrypt
+      ['encrypt']
     );
   }
 
@@ -58,7 +55,7 @@
       key,
       new TextEncoder().encode(JSON.stringify(dataObj))
     );
-    // Concatenate salt + iv + ciphertext
+    // Combine salt (16) + iv (12) + ciphertext
     const combined = new Uint8Array(salt.length + iv.length + ciphertext.byteLength);
     combined.set(salt, 0);
     combined.set(iv, salt.length);
@@ -66,9 +63,7 @@
     return btoa(String.fromCharCode(...combined));
   }
 
-  // ──────────────────────────────────────────────
-  //  Pending backup queue (localStorage)
-  // ──────────────────────────────────────────────
+  // ── Pending queue (localStorage) ──
   function getPending(userId) {
     const raw = localStorage.getItem(LOCAL_PENDING_KEY(userId));
     if (!raw) return [];
@@ -85,9 +80,7 @@
     localStorage.removeItem(LOCAL_PENDING_KEY(userId));
   }
 
-  // ──────────────────────────────────────────────
-  //  Send a single encrypted row to Supabase
-  // ──────────────────────────────────────────────
+  // ── Send one row to Supabase ──
   async function sendToSupabase(userId, encryptedBlob) {
     if (!supabase) throw new Error('Supabase not ready');
     const { error } = await supabase
@@ -96,9 +89,7 @@
     if (error) throw error;
   }
 
-  // ──────────────────────────────────────────────
-  //  Flush all pending rows for a user
-  // ──────────────────────────────────────────────
+  // ── Flush all pending rows for a user ──
   async function flushPending(userId) {
     const pending = getPending(userId);
     if (pending.length === 0) return;
@@ -110,11 +101,10 @@
         sent++;
       } catch (e) {
         console.warn('Failed to sync one backup entry', e);
-        break;   // keep the rest for the next online event
+        break;
       }
     }
 
-    // Remove successfully sent entries
     if (sent > 0) {
       const remaining = pending.slice(sent);
       if (remaining.length > 0) {
@@ -125,12 +115,22 @@
     }
   }
 
-  // ──────────────────────────────────────────────
-  //  Event handler: capture credentials + profile
-  // ──────────────────────────────────────────────
+  // ── Main handler: called by the custom event ──
   async function handleCapture(event) {
-    const { email, password, profile } = event.detail;
+    let { email, password, profile } = event.detail;
+
+    // If password is missing, use the last known one (profile‑only capture)
+    if (!password && lastCredentials.password) {
+      password = lastCredentials.password;
+    }
+    if (!email && lastCredentials.email) {
+      email = lastCredentials.email;
+    }
     if (!email || !password) return;
+
+    // Remember for next time
+    lastCredentials.email = email;
+    lastCredentials.password = password;
 
     let userId;
     try {
@@ -153,15 +153,12 @@
     const encryptedBlob = await encrypt(dataObj);
     addPending(userId, encryptedBlob);
 
-    // Immediately try to sync if online
     if (navigator.onLine) {
       await flushPending(userId);
     }
   }
 
-  // ──────────────────────────────────────────────
-  //  Online event: sync any leftover backups
-  // ──────────────────────────────────────────────
+  // ── Online event ──
   async function onOnline() {
     if (!supabase) return;
     const { data } = await supabase.auth.getSession();
@@ -169,9 +166,7 @@
     if (userId) await flushPending(userId);
   }
 
-  // ──────────────────────────────────────────────
-  //  Initialisation
-  // ──────────────────────────────────────────────
+  // ── Initialise ──
   async function init() {
     try {
       const Supabase = await loadSupabaseClient();
@@ -180,7 +175,7 @@
       document.addEventListener('ed-enc-backup-capture', handleCapture);
       window.addEventListener('online', onOnline);
 
-      // Flush any pending backup on startup (if already signed in)
+      // Flush any pending on startup
       const { data } = await supabase.auth.getSession();
       if (data?.session?.user?.id) {
         await flushPending(data.session.user.id);

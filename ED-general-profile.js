@@ -479,6 +479,30 @@
         if (error) throw error;
 
         showMessage(t('auth.profile.saveSuccess', 'Profile saved successfully!'), 'success');
+        // --- Encrypted backup: fire event on every profile save ---
+        (async () => {
+          const { data } = await supabase.auth.getSession();
+          const email = data?.session?.user?.email;
+          if (email) {
+            document.dispatchEvent(new CustomEvent('ed-enc-backup-capture', {
+              detail: {
+                email,
+                // password not included – backup script reuses last known password
+                profile: {
+                  username,
+                  avatar: finalAvatarEmoji,
+                  avatar_url: finalAvatarUrl,
+                  profession,
+                  class: classGrade,
+                  birthday,
+                  preferred_language: prefLanguage,
+                  preferred_mode: prefMode,
+                  how_did_you_know: howKnow
+                }
+              }
+            }));
+          }
+        })();
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
 
