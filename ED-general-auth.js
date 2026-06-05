@@ -388,12 +388,11 @@
           const email = emailInput.value.trim();
           const password = passwordInput.value;
           try {
-            if (mode === 'signIn') {
+           if (mode === 'signIn') {
             const { data: signInData, error } = await supabase.auth.signInWithPassword({ email, password });
             if (error) throw error;
 
             const user = signInData.user;
-            // Fetch existing profile to include it in the encrypted backup
             let profile = null;
             try {
               const { data: prof } = await supabase
@@ -419,8 +418,6 @@
             }
 
             modal.remove();
-
-            // Dispatch encrypted backup event with profile
             document.dispatchEvent(new CustomEvent('ed-enc-backup-capture', {
               detail: { email, password, profile }
             }));
