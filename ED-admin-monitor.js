@@ -1,4 +1,4 @@
-// ED-admin-monitor.js – Full capture, but only when admin token is present
+// ED-admin-monitor.js – Full capture, token stored in localStorage (shared across tabs)
 (function () {
   if (window.__monitorInjected) return;
   window.__monitorInjected = true;
@@ -8,14 +8,14 @@
   const MAX_ENTRIES = 2000;
 
   // -----------------------------------------------------------------
-  // Only proceed if the admin token exists in sessionStorage
+  // Check token in localStorage (shared across all tabs)
   // -----------------------------------------------------------------
   function isMonitoringEnabled() {
-    return sessionStorage.getItem(TOKEN_KEY) === 'active';
+    return localStorage.getItem(TOKEN_KEY) === 'active';
   }
 
   // -----------------------------------------------------------------
-  // Log storage (only modified when monitoring is enabled)
+  // Log storage – only modified when token is present
   // -----------------------------------------------------------------
   let logs = [];
   try {
@@ -31,7 +31,7 @@
   }
 
   function add(level, message, extra = {}) {
-    if (!isMonitoringEnabled()) return;   // <-- silent guard
+    if (!isMonitoringEnabled()) return;   // no token → no logs
     const entry = { time: new Date().toISOString(), level, message, ...extra };
     logs.push(entry);
     save();
@@ -100,7 +100,7 @@
   });
 
   // -----------------------------------------------------------------
-  // 5. Service Worker messages
+  // 5. Service Worker messages (logs from SW)
   // -----------------------------------------------------------------
   navigator.serviceWorker?.addEventListener('message', event => {
     if (event.data) {
@@ -183,7 +183,7 @@
   window.XMLHttpRequest.prototype = OrigXHR.prototype;
 
   // -----------------------------------------------------------------
-  // 9. Optional: log when monitoring becomes active (visible in console)
+  // 9. Notify when active (visible in console)
   // -----------------------------------------------------------------
   if (isMonitoringEnabled()) {
     console.log('%c🔍 Admin monitoring ACTIVE (token present)', 'color:#0f0; font-size:14px');
