@@ -1,21 +1,27 @@
-// ED-admin-monitor.js – Full capture, token stored in localStorage (shared across tabs)
+// ED-admin-monitor.js – Full capture with separate SW pause flag
 (function () {
   if (window.__monitorInjected) return;
   window.__monitorInjected = true;
 
   const STORAGE_KEY = '__admin_logs__';
   const TOKEN_KEY = '__admin_monitor_token__';
+  const SW_PAUSE_KEY = '__admin_sw_paused__';   // true = SW logs disabled
   const MAX_ENTRIES = 2000;
 
   // -----------------------------------------------------------------
-  // Check token in localStorage (shared across all tabs)
+  // Flag checks
   // -----------------------------------------------------------------
   function isMonitoringEnabled() {
     return localStorage.getItem(TOKEN_KEY) === 'active';
   }
 
+  function isSWMonitoringEnabled() {
+    // SW logs are allowed only if main monitor is active AND SW pause is NOT set
+    return isMonitoringEnabled() && localStorage.getItem(SW_PAUSE_KEY) !== 'true';
+  }
+
   // -----------------------------------------------------------------
-  // Log storage – only modified when token is present
+  // Log storage
   // -----------------------------------------------------------------
   let logs = [];
   try {
@@ -31,14 +37,14 @@
   }
 
   function add(level, message, extra = {}) {
-    if (!isMonitoringEnabled()) return;   // no token → no logs
+    if (!isMonitoringEnabled()) return;
     const entry = { time: new Date().toISOString(), level, message, ...extra };
     logs.push(entry);
     save();
   }
 
   // -----------------------------------------------------------------
-  // 1. Console interception (log, warn, error, info, debug)
+  // Console interception (unchanged)
   // -----------------------------------------------------------------
   const origConsole = {};
   ['log', 'warn', 'error', 'info', 'debug'].forEach(method => {
@@ -61,7 +67,6 @@
     });
   });
 
-  // console.clear
   const origClear = console.clear;
   console.clear = function () {
     add('info', 'console.clear() called');
@@ -69,7 +74,7 @@
   };
 
   // -----------------------------------------------------------------
-  // 2. Global script errors
+  // Global errors
   // -----------------------------------------------------------------
   window.addEventListener('error', e => {
     if (e.message) {
@@ -79,9 +84,6 @@
     }
   });
 
-  // -----------------------------------------------------------------
-  // 3. Resource loading errors (capture phase)
-  // -----------------------------------------------------------------
   window.addEventListener('error', e => {
     if (!e.message && e.target && e.target !== window) {
       const tag = e.target.tagName || 'resource';
@@ -90,9 +92,6 @@
     }
   }, true);
 
-  // -----------------------------------------------------------------
-  // 4. Unhandled promise rejections
-  // -----------------------------------------------------------------
   window.addEventListener('unhandledrejection', e => {
     add('unhandledrejection', String(e.reason), {
       stack: e.reason && e.reason.stack ? e.reason.stack : undefined
@@ -100,20 +99,28 @@
   });
 
   // -----------------------------------------------------------------
-  // 5. Service Worker messages (logs from SW)
+  // Service Worker messages (with independent pause flag)
   // -----------------------------------------------------------------
   navigator.serviceWorker?.addEventListener('message', event => {
-    if (event.data) {
-      if (event.data.type === 'SW_LOG') {
-        add(event.data.level || 'info', event.data.message);
-      } else if (event.data.type === 'NEW_VERSION_READY') {
-        add('info', 'Service Worker: NEW_VERSION_READY (update ready)');
-      }
+    if (!event.data) return;
+    // Only log SW messages if SW monitoring is enabled
+    if (!isSWMonitoringEnabled()) return;
+
+    if (event.data.type === 'SW_LOG') {
+      add(event.data.level || 'info', event.data.message, { source: 'sw' });
+    } else if (event.data.type === 'NEW_VERSION_READY') {
+      add('info', 'Service Worker: NEW_VERSION_READY (update ready)', { source: 'sw' });
+    } else if (event.data.type === 'SW_FETCH') {
+      add('network', `SW fetch: ${event.data.method} ${event.data.url}`, { source: 'sw' });
+    } else if (event.data.type === 'SW_SYNC') {
+      add('info', `SW sync: ${event.data.tag}`, { source: 'sw' });
+    } else if (event.data.type === 'SW_PUSH') {
+      add('info', `SW push received: ${event.data.data}`, { source: 'sw' });
     }
   });
 
   // -----------------------------------------------------------------
-  // 6. PerformanceObserver – detect failed resource loads
+  // PerformanceObserver – treat 409 as info, not error
   // -----------------------------------------------------------------
   if (window.PerformanceObserver) {
     try {
@@ -121,8 +128,10 @@
         for (const entry of list.getEntries()) {
           if (entry.entryType === 'resource') {
             const status = entry.responseStatus || 0;
-            if (status === 0 || status >= 400) {
-              add('error', `Resource error: ${entry.name} (status: ${status})`);
+            if (status === 409) {
+              add('info', `Duplicate resource (409): ${entry.name}`, { source: 'resource' });
+            } else if (status === 0 || status >= 400) {
+              add('error', `Resource error: ${entry.name} (status: ${status})`, { source: 'resource' });
             }
           }
         }
@@ -132,7 +141,7 @@
   }
 
   // -----------------------------------------------------------------
-  // 7. Fetch monitoring
+  // Fetch – treat 409 as info
   // -----------------------------------------------------------------
   const origFetch = window.fetch;
   window.fetch = function (...args) {
@@ -141,7 +150,8 @@
     return origFetch.apply(this, args)
       .then(response => {
         const duration = (performance.now() - start).toFixed(1);
-        add('network', `${response.status} ${args[1]?.method || 'GET'} ${url} (${duration}ms)`, {
+        const level = response.status === 409 ? 'info' : 'network';
+        add(level, `${response.status} ${args[1]?.method || 'GET'} ${url} (${duration}ms)`, {
           status: response.status, url, method: args[1]?.method || 'GET', duration
         });
         return response;
@@ -153,7 +163,7 @@
   };
 
   // -----------------------------------------------------------------
-  // 8. XMLHttpRequest monitoring
+  // XMLHttpRequest – treat 409 as info
   // -----------------------------------------------------------------
   const OrigXHR = window.XMLHttpRequest;
   window.XMLHttpRequest = function () {
@@ -167,7 +177,8 @@
     };
     xhr.addEventListener('loadend', () => {
       const duration = (performance.now() - start).toFixed(1);
-      add('network', `${xhr.status} ${method} ${url} (${duration}ms)`, {
+      const level = xhr.status === 409 ? 'info' : 'network';
+      add(level, `${xhr.status} ${method} ${url} (${duration}ms)`, {
         status: xhr.status, url, method, duration
       });
     });
@@ -176,14 +187,20 @@
     });
     return xhr;
   };
-  // Copy static properties
   for (const key of Object.keys(OrigXHR)) {
     window.XMLHttpRequest[key] = OrigXHR[key];
   }
   window.XMLHttpRequest.prototype = OrigXHR.prototype;
 
   // -----------------------------------------------------------------
-  // 9. Notify when active (visible in console)
+  // Security: CSP violation logging
+  // -----------------------------------------------------------------
+  document.addEventListener('securitypolicyviolation', (e) => {
+    add('error', `CSP violation: ${e.violatedDirective} – ${e.blockedURI}`, { source: 'security' });
+  });
+
+  // -----------------------------------------------------------------
+  // Notify when main monitor becomes active
   // -----------------------------------------------------------------
   if (isMonitoringEnabled()) {
     console.log('%c🔍 Admin monitoring ACTIVE (token present)', 'color:#0f0; font-size:14px');

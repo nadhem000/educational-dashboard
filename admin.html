@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Monitor – Full Capture (Cross‑Tab)</title>
+  <title>Admin Monitor – Full Control + SW + Testing</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -44,7 +44,7 @@
     }
     .stat-label { font-size: 0.7rem; text-transform: uppercase; color: #8e9aaf; }
     .stat-value { font-size: 1.6rem; font-weight: 700; margin-top: 0.2rem; }
-    .controls {
+    .controls, .sw-controls {
       display: flex;
       flex-wrap: wrap;
       gap: 0.8rem;
@@ -54,6 +54,7 @@
       border-radius: 2rem;
       margin-bottom: 1.5rem;
     }
+    .sw-controls { background: #1a1e28; border-left: 3px solid #4c6ef5; }
     button, .filter-badge {
       background: #1e222b;
       border: none;
@@ -81,10 +82,11 @@
       border-radius: 1rem;
       border: 1px solid #2a2e35;
       overflow: hidden;
+      margin-bottom: 2rem;
     }
     .log-header {
       display: grid;
-      grid-template-columns: 90px 80px 1fr;
+      grid-template-columns: 90px 80px 70px 1fr;
       background: #15181f;
       padding: 0.6rem 1rem;
       font-size: 0.7rem;
@@ -92,14 +94,14 @@
       border-bottom: 1px solid #2a2e35;
     }
     .log-entries {
-      height: 55vh;
+      height: 45vh;
       overflow-y: auto;
       font-family: monospace;
       font-size: 0.75rem;
     }
     .log-entry {
       display: grid;
-      grid-template-columns: 90px 80px 1fr;
+      grid-template-columns: 90px 80px 70px 1fr;
       padding: 0.4rem 1rem;
       border-bottom: 1px solid #1e222b;
       cursor: pointer;
@@ -108,6 +110,15 @@
     .level-error, .level-unhandledrejection { color: #ff6b6b; }
     .level-warn { color: #ffd93d; }
     .level-network { color: #6c8eff; }
+    .source-sw { color: #a67cff; font-weight: bold; }
+    .testing-section, .security-section {
+      background: #15181f;
+      border-radius: 1rem;
+      padding: 1rem;
+      margin-top: 1.5rem;
+    }
+    .testing-section h3, .security-section h3 { margin-bottom: 0.8rem; font-size: 1rem; }
+    .test-buttons { display: flex; gap: 0.5rem; flex-wrap: wrap; }
     .modal {
       display: none;
       position: fixed;
@@ -132,7 +143,8 @@
       padding: 0.3rem 1rem;
       font-size: 0.7rem;
     }
-    .status-active { background: #2b8c4e; }
+    .status-active { background: #2b8c4e; color: white; }
+    .status-inactive { background: #a02c2c; color: white; }
     .dashboard-link {
       background: #2a2e35;
       padding: 0.4rem 1rem;
@@ -147,7 +159,7 @@
 <body>
 <div class="dashboard">
   <div class="header">
-    <div class="title"><h1>📡 Admin Monitor (Cross‑Tab)</h1></div>
+    <div class="title"><h1>📡 Admin Monitor (Full + SW)</h1></div>
     <div>
       <a href="/index.html" class="dashboard-link" target="_blank">🚀 Open Dashboard in New Tab</a>
     </div>
@@ -155,6 +167,7 @@
 
   <div class="stats" id="statsPanel"></div>
 
+  <!-- Main monitor controls -->
   <div class="controls">
     <button id="startStopBtn" class="btn-primary">▶️ Start Monitoring</button>
     <button id="clearLogsBtn" class="btn-danger">🗑 Clear</button>
@@ -164,6 +177,8 @@
       <span class="filter-badge" data-level="warn">Warns</span>
       <span class="filter-badge" data-level="network">Network</span>
       <span class="filter-badge" data-level="log">Console</span>
+      <span class="filter-badge" data-level="info">Info</span>
+      <span class="filter-badge" data-level="sw">SW only</span>
     </div>
     <input type="text" id="searchInput" class="search-box" placeholder="🔍 Search...">
     <button id="exportJsonBtn">📦 JSON</button>
@@ -171,50 +186,111 @@
     <button id="exportTxtBtn">📄 TXT</button>
   </div>
 
+  <!-- Service Worker specific controls -->
+  <div class="sw-controls">
+    <span style="font-size:0.8rem; color:#a67cff;">⚙️ Service Worker logs:</span>
+    <button id="swToggleBtn" class="btn-primary">▶️ Enable SW Logging</button>
+    <span id="swStatusBadge" class="status-badge status-inactive">SW inactive</span>
+  </div>
+
+  <!-- Log display -->
   <div class="log-container">
-    <div class="log-header"><div>🕒 Time</div><div>Level</div><div>Message</div></div>
+    <div class="log-header">
+      <div>🕒 Time</div>
+      <div>Level</div>
+      <div>Source</div>
+      <div>Message</div>
+    </div>
     <div class="log-entries" id="logEntries">⏸ Monitoring inactive. Click Start.</div>
+  </div>
+
+  <!-- Testing section -->
+  <div class="testing-section">
+    <h3>🧪 Testing & Simulation</h3>
+    <div class="test-buttons">
+      <button id="testConsoleLog">📢 Test console.log</button>
+      <button id="testError">💥 Test throw error</button>
+      <button id="testNetwork">🌐 Test fetch (404)</button>
+      <button id="testRejection">💔 Test unhandled rejection</button>
+      <button id="testXSS">⚠️ Test XSS simulation</button>
+    </div>
+    <div id="testOutput" style="margin-top: 0.8rem; font-size: 0.75rem; color: #8e9aaf;"></div>
+  </div>
+
+  <!-- Security monitoring section -->
+  <div class="security-section">
+    <h3>🛡️ Security Events</h3>
+    <div id="securityAlerts" style="font-size: 0.75rem; color: #ffaa33;">No CSP violations detected yet.</div>
   </div>
 </div>
 
-<div id="detailModal" class="modal"><div class="modal-content"><h3>📄 Full log</h3><pre id="modalDetailPre"></pre><button id="closeModalBtn" style="margin-top:1rem;">Close</button></div></div>
+<!-- Modal for log details -->
+<div id="detailModal" class="modal">
+  <div class="modal-content">
+    <h3>📄 Full log details</h3>
+    <pre id="modalDetailPre"></pre>
+    <button id="closeModalBtn" style="margin-top:1rem;">Close</button>
+  </div>
+</div>
 
 <script>
   (function() {
+    // ---------- constants ----------
     const STORAGE_KEY = '__admin_logs__';
     const TOKEN_KEY = '__admin_monitor_token__';
+    const SW_PAUSE_KEY = '__admin_sw_paused__';
+
     let currentLevel = 'all';
     let currentSearch = '';
 
-    function isActive() { return localStorage.getItem(TOKEN_KEY) === 'active'; }
-    function getLogs() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e) { return []; } }
+    // Helper: get active states
+    function isMainActive() { return localStorage.getItem(TOKEN_KEY) === 'active'; }
+    function isSWActive() { return localStorage.getItem(SW_PAUSE_KEY) !== 'true'; }
 
-    function updateUI() {
+    function getLogs() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e) { return []; }
+    }
+
+    // Update UI for main monitor
+    function updateMainUI() {
       const btn = document.getElementById('startStopBtn');
-      const active = isActive();
+      const active = isMainActive();
       btn.textContent = active ? '⏸️ Pause Monitoring' : '▶️ Start Monitoring';
       btn.className = active ? 'btn-danger' : 'btn-primary';
     }
 
-    function startMonitoring() {
-      localStorage.setItem(TOKEN_KEY, 'active');
-      updateUI();
-      renderLogs();
-      // Optional: reload current page to ensure monitor script sees token immediately? Not needed.
-    }
-    function pauseMonitoring() {
-      localStorage.removeItem(TOKEN_KEY);
-      updateUI();
-      renderLogs();
+    // Update UI for SW monitor
+    function updateSWUI() {
+      const btn = document.getElementById('swToggleBtn');
+      const active = isSWActive();
+      const badge = document.getElementById('swStatusBadge');
+      btn.textContent = active ? '⏸️ Pause SW Logging' : '▶️ Enable SW Logging';
+      btn.className = active ? 'btn-danger' : 'btn-primary';
+      badge.textContent = active ? 'SW active' : 'SW paused';
+      badge.className = active ? 'status-badge status-active' : 'status-badge status-inactive';
     }
 
+    // Main monitor toggle
+    function startMainMonitoring() { localStorage.setItem(TOKEN_KEY, 'active'); updateMainUI(); renderLogs(); }
+    function pauseMainMonitoring() { localStorage.removeItem(TOKEN_KEY); updateMainUI(); renderLogs(); }
+    function toggleMain() { isMainActive() ? pauseMainMonitoring() : startMainMonitoring(); }
+
+    // SW monitor toggle
+    function enableSW() { localStorage.removeItem(SW_PAUSE_KEY); updateSWUI(); renderLogs(); }
+    function pauseSW() { localStorage.setItem(SW_PAUSE_KEY, 'true'); updateSWUI(); renderLogs(); }
+    function toggleSW() { isSWActive() ? pauseSW() : enableSW(); }
+
+    // Filter logs by level and search, plus SW filter
     function filterLogs(logs) {
       let filtered = logs;
       if (currentLevel !== 'all') {
-        if (currentLevel === 'error')
+        if (currentLevel === 'sw') {
+          filtered = filtered.filter(l => l.source === 'sw');
+        } else if (currentLevel === 'error') {
           filtered = filtered.filter(l => l.level === 'error' || l.level === 'unhandledrejection');
-        else
+        } else {
           filtered = filtered.filter(l => l.level === currentLevel);
+        }
       }
       if (currentSearch.trim()) {
         const term = currentSearch.trim().toLowerCase();
@@ -223,18 +299,21 @@
       return filtered;
     }
 
+    // Update stats cards
     function updateStats(logs) {
       const total = logs.length;
       const errors = logs.filter(l => l.level === 'error' || l.level === 'unhandledrejection').length;
       const warns = logs.filter(l => l.level === 'warn').length;
       const network = logs.filter(l => l.level === 'network').length;
       const consoleLogs = logs.filter(l => l.level === 'log' || l.level === 'info').length;
+      const swLogs = logs.filter(l => l.source === 'sw').length;
       document.getElementById('statsPanel').innerHTML = `
         <div class="stat-card"><div class="stat-label">Total</div><div class="stat-value">${total}</div></div>
         <div class="stat-card"><div class="stat-label">❌ Errors</div><div class="stat-value" style="color:#ff6b6b">${errors}</div></div>
         <div class="stat-card"><div class="stat-label">⚠️ Warnings</div><div class="stat-value" style="color:#ffd93d">${warns}</div></div>
         <div class="stat-card"><div class="stat-label">🌐 Network</div><div class="stat-value" style="color:#6c8eff">${network}</div></div>
         <div class="stat-card"><div class="stat-label">📝 Console</div><div class="stat-value">${consoleLogs}</div></div>
+        <div class="stat-card"><div class="stat-label">⚙️ SW logs</div><div class="stat-value" style="color:#a67cff">${swLogs}</div></div>
       `;
     }
 
@@ -244,7 +323,7 @@
       const filtered = filterLogs(allLogs);
       const container = document.getElementById('logEntries');
       if (filtered.length === 0) {
-        container.innerHTML = isActive() ? '<div style="padding:2rem;text-align:center;">No logs match filters.</div>' : '<div style="padding:2rem;text-align:center;">⏸ Monitoring inactive. Click Start, then open your site in a new tab.</div>';
+        container.innerHTML = isMainActive() ? '<div style="padding:2rem;text-align:center;">No logs match filters.</div>' : '<div style="padding:2rem;text-align:center;">⏸ Main monitoring inactive. Click Start.</div>';
         return;
       }
       container.innerHTML = filtered.map((log, idx) => {
@@ -254,12 +333,15 @@
         else if (log.level === 'network') levelClass = 'level-network';
         else levelClass = '';
         const timeStr = log.time ? log.time.slice(11,19) : '??';
+        const source = log.source || 'page';
+        const sourceClass = source === 'sw' ? 'source-sw' : '';
         let msg = log.message;
         if (log.url) msg += ` ${log.method || ''} ${log.url} (${log.duration}ms)`;
-        if (msg.length > 120) msg = msg.slice(0,120)+'…';
+        if (msg.length > 100) msg = msg.slice(0,100)+'…';
         return `<div class="log-entry" data-full='${JSON.stringify(log).replace(/'/g, "&#39;")}'>
           <div class="log-time">${timeStr}</div>
           <div class="${levelClass}">${log.level.toUpperCase()}</div>
+          <div class="${sourceClass}">${source}</div>
           <div>${escapeHtml(msg)}</div>
         </div>`;
       }).join('');
@@ -275,18 +357,19 @@
       });
     }
 
-    function escapeHtml(str) { return str.replace(/[&<>]/g, function(m) { return m==='&'?'&amp;': m==='<'?'&lt;':'&gt;'; }); }
+    function escapeHtml(str) { return str.replace(/[&<>]/g, m => m==='&'?'&amp;': m==='<'?'&lt;':'&gt;'); }
 
+    // Exports
     function exportJSON() { download(JSON.stringify(getLogs(),null,2), 'admin_logs.json', 'application/json'); }
     function exportCSV() {
       const logs = getLogs();
-      const headers = ['time','level','message','url','method','duration','status','stack'];
-      const rows = logs.map(l => [l.time, l.level, l.message, l.url||'', l.method||'', l.duration||'', l.status||'', (l.stack||'').replace(/,/g,';')]);
+      const headers = ['time','level','source','message','url','method','duration','status','stack'];
+      const rows = logs.map(l => [l.time, l.level, l.source||'page', l.message, l.url||'', l.method||'', l.duration||'', l.status||'', (l.stack||'').replace(/,/g,';')]);
       const csv = [headers, ...rows].map(row => row.map(c => `"${c}"`).join(',')).join('\n');
       download(csv, 'admin_logs.csv', 'text/csv');
     }
     function exportTXT() {
-      const lines = getLogs().map(l => `[${l.time}] [${l.level.toUpperCase()}] ${l.message}${l.url ? ` (${l.method||''} ${l.url}, ${l.duration}ms)` : ''}${l.stack ? '\n'+l.stack : ''}`);
+      const lines = getLogs().map(l => `[${l.time}] [${l.level.toUpperCase()}] [${l.source||'page'}] ${l.message}${l.url ? ` (${l.method||''} ${l.url}, ${l.duration}ms)` : ''}${l.stack ? '\n'+l.stack : ''}`);
       download(lines.join('\n'), 'admin_logs.txt', 'text/plain');
     }
     function download(content, filename, type) {
@@ -297,7 +380,29 @@
       URL.revokeObjectURL(a.href);
     }
 
-    document.getElementById('startStopBtn').addEventListener('click', () => isActive() ? pauseMonitoring() : startMonitoring());
+    // Testing functions
+    function testConsoleLog() { console.log('🧪 Test log from admin panel'); document.getElementById('testOutput').innerHTML = '✅ console.log triggered'; }
+    function testError() { throw new Error('🧪 Test error from admin panel'); }
+    function testNetwork() { fetch('/non-existent-endpoint').catch(() => {}); document.getElementById('testOutput').innerHTML = '🌐 Fetch to 404 sent'; }
+    function testRejection() { Promise.reject('🧪 Test rejection from admin panel'); }
+    function testXSS() { 
+      document.getElementById('testOutput').innerHTML = '⚠️ XSS simulation: script tag attempted (safe)';
+      // This will show in logs as a console log if you uncomment below, but we just simulate
+      console.log('XSS simulation - no actual injection');
+    }
+
+    // CSP violation listener already in monitor script; we just display alerts here
+    function updateSecurityAlerts() {
+      const logs = getLogs();
+      const cspLogs = logs.filter(l => l.message.includes('CSP violation'));
+      if (cspLogs.length > 0) {
+        document.getElementById('securityAlerts').innerHTML = cspLogs.map(l => `⚠️ ${l.message}`).join('<br>');
+      }
+    }
+
+    // Event listeners
+    document.getElementById('startStopBtn').addEventListener('click', toggleMain);
+    document.getElementById('swToggleBtn').addEventListener('click', toggleSW);
     document.getElementById('clearLogsBtn').addEventListener('click', () => { if(confirm('Clear all logs?')) { localStorage.removeItem(STORAGE_KEY); renderLogs(); } });
     document.getElementById('searchInput').addEventListener('input', e => { currentSearch = e.target.value; renderLogs(); });
     document.querySelectorAll('.filter-badge').forEach(b => {
@@ -312,10 +417,21 @@
     document.getElementById('exportCsvBtn').addEventListener('click', exportCSV);
     document.getElementById('exportTxtBtn').addEventListener('click', exportTXT);
     document.getElementById('closeModalBtn').addEventListener('click', () => document.getElementById('detailModal').style.display = 'none');
-    window.addEventListener('storage', e => { if(e.key === STORAGE_KEY || e.key === TOKEN_KEY) { renderLogs(); updateUI(); } });
-    setInterval(renderLogs, 1000);
-    updateUI();
+    window.addEventListener('storage', e => { if(e.key === STORAGE_KEY || e.key === TOKEN_KEY || e.key === SW_PAUSE_KEY) { renderLogs(); updateMainUI(); updateSWUI(); updateSecurityAlerts(); } });
+    setInterval(() => { renderLogs(); updateSecurityAlerts(); }, 1000);
+
+    // Testing buttons
+    document.getElementById('testConsoleLog').addEventListener('click', testConsoleLog);
+    document.getElementById('testError').addEventListener('click', testError);
+    document.getElementById('testNetwork').addEventListener('click', testNetwork);
+    document.getElementById('testRejection').addEventListener('click', testRejection);
+    document.getElementById('testXSS').addEventListener('click', testXSS);
+
+    // Initial UI
+    updateMainUI();
+    updateSWUI();
     renderLogs();
+    updateSecurityAlerts();
   })();
 </script>
 </body>

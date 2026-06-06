@@ -1,4 +1,4 @@
-const CACHE_NAME = 'edudash-v150'; // bump version when  deploy
+const CACHE_NAME = 'edudash-v151'; // bump version when deploy
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
@@ -47,21 +47,29 @@ const PRECACHE_ASSETS = [
   '/assets/icons/icon-192x192.png',
   '/assets/icons/icon-96x96.png'
 ];
-// Forward all SW console output to the client
+
+// ---------- Helper: send message to all clients ----------
+function sendToAllClients(type, data = {}) {
+  self.clients.matchAll().then(clients => {
+    clients.forEach(client => {
+      client.postMessage({ type, ...data });
+    });
+  });
+}
+
+// Forward all SW console output to the client (original functionality)
 const swConsole = {};
 ['log','warn','error','info','debug'].forEach(m => {
   swConsole[m] = console[m];
   console[m] = function(...args) {
-    swConsole[m].apply(console, args);                       // still show in SW DevTools
-    self.clients.matchAll().then(clients => {
-      clients.forEach(client => client.postMessage({
-        type: 'SW_LOG',
-        level: m,
-        message: args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ')
-      }));
+    swConsole[m].apply(console, args);
+    sendToAllClients('SW_LOG', {
+      level: m,
+      message: args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ')
     });
   };
 });
+
 // ---------- Install ----------
 self.addEventListener('install', event => {
   const isUpdate = self.registration.active !== null;
@@ -73,6 +81,8 @@ self.addEventListener('install', event => {
         self.isUpdate = isUpdate;
       })
   );
+  // Notify about install event (for debugging)
+  sendToAllClients('SW_INSTALL', { isUpdate });
 });
 
 // ---------- Activate ----------
@@ -89,13 +99,7 @@ self.addEventListener('activate', event => {
 
   // Notify open clients about version update
   if (self.isUpdate) {
-    event.waitUntil(
-      self.clients.matchAll().then(clients => {
-        clients.forEach(client =>
-          client.postMessage({ type: 'NEW_VERSION_READY' })
-        );
-      })
-    );
+    sendToAllClients('NEW_VERSION_READY');
   }
 
   // Update all existing widget instances
@@ -109,10 +113,19 @@ self.addEventListener('activate', event => {
       })()
     );
   }
+
+  // Notify that activation is complete
+  sendToAllClients('SW_ACTIVATE');
 });
 
-// ---------- Fetch (offline support) ----------
+// ---------- Fetch (offline support) + forward to client ----------
 self.addEventListener('fetch', event => {
+  // Forward the fetch event to client for monitoring (only the URL and method)
+  sendToAllClients('SW_FETCH', {
+    url: event.request.url,
+    method: event.request.method
+  });
+
   if (event.request.method !== 'GET') return;
   if (event.request.mode === 'navigate') {
     event.respondWith(
@@ -137,6 +150,8 @@ self.addEventListener('fetch', event => {
 
 // ---------- Background Sync ----------
 self.addEventListener('sync', event => {
+  sendToAllClients('SW_SYNC', { tag: event.tag });
+
   if (event.tag === 'sync-data') {
     event.waitUntil(
       fetch('/data_general.js')
@@ -154,6 +169,8 @@ self.addEventListener('sync', event => {
 
 // ---------- Periodic Background Sync ----------
 self.addEventListener('periodicsync', event => {
+  sendToAllClients('SW_PERIODICSYNC', { tag: event.tag });
+
   if (event.tag === 'periodic-update') {
     event.waitUntil(
       Promise.all(
@@ -183,6 +200,10 @@ self.addEventListener('push', event => {
       data.body = event.data.text();
     }
   }
+
+  // Forward push event to client for monitoring
+  sendToAllClients('SW_PUSH', { data: JSON.stringify(data) });
+
   event.waitUntil(
     self.registration.showNotification(data.title, {
       body: data.body,
@@ -254,8 +275,8 @@ self.addEventListener('widgetinstall', event => {
   event.waitUntil(renderWidgetByTag(event.widget.definition.tag));
 });
 
-// (Optional) Handle widget actions –  template uses Action.OpenUrl,
-// which the OS handles automatically, but  must still register the event.
+// (Optional) Handle widget actions – template uses Action.OpenUrl,
+// which the OS handles automatically, but we must still register the event.
 self.addEventListener('widgetclick', event => {
   console.log(`Widget action: ${event.action}`);
 });
