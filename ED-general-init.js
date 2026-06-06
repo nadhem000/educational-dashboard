@@ -1,5 +1,18 @@
 // ED-general-init.js
 // Shared startup logic for index.html and contact.html
+// ========== OFFLINE FETCH BLOCKER FOR SUPABASE ==========
+(function() {
+  const originalFetch = window.fetch;
+  window.fetch = function(...args) {
+    const url = typeof args[0] === 'string' ? args[0] : (args[0] && args[0].url);
+    // If offline and the request goes to Supabase, reject immediately
+    if (!navigator.onLine && url && url.includes('supabase.co')) {
+      return Promise.reject(new Error('Offline: Supabase request blocked'));
+    }
+    return originalFetch.apply(this, args);
+  };
+})();
+// ========================================================
 (function() {
   // --- Error handlers ---
   window.addEventListener('error', function(event) {

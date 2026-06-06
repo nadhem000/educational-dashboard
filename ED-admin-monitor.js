@@ -1,28 +1,36 @@
-// ED-admin-monitor.js – Full capture with separate SW pause flag
+// ED-admin-monitor.js – Full capture with rate limiting for network errors
 (function () {
   if (window.__monitorInjected) return;
   window.__monitorInjected = true;
 
   const STORAGE_KEY = '__admin_logs__';
   const TOKEN_KEY = '__admin_monitor_token__';
-  const SW_PAUSE_KEY = '__admin_sw_paused__';   // true = SW logs disabled
+  const SW_PAUSE_KEY = '__admin_sw_paused__';
   const MAX_ENTRIES = 2000;
 
-  // -----------------------------------------------------------------
-  // Flag checks
-  // -----------------------------------------------------------------
+  // ----- Rate limiting for fetch errors (same URL + method within 3 seconds)
+  const lastNetworkErrorTime = new Map();
+  const RATE_LIMIT_MS = 3000;
+
+  function shouldLogNetworkError(url, method) {
+    const key = `${method}:${url}`;
+    const now = Date.now();
+    const last = lastNetworkErrorTime.get(key);
+    if (last && (now - last) < RATE_LIMIT_MS) return false;
+    lastNetworkErrorTime.set(key, now);
+    return true;
+  }
+
+  // ----- Flag checks
   function isMonitoringEnabled() {
     return localStorage.getItem(TOKEN_KEY) === 'active';
   }
 
   function isSWMonitoringEnabled() {
-    // SW logs are allowed only if main monitor is active AND SW pause is NOT set
     return isMonitoringEnabled() && localStorage.getItem(SW_PAUSE_KEY) !== 'true';
   }
 
-  // -----------------------------------------------------------------
-  // Log storage
-  // -----------------------------------------------------------------
+  // ----- Log storage
   let logs = [];
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -43,9 +51,7 @@
     save();
   }
 
-  // -----------------------------------------------------------------
-  // Console interception (unchanged)
-  // -----------------------------------------------------------------
+  // ----- Console interception (unchanged)
   const origConsole = {};
   ['log', 'warn', 'error', 'info', 'debug'].forEach(method => {
     origConsole[method] = console[method];
@@ -73,9 +79,7 @@
     origClear.call(console);
   };
 
-  // -----------------------------------------------------------------
-  // Global errors
-  // -----------------------------------------------------------------
+  // ----- Global errors
   window.addEventListener('error', e => {
     if (e.message) {
       add('error', `${e.message} at ${e.filename}:${e.lineno}`, {
@@ -98,12 +102,9 @@
     });
   });
 
-  // -----------------------------------------------------------------
-  // Service Worker messages (with independent pause flag)
-  // -----------------------------------------------------------------
+  // ----- Service Worker messages (with independent pause)
   navigator.serviceWorker?.addEventListener('message', event => {
     if (!event.data) return;
-    // Only log SW messages if SW monitoring is enabled
     if (!isSWMonitoringEnabled()) return;
 
     if (event.data.type === 'SW_LOG') {
@@ -119,9 +120,7 @@
     }
   });
 
-  // -----------------------------------------------------------------
-  // PerformanceObserver – treat 409 as info, not error
-  // -----------------------------------------------------------------
+  // ----- PerformanceObserver – treat 409 as info, with rate limiting for errors
   if (window.PerformanceObserver) {
     try {
       const po = new PerformanceObserver(list => {
@@ -131,7 +130,14 @@
             if (status === 409) {
               add('info', `Duplicate resource (409): ${entry.name}`, { source: 'resource' });
             } else if (status === 0 || status >= 400) {
-              add('error', `Resource error: ${entry.name} (status: ${status})`, { source: 'resource' });
+              // rate limit per URL
+              const key = `resource:${entry.name}`;
+              const now = Date.now();
+              const last = lastNetworkErrorTime.get(key);
+              if (!last || (now - last) >= RATE_LIMIT_MS) {
+                lastNetworkErrorTime.set(key, now);
+                add('error', `Resource error: ${entry.name} (status: ${status})`, { source: 'resource' });
+              }
             }
           }
         }
@@ -140,9 +146,7 @@
     } catch (_) {}
   }
 
-  // -----------------------------------------------------------------
-  // Fetch – treat 409 as info
-  // -----------------------------------------------------------------
+  // ----- Fetch – treat 409 as info, with rate limiting for errors
   const origFetch = window.fetch;
   window.fetch = function (...args) {
     const start = performance.now();
@@ -157,14 +161,17 @@
         return response;
       })
       .catch(err => {
-        add('network', `FETCH ERROR ${url}: ${err.message}`);
-        throw err;
+        // Rate limit error logging
+        const method = args[1]?.method || 'GET';
+        if (shouldLogNetworkError(url, method)) {
+          add('network', `FETCH ERROR ${url}: ${err.message}`, { url, method });
+        }
+        // Do NOT rethrow – let the original promise rejection propagate naturally
+        return Promise.reject(err);
       });
   };
 
-  // -----------------------------------------------------------------
-  // XMLHttpRequest – treat 409 as info
-  // -----------------------------------------------------------------
+  // ----- XMLHttpRequest – treat 409 as info, with rate limiting
   const OrigXHR = window.XMLHttpRequest;
   window.XMLHttpRequest = function () {
     const xhr = new OrigXHR();
@@ -183,7 +190,9 @@
       });
     });
     xhr.addEventListener('error', () => {
-      add('network', `XHR ERROR ${method} ${url}`);
+      if (shouldLogNetworkError(url, method)) {
+        add('network', `XHR ERROR ${method} ${url}`);
+      }
     });
     return xhr;
   };
@@ -192,16 +201,12 @@
   }
   window.XMLHttpRequest.prototype = OrigXHR.prototype;
 
-  // -----------------------------------------------------------------
-  // Security: CSP violation logging
-  // -----------------------------------------------------------------
+  // ----- Security: CSP violation logging
   document.addEventListener('securitypolicyviolation', (e) => {
     add('error', `CSP violation: ${e.violatedDirective} – ${e.blockedURI}`, { source: 'security' });
   });
 
-  // -----------------------------------------------------------------
-  // Notify when main monitor becomes active
-  // -----------------------------------------------------------------
+  // ----- Notify when main monitor becomes active
   if (isMonitoringEnabled()) {
     console.log('%c🔍 Admin monitoring ACTIVE (token present)', 'color:#0f0; font-size:14px');
   }
