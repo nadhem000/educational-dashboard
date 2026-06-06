@@ -1,5 +1,5 @@
-// ED-admin-monitor.js – captures logs ONLY when admin token is present
-(function() {
+// ED-admin-monitor.js – Full capture, but only when admin token is present
+(function () {
   if (window.__monitorInjected) return;
   window.__monitorInjected = true;
 
@@ -8,14 +8,14 @@
   const MAX_ENTRIES = 2000;
 
   // -----------------------------------------------------------------
-  // Only proceed if the admin token is present in sessionStorage
+  // Only proceed if the admin token exists in sessionStorage
   // -----------------------------------------------------------------
   function isMonitoringEnabled() {
     return sessionStorage.getItem(TOKEN_KEY) === 'active';
   }
 
   // -----------------------------------------------------------------
-  // Load existing logs (but don't add new ones if token missing)
+  // Log storage (only modified when monitoring is enabled)
   // -----------------------------------------------------------------
   let logs = [];
   try {
@@ -31,14 +31,14 @@
   }
 
   function add(level, message, extra = {}) {
-    if (!isMonitoringEnabled()) return;   // <-- critical guard
+    if (!isMonitoringEnabled()) return;   // <-- silent guard
     const entry = { time: new Date().toISOString(), level, message, ...extra };
     logs.push(entry);
     save();
   }
 
   // -----------------------------------------------------------------
-  // Console overrides (same as before, but guarded by add())
+  // 1. Console interception (log, warn, error, info, debug)
   // -----------------------------------------------------------------
   const origConsole = {};
   ['log', 'warn', 'error', 'info', 'debug'].forEach(method => {
@@ -68,7 +68,9 @@
     origClear.call(console);
   };
 
-  // Global errors
+  // -----------------------------------------------------------------
+  // 2. Global script errors
+  // -----------------------------------------------------------------
   window.addEventListener('error', e => {
     if (e.message) {
       add('error', `${e.message} at ${e.filename}:${e.lineno}`, {
@@ -77,7 +79,9 @@
     }
   });
 
-  // Resource loading errors
+  // -----------------------------------------------------------------
+  // 3. Resource loading errors (capture phase)
+  // -----------------------------------------------------------------
   window.addEventListener('error', e => {
     if (!e.message && e.target && e.target !== window) {
       const tag = e.target.tagName || 'resource';
@@ -86,14 +90,18 @@
     }
   }, true);
 
-  // Unhandled rejections
+  // -----------------------------------------------------------------
+  // 4. Unhandled promise rejections
+  // -----------------------------------------------------------------
   window.addEventListener('unhandledrejection', e => {
     add('unhandledrejection', String(e.reason), {
       stack: e.reason && e.reason.stack ? e.reason.stack : undefined
     });
   });
 
-  // Service Worker messages
+  // -----------------------------------------------------------------
+  // 5. Service Worker messages
+  // -----------------------------------------------------------------
   navigator.serviceWorker?.addEventListener('message', event => {
     if (event.data) {
       if (event.data.type === 'SW_LOG') {
@@ -104,7 +112,9 @@
     }
   });
 
-  // PerformanceObserver for failed resources
+  // -----------------------------------------------------------------
+  // 6. PerformanceObserver – detect failed resource loads
+  // -----------------------------------------------------------------
   if (window.PerformanceObserver) {
     try {
       const po = new PerformanceObserver(list => {
@@ -121,7 +131,9 @@
     } catch (_) {}
   }
 
-  // Fetch & XHR interceptions (same as original, guarded)
+  // -----------------------------------------------------------------
+  // 7. Fetch monitoring
+  // -----------------------------------------------------------------
   const origFetch = window.fetch;
   window.fetch = function (...args) {
     const start = performance.now();
@@ -140,6 +152,9 @@
       });
   };
 
+  // -----------------------------------------------------------------
+  // 8. XMLHttpRequest monitoring
+  // -----------------------------------------------------------------
   const OrigXHR = window.XMLHttpRequest;
   window.XMLHttpRequest = function () {
     const xhr = new OrigXHR();
@@ -161,12 +176,15 @@
     });
     return xhr;
   };
+  // Copy static properties
   for (const key of Object.keys(OrigXHR)) {
     window.XMLHttpRequest[key] = OrigXHR[key];
   }
   window.XMLHttpRequest.prototype = OrigXHR.prototype;
 
-  // Optional: log when monitoring becomes active (admin will see in console)
+  // -----------------------------------------------------------------
+  // 9. Optional: log when monitoring becomes active (visible in console)
+  // -----------------------------------------------------------------
   if (isMonitoringEnabled()) {
     console.log('%c🔍 Admin monitoring ACTIVE (token present)', 'color:#0f0; font-size:14px');
   }

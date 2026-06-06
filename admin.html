@@ -3,28 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard – Real‑Time Monitor</title>
+  <title>Admin Monitor – Full Capture</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       background: #0a0c10;
-      font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, monospace;
+      font-family: 'Segoe UI', system-ui, monospace;
       color: #e4e6eb;
       padding: 1.5rem;
     }
-
-    /* container */
-    .dashboard {
-      max-width: 1600px;
-      margin: 0 auto;
-    }
-
-    /* header */
+    .dashboard { max-width: 1600px; margin: 0 auto; }
     .header {
       display: flex;
       justify-content: space-between;
@@ -35,203 +23,96 @@
       padding-bottom: 1rem;
       border-bottom: 1px solid #2a2e35;
     }
-
     .title h1 {
       font-size: 1.8rem;
-      font-weight: 600;
       background: linear-gradient(135deg, #6c8eff, #a67cff);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
     }
-
-    .title p {
-      font-size: 0.85rem;
-      color: #8e9aaf;
-    }
-
-    /* stats grid */
     .stats {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
       gap: 1rem;
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
     }
-
     .stat-card {
       background: #15181f;
-      border-radius: 1.2rem;
-      padding: 1rem 1.2rem;
+      border-radius: 1rem;
+      padding: 0.8rem 1rem;
       border: 1px solid #2a2e35;
-      transition: 0.2s;
     }
-
-    .stat-card:hover {
-      border-color: #4c6ef5;
-      background: #1a1e27;
-    }
-
-    .stat-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #8e9aaf;
-    }
-
-    .stat-value {
-      font-size: 2rem;
-      font-weight: 700;
-      margin-top: 0.25rem;
-    }
-
-    /* controls */
+    .stat-label { font-size: 0.7rem; text-transform: uppercase; color: #8e9aaf; }
+    .stat-value { font-size: 1.6rem; font-weight: 700; margin-top: 0.2rem; }
     .controls {
       display: flex;
       flex-wrap: wrap;
       gap: 0.8rem;
-      margin-bottom: 1.8rem;
       align-items: center;
       background: #111317;
-      padding: 0.8rem 1.2rem;
+      padding: 0.7rem 1rem;
       border-radius: 2rem;
+      margin-bottom: 1.5rem;
     }
-
     button, .filter-badge {
       background: #1e222b;
       border: none;
-      padding: 0.5rem 1rem;
+      padding: 0.4rem 1rem;
       border-radius: 2rem;
-      font-weight: 500;
-      font-size: 0.8rem;
       cursor: pointer;
       color: #e4e6eb;
-      transition: 0.2s;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
+      font-size: 0.8rem;
     }
-
-    button:hover {
-      background: #2c313c;
-      transform: translateY(-1px);
-    }
-
-    .btn-primary {
-      background: #4c6ef5;
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background: #5f7bf5;
-    }
-
-    .btn-danger {
-      background: #e03131;
-    }
-
-    .btn-danger:hover {
-      background: #f03e3e;
-    }
-
-    .filter-group {
-      display: flex;
-      gap: 0.4rem;
-      flex-wrap: wrap;
-    }
-
-    .filter-badge {
-      background: #252a33;
-      padding: 0.4rem 0.9rem;
-    }
-
-    .filter-badge.active {
-      background: #4c6ef5;
-      color: white;
-    }
-
+    button:hover { background: #2c313c; }
+    .btn-primary { background: #4c6ef5; color: white; }
+    .btn-primary:hover { background: #5f7bf5; }
+    .btn-danger { background: #e03131; }
+    .filter-badge.active { background: #4c6ef5; }
     .search-box {
       background: #1e222b;
       border: 1px solid #2a2e35;
-      padding: 0.5rem 1rem;
+      padding: 0.4rem 1rem;
       border-radius: 2rem;
-      width: 220px;
       color: white;
-      font-size: 0.8rem;
+      width: 200px;
     }
-
-    .search-box::placeholder {
-      color: #6c757d;
-    }
-
-    /* log container */
     .log-container {
       background: #0e1015;
-      border-radius: 1.2rem;
+      border-radius: 1rem;
       border: 1px solid #2a2e35;
       overflow: hidden;
-      margin-top: 1rem;
     }
-
     .log-header {
       display: grid;
-      grid-template-columns: 100px 80px 1fr;
+      grid-template-columns: 90px 80px 1fr;
       background: #15181f;
-      padding: 0.75rem 1rem;
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      color: #8e9aaf;
+      padding: 0.6rem 1rem;
+      font-size: 0.7rem;
+      font-weight: bold;
       border-bottom: 1px solid #2a2e35;
     }
-
     .log-entries {
-      height: 60vh;
+      height: 55vh;
       overflow-y: auto;
-      font-family: 'JetBrains Mono', 'Fira Code', monospace;
-      font-size: 0.8rem;
+      font-family: monospace;
+      font-size: 0.75rem;
     }
-
     .log-entry {
       display: grid;
-      grid-template-columns: 100px 80px 1fr;
-      padding: 0.6rem 1rem;
+      grid-template-columns: 90px 80px 1fr;
+      padding: 0.4rem 1rem;
       border-bottom: 1px solid #1e222b;
-      transition: 0.1s;
       cursor: pointer;
     }
-
-    .log-entry:hover {
-      background: #1a1e27;
-    }
-
-    .log-time {
-      color: #6c86a3;
-      font-family: monospace;
-    }
-
-    .log-level {
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-
+    .log-entry:hover { background: #1a1e27; }
     .level-error, .level-unhandledrejection { color: #ff6b6b; }
     .level-warn { color: #ffd93d; }
     .level-network { color: #6c8eff; }
-    .level-info, .level-log { color: #94d2bd; }
-
-    .log-message {
-      white-space: nowrap;
-      overflow-x: hidden;
-      text-overflow: ellipsis;
-      color: #cdd9f4;
-    }
-
-    /* modal */
     .modal {
       display: none;
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      top:0;left:0;
+      width:100%;height:100%;
       background: rgba(0,0,0,0.8);
       align-items: center;
       justify-content: center;
@@ -241,231 +122,114 @@
       background: #15181f;
       max-width: 700px;
       width: 90%;
-      border-radius: 1.5rem;
+      border-radius: 1rem;
       padding: 1.5rem;
-      border: 1px solid #4c6ef5;
-      box-shadow: 0 20px 35px rgba(0,0,0,0.5);
     }
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 1rem;
-    }
-    .modal-close {
-      background: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-      padding: 0;
-    }
-    .modal pre {
-      background: #0e1015;
-      padding: 1rem;
-      border-radius: 0.8rem;
-      overflow-x: auto;
-      font-size: 0.8rem;
-    }
-
+    .modal pre { background: #0e1015; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; }
     .status-badge {
       background: #2a2e35;
       border-radius: 2rem;
       padding: 0.3rem 1rem;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
     }
-    .status-active { background: #2b8c4e; color: white; }
-    .status-inactive { background: #a02c2c; color: white; }
-
-    @media (max-width: 700px) {
-      .log-header, .log-entry { grid-template-columns: 80px 70px 1fr; }
-      body { padding: 1rem; }
+    .status-active { background: #2b8c4e; }
+    .dashboard-link {
+      background: #2a2e35;
+      padding: 0.4rem 1rem;
+      border-radius: 2rem;
+      text-decoration: none;
+      color: white;
+      font-size: 0.8rem;
     }
+    .dashboard-link:hover { background: #4c6ef5; }
   </style>
 </head>
 <body>
 <div class="dashboard">
   <div class="header">
-    <div class="title">
-      <h1>📡 Admin Monitor</h1>
-      <p>real‑time console, network, errors & deep events</p>
+    <div class="title"><h1>📡 Admin Monitor</h1></div>
+    <div>
+      <a href="/index.html" class="dashboard-link" target="_blank">🚀 Go to Dashboard (same tab)</a>
     </div>
-    <div class="status-badge" id="monitorStatusBadge">⚫ INACTIVE</div>
   </div>
 
   <div class="stats" id="statsPanel"></div>
 
   <div class="controls">
     <button id="startStopBtn" class="btn-primary">▶️ Start Monitoring</button>
-    <button id="clearLogsBtn" class="btn-danger">🗑 Clear all</button>
+    <button id="clearLogsBtn" class="btn-danger">🗑 Clear</button>
     <div class="filter-group" id="levelFilters">
       <span class="filter-badge active" data-level="all">All</span>
       <span class="filter-badge" data-level="error">Errors</span>
-      <span class="filter-badge" data-level="warn">Warnings</span>
+      <span class="filter-badge" data-level="warn">Warns</span>
       <span class="filter-badge" data-level="network">Network</span>
       <span class="filter-badge" data-level="log">Console</span>
-      <span class="filter-badge" data-level="info">Info</span>
     </div>
-    <input type="text" id="searchInput" class="search-box" placeholder="🔍 Search message...">
+    <input type="text" id="searchInput" class="search-box" placeholder="🔍 Search...">
     <button id="exportJsonBtn">📦 JSON</button>
     <button id="exportCsvBtn">📊 CSV</button>
     <button id="exportTxtBtn">📄 TXT</button>
   </div>
 
   <div class="log-container">
-    <div class="log-header">
-      <div>🕒 Time</div>
-      <div>Level</div>
-      <div>Message</div>
-    </div>
-    <div class="log-entries" id="logEntries">
-      <div style="padding: 2rem; text-align: center; color: #6c757d;">⏸ Monitoring paused. Click "Start Monitoring" to begin.</div>
-    </div>
+    <div class="log-header"><div>🕒 Time</div><div>Level</div><div>Message</div></div>
+    <div class="log-entries" id="logEntries">⏸ Monitoring inactive. Click Start.</div>
   </div>
 </div>
 
-<!-- Modal for detailed view -->
-<div id="detailModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3>📄 Log details</h3>
-      <button class="modal-close" id="closeModalBtn">&times;</button>
-    </div>
-    <pre id="modalDetailPre"></pre>
-  </div>
-</div>
+<div id="detailModal" class="modal"><div class="modal-content"><h3>📄 Full log</h3><pre id="modalDetailPre"></pre><button id="closeModalBtn" style="margin-top:1rem;">Close</button></div></div>
 
 <script>
   (function() {
-    // ---------- constants ----------
     const STORAGE_KEY = '__admin_logs__';
     const TOKEN_KEY = '__admin_monitor_token__';
-    const MONITOR_SCRIPT_URL = '/ED-admin-monitor.js';
-
-    // DOM elements
-    const logContainer = document.getElementById('logEntries');
-    const startStopBtn = document.getElementById('startStopBtn');
-    const clearBtn = document.getElementById('clearLogsBtn');
-    const searchInput = document.getElementById('searchInput');
-    const statsPanel = document.getElementById('statsPanel');
-    const modal = document.getElementById('detailModal');
-    const modalPre = document.getElementById('modalDetailPre');
-    const closeModalBtn = document.getElementById('closeModalBtn');
-    const monitorStatusBadge = document.getElementById('monitorStatusBadge');
-
-    let currentLevelFilter = 'all';
+    let currentLevel = 'all';
     let currentSearch = '';
-    let monitorLoaded = false;
-    let autoRefreshTimer = null;
 
-    // ---------- helpers ----------
-    function isMonitoringActive() {
-      return sessionStorage.getItem(TOKEN_KEY) === 'active';
+    function isActive() { return sessionStorage.getItem(TOKEN_KEY) === 'active'; }
+    function getLogs() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e) { return []; } }
+
+    function updateUI() {
+      const btn = document.getElementById('startStopBtn');
+      const active = isActive();
+      btn.textContent = active ? '⏸️ Pause Monitoring' : '▶️ Start Monitoring';
+      btn.className = active ? 'btn-danger' : 'btn-primary';
     }
 
-    function getLogs() {
-      try {
-        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-      } catch(e) { return []; }
-    }
-
-    function saveLogs(logs) {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
-      } catch(e) {}
-    }
-
-    // update UI based on monitoring state
-    function updateMonitorUI() {
-      const active = isMonitoringActive();
-      if (active) {
-        startStopBtn.textContent = '⏸️ Pause Monitoring';
-        startStopBtn.classList.remove('btn-primary');
-        startStopBtn.classList.add('btn-danger');
-        monitorStatusBadge.textContent = '🟢 ACTIVE';
-        monitorStatusBadge.classList.add('status-active');
-        monitorStatusBadge.classList.remove('status-inactive');
-      } else {
-        startStopBtn.textContent = '▶️ Start Monitoring';
-        startStopBtn.classList.remove('btn-danger');
-        startStopBtn.classList.add('btn-primary');
-        monitorStatusBadge.textContent = '⚫ INACTIVE';
-        monitorStatusBadge.classList.add('status-inactive');
-        monitorStatusBadge.classList.remove('status-active');
-      }
-    }
-
-    // load monitor script (only once)
-    function loadMonitorScript() {
-      if (monitorLoaded) return Promise.resolve();
-      return new Promise((resolve, reject) => {
-        if (document.querySelector('script[src="' + MONITOR_SCRIPT_URL + '"]')) {
-          monitorLoaded = true;
-          resolve();
-          return;
-        }
-        const script = document.createElement('script');
-        script.src = MONITOR_SCRIPT_URL;
-        script.onload = () => {
-          monitorLoaded = true;
-          resolve();
-        };
-        script.onerror = () => reject(new Error('Failed to load monitor script'));
-        document.head.appendChild(script);
-      });
-    }
-
-    async function startMonitoring() {
+    function startMonitoring() {
       sessionStorage.setItem(TOKEN_KEY, 'active');
-      await loadMonitorScript();
-      updateMonitorUI();
+      updateUI();
+      renderLogs();
+    }
+    function pauseMonitoring() {
+      sessionStorage.removeItem(TOKEN_KEY);
+      updateUI();
       renderLogs();
     }
 
-    function pauseMonitoring() {
-      sessionStorage.removeItem(TOKEN_KEY);
-      updateMonitorUI();
-      renderLogs();  // logs remain visible but no new captures
-    }
-
-    async function toggleMonitoring() {
-      if (isMonitoringActive()) {
-        pauseMonitoring();
-      } else {
-        await startMonitoring();
-      }
-    }
-
-    // clear logs
-    function clearLogs() {
-      if (confirm('Delete all captured logs?')) {
-        localStorage.removeItem(STORAGE_KEY);
-        renderLogs();
-      }
-    }
-
-    // filtering & search
     function filterLogs(logs) {
       let filtered = logs;
-      if (currentLevelFilter !== 'all') {
-        if (currentLevelFilter === 'error')
+      if (currentLevel !== 'all') {
+        if (currentLevel === 'error')
           filtered = filtered.filter(l => l.level === 'error' || l.level === 'unhandledrejection');
         else
-          filtered = filtered.filter(l => l.level === currentLevelFilter);
+          filtered = filtered.filter(l => l.level === currentLevel);
       }
-      if (currentSearch.trim() !== '') {
+      if (currentSearch.trim()) {
         const term = currentSearch.trim().toLowerCase();
         filtered = filtered.filter(l => l.message.toLowerCase().includes(term));
       }
       return filtered;
     }
 
-    // update stats cards
     function updateStats(logs) {
       const total = logs.length;
       const errors = logs.filter(l => l.level === 'error' || l.level === 'unhandledrejection').length;
       const warns = logs.filter(l => l.level === 'warn').length;
       const network = logs.filter(l => l.level === 'network').length;
       const consoleLogs = logs.filter(l => l.level === 'log' || l.level === 'info').length;
-      statsPanel.innerHTML = `
-        <div class="stat-card"><div class="stat-label">Total events</div><div class="stat-value">${total}</div></div>
+      document.getElementById('statsPanel').innerHTML = `
+        <div class="stat-card"><div class="stat-label">Total</div><div class="stat-value">${total}</div></div>
         <div class="stat-card"><div class="stat-label">❌ Errors</div><div class="stat-value" style="color:#ff6b6b">${errors}</div></div>
         <div class="stat-card"><div class="stat-label">⚠️ Warnings</div><div class="stat-value" style="color:#ffd93d">${warns}</div></div>
         <div class="stat-card"><div class="stat-label">🌐 Network</div><div class="stat-value" style="color:#6c8eff">${network}</div></div>
@@ -473,137 +237,84 @@
       `;
     }
 
-    // render logs into DOM
     function renderLogs() {
       const allLogs = getLogs();
       updateStats(allLogs);
       const filtered = filterLogs(allLogs);
+      const container = document.getElementById('logEntries');
       if (filtered.length === 0) {
-        logContainer.innerHTML = `<div style="padding: 2rem; text-align: center; color: #6c757d;">${isMonitoringActive() ? 'No logs match filters.' : 'Monitoring inactive. Press Start.'}</div>`;
+        container.innerHTML = isActive() ? '<div style="padding:2rem;text-align:center;">No logs match filters.</div>' : '<div style="padding:2rem;text-align:center;">⏸ Monitoring inactive. Click Start, then open your site in a new tab.</div>';
         return;
       }
-      const html = filtered.map((log, idx) => {
+      container.innerHTML = filtered.map((log, idx) => {
         let levelClass = '';
         if (log.level === 'error' || log.level === 'unhandledrejection') levelClass = 'level-error';
         else if (log.level === 'warn') levelClass = 'level-warn';
         else if (log.level === 'network') levelClass = 'level-network';
-        else levelClass = 'level-info';
-        const timeStr = log.time ? log.time.slice(11, 19) : '??';
-        let displayMessage = log.message;
-        if (log.url) displayMessage += ` ${log.method || ''} ${log.url} (${log.duration}ms)`;
-        if (displayMessage.length > 120) displayMessage = displayMessage.slice(0, 120) + '…';
-        return `<div class="log-entry" data-log-index="${idx}" data-full-log='${JSON.stringify(log).replace(/'/g, "&#39;")}'>
+        else levelClass = '';
+        const timeStr = log.time ? log.time.slice(11,19) : '??';
+        let msg = log.message;
+        if (log.url) msg += ` ${log.method || ''} ${log.url} (${log.duration}ms)`;
+        if (msg.length > 120) msg = msg.slice(0,120)+'…';
+        return `<div class="log-entry" data-full='${JSON.stringify(log).replace(/'/g, "&#39;")}'>
           <div class="log-time">${timeStr}</div>
-          <div class="log-level ${levelClass}">${log.level.toUpperCase()}</div>
-          <div class="log-message" title="${escapeHtml(log.message)}">${escapeHtml(displayMessage)}</div>
+          <div class="${levelClass}">${log.level.toUpperCase()}</div>
+          <div>${escapeHtml(msg)}</div>
         </div>`;
       }).join('');
-      logContainer.innerHTML = html;
-
-      // attach click handlers for details
+      // attach click handlers
       document.querySelectorAll('.log-entry').forEach(el => {
-        el.addEventListener('click', (e) => {
-          const raw = el.getAttribute('data-full-log');
+        el.addEventListener('click', () => {
+          const raw = el.getAttribute('data-full');
           if (raw) {
-            try {
-              const logObj = JSON.parse(raw);
-              modalPre.textContent = JSON.stringify(logObj, null, 2);
-              modal.style.display = 'flex';
-            } catch(err) { modalPre.textContent = 'Error displaying log'; }
+            document.getElementById('modalDetailPre').textContent = JSON.stringify(JSON.parse(raw), null, 2);
+            document.getElementById('detailModal').style.display = 'flex';
           }
         });
       });
     }
 
-    function escapeHtml(str) {
-      if (!str) return '';
-      return str.replace(/[&<>]/g, function(m) {
-        if (m === '&') return '&amp;';
-        if (m === '<') return '&lt;';
-        if (m === '>') return '&gt;';
-        return m;
-      });
-    }
+    function escapeHtml(str) { return str.replace(/[&<>]/g, function(m) { return m==='&'?'&amp;': m==='<'?'&lt;':'&gt;'; }); }
 
-    // export functions
-    function exportJSON() {
-      const logs = getLogs();
-      const blob = new Blob([JSON.stringify(logs, null, 2)], {type: 'application/json'});
-      downloadBlob(blob, 'admin_logs.json');
-    }
-
+    function exportJSON() { download(JSON.stringify(getLogs(),null,2), 'admin_logs.json', 'application/json'); }
     function exportCSV() {
       const logs = getLogs();
-      const headers = ['time', 'level', 'message', 'url', 'method', 'duration', 'status', 'stack'];
-      const rows = logs.map(l => [
-        l.time, l.level, (l.message || '').replace(/,/g, ';'),
-        l.url || '', l.method || '', l.duration || '', l.status || '', (l.stack || '').replace(/,/g, ';')
-      ]);
-      const csvContent = [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
-      const blob = new Blob([csvContent], {type: 'text/csv'});
-      downloadBlob(blob, 'admin_logs.csv');
+      const headers = ['time','level','message','url','method','duration','status','stack'];
+      const rows = logs.map(l => [l.time, l.level, l.message, l.url||'', l.method||'', l.duration||'', l.status||'', (l.stack||'').replace(/,/g,';')]);
+      const csv = [headers, ...rows].map(row => row.map(c => `"${c}"`).join(',')).join('\n');
+      download(csv, 'admin_logs.csv', 'text/csv');
     }
-
     function exportTXT() {
-      const logs = getLogs();
-      const lines = logs.map(l => {
-        let line = `[${l.time}] [${l.level.toUpperCase()}] ${l.message}`;
-        if (l.url) line += ` (${l.method || ''} ${l.url}, ${l.duration}ms)`;
-        if (l.stack) line += '\n' + l.stack;
-        return line;
-      });
-      const blob = new Blob([lines.join('\n')], {type: 'text/plain'});
-      downloadBlob(blob, 'admin_logs.txt');
+      const lines = getLogs().map(l => `[${l.time}] [${l.level.toUpperCase()}] ${l.message}${l.url ? ` (${l.method||''} ${l.url}, ${l.duration}ms)` : ''}${l.stack ? '\n'+l.stack : ''}`);
+      download(lines.join('\n'), 'admin_logs.txt', 'text/plain');
     }
-
-    function downloadBlob(blob, filename) {
+    function download(content, filename, type) {
       const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
+      a.href = URL.createObjectURL(new Blob([content], {type}));
       a.download = filename;
       a.click();
       URL.revokeObjectURL(a.href);
     }
 
-    // event listeners
-    function bindEvents() {
-      startStopBtn.addEventListener('click', toggleMonitoring);
-      clearBtn.addEventListener('click', clearLogs);
-      searchInput.addEventListener('input', (e) => { currentSearch = e.target.value; renderLogs(); });
-      document.querySelectorAll('.filter-badge').forEach(badge => {
-        badge.addEventListener('click', () => {
-          document.querySelectorAll('.filter-badge').forEach(b => b.classList.remove('active'));
-          badge.classList.add('active');
-          currentLevelFilter = badge.getAttribute('data-level');
-          renderLogs();
-        });
+    document.getElementById('startStopBtn').addEventListener('click', () => isActive() ? pauseMonitoring() : startMonitoring());
+    document.getElementById('clearLogsBtn').addEventListener('click', () => { if(confirm('Clear all logs?')) { localStorage.removeItem(STORAGE_KEY); renderLogs(); } });
+    document.getElementById('searchInput').addEventListener('input', e => { currentSearch = e.target.value; renderLogs(); });
+    document.querySelectorAll('.filter-badge').forEach(b => {
+      b.addEventListener('click', () => {
+        document.querySelectorAll('.filter-badge').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        currentLevel = b.dataset.level;
+        renderLogs();
       });
-      document.getElementById('exportJsonBtn').addEventListener('click', exportJSON);
-      document.getElementById('exportCsvBtn').addEventListener('click', exportCSV);
-      document.getElementById('exportTxtBtn').addEventListener('click', exportTXT);
-      closeModalBtn.addEventListener('click', () => modal.style.display = 'none');
-      modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
-    }
-
-    // auto refresh every 1s
-    function startAutoRefresh() {
-      if (autoRefreshTimer) clearInterval(autoRefreshTimer);
-      autoRefreshTimer = setInterval(() => renderLogs(), 1000);
-    }
-
-    // listen to storage changes from other tabs
-    window.addEventListener('storage', (e) => {
-      if (e.key === STORAGE_KEY) renderLogs();
     });
-
-    // initialise
-    function init() {
-      bindEvents();
-      startAutoRefresh();
-      updateMonitorUI();
-      renderLogs();
-    }
-
-    init();
+    document.getElementById('exportJsonBtn').addEventListener('click', exportJSON);
+    document.getElementById('exportCsvBtn').addEventListener('click', exportCSV);
+    document.getElementById('exportTxtBtn').addEventListener('click', exportTXT);
+    document.getElementById('closeModalBtn').addEventListener('click', () => document.getElementById('detailModal').style.display = 'none');
+    window.addEventListener('storage', e => { if(e.key === STORAGE_KEY) renderLogs(); });
+    setInterval(renderLogs, 1000);
+    updateUI();
+    renderLogs();
   })();
 </script>
 </body>
