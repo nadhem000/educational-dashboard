@@ -2,151 +2,405 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Admin Monitor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard – Real‑Time Monitor</title>
   <style>
-    * { box-sizing: border-box; }
-    body {
+    * {
       margin: 0;
-      font-family: 'Segoe UI', system-ui, monospace;
-      background: #0a0a0a;
-      color: #ccc;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0a0c10;
+      font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, monospace;
+      color: #e4e6eb;
+      padding: 1.5rem;
+    }
+
+    /* container */
+    .dashboard {
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    /* header */
+    .header {
       display: flex;
-      height: 100vh;
-    }
-    .sidebar {
-      width: 200px;
-      background: #141414;
-      padding: 15px;
-      border-right: 1px solid #333;
-    }
-    .sidebar h2 { margin-top: 0; font-size: 18px; color: #fff; }
-    .filter-btn {
-      display: block;
-      width: 100%;
-      padding: 6px;
-      margin: 4px 0;
-      background: #1e1e1e;
-      border: none;
-      color: #ddd;
-      cursor: pointer;
-      text-align: left;
-      border-radius: 3px;
-    }
-    .filter-btn.active { background: #2a7fd9; color: #fff; }
-    .main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
-    .toolbar {
-      padding: 10px;
-      background: #1e1e1e;
-      border-bottom: 1px solid #333;
-      display: flex;
-      gap: 10px;
+      justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #2a2e35;
     }
-    .log-container {
-      flex: 1;
-      overflow-y: auto;
-      padding: 10px;
-      font-size: 13px;
-      line-height: 1.5;
-      background: #0d0d0d;
+
+    .title h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, #6c8eff, #a67cff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
-    .log-entry {
-      border-bottom: 1px solid #1a1a1a;
-      padding: 3px 5px;
-      white-space: pre-wrap;
-      word-break: break-all;
+
+    .title p {
+      font-size: 0.85rem;
+      color: #8e9aaf;
     }
-    .log-time { color: #888; margin-right: 8px; }
-    .level-error, .level-unhandledrejection { color: #ff5555; }
-    .level-warn { color: #ffaa33; }
-    .level-network { color: #66aaff; }
-    .btn {
-      background: #2a7fd9;
+
+    /* stats grid */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: #15181f;
+      border-radius: 1.2rem;
+      padding: 1rem 1.2rem;
+      border: 1px solid #2a2e35;
+      transition: 0.2s;
+    }
+
+    .stat-card:hover {
+      border-color: #4c6ef5;
+      background: #1a1e27;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #8e9aaf;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-top: 0.25rem;
+    }
+
+    /* controls */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-bottom: 1.8rem;
+      align-items: center;
+      background: #111317;
+      padding: 0.8rem 1.2rem;
+      border-radius: 2rem;
+    }
+
+    button, .filter-badge {
+      background: #1e222b;
       border: none;
-      color: white;
-      padding: 5px 12px;
-      border-radius: 4px;
+      padding: 0.5rem 1rem;
+      border-radius: 2rem;
+      font-weight: 500;
+      font-size: 0.8rem;
       cursor: pointer;
-      font-size: 13px;
+      color: #e4e6eb;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
     }
-    .btn:hover { background: #1c5fa8; }
-    .btn.start { background: #2a7fd9; }
-    .btn.start:hover { background: #1c5fa8; }
-    .btn.pause { background: #d94a2a; }
-    .btn.pause:hover { background: #a8381f; }
-    .status { font-size: 12px; color: #aaa; margin-left: auto; }
-    .inactive-message {
-      text-align: center;
-      padding: 2rem;
-      color: #ffaa33;
-      background: #1e1e1e;
-      border-radius: 8px;
-      margin: 1rem;
+
+    button:hover {
+      background: #2c313c;
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: #4c6ef5;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #5f7bf5;
+    }
+
+    .btn-danger {
+      background: #e03131;
+    }
+
+    .btn-danger:hover {
+      background: #f03e3e;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-badge {
+      background: #252a33;
+      padding: 0.4rem 0.9rem;
+    }
+
+    .filter-badge.active {
+      background: #4c6ef5;
+      color: white;
+    }
+
+    .search-box {
+      background: #1e222b;
+      border: 1px solid #2a2e35;
+      padding: 0.5rem 1rem;
+      border-radius: 2rem;
+      width: 220px;
+      color: white;
+      font-size: 0.8rem;
+    }
+
+    .search-box::placeholder {
+      color: #6c757d;
+    }
+
+    /* log container */
+    .log-container {
+      background: #0e1015;
+      border-radius: 1.2rem;
+      border: 1px solid #2a2e35;
+      overflow: hidden;
+      margin-top: 1rem;
+    }
+
+    .log-header {
+      display: grid;
+      grid-template-columns: 100px 80px 1fr;
+      background: #15181f;
+      padding: 0.75rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #8e9aaf;
+      border-bottom: 1px solid #2a2e35;
+    }
+
+    .log-entries {
+      height: 60vh;
+      overflow-y: auto;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.8rem;
+    }
+
+    .log-entry {
+      display: grid;
+      grid-template-columns: 100px 80px 1fr;
+      padding: 0.6rem 1rem;
+      border-bottom: 1px solid #1e222b;
+      transition: 0.1s;
+      cursor: pointer;
+    }
+
+    .log-entry:hover {
+      background: #1a1e27;
+    }
+
+    .log-time {
+      color: #6c86a3;
+      font-family: monospace;
+    }
+
+    .log-level {
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .level-error, .level-unhandledrejection { color: #ff6b6b; }
+    .level-warn { color: #ffd93d; }
+    .level-network { color: #6c8eff; }
+    .level-info, .level-log { color: #94d2bd; }
+
+    .log-message {
+      white-space: nowrap;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+      color: #cdd9f4;
+    }
+
+    /* modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: #15181f;
+      max-width: 700px;
+      width: 90%;
+      border-radius: 1.5rem;
+      padding: 1.5rem;
+      border: 1px solid #4c6ef5;
+      box-shadow: 0 20px 35px rgba(0,0,0,0.5);
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    .modal-close {
+      background: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0;
+    }
+    .modal pre {
+      background: #0e1015;
+      padding: 1rem;
+      border-radius: 0.8rem;
+      overflow-x: auto;
+      font-size: 0.8rem;
+    }
+
+    .status-badge {
+      background: #2a2e35;
+      border-radius: 2rem;
+      padding: 0.3rem 1rem;
+      font-size: 0.75rem;
+    }
+    .status-active { background: #2b8c4e; color: white; }
+    .status-inactive { background: #a02c2c; color: white; }
+
+    @media (max-width: 700px) {
+      .log-header, .log-entry { grid-template-columns: 80px 70px 1fr; }
+      body { padding: 1rem; }
     }
   </style>
 </head>
 <body>
-  <div class="sidebar">
-    <h2>Filters</h2>
-    <button class="filter-btn active" data-filter="all">All</button>
-    <button class="filter-btn" data-filter="error">Errors</button>
-    <button class="filter-btn" data-filter="warn">Warnings</button>
-    <button class="filter-btn" data-filter="network">Network</button>
-    <button class="filter-btn" data-filter="log">Console</button>
-  </div>
-  <div class="main">
-    <div class="toolbar">
-      <button class="btn start" id="toggleMonitorBtn">▶️ Start Monitoring</button>
-      <button class="btn" onclick="clearLogs()">🗑 Clear</button>
-      <button class="btn" onclick="showAsText()">📄 Show as TXT</button>
-      <button class="btn" onclick="exportJSON()">📥 Export JSON</button>
-      <span class="status" id="status">🔴 Monitoring inactive</span>
+<div class="dashboard">
+  <div class="header">
+    <div class="title">
+      <h1>📡 Admin Monitor</h1>
+      <p>real‑time console, network, errors & deep events</p>
     </div>
-    <div class="log-container" id="logContainer">
-      <div class="inactive-message">
-        ⏸️ Monitoring is off.<br>
-        Click <strong>Start Monitoring</strong> to begin capturing logs.
-      </div>
+    <div class="status-badge" id="monitorStatusBadge">⚫ INACTIVE</div>
+  </div>
+
+  <div class="stats" id="statsPanel"></div>
+
+  <div class="controls">
+    <button id="startStopBtn" class="btn-primary">▶️ Start Monitoring</button>
+    <button id="clearLogsBtn" class="btn-danger">🗑 Clear all</button>
+    <div class="filter-group" id="levelFilters">
+      <span class="filter-badge active" data-level="all">All</span>
+      <span class="filter-badge" data-level="error">Errors</span>
+      <span class="filter-badge" data-level="warn">Warnings</span>
+      <span class="filter-badge" data-level="network">Network</span>
+      <span class="filter-badge" data-level="log">Console</span>
+      <span class="filter-badge" data-level="info">Info</span>
+    </div>
+    <input type="text" id="searchInput" class="search-box" placeholder="🔍 Search message...">
+    <button id="exportJsonBtn">📦 JSON</button>
+    <button id="exportCsvBtn">📊 CSV</button>
+    <button id="exportTxtBtn">📄 TXT</button>
+  </div>
+
+  <div class="log-container">
+    <div class="log-header">
+      <div>🕒 Time</div>
+      <div>Level</div>
+      <div>Message</div>
+    </div>
+    <div class="log-entries" id="logEntries">
+      <div style="padding: 2rem; text-align: center; color: #6c757d;">⏸ Monitoring paused. Click "Start Monitoring" to begin.</div>
     </div>
   </div>
-  <script>
+</div>
+
+<!-- Modal for detailed view -->
+<div id="detailModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>📄 Log details</h3>
+      <button class="modal-close" id="closeModalBtn">&times;</button>
+    </div>
+    <pre id="modalDetailPre"></pre>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // ---------- constants ----------
     const STORAGE_KEY = '__admin_logs__';
     const TOKEN_KEY = '__admin_monitor_token__';
-    const MONITOR_SCRIPT_URL = '/ED-admin-monitor.js';  // adjust path if needed
+    const MONITOR_SCRIPT_URL = '/ED-admin-monitor.js';
 
-    let currentFilter = 'all';
+    // DOM elements
+    const logContainer = document.getElementById('logEntries');
+    const startStopBtn = document.getElementById('startStopBtn');
+    const clearBtn = document.getElementById('clearLogsBtn');
+    const searchInput = document.getElementById('searchInput');
+    const statsPanel = document.getElementById('statsPanel');
+    const modal = document.getElementById('detailModal');
+    const modalPre = document.getElementById('modalDetailPre');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const monitorStatusBadge = document.getElementById('monitorStatusBadge');
+
+    let currentLevelFilter = 'all';
+    let currentSearch = '';
     let monitorLoaded = false;
+    let autoRefreshTimer = null;
 
+    // ---------- helpers ----------
     function isMonitoringActive() {
       return sessionStorage.getItem(TOKEN_KEY) === 'active';
     }
 
-    function updateUI() {
+    function getLogs() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      } catch(e) { return []; }
+    }
+
+    function saveLogs(logs) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
+      } catch(e) {}
+    }
+
+    // update UI based on monitoring state
+    function updateMonitorUI() {
       const active = isMonitoringActive();
-      const btn = document.getElementById('toggleMonitorBtn');
-      const statusSpan = document.getElementById('status');
       if (active) {
-        btn.textContent = '⏸️ Pause Monitoring';
-        btn.className = 'btn pause';
-        statusSpan.textContent = '🟢 Monitoring active (capturing events)';
-        statusSpan.style.color = '#4f4';
+        startStopBtn.textContent = '⏸️ Pause Monitoring';
+        startStopBtn.classList.remove('btn-primary');
+        startStopBtn.classList.add('btn-danger');
+        monitorStatusBadge.textContent = '🟢 ACTIVE';
+        monitorStatusBadge.classList.add('status-active');
+        monitorStatusBadge.classList.remove('status-inactive');
       } else {
-        btn.textContent = '▶️ Start Monitoring';
-        btn.className = 'btn start';
-        statusSpan.textContent = '🔴 Monitoring inactive';
-        statusSpan.style.color = '#f44';
+        startStopBtn.textContent = '▶️ Start Monitoring';
+        startStopBtn.classList.remove('btn-danger');
+        startStopBtn.classList.add('btn-primary');
+        monitorStatusBadge.textContent = '⚫ INACTIVE';
+        monitorStatusBadge.classList.add('status-inactive');
+        monitorStatusBadge.classList.remove('status-active');
       }
     }
 
-    // Load the monitor script dynamically (only once)
+    // load monitor script (only once)
     function loadMonitorScript() {
       if (monitorLoaded) return Promise.resolve();
       return new Promise((resolve, reject) => {
+        if (document.querySelector('script[src="' + MONITOR_SCRIPT_URL + '"]')) {
+          monitorLoaded = true;
+          resolve();
+          return;
+        }
         const script = document.createElement('script');
         script.src = MONITOR_SCRIPT_URL;
         script.onload = () => {
@@ -158,66 +412,107 @@
       });
     }
 
-    // Start monitoring: set token, load script, refresh display
     async function startMonitoring() {
       sessionStorage.setItem(TOKEN_KEY, 'active');
       await loadMonitorScript();
-      updateUI();
-      render();      // show existing logs (if any)
-      // Remove the placeholder message if present
-      const msg = document.querySelector('.inactive-message');
-      if (msg) msg.remove();
+      updateMonitorUI();
+      renderLogs();
     }
 
     function pauseMonitoring() {
       sessionStorage.removeItem(TOKEN_KEY);
-      updateUI();
-      render();      // logs still visible but no new captures
-      if (getLogs().length === 0) {
-        showInactiveMessage();
-      }
+      updateMonitorUI();
+      renderLogs();  // logs remain visible but no new captures
     }
 
-    function toggleMonitoring() {
+    async function toggleMonitoring() {
       if (isMonitoringActive()) {
         pauseMonitoring();
       } else {
-        startMonitoring();
+        await startMonitoring();
       }
     }
 
-    function getLogs() {
-      try {
-        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-      } catch (_) { return []; }
+    // clear logs
+    function clearLogs() {
+      if (confirm('Delete all captured logs?')) {
+        localStorage.removeItem(STORAGE_KEY);
+        renderLogs();
+      }
     }
 
-    function render() {
-      const logs = getLogs();
-      if (!isMonitoringActive() && logs.length === 0) {
-        showInactiveMessage();
+    // filtering & search
+    function filterLogs(logs) {
+      let filtered = logs;
+      if (currentLevelFilter !== 'all') {
+        if (currentLevelFilter === 'error')
+          filtered = filtered.filter(l => l.level === 'error' || l.level === 'unhandledrejection');
+        else
+          filtered = filtered.filter(l => l.level === currentLevelFilter);
+      }
+      if (currentSearch.trim() !== '') {
+        const term = currentSearch.trim().toLowerCase();
+        filtered = filtered.filter(l => l.message.toLowerCase().includes(term));
+      }
+      return filtered;
+    }
+
+    // update stats cards
+    function updateStats(logs) {
+      const total = logs.length;
+      const errors = logs.filter(l => l.level === 'error' || l.level === 'unhandledrejection').length;
+      const warns = logs.filter(l => l.level === 'warn').length;
+      const network = logs.filter(l => l.level === 'network').length;
+      const consoleLogs = logs.filter(l => l.level === 'log' || l.level === 'info').length;
+      statsPanel.innerHTML = `
+        <div class="stat-card"><div class="stat-label">Total events</div><div class="stat-value">${total}</div></div>
+        <div class="stat-card"><div class="stat-label">❌ Errors</div><div class="stat-value" style="color:#ff6b6b">${errors}</div></div>
+        <div class="stat-card"><div class="stat-label">⚠️ Warnings</div><div class="stat-value" style="color:#ffd93d">${warns}</div></div>
+        <div class="stat-card"><div class="stat-label">🌐 Network</div><div class="stat-value" style="color:#6c8eff">${network}</div></div>
+        <div class="stat-card"><div class="stat-label">📝 Console</div><div class="stat-value">${consoleLogs}</div></div>
+      `;
+    }
+
+    // render logs into DOM
+    function renderLogs() {
+      const allLogs = getLogs();
+      updateStats(allLogs);
+      const filtered = filterLogs(allLogs);
+      if (filtered.length === 0) {
+        logContainer.innerHTML = `<div style="padding: 2rem; text-align: center; color: #6c757d;">${isMonitoringActive() ? 'No logs match filters.' : 'Monitoring inactive. Press Start.'}</div>`;
         return;
       }
-      const filtered = currentFilter === 'all'
-        ? logs
-        : logs.filter(l => l.level === currentFilter || (currentFilter === 'error' && l.level === 'unhandledrejection'));
-      if (filtered.length === 0 && logs.length > 0) {
-        container.innerHTML = `<div class="inactive-message" style="background:transparent; color:#888;">No logs match the selected filter.</div>`;
-        return;
-      }
-      const container = document.getElementById('logContainer');
-      container.innerHTML = filtered.map(l => {
-        const colorClass = 'level-' + l.level;
-        let extra = '';
-        if (l.url) extra = ` ${l.method || ''} ${l.url} (${l.duration}ms)`;
-        return `<div class="log-entry">
-          <span class="log-time">${l.time.slice(11, 19)}</span>
-          <span class="${colorClass}">[${l.level.toUpperCase()}]</span>
-          ${escapeHtml(l.message)}${extra}
-          ${l.stack ? '\n' + escapeHtml(l.stack) : ''}
+      const html = filtered.map((log, idx) => {
+        let levelClass = '';
+        if (log.level === 'error' || log.level === 'unhandledrejection') levelClass = 'level-error';
+        else if (log.level === 'warn') levelClass = 'level-warn';
+        else if (log.level === 'network') levelClass = 'level-network';
+        else levelClass = 'level-info';
+        const timeStr = log.time ? log.time.slice(11, 19) : '??';
+        let displayMessage = log.message;
+        if (log.url) displayMessage += ` ${log.method || ''} ${log.url} (${log.duration}ms)`;
+        if (displayMessage.length > 120) displayMessage = displayMessage.slice(0, 120) + '…';
+        return `<div class="log-entry" data-log-index="${idx}" data-full-log='${JSON.stringify(log).replace(/'/g, "&#39;")}'>
+          <div class="log-time">${timeStr}</div>
+          <div class="log-level ${levelClass}">${log.level.toUpperCase()}</div>
+          <div class="log-message" title="${escapeHtml(log.message)}">${escapeHtml(displayMessage)}</div>
         </div>`;
       }).join('');
-      container.scrollTop = container.scrollHeight;
+      logContainer.innerHTML = html;
+
+      // attach click handlers for details
+      document.querySelectorAll('.log-entry').forEach(el => {
+        el.addEventListener('click', (e) => {
+          const raw = el.getAttribute('data-full-log');
+          if (raw) {
+            try {
+              const logObj = JSON.parse(raw);
+              modalPre.textContent = JSON.stringify(logObj, null, 2);
+              modal.style.display = 'flex';
+            } catch(err) { modalPre.textContent = 'Error displaying log'; }
+          }
+        });
+      });
     }
 
     function escapeHtml(str) {
@@ -230,66 +525,86 @@
       });
     }
 
-    function showInactiveMessage() {
-      const container = document.getElementById('logContainer');
-      container.innerHTML = `<div class="inactive-message">
-        ⏸️ Monitoring is off.<br>
-        Click <strong>Start Monitoring</strong> to begin capturing logs.
-      </div>`;
+    // export functions
+    function exportJSON() {
+      const logs = getLogs();
+      const blob = new Blob([JSON.stringify(logs, null, 2)], {type: 'application/json'});
+      downloadBlob(blob, 'admin_logs.json');
     }
 
-    window.clearLogs = () => {
-      localStorage.removeItem(STORAGE_KEY);
-      render();
-      if (!isMonitoringActive()) showInactiveMessage();
-    };
-
-    window.exportJSON = () => {
+    function exportCSV() {
       const logs = getLogs();
-      const blob = new Blob([JSON.stringify(logs, null, 2)], { type: 'application/json' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'admin-logs.json';
-      a.click();
-    };
+      const headers = ['time', 'level', 'message', 'url', 'method', 'duration', 'status', 'stack'];
+      const rows = logs.map(l => [
+        l.time, l.level, (l.message || '').replace(/,/g, ';'),
+        l.url || '', l.method || '', l.duration || '', l.status || '', (l.stack || '').replace(/,/g, ';')
+      ]);
+      const csvContent = [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+      const blob = new Blob([csvContent], {type: 'text/csv'});
+      downloadBlob(blob, 'admin_logs.csv');
+    }
 
-    window.showAsText = () => {
+    function exportTXT() {
       const logs = getLogs();
-      const text = logs.map(l => {
+      const lines = logs.map(l => {
         let line = `[${l.time}] [${l.level.toUpperCase()}] ${l.message}`;
         if (l.url) line += ` (${l.method || ''} ${l.url}, ${l.duration}ms)`;
         if (l.stack) line += '\n' + l.stack;
         return line;
-      }).join('\n');
-      const blob = new Blob([text], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      window.open(url, '_blank');
-    };
-
-    // Filter buttons
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentFilter = btn.dataset.filter;
-        render();
       });
+      const blob = new Blob([lines.join('\n')], {type: 'text/plain'});
+      downloadBlob(blob, 'admin_logs.txt');
+    }
+
+    function downloadBlob(blob, filename) {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    // event listeners
+    function bindEvents() {
+      startStopBtn.addEventListener('click', toggleMonitoring);
+      clearBtn.addEventListener('click', clearLogs);
+      searchInput.addEventListener('input', (e) => { currentSearch = e.target.value; renderLogs(); });
+      document.querySelectorAll('.filter-badge').forEach(badge => {
+        badge.addEventListener('click', () => {
+          document.querySelectorAll('.filter-badge').forEach(b => b.classList.remove('active'));
+          badge.classList.add('active');
+          currentLevelFilter = badge.getAttribute('data-level');
+          renderLogs();
+        });
+      });
+      document.getElementById('exportJsonBtn').addEventListener('click', exportJSON);
+      document.getElementById('exportCsvBtn').addEventListener('click', exportCSV);
+      document.getElementById('exportTxtBtn').addEventListener('click', exportTXT);
+      closeModalBtn.addEventListener('click', () => modal.style.display = 'none');
+      modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+    }
+
+    // auto refresh every 1s
+    function startAutoRefresh() {
+      if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+      autoRefreshTimer = setInterval(() => renderLogs(), 1000);
+    }
+
+    // listen to storage changes from other tabs
+    window.addEventListener('storage', (e) => {
+      if (e.key === STORAGE_KEY) renderLogs();
     });
 
-    // Listen for storage changes (if logs updated in another tab)
-    window.addEventListener('storage', e => {
-      if (e.key === STORAGE_KEY) render();
-    });
+    // initialise
+    function init() {
+      bindEvents();
+      startAutoRefresh();
+      updateMonitorUI();
+      renderLogs();
+    }
 
-    // Auto-refresh display every second
-    setInterval(render, 1000);
-
-    // Event binding
-    document.getElementById('toggleMonitorBtn').addEventListener('click', toggleMonitoring);
-
-    // Initial UI
-    updateUI();
-    render();
-  </script>
+    init();
+  })();
+</script>
 </body>
 </html>
