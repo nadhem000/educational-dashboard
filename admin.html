@@ -75,9 +75,19 @@
       font-size: 13px;
     }
     .btn:hover { background: #1c5fa8; }
+    .btn.start { background: #2a7fd9; }
+    .btn.start:hover { background: #1c5fa8; }
     .btn.pause { background: #d94a2a; }
     .btn.pause:hover { background: #a8381f; }
     .status { font-size: 12px; color: #aaa; margin-left: auto; }
+    .inactive-message {
+      text-align: center;
+      padding: 2rem;
+      color: #ffaa33;
+      background: #1e1e1e;
+      border-radius: 8px;
+      margin: 1rem;
+    }
   </style>
 </head>
 <body>
@@ -91,46 +101,90 @@
   </div>
   <div class="main">
     <div class="toolbar">
-      <button class="btn" id="pauseBtn" onclick="togglePause()">⏸️ Pause</button>
+      <button class="btn start" id="toggleMonitorBtn">▶️ Start Monitoring</button>
       <button class="btn" onclick="clearLogs()">🗑 Clear</button>
       <button class="btn" onclick="showAsText()">📄 Show as TXT</button>
       <button class="btn" onclick="exportJSON()">📥 Export JSON</button>
-      <span class="status" id="status">🟢 Monitoring active</span>
+      <span class="status" id="status">🔴 Monitoring inactive</span>
     </div>
-    <div class="log-container" id="logContainer"></div>
+    <div class="log-container" id="logContainer">
+      <div class="inactive-message">
+        ⏸️ Monitoring is off.<br>
+        Click <strong>Start Monitoring</strong> to begin capturing logs.
+      </div>
+    </div>
   </div>
-
   <script>
     const STORAGE_KEY = '__admin_logs__';
-    const PAUSE_KEY = '__monitor_paused__';
-    const container = document.getElementById('logContainer');
-    const statusEl = document.getElementById('status');
-    const pauseBtn = document.getElementById('pauseBtn');
+    const TOKEN_KEY = '__admin_monitor_token__';
+    const MONITOR_SCRIPT_URL = '/ED-admin-monitor.js';  // adjust path if needed
+
     let currentFilter = 'all';
+    let monitorLoaded = false;
 
-    function isPaused() {
-      return localStorage.getItem(PAUSE_KEY) === 'true';
+    function isMonitoringActive() {
+      return sessionStorage.getItem(TOKEN_KEY) === 'active';
     }
 
-    function updatePauseUI() {
-      const paused = isPaused();
-      pauseBtn.textContent = paused ? '▶️ Resume' : '⏸️ Pause';
-      pauseBtn.className = paused ? 'btn' : 'btn pause';
-      statusEl.textContent = paused ? '🔴 Monitoring paused' : '🟢 Monitoring active';
-      statusEl.style.color = paused ? '#f44' : '#4f4';
-    }
-
-    window.togglePause = function() {
-      const paused = isPaused();
-      if (paused) {
-        localStorage.removeItem(PAUSE_KEY);
+    function updateUI() {
+      const active = isMonitoringActive();
+      const btn = document.getElementById('toggleMonitorBtn');
+      const statusSpan = document.getElementById('status');
+      if (active) {
+        btn.textContent = '⏸️ Pause Monitoring';
+        btn.className = 'btn pause';
+        statusSpan.textContent = '🟢 Monitoring active (capturing events)';
+        statusSpan.style.color = '#4f4';
       } else {
-        localStorage.setItem(PAUSE_KEY, 'true');
+        btn.textContent = '▶️ Start Monitoring';
+        btn.className = 'btn start';
+        statusSpan.textContent = '🔴 Monitoring inactive';
+        statusSpan.style.color = '#f44';
       }
-      updatePauseUI();
-      // Notify other tabs (they will re-render and check pause flag)
-      window.dispatchEvent(new Event('storage'));
-    };
+    }
+
+    // Load the monitor script dynamically (only once)
+    function loadMonitorScript() {
+      if (monitorLoaded) return Promise.resolve();
+      return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = MONITOR_SCRIPT_URL;
+        script.onload = () => {
+          monitorLoaded = true;
+          resolve();
+        };
+        script.onerror = () => reject(new Error('Failed to load monitor script'));
+        document.head.appendChild(script);
+      });
+    }
+
+    // Start monitoring: set token, load script, refresh display
+    async function startMonitoring() {
+      sessionStorage.setItem(TOKEN_KEY, 'active');
+      await loadMonitorScript();
+      updateUI();
+      render();      // show existing logs (if any)
+      // Remove the placeholder message if present
+      const msg = document.querySelector('.inactive-message');
+      if (msg) msg.remove();
+    }
+
+    function pauseMonitoring() {
+      sessionStorage.removeItem(TOKEN_KEY);
+      updateUI();
+      render();      // logs still visible but no new captures
+      if (getLogs().length === 0) {
+        showInactiveMessage();
+      }
+    }
+
+    function toggleMonitoring() {
+      if (isMonitoringActive()) {
+        pauseMonitoring();
+      } else {
+        startMonitoring();
+      }
+    }
 
     function getLogs() {
       try {
@@ -140,10 +194,18 @@
 
     function render() {
       const logs = getLogs();
+      if (!isMonitoringActive() && logs.length === 0) {
+        showInactiveMessage();
+        return;
+      }
       const filtered = currentFilter === 'all'
         ? logs
         : logs.filter(l => l.level === currentFilter || (currentFilter === 'error' && l.level === 'unhandledrejection'));
-      
+      if (filtered.length === 0 && logs.length > 0) {
+        container.innerHTML = `<div class="inactive-message" style="background:transparent; color:#888;">No logs match the selected filter.</div>`;
+        return;
+      }
+      const container = document.getElementById('logContainer');
       container.innerHTML = filtered.map(l => {
         const colorClass = 'level-' + l.level;
         let extra = '';
@@ -151,26 +213,35 @@
         return `<div class="log-entry">
           <span class="log-time">${l.time.slice(11, 19)}</span>
           <span class="${colorClass}">[${l.level.toUpperCase()}]</span>
-          ${l.message}${extra}
-          ${l.stack ? '\n' + l.stack : ''}
+          ${escapeHtml(l.message)}${extra}
+          ${l.stack ? '\n' + escapeHtml(l.stack) : ''}
         </div>`;
       }).join('');
       container.scrollTop = container.scrollHeight;
     }
 
-    // Filter buttons
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentFilter = btn.dataset.filter;
-        render();
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
       });
-    });
+    }
+
+    function showInactiveMessage() {
+      const container = document.getElementById('logContainer');
+      container.innerHTML = `<div class="inactive-message">
+        ⏸️ Monitoring is off.<br>
+        Click <strong>Start Monitoring</strong> to begin capturing logs.
+      </div>`;
+    }
 
     window.clearLogs = () => {
       localStorage.removeItem(STORAGE_KEY);
       render();
+      if (!isMonitoringActive()) showInactiveMessage();
     };
 
     window.exportJSON = () => {
@@ -195,17 +266,29 @@
       window.open(url, '_blank');
     };
 
-    // Sync across tabs
-    window.addEventListener('storage', e => {
-      if (e.key === STORAGE_KEY || e.key === PAUSE_KEY) {
+    // Filter buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
         render();
-        updatePauseUI();
-      }
+      });
     });
 
-    // Periodic refresh
-    setInterval(() => { render(); updatePauseUI(); }, 1000);
-    updatePauseUI();
+    // Listen for storage changes (if logs updated in another tab)
+    window.addEventListener('storage', e => {
+      if (e.key === STORAGE_KEY) render();
+    });
+
+    // Auto-refresh display every second
+    setInterval(render, 1000);
+
+    // Event binding
+    document.getElementById('toggleMonitorBtn').addEventListener('click', toggleMonitoring);
+
+    // Initial UI
+    updateUI();
     render();
   </script>
 </body>

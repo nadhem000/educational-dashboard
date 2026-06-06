@@ -1,15 +1,22 @@
-// monitor.js – Ultimate capture with pause/resume support
-(function () {
+// ED-admin-monitor.js – captures logs ONLY when admin token is present
+(function() {
   if (window.__monitorInjected) return;
   window.__monitorInjected = true;
 
   const STORAGE_KEY = '__admin_logs__';
-  const PAUSE_KEY = '__monitor_paused__';
+  const TOKEN_KEY = '__admin_monitor_token__';
   const MAX_ENTRIES = 2000;
 
-  // ---------------------------------------------------------------
-  // 1. Load existing logs & pause state
-  // ---------------------------------------------------------------
+  // -----------------------------------------------------------------
+  // Only proceed if the admin token is present in sessionStorage
+  // -----------------------------------------------------------------
+  function isMonitoringEnabled() {
+    return sessionStorage.getItem(TOKEN_KEY) === 'active';
+  }
+
+  // -----------------------------------------------------------------
+  // Load existing logs (but don't add new ones if token missing)
+  // -----------------------------------------------------------------
   let logs = [];
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -23,26 +30,16 @@
     } catch (_) {}
   }
 
-  // ---------------------------------------------------------------
-  // 2. Pause / resume (checks a localStorage flag)
-  // ---------------------------------------------------------------
-  function isPaused() {
-    return localStorage.getItem(PAUSE_KEY) === 'true';
-  }
-
-  // ---------------------------------------------------------------
-  // 3. Add an entry (skips when paused)
-  // ---------------------------------------------------------------
   function add(level, message, extra = {}) {
-    if (isPaused()) return;   // <-- PAUSE CHECK
+    if (!isMonitoringEnabled()) return;   // <-- critical guard
     const entry = { time: new Date().toISOString(), level, message, ...extra };
     logs.push(entry);
     save();
   }
 
-  // ---------------------------------------------------------------
-  // 4. Proxy‑based console override (bulletproof)
-  // ---------------------------------------------------------------
+  // -----------------------------------------------------------------
+  // Console overrides (same as before, but guarded by add())
+  // -----------------------------------------------------------------
   const origConsole = {};
   ['log', 'warn', 'error', 'info', 'debug'].forEach(method => {
     origConsole[method] = console[method];
@@ -64,16 +61,14 @@
     });
   });
 
-  // Capture console.clear calls
+  // console.clear
   const origClear = console.clear;
   console.clear = function () {
     add('info', 'console.clear() called');
     origClear.call(console);
   };
 
-  // ---------------------------------------------------------------
-  // 5. Global script errors (bubble phase)
-  // ---------------------------------------------------------------
+  // Global errors
   window.addEventListener('error', e => {
     if (e.message) {
       add('error', `${e.message} at ${e.filename}:${e.lineno}`, {
@@ -82,9 +77,7 @@
     }
   });
 
-  // ---------------------------------------------------------------
-  // 6. Resource loading errors (capture phase)
-  // ---------------------------------------------------------------
+  // Resource loading errors
   window.addEventListener('error', e => {
     if (!e.message && e.target && e.target !== window) {
       const tag = e.target.tagName || 'resource';
@@ -93,18 +86,14 @@
     }
   }, true);
 
-  // ---------------------------------------------------------------
-  // 7. Unhandled promise rejections
-  // ---------------------------------------------------------------
+  // Unhandled rejections
   window.addEventListener('unhandledrejection', e => {
     add('unhandledrejection', String(e.reason), {
       stack: e.reason && e.reason.stack ? e.reason.stack : undefined
     });
   });
 
-  // ---------------------------------------------------------------
-  // 8. Service Worker messages (forwarded SW logs & update notices)
-  // ---------------------------------------------------------------
+  // Service Worker messages
   navigator.serviceWorker?.addEventListener('message', event => {
     if (event.data) {
       if (event.data.type === 'SW_LOG') {
@@ -115,9 +104,7 @@
     }
   });
 
-  // ---------------------------------------------------------------
-  // 9. PerformanceObserver – detect failed resource loads
-  // ---------------------------------------------------------------
+  // PerformanceObserver for failed resources
   if (window.PerformanceObserver) {
     try {
       const po = new PerformanceObserver(list => {
@@ -134,9 +121,7 @@
     } catch (_) {}
   }
 
-  // ---------------------------------------------------------------
-  // 10. Network monitoring – fetch()
-  // ---------------------------------------------------------------
+  // Fetch & XHR interceptions (same as original, guarded)
   const origFetch = window.fetch;
   window.fetch = function (...args) {
     const start = performance.now();
@@ -155,9 +140,6 @@
       });
   };
 
-  // ---------------------------------------------------------------
-  // 11. Network monitoring – XMLHttpRequest
-  // ---------------------------------------------------------------
   const OrigXHR = window.XMLHttpRequest;
   window.XMLHttpRequest = function () {
     const xhr = new OrigXHR();
@@ -179,15 +161,13 @@
     });
     return xhr;
   };
-  // Copy static properties and prototype
   for (const key of Object.keys(OrigXHR)) {
     window.XMLHttpRequest[key] = OrigXHR[key];
   }
   window.XMLHttpRequest.prototype = OrigXHR.prototype;
 
-  // ---------------------------------------------------------------
-  // 12. Final activation
-  // ---------------------------------------------------------------
-  localStorage.setItem('__monitor_active__', 'true');
-  console.log('%c🔍 Ultimate monitoring active – open /admin to view', 'color:#0f0; font-size:14px');
+  // Optional: log when monitoring becomes active (admin will see in console)
+  if (isMonitoringEnabled()) {
+    console.log('%c🔍 Admin monitoring ACTIVE (token present)', 'color:#0f0; font-size:14px');
+  }
 })();
