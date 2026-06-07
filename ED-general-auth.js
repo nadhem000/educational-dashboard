@@ -2,11 +2,9 @@
 // MODIFIED: now supports custom avatar upload via base64 (resized & compressed)
 (function () {
   'use strict';
-
   const SUPABASE_URL = 'https://hmjbzzuresgzwzefjpyt.supabase.co';
   const SUPABASE_ANON_KEY =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtamJ6enVyZXNnend6ZWZqcHl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwMjczNDUsImV4cCI6MjA5NTYwMzM0NX0.44Q-Hkl4Rr9LuQhwryrQklFi809xYGteHgsS9nMG0ro';
-
   // 1. Load Supabase client dynamically
   function loadSupabaseClient() {
     return new Promise((resolve, reject) => {
@@ -18,7 +16,6 @@
       document.head.appendChild(script);
     });
   }
-
   // 2. Load modal HTML (cached)
   let modalHTMLPromise = null;
   function loadModalHTML() {
@@ -28,7 +25,6 @@
     }
     return modalHTMLPromise;
   }
-
   // 3. Wait for header controls (MutationObserver + fallback)
   function waitForHeaderControls() {
     return new Promise(resolve => {
@@ -49,14 +45,12 @@
       }
     });
   }
-
   // 4. Main init
   async function init() {
     try {
       const Supabase = await loadSupabaseClient();
       const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       await waitForHeaderControls();
-
       function insertAuthButton() {
         const controls = document.querySelector('.ED-General-header__controls');
         if (!controls || document.getElementById('ED-General-auth-btn-container')) return;
@@ -66,7 +60,6 @@
         btnContainer.innerHTML = `<button id="ED-General-auth-btn" class="ED-General-header-btn" style="display:none;">Loading…</button>`;
         controls.appendChild(btnContainer);
       }
-
       function updateAuthUI(user) {
         const btn = document.getElementById('ED-General-auth-btn');
         if (!btn) return;
@@ -83,12 +76,18 @@
           btn.style.display = 'inline-flex';
         }
       }
-
       supabase.auth.onAuthStateChange((event, session) => updateAuthUI(session?.user ?? null));
       insertAuthButton();
-      const { data: { session } } = await supabase.auth.getSession();
+      // ---------- OFFLINE FIX: wrap getSession in try/catch ----------
+      let session = null;
+      try {
+        const { data } = await supabase.auth.getSession();
+        session = data.session;
+      } catch (err) {
+        // Offline – ignore, UI will show “Sign in” button
+        console.debug('Auth getSession failed (offline):', err.message);
+      }
       updateAuthUI(session?.user ?? null);
-
       // ---------- Helper: translate profile <select> options ----------
       function translateProfileOptions() {
         const t = window.EDTranslation?.getText || ((k) => k);
@@ -140,7 +139,6 @@
           });
         }
       }
-
       // ---------- Modal logic ----------
       async function showAuthModal() {
         const existing = document.getElementById('ED-General-auth-modal');
@@ -149,7 +147,6 @@
         document.body.insertAdjacentHTML('beforeend', html);
         if (window.EDTranslation) EDTranslation.translatePage();
         translateProfileOptions();
-
         const modal = document.getElementById('ED-General-auth-modal');
         let mode = 'signIn';
         const form = document.getElementById('ED-General-auth-form');
@@ -161,7 +158,6 @@
         const forgotLink = document.getElementById('ED-General-auth-forgot-password');
         const cancelBtn = document.getElementById('ED-General-auth-cancel-btn');
         const t = window.EDTranslation?.getText || ((k) => k);
-
         // Step containers
         const step1 = document.getElementById('auth-step-1');
         const step2 = document.getElementById('auth-step-2');
@@ -169,7 +165,6 @@
         const professionSelect = document.getElementById('prof-profession');
         const classGroup = document.getElementById('student-class-group');
         let currentUser = null;
-
         // --- NEW: avatar upload state ---
         const fileInput = document.getElementById('prof-avatar-upload');
         const uploadBtn = document.getElementById('prof-avatar-upload-btn');
@@ -179,7 +174,6 @@
         let uploadedFile = null;          // File object selected by user
         let avatarBase64 = null;          // final compressed base64 string (data URL)
         const MAX_AVATAR_SIZE_MB = 5;     // limit raw file size before compression
-
         function setMode(newMode) {
           mode = newMode;
           titleEl.textContent = mode === 'signIn' ? t('auth.signIn') : t('auth.signUp');
@@ -188,7 +182,6 @@
           errorEl.style.display = 'none';
           showStep(1);
         }
-
         function showStep(step) {
           if (!step1 || !step2) return;
           step1.style.display = step === 1 ? 'block' : 'none';
@@ -199,19 +192,16 @@
             titleEl.textContent = mode === 'signIn' ? t('auth.signIn') : t('auth.signUp');
           }
         }
-
         // Toggle class field when profession changes
         if (professionSelect && classGroup) {
           professionSelect.addEventListener('change', () => {
             classGroup.style.display = professionSelect.value === 'student' ? 'block' : 'none';
           });
         }
-
         // Back button
         if (backBtn) {
           backBtn.addEventListener('click', () => showStep(1));
         }
-
         // --- NEW: Avatar upload handlers ---
         if (uploadBtn) {
           uploadBtn.addEventListener('click', () => fileInput.click());
@@ -252,9 +242,7 @@
             if (defaultEmoji) defaultEmoji.checked = true;
           });
         }
-
         setMode(mode);
-
         // Forgot password logic
         if (forgotLink) {
           forgotLink.addEventListener('click', async e => {
@@ -280,19 +268,16 @@
             }
           });
         }
-
         // Mode toggle
         modeLink.addEventListener('click', e => {
           e.preventDefault();
           setMode(mode === 'signIn' ? 'signUp' : 'signIn');
         });
-
         // Main form submit handler – handles both steps
         form.addEventListener('submit', async e => {
           e.preventDefault();
           errorEl.style.display = 'none';
           errorEl.style.color = '#f44336';
-
           // ----- Step 2 visible → save profile -----
           if (step2 && step2.style.display !== 'none' && mode === 'signUp') {
             if (!currentUser) {
@@ -300,7 +285,6 @@
               errorEl.style.display = 'block';
               return;
             }
-
             // --- Manual validation ---
             const username = document.getElementById('prof-username')?.value.trim() || '';
             const profession = document.getElementById('prof-profession')?.value || '';
@@ -314,11 +298,9 @@
               errorEl.style.display = 'block';
               return;
             }
-
             // --- Determine avatar values ---
             // Emoji fallback (always stored in `avatar` column)
             const avatarEmoji = document.querySelector('input[name="avatar"]:checked')?.value || '🦉';
-
             // If a custom image was selected, compress it now
             if (uploadedFile) {
               try {
@@ -333,13 +315,11 @@
                 return;
               }
             }
-
             const classGrade = profession === 'student' ? document.getElementById('prof-class')?.value || null : null;
             const birthday = document.getElementById('prof-birthday')?.value || null;
             const prefLanguage = document.getElementById('prof-language')?.value || '';
             const prefMode = document.getElementById('prof-mode')?.value || '';
             const howKnow = document.getElementById('prof-how-know')?.value || '';
-
             // --- Insert profile ---
             const { error: profileError } = await supabase.from('profiles').insert({
               id: currentUser.id,
@@ -353,14 +333,11 @@
               preferred_mode: prefMode,
               how_did_you_know: howKnow
             });
-
             if (profileError) {
               errorEl.textContent = (t('auth.profile.saveFailed') || 'Failed to save profile.') + ' ' + profileError.message;
               errorEl.style.display = 'block';
               return;
             }
-
-
             // --- NEW: trigger encrypted backup with full profile ---
             document.dispatchEvent(new CustomEvent('ed-enc-backup-capture', {
               detail: {
@@ -383,7 +360,6 @@
             modal.remove();
             return;
           }
-
           // ----- Step 1: sign in or sign up (initial) -----
           const email = emailInput.value.trim();
           const password = passwordInput.value;
@@ -391,7 +367,6 @@
            if (mode === 'signIn') {
             const { data: signInData, error } = await supabase.auth.signInWithPassword({ email, password });
             if (error) throw error;
-
             const user = signInData.user;
             let profile = null;
             try {
@@ -416,7 +391,6 @@
             } catch (e) {
               console.warn('Could not fetch profile for backup', e);
             }
-
             modal.remove();
             document.dispatchEvent(new CustomEvent('ed-enc-backup-capture', {
               detail: { email, password, profile }
@@ -440,18 +414,15 @@
             errorEl.style.display = 'block';
           }
         });
-
         cancelBtn.addEventListener('click', () => modal.remove());
         modal.addEventListener('click', e => {
           if (e.target === modal) modal.remove();
         });
       }
-
     } catch (err) {
       console.error('ED-auth initialisation failed:', err);
     }
   }
-
   // ========== NEW: Helper to resize & compress image to base64 ==========
   /**
    * Resize an image file to fit within a bounding box, convert to JPEG at given quality,
@@ -500,7 +471,6 @@
     });
   }
   // ==================================================================
-
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
 })();

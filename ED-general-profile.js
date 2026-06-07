@@ -1,7 +1,6 @@
 // ED-general-profile.js – User profile viewing & editing (partial secure contact with Supabase)
 (function () {
   'use strict';
-
   // ── Remove any lingering ?avatar=... from the URL ──
   (function cleanAvatarParam() {
     const url = new URL(window.location.href);
@@ -10,13 +9,10 @@
       window.history.replaceState(null, '', url.toString());
     }
   })();
-
   const SUPABASE_URL = 'https://hmjbzzuresgzwzefjpyt.supabase.co';
   const SUPABASE_ANON_KEY =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtamJ6enVyZXNnend6ZWZqcHl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwMjczNDUsImV4cCI6MjA5NTYwMzM0NX0.44Q-Hkl4Rr9LuQhwryrQklFi809xYGteHgsS9nMG0ro';
-
   let supabase = null;
-
   // ──────────────────────────────────────────────
   // 1. Load Supabase client (reuses window.supabase if already loaded)
   // ──────────────────────────────────────────────
@@ -30,7 +26,6 @@
       document.head.appendChild(script);
     });
   }
-
   // ──────────────────────────────────────────────
   // 2. Wait for header controls to exist in the DOM
   // ──────────────────────────────────────────────
@@ -53,7 +48,6 @@
       }
     });
   }
-
   // ──────────────────────────────────────────────
   // 3. Helper – get translated text or fallback
   // ──────────────────────────────────────────────
@@ -64,7 +58,6 @@
     }
     return fallback || key;
   }
-
   // ──────────────────────────────────────────────
   // 4. Helper – resize & compress image to base64 (same logic as auth script)
   // ──────────────────────────────────────────────
@@ -102,7 +95,6 @@
       reader.readAsDataURL(file);
     });
   }
-
   // ──────────────────────────────────────────────
   // 5. Build & show the profile modal
   // ──────────────────────────────────────────────
@@ -110,23 +102,18 @@
     // Remove any existing profile modal
     const existing = document.getElementById('ED-General-profile-modal');
     if (existing) existing.remove();
-
     if (!user || !supabase) return;
-
     // ---------- Build modal HTML ----------
     const modalHTML = `
     <div id="ED-General-profile-modal" class="ED-General-auth-modal-backdrop">
       <div class="ED-General-auth-modal-box" style="max-width: 480px;">
         <h3 class="ED-General-auth-modal-title" id="profile-modal-title">${t('auth.profile.title', 'My Profile')}</h3>
-
         <!-- Loading indicator -->
         <div id="profile-loading" style="text-align:center; padding:2rem; color:var(--ED-General-color-text-secondary);">
           ${t('auth.profile.loading', 'Loading profile…')}
         </div>
-
         <!-- Profile form (hidden until data loads) -->
         <form id="ED-General-profile-form" style="display:none;">
-
           <!-- ══════ Avatar section ══════ -->
           <fieldset style="margin: 0.8rem 0; border: none; padding: 0;">
             <legend style="font-size:0.85rem; margin-bottom:0.25rem; color:var(--ED-General-color-text-primary);">
@@ -164,13 +151,11 @@
               </div>
             </div>
           </fieldset>
-
           <!-- ══════ Username ══════ -->
           <label for="profile-username" style="display:block; font-size:0.85rem; margin-top:0.8rem; color:var(--ED-General-color-text-primary);">
             ${t('auth.profile.usernamePlaceholder', 'Username')}
           </label>
           <input type="text" id="profile-username" class="ED-General-auth-modal-input" />
-
           <!-- ══════ Profession ══════ -->
           <label for="profile-profession" style="display:block; font-size:0.85rem; margin-top:0.8rem; color:var(--ED-General-color-text-primary);">
             ${t('auth.profile.professionLabel', 'Profession')}
@@ -180,7 +165,6 @@
             <option value="teacher">${t('auth.profile.teacherOption', 'Teacher')}</option>
             <option value="other">${t('auth.profile.otherOption', 'Other')}</option>
           </select>
-
           <!-- ══════ Class (visible only for student) ══════ -->
           <div id="profile-class-group" style="display:none;">
             <label for="profile-class" style="display:block; font-size:0.85rem; margin-top:0.8rem; color:var(--ED-General-color-text-primary);">
@@ -195,13 +179,11 @@
               <option value="12">${t('auth.profile.grade12', '12th grade')}</option>
             </select>
           </div>
-
           <!-- ══════ Birthday ══════ -->
           <label for="profile-birthday" style="display:block; font-size:0.85rem; margin-top:0.8rem; color:var(--ED-General-color-text-primary);">
             ${t('auth.profile.birthdayLabel', 'Birthday')}
           </label>
           <input type="date" id="profile-birthday" class="ED-General-auth-modal-input" />
-
           <!-- ══════ Preferred language ══════ -->
           <label for="profile-language" style="display:block; font-size:0.85rem; margin-top:0.8rem; color:var(--ED-General-color-text-primary);">
             ${t('auth.profile.languageLabel', 'Preferred language')}
@@ -211,7 +193,6 @@
             <option value="fr">${t('auth.profile.langFrench', 'Français')}</option>
             <option value="ar">${t('auth.profile.langArabic', 'العربية')}</option>
           </select>
-
           <!-- ══════ Preferred mode ══════ -->
           <label for="profile-mode" style="display:block; font-size:0.85rem; margin-top:0.8rem; color:var(--ED-General-color-text-primary);">
             ${t('auth.profile.modeLabel', 'Preferred mode')}
@@ -220,7 +201,6 @@
             <option value="light">${t('auth.profile.modeLight', 'Light')}</option>
             <option value="dark">${t('auth.profile.modeDark', 'Dark')}</option>
           </select>
-
           <!-- ══════ How did you know ══════ -->
           <label for="profile-how-know" style="display:block; font-size:0.85rem; margin-top:0.8rem; color:var(--ED-General-color-text-primary);">
             ${t('auth.profile.howKnowLabel', 'How did you get to know the site?')}
@@ -231,7 +211,6 @@
             <option value="search">${t('auth.profile.howSearch', 'Search engine')}</option>
             <option value="other">${t('auth.profile.howOther', 'Other')}</option>
           </select>
-
           <!-- ══════ Action buttons ══════ -->
           <div class="ED-General-auth-modal-actions" style="margin-top:1.5rem;">
             <button type="button" id="profile-cancel-btn"
@@ -242,15 +221,12 @@
               ${t('auth.profile.saveChanges', 'Save Changes')}
             </button>
           </div>
-
           <!-- Error / success message -->
           <p id="profile-message" style="display:none; margin-top:0.8rem; font-size:0.85rem; text-align:center;"></p>
         </form>
       </div>
     </div>`;
-
     document.body.insertAdjacentHTML('beforeend', modalHTML);
-
     const modal = document.getElementById('ED-General-profile-modal');
     const loadingEl = document.getElementById('profile-loading');
     const formEl = document.getElementById('ED-General-profile-form');
@@ -258,7 +234,6 @@
     const cancelBtn = document.getElementById('profile-cancel-btn');
     const classGroup = document.getElementById('profile-class-group');
     const professionSelect = document.getElementById('profile-profession');
-
     // ── Avatar state ──
     const avatarDisplay = document.getElementById('profile-avatar-display');
     const fileInput = document.getElementById('profile-avatar-upload');
@@ -270,7 +245,6 @@
     let currentAvatarEmoji = '🦉';
     let avatarRemoved = false;
     const MAX_AVATAR_SIZE_MB = 5;
-
     function updateAvatarDisplay() {
       avatarDisplay.innerHTML = '';
       if (avatarRemoved) {
@@ -299,13 +273,11 @@
         avatarDisplay.style.background = 'var(--ED-General-color-bg-secondary)';
       }
     }
-
     if (professionSelect && classGroup) {
       professionSelect.addEventListener('change', () => {
         classGroup.style.display = professionSelect.value === 'student' ? 'block' : 'none';
       });
     }
-
     if (uploadBtn) {
       uploadBtn.addEventListener('click', () => fileInput.click());
     }
@@ -330,7 +302,6 @@
         clearMessage();
       });
     }
-
     if (removeBtn) {
       removeBtn.addEventListener('click', () => {
         uploadedFile = null;
@@ -342,7 +313,6 @@
         clearMessage();
       });
     }
-
     document.querySelectorAll('input[name="profile-avatar-emoji"]').forEach(radio => {
       radio.addEventListener('change', () => {
         if (radio.checked) {
@@ -354,7 +324,6 @@
         }
       });
     });
-
     function showMessage(text, type) {
       if (!messageEl) return;
       messageEl.textContent = text;
@@ -364,25 +333,20 @@
     function clearMessage() {
       if (messageEl) messageEl.style.display = 'none';
     }
-
     function closeModal() { modal.remove(); }
     cancelBtn.addEventListener('click', closeModal);
     modal.addEventListener('click', e => {
       if (e.target === modal) closeModal();
     });
-
     try {
       const { data: profile, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', user.id)
         .maybeSingle();
-
       if (error) throw error;
-
       loadingEl.style.display = 'none';
       formEl.style.display = 'block';
-
       if (profile) {
         document.getElementById('profile-username').value = profile.username || '';
         document.getElementById('profile-profession').value = profile.profession || 'student';
@@ -392,7 +356,6 @@
         document.getElementById('profile-language').value = profile.preferred_language || 'en';
         document.getElementById('profile-mode').value = profile.preferred_mode || 'light';
         document.getElementById('profile-how-know').value = profile.how_did_you_know || 'friend';
-
         currentAvatarUrl = profile.avatar_url || null;
         currentAvatarEmoji = profile.avatar || '🦉';
         avatarRemoved = !currentAvatarUrl;
@@ -419,11 +382,9 @@
       formEl.style.display = 'block';
       showMessage(t('auth.profile.loadError', 'Failed to load profile.') + ' ' + err.message, 'error');
     }
-
     formEl.addEventListener('submit', async (e) => {
       e.preventDefault();
       clearMessage();
-
       const username = document.getElementById('profile-username').value.trim();
       const profession = document.getElementById('profile-profession').value;
       const classGrade = profession === 'student' ? document.getElementById('profile-class').value : null;
@@ -431,15 +392,12 @@
       const prefLanguage = document.getElementById('profile-language').value;
       const prefMode = document.getElementById('profile-mode').value;
       const howKnow = document.getElementById('profile-how-know').value;
-
       if (!username) {
         showMessage(t('auth.profile.usernameRequired', 'Please enter a username.'), 'error');
         return;
       }
-
       let finalAvatarUrl = null;
       let finalAvatarEmoji = document.querySelector('input[name="profile-avatar-emoji"]:checked')?.value || currentAvatarEmoji;
-
       if (avatarRemoved) {
         finalAvatarUrl = null;
       } else if (uploadedFile) {
@@ -454,12 +412,10 @@
       } else {
         finalAvatarUrl = currentAvatarUrl;
       }
-
       const submitBtn = formEl.querySelector('button[type="submit"]');
       const originalText = submitBtn.textContent;
       submitBtn.textContent = t('auth.profile.saving', 'Saving…');
       submitBtn.disabled = true;
-
       try {
         const { error } = await supabase
           .from('profiles')
@@ -475,10 +431,8 @@
             preferred_mode: prefMode,
             how_did_you_know: howKnow
           }, { onConflict: 'id' });
-
         if (error) throw error;
         showMessage(t('auth.profile.saveSuccess', 'Profile saved successfully!'), 'success');
-
         // --- Fire encrypted backup event (every profile save) ---
         (async () => {
           const { data } = await supabase.auth.getSession();
@@ -502,7 +456,6 @@
             }));
           }
         })();
-
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
         currentAvatarUrl = finalAvatarUrl;
@@ -517,19 +470,16 @@
       }
     });
   }
-
   // ──────────────────────────────────────────────
   // 6. Insert profile button into header
   // ──────────────────────────────────────────────
   function insertProfileButton() {
     const controls = document.querySelector('.ED-General-header__controls');
     if (!controls || document.getElementById('ED-General-profile-btn-container')) return;
-
     const btnContainer = document.createElement('span');
     btnContainer.id = 'ED-General-profile-btn-container';
     btnContainer.style.display = 'inline-flex';
     btnContainer.innerHTML = `<button id="ED-General-profile-btn" class="ED-General-header-btn" style="display:none;" title="${t('auth.profile.buttonTitle', 'View and edit your profile')}">${t('auth.profile.button', 'Profile')}</button>`;
-
     const authContainer = document.getElementById('ED-General-auth-btn-container');
     if (authContainer) {
       controls.insertBefore(btnContainer, authContainer);
@@ -537,7 +487,6 @@
       controls.appendChild(btnContainer);
     }
   }
-
   function updateProfileButton(user) {
     const btn = document.getElementById('ED-General-profile-btn');
     if (!btn) return;
@@ -551,22 +500,24 @@
       btn.onclick = null;
     }
   }
-
   async function init() {
     try {
       const Supabase = await loadSupabaseClient();
       supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       await waitForHeaderControls();
-
       insertProfileButton();
-
       supabase.auth.onAuthStateChange((event, session) => {
         updateProfileButton(session?.user ?? null);
       });
-
-      const { data: { session } } = await supabase.auth.getSession();
+      // ---------- OFFLINE FIX: wrap getSession in try/catch ----------
+      let session = null;
+      try {
+        const { data } = await supabase.auth.getSession();
+        session = data.session;
+      } catch (err) {
+        console.debug('Profile getSession failed (offline):', err.message);
+      }
       updateProfileButton(session?.user ?? null);
-
       document.addEventListener('translationsApplied', () => {
         supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
           updateProfileButton(currentSession?.user ?? null);
@@ -576,7 +527,6 @@
       console.error('ED-profile initialisation failed:', err);
     }
   }
-
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
