@@ -2,8 +2,8 @@
 (function () {
   'use strict';
   // ── SECRET DEVELOPER SHORTCUT ──
-// Set to true to enable “pick one folder → store all images”
-window.imageShortcut = true;   // ← change this to true when you need it
+  // Set to true to enable “pick one folder → store all images”
+  window.imageShortcut = true;   // ← change this to true when you need it
   // ── Remove any lingering ?avatar=... from the URL ──
   (function cleanAvatarParam() {
     const url = new URL(window.location.href);
@@ -142,6 +142,7 @@ window.imageShortcut = true;   // ← change this to true when you need it
                     <input type="radio" name="profile-avatar-emoji" value="🐨" /> 🐨
                   </label>
                 </div>
+                <!-- Upload & Remove row -->
                 <div style="display:flex; gap:0.5rem; align-items:center;">
                   <input type="file" id="profile-avatar-upload" accept="image/*" style="display:none;" />
                   <button type="button" id="profile-avatar-upload-btn" class="ED-General-header-btn">
@@ -150,15 +151,18 @@ window.imageShortcut = true;   // ← change this to true when you need it
                   <button type="button" id="profile-avatar-remove-btn" class="ED-General-header-btn" style="font-size:0.8rem;">
                     ✕ ${t('auth.profile.removeAvatar', 'Remove')}
                   </button>
-				  <button type="button" id="profile-create-animated-avatar-btn"
-        class="ED-General-header-btn"
-        style="background: #9333ea; color: #fff; font-size:0.8rem;"
-        title="Experimental feature">
-  🎞️ ${t('auth.profile.createAnimatedAvatar', 'Create animated avatar')}
-</button>
-<span style="font-size:0.7rem; color: var(--ED-General-color-text-tertiary); margin-left:0.3rem;">
-  ${t('auth.profile.experimentalNote', 'still experimental')}
-</span>
+                </div>
+                <!-- Experimental animated avatar (separate row, note below) -->
+                <div style="margin-top:0.3rem;">
+                  <button type="button" id="profile-create-animated-avatar-btn"
+                          class="ED-General-header-btn"
+                          style="font-size:0.8rem;"
+                          title="Experimental feature">
+                    🎞️ ${t('auth.profile.createAnimatedAvatar', 'Create animated avatar')}
+                  </button>
+                  <div style="font-size:0.7rem; color: var(--ED-General-color-text-tertiary); margin-top:0.2rem;">
+                    ${t('auth.profile.experimentalNote', 'still experimental')}
+                  </div>
                 </div>
               </div>
             </div>
@@ -551,17 +555,8 @@ window.imageShortcut = true;   // ← change this to true when you need it
 // =================================================================
 (function () {
   'use strict';
-
   // Feature flag – set to true to show the experimental button & enable sandbox
   if (window.imageShortcut !== true) return;
-
-  // Visual indicator (banner)
-  const banner = document.createElement('div');
-  banner.style.cssText = 'position:fixed; bottom:20px; left:20px; background:#9333ea; color:white; padding:10px 20px; border-radius:10px; z-index:99999; font-family:system-ui; font-size:0.9rem;';
-  banner.textContent = '🎞️ Animated Avatar Sandbox ACTIVE';
-  document.body.appendChild(banner);
-  console.log('🔓 Animated‑avatar sandbox started (v6 – dedicated button)');
-
   // ── Folder picker (hidden) ──
   const folderInput = document.createElement('input');
   folderInput.type = 'file';
@@ -571,7 +566,6 @@ window.imageShortcut = true;   // ← change this to true when you need it
   folderInput.accept = 'image/*';
   folderInput.style.display = 'none';
   document.body.appendChild(folderInput);
-
   // ── IndexedDB (stores base64 data URLs) ──
   function openDB() {
     return new Promise((resolve, reject) => {
@@ -586,7 +580,6 @@ window.imageShortcut = true;   // ← change this to true when you need it
       req.onerror = () => reject(req.error);
     });
   }
-
   function storeImage(name, dataUrl) {
     return openDB().then(db => new Promise((resolve, reject) => {
       const tx = db.transaction('images', 'readwrite');
@@ -595,7 +588,6 @@ window.imageShortcut = true;   // ← change this to true when you need it
       tx.onerror = () => reject(tx.error);
     }));
   }
-
   // Compress image to base64 JPEG thumbnail
   function compressToBase64(file, maxWidth = 300, quality = 0.5) {
     return new Promise((resolve, reject) => {
@@ -621,12 +613,10 @@ window.imageShortcut = true;   // ← change this to true when you need it
       reader.readAsDataURL(file);
     });
   }
-
   // ── Process folder selection ──
   folderInput.addEventListener('change', async () => {
     const files = Array.from(folderInput.files);
     if (files.length === 0) return;
-    banner.textContent = '🎞️ Compressing & storing…';
     let stored = 0;
     for (const file of files) {
       if (!/\.(jpg|jpeg|png|gif|webp|bmp|svg|avif|tiff?|heic|heif|ico)$/i.test(file.name)) continue;
@@ -638,18 +628,13 @@ window.imageShortcut = true;   // ← change this to true when you need it
         console.warn('Skipped:', file.name, err);
       }
     }
-    banner.textContent = `✔ ${stored} images stored (base64)`;
-    setTimeout(() => { banner.textContent = '🎞️ Animated Avatar Sandbox ACTIVE'; }, 4000);
     folderInput.value = '';
   });
-
   // ── Hook the NEW button persistently ──
   const observer = new MutationObserver(() => {
     const animBtn = document.getElementById('profile-create-animated-avatar-btn');
     if (animBtn && !animBtn.dataset.shortcutHooked) {
       animBtn.dataset.shortcutHooked = 'true';
-      console.log('🔓 Hooked "Create animated avatar" button to folder picker.');
-
       animBtn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -657,7 +642,5 @@ window.imageShortcut = true;   // ← change this to true when you need it
       }, true);                     // capture phase ensures we run first
     }
   });
-
   observer.observe(document.body, { childList: true, subtree: true });
-
 })();
