@@ -51,20 +51,26 @@
   }
 
   async function flushQueue() {
-    const queue = getQueue();
-    if (queue.length === 0) return;
-    let sent = 0;
-    for (const item of queue) {
-      try {
-        await sendEvent(item.entity_type, item.entity_id);
-        sent++;
-      } catch (err) {
-        console.warn('Failed to flush analytics event', err);
-        break; // stop on first failure, keep the rest for next time
-      }
+  const queue = getQueue();
+  if (queue.length === 0) return;
+  let sent = 0;
+  for (const item of queue) {
+    try {
+      await sendEvent(item.entity_type, item.entity_id);
+      sent++;
+    } catch (err) {
+      console.warn('Failed to flush analytics event', err);
+      break; // stop on first failure, keep remaining items
     }
+  }
+  // If all items were sent, delete the queue key entirely
+  if (sent === queue.length) {
+    localStorage.removeItem(QUEUE_KEY);
+  } else if (sent > 0) {
+    // Only some were sent – keep the rest
     removeFromQueue(sent);
   }
+}
 
   function trackInteraction(entityType, entityId) {
     if (shouldThrottle(entityType, entityId)) return;
@@ -114,6 +120,11 @@
         if (socialId) trackInteraction('card', 'social-' + socialId);
         return;
       }
+	  const animBtn = e.target.closest('#profile-create-animated-avatar-btn');
+if (animBtn) {
+  trackInteraction('experimental-feature', 'create-animated-avatar');
+  return;
+}
     });
   }
 
