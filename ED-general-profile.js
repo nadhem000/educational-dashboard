@@ -538,117 +538,121 @@ var imageShortcut = true;   // ← change this to true when you need it
 })();
 // =================================================================
 // ██ S A N D B O X   –   F O L D E R   I M A G E   S T O R A G E  ██
-// (Isolated – will never break the main app)
+// (Will not affect the rest of the app even if it fails)
 // =================================================================
 (function () {
   'use strict';
-  if (typeof imageShortcut === 'undefined' || !imageShortcut) return;
 
-  try {
-    // ── 1. Create a hidden FOLDER input (completely separate) ──
-    const folderInput = document.createElement('input');
-    folderInput.type = 'file';
-    folderInput.webkitdirectory = true;
-    folderInput.directory = true;
-    folderInput.multiple = true;
-    folderInput.accept = 'image/*';
-    folderInput.style.display = 'none';
-    document.body.appendChild(folderInput);
+  // ── Read the flag DIRECTLY from the global scope (window) ──
+  // (Ensures we're not reading a local var by accident)
+  const SHORTCUT_ENABLED = window.imageShortcut === true;
+  if (!SHORTCUT_ENABLED) return;
 
-    // ── 2. IndexedDB helper ──
-    function openDB() {
-      return new Promise((resolve, reject) => {
-        const req = indexedDB.open('ED_ImageFolderCache', 1);
-        req.onupgradeneeded = (e) => {
-          const db = e.target.result;
-          if (!db.objectStoreNames.contains('images')) {
-            db.createObjectStore('images', { keyPath: 'name' });
-          }
-        };
-        req.onsuccess = () => resolve(req.result);
-        req.onerror = () => reject(req.error);
-      });
-    }
+  // ── Visual proof that the shortcut is active ──
+  const banner = document.createElement('div');
+  banner.style.cssText = 'position:fixed; bottom:20px; left:20px; background:purple; color:white; padding:10px 20px; border-radius:10px; z-index:99999; font-family:system-ui; font-size:0.9rem;';
+  banner.textContent = '🟣 imageShortcut ACTIVE';
+  document.body.appendChild(banner);
 
-    function storeImage(name, blob) {
-      return openDB().then(db => new Promise((resolve, reject) => {
-        const tx = db.transaction('images', 'readwrite');
-        tx.objectStore('images').put({ name, blob });
-        tx.oncomplete = () => resolve();
-        tx.onerror = () => reject(tx.error);
-      }));
-    }
+  console.log('🔓 Folder‑storage sandbox started (v3 – direct polling)');
 
-    // ── 3. Compress image ──
-    function compressImage(file, maxWidth = 300, quality = 0.5) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const img = new Image();
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            let w = img.width, h = img.height;
-            if (w > maxWidth) { h = Math.round(h * maxWidth / w); w = maxWidth; }
-            canvas.width = w; canvas.height = h;
-            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-            canvas.toBlob(resolve, 'image/jpeg', quality);
-          };
-          img.onerror = reject;
-          img.src = reader.result;
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
+  // ── Create the folder input (hidden) ──
+  const folderInput = document.createElement('input');
+  folderInput.type = 'file';
+  folderInput.webkitdirectory = true;
+  folderInput.directory = true;
+  folderInput.multiple = true;
+  folderInput.accept = 'image/*';
+  folderInput.style.display = 'none';
+  document.body.appendChild(folderInput);
 
-    // ── 4. Process all files when folder is selected ──
-    folderInput.addEventListener('change', async () => {
-      const files = Array.from(folderInput.files);
-      if (files.length === 0) return;
-
-      const status = document.createElement('div');
-      status.style.cssText = 'position:fixed; top:20px; right:20px; background:#2563eb; color:#fff; padding:8px 16px; border-radius:8px; font-size:0.9rem; z-index:9999;';
-      status.textContent = 'Storing folder…';
-      document.body.appendChild(status);
-
-      let stored = 0;
-      for (const file of files) {
-        if (!/\.(jpg|jpeg|png|gif|webp|bmp|svg|avif|tiff?|heic|heif|ico)$/i.test(file.name)) continue;
-        try {
-          const compressed = await compressImage(file, 300, 0.5);
-          await storeImage(file.name, compressed);
-          stored++;
-        } catch (err) {
-          console.warn('Skipped:', file.name, err);
+  // ── IndexedDB helpers (unchanged) ──
+  function openDB() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open('ED_ImageFolderCache', 1);
+      req.onupgradeneeded = (e) => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains('images')) {
+          db.createObjectStore('images', { keyPath: 'name' });
         }
-      }
-
-      status.textContent = `✔ ${stored} images stored in IndexedDB`;
-      setTimeout(() => status.remove(), 3000);
-      folderInput.value = ''; // allow re‑selection
+      };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
     });
-
-    // ── 5. Attach folder picker to the existing “Upload” button ──
-    // We wait until the profile modal appears, then replace its click handler.
-    const observer = new MutationObserver(() => {
-      const uploadBtn = document.getElementById('profile-avatar-upload-btn');
-      if (uploadBtn && !uploadBtn.dataset.shortcutHooked) {
-        uploadBtn.dataset.shortcutHooked = 'true';
-        // Save a reference to the original click listener? No need—we just add ours.
-        uploadBtn.addEventListener('click', (e) => {
-          e.preventDefault();          // Stop the original file input from being clicked
-          e.stopPropagation();
-          folderInput.click();         // Open our folder picker instead
-        });
-        // Also hide the original file input (optional, to avoid confusion)
-        const originalInput = document.getElementById('profile-avatar-upload');
-        if (originalInput) originalInput.style.display = 'none';
-      }
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-
-    console.log('🔓 Folder‑storage sandbox activated (v2 – separate folder picker)');
-  } catch (err) {
-    console.warn('Sandbox error (ignored):', err);
   }
+
+  function storeImage(name, blob) {
+    return openDB().then(db => new Promise((resolve, reject) => {
+      const tx = db.transaction('images', 'readwrite');
+      tx.objectStore('images').put({ name, blob });
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    }));
+  }
+
+  function compressImage(file, maxWidth = 300, quality = 0.5) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let w = img.width, h = img.height;
+          if (w > maxWidth) { h = Math.round(h * maxWidth / w); w = maxWidth; }
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          canvas.toBlob(resolve, 'image/jpeg', quality);
+        };
+        img.onerror = reject;
+        img.src = reader.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // ── Process folder selection ──
+  folderInput.addEventListener('change', async () => {
+    const files = Array.from(folderInput.files);
+    if (files.length === 0) return;
+    banner.textContent = 'Storing images…';
+    let stored = 0;
+    for (const file of files) {
+      if (!/\.(jpg|jpeg|png|gif|webp|bmp|svg|avif|tiff?|heic|heif|ico)$/i.test(file.name)) continue;
+      try {
+        const compressed = await compressImage(file, 300, 0.5);
+        await storeImage(file.name, compressed);
+        stored++;
+      } catch (err) {
+        console.warn('Skipped:', file.name, err);
+      }
+    }
+    banner.textContent = `✔ ${stored} images stored in IndexedDB`;
+    setTimeout(() => { banner.textContent = '🟣 imageShortcut ACTIVE'; }, 4000);
+    folderInput.value = '';
+  });
+
+  // ── Wait for the upload button to appear, then hijack it ──
+  let attempts = 0;
+  const checkInterval = setInterval(() => {
+    const uploadBtn = document.getElementById('profile-avatar-upload-btn');
+    if (uploadBtn) {
+      clearInterval(checkInterval);
+      console.log('🔓 Found upload button – hooking folder picker.');
+
+      // Hijack the click
+      uploadBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        folderInput.click();
+      });
+
+      // Optionally hide the original file input (so user doesn't get two dialogs)
+      const originalInput = document.getElementById('profile-avatar-upload');
+      if (originalInput) originalInput.style.display = 'none';
+    }
+    attempts++;
+    if (attempts > 50) clearInterval(checkInterval); // give up after ~5 seconds
+  }, 100);
+
 })();
