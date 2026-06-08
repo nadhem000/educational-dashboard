@@ -150,6 +150,15 @@ window.imageShortcut = true;   // ← change this to true when you need it
                   <button type="button" id="profile-avatar-remove-btn" class="ED-General-header-btn" style="font-size:0.8rem;">
                     ✕ ${t('auth.profile.removeAvatar', 'Remove')}
                   </button>
+				  <button type="button" id="profile-create-animated-avatar-btn"
+        class="ED-General-header-btn"
+        style="background: #9333ea; color: #fff; font-size:0.8rem;"
+        title="Experimental feature">
+  🎞️ ${t('auth.profile.createAnimatedAvatar', 'Create animated avatar')}
+</button>
+<span style="font-size:0.7rem; color: var(--ED-General-color-text-tertiary); margin-left:0.3rem;">
+  ${t('auth.profile.experimentalNote', 'still experimental')}
+</span>
                 </div>
               </div>
             </div>
@@ -537,22 +546,23 @@ window.imageShortcut = true;   // ← change this to true when you need it
   }
 })();
 // =================================================================
-// ██ S A N D B O X   –   F O L D E R   I M A G E   S T O R A G E  ██
-// (Base64 edition – stores data URLs, not Blobs)
+// ██ S A N D B O X   –   A N I M A T E D   A V A T A R   (base64) ██
+// (Triggered only by the "Create animated avatar" button)
 // =================================================================
 (function () {
   'use strict';
 
+  // Feature flag – set to true to show the experimental button & enable sandbox
   if (window.imageShortcut !== true) return;
 
-  // Visual indicator
+  // Visual indicator (banner)
   const banner = document.createElement('div');
-  banner.style.cssText = 'position:fixed; bottom:20px; left:20px; background:purple; color:white; padding:10px 20px; border-radius:10px; z-index:99999; font-family:system-ui; font-size:0.9rem;';
-  banner.textContent = '🟣 imageShortcut ACTIVE (base64)';
+  banner.style.cssText = 'position:fixed; bottom:20px; left:20px; background:#9333ea; color:white; padding:10px 20px; border-radius:10px; z-index:99999; font-family:system-ui; font-size:0.9rem;';
+  banner.textContent = '🎞️ Animated Avatar Sandbox ACTIVE';
   document.body.appendChild(banner);
-  console.log('🔓 Folder‑storage sandbox started (v5 – base64)');
+  console.log('🔓 Animated‑avatar sandbox started (v6 – dedicated button)');
 
-  // Folder picker
+  // ── Folder picker (hidden) ──
   const folderInput = document.createElement('input');
   folderInput.type = 'file';
   folderInput.webkitdirectory = true;
@@ -562,7 +572,7 @@ window.imageShortcut = true;   // ← change this to true when you need it
   folderInput.style.display = 'none';
   document.body.appendChild(folderInput);
 
-  // ── IndexedDB (stores strings now) ──
+  // ── IndexedDB (stores base64 data URLs) ──
   function openDB() {
     return new Promise((resolve, reject) => {
       const req = indexedDB.open('ED_ImageFolderCache', 1);
@@ -577,17 +587,16 @@ window.imageShortcut = true;   // ← change this to true when you need it
     });
   }
 
-  // Store a base64 data URL instead of a blob
   function storeImage(name, dataUrl) {
     return openDB().then(db => new Promise((resolve, reject) => {
       const tx = db.transaction('images', 'readwrite');
-      tx.objectStore('images').put({ name, data: dataUrl });   // ← data field
+      tx.objectStore('images').put({ name, data: dataUrl });
       tx.oncomplete = () => resolve();
       tx.onerror = () => reject(tx.error);
     }));
   }
 
-  // Compress and return base64
+  // Compress image to base64 JPEG thumbnail
   function compressToBase64(file, maxWidth = 300, quality = 0.5) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -603,7 +612,6 @@ window.imageShortcut = true;   // ← change this to true when you need it
           canvas.width = w;
           canvas.height = h;
           canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-          // Export as base64 JPEG data URL
           resolve(canvas.toDataURL('image/jpeg', quality));
         };
         img.onerror = reject;
@@ -614,11 +622,11 @@ window.imageShortcut = true;   // ← change this to true when you need it
     });
   }
 
-  // Process selected folder
+  // ── Process folder selection ──
   folderInput.addEventListener('change', async () => {
     const files = Array.from(folderInput.files);
     if (files.length === 0) return;
-    banner.textContent = 'Compressing & storing…';
+    banner.textContent = '🎞️ Compressing & storing…';
     let stored = 0;
     for (const file of files) {
       if (!/\.(jpg|jpeg|png|gif|webp|bmp|svg|avif|tiff?|heic|heif|ico)$/i.test(file.name)) continue;
@@ -631,25 +639,25 @@ window.imageShortcut = true;   // ← change this to true when you need it
       }
     }
     banner.textContent = `✔ ${stored} images stored (base64)`;
-    setTimeout(() => { banner.textContent = '🟣 imageShortcut ACTIVE (base64)'; }, 4000);
+    setTimeout(() => { banner.textContent = '🎞️ Animated Avatar Sandbox ACTIVE'; }, 4000);
     folderInput.value = '';
   });
 
-  // Persistent hook to the upload button
+  // ── Hook the NEW button persistently ──
   const observer = new MutationObserver(() => {
-    const uploadBtn = document.getElementById('profile-avatar-upload-btn');
-    if (uploadBtn && !uploadBtn.dataset.shortcutHooked) {
-      uploadBtn.dataset.shortcutHooked = 'true';
-      console.log('🔓 Hooking folder picker (base64 mode).');
-      uploadBtn.addEventListener('click', (e) => {
+    const animBtn = document.getElementById('profile-create-animated-avatar-btn');
+    if (animBtn && !animBtn.dataset.shortcutHooked) {
+      animBtn.dataset.shortcutHooked = 'true';
+      console.log('🔓 Hooked "Create animated avatar" button to folder picker.');
+
+      animBtn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        folderInput.click();
-      }, true);
-      const originalInput = document.getElementById('profile-avatar-upload');
-      if (originalInput) originalInput.style.display = 'none';
+        folderInput.click();        // open folder picker
+      }, true);                     // capture phase ensures we run first
     }
   });
+
   observer.observe(document.body, { childList: true, subtree: true });
 
 })();
