@@ -3,7 +3,7 @@
   'use strict';
   // ── SECRET DEVELOPER SHORTCUT ──
 // Set to true to enable “pick one folder → store all images”
-var imageShortcut = true;   // ← change this to true when you need it
+window.imageShortcut = true;   // ← change this to true when you need it
   // ── Remove any lingering ?avatar=... from the URL ──
   (function cleanAvatarParam() {
     const url = new URL(window.location.href);
