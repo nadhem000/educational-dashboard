@@ -19,26 +19,26 @@
     const SUPABASE_URL = 'https://hmjbzzuresgzwzefjpyt.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtamJ6enVyZXNnend6ZWZqcHl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwMjczNDUsImV4cCI6MjA5NTYwMzM0NX0.44Q-Hkl4Rr9LuQhwryrQklFi809xYGteHgsS9nMG0ro';
     try {
-      const response = await fetch(`${SUPABASE_URL}/rest/v1/push_subscriptions`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          apikey: SUPABASE_ANON_KEY,
-          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-          Prefer: 'return=minimal',
-        },
-        body: JSON.stringify({ subscription }),
-      });
-      if (response.status === 409) {
-        console.debug('Push subscription already exists (expected).');
-        return;
-      }
-      if (!response.ok) console.error('Failed to save subscription:', response.status);
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/push_subscriptions`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                apikey: SUPABASE_ANON_KEY,
+                Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+                Prefer: 'return=minimal',
+            },
+            body: JSON.stringify({ subscription }),
+        });
+        if (response.status === 409) {
+            console.debug('Push subscription already exists (expected).');
+            return;
+        }
+        if (!response.ok) console.error('Failed to save subscription:', response.status);
     } catch (err) {
-      // Offline – ignore silently
-      console.debug('Push subscription save failed (offline)', err);
+        // Offline – ignore silently
+        console.debug('Push subscription save failed (offline)', err);
     }
-  }
+}
 
   async function subscribeToPush() {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {

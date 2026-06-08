@@ -1,4 +1,4 @@
-const CACHE_NAME = 'edudash-v155'; // bump version when deploy
+const CACHE_NAME = 'edudash-v156'; // bump version when deploy
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
@@ -9,7 +9,12 @@ const PRECACHE_ASSETS = [
   '/ED-general-common.css',
   '/header.html',
   '/footer.html',
-  '/contact.html',
+  '/admin.html',
+'/contact.html',
+'/privacyPolicy.html',
+'/reset-password.html',
+'/signin.html',
+'/termsOfUse.html',
   '/manifest.json',
   '/widgets/dashboard-widgets.json',
   '/widgets/dashboard-template.json',
