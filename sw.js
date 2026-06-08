@@ -1,56 +1,28 @@
-const CACHE_NAME = 'edudash-v158'; // bump version when deploy
+const CACHE_NAME = 'edudash-v159'; // bump version when deploy
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
-  '/data_general.js',
+  '/contact.html',
+  '/privacyPolicy.html',
+  '/reset-password.html',
+  '/signin.html',
+  '/termsOfUse.html',
+  '/admin.html',
+  '/ED-general-common.css',
   '/ED-general-pwa.js',
   '/ED-general-cards.js',
   '/ED-general-shortcuts.js',
-  '/ED-general-common.css',
+  '/ED-general-translations-data.js',
+  '/data_general.js',
+  '/ED-general-translation.js',
+  '/ED-general-analytics.js',
+  '/ED-general-init.js',
+  '/ED-general-auth.js',
+  '/ED-general-profile.js',
+  '/ED-general-encrypted-backup.js',
   '/header.html',
   '/footer.html',
-  '/admin.html',
-'/contact.html',
-'/privacyPolicy.html',
-'/reset-password.html',
-'/signin.html',
-'/termsOfUse.html',
-  '/manifest.json',
-  '/widgets/dashboard-widgets.json',
-  '/widgets/dashboard-template.json',
-  '/assets/icons/arabicHub.png',
-  '/assets/icons/englishHub.png',
-  '/assets/icons/mathematicsHub.png',
-  '/assets/icons/frenchHub.png',
-  '/assets/icons/naturalScienceHub.png',
-  '/assets/icons/physicsHub.png',
-  '/assets/icons/philosophyHub.png',
-  '/assets/icons/testsHub.png',
-  '/assets/icons/wesnothTools.png',
-  '/assets/icons/wesnothEditor.png',
-  '/assets/icons/wesnothTimeline.png',
-  '/assets/icons/multiTasksCalendar.png',
-  '/assets/icons/codeHub.png',
-  '/assets/icons/spiritualGuideHub.png',
-  '/assets/icons/spiritArchetype.png',
-  '/assets/icons/documentsManager.png',
-  '/assets/icons/bacHistoryGeographyQuiz.png',
-  '/assets/icons/gameHub.png',
-  '/assets/icons/cosmicNews.png',
-  '/assets/icons/nocTunisia.png',
-  '/assets/icons/mmathematicsCalculators.png',
-  '/assets/icons/calendarMultiTaskOld.png',
-  '/assets/icons/encyclopediaOfCivilisations.png',
-  '/assets/icons/spiritualConsultation.png',
-  '/assets/icons/spiritualConsultationTest.png',
-  '/assets/icons/wesnothTimelineOld.png',
-  '/assets/icons/interactiveTimelineEditor.png',
-  '/assets/icons/oldQuizGame.png',
-  '/assets/icons/mathematicsHubOld.png',
-  '/assets/icons/simpleTestAppOld.png',
-  '/assets/icons/newsTestTestingShares.png',
-  '/assets/icons/icon-192x192.png',
-  '/assets/icons/icon-96x96.png'
+  '/manifest.json'
 ];
 
 // ---------- Helper: send message to all clients ----------
@@ -184,23 +156,29 @@ self.addEventListener('sync', event => {
 
 // ---------- Periodic Background Sync ----------
 self.addEventListener('periodicsync', event => {
-  sendToAllClients('SW_PERIODICSYNC', { tag: event.tag });
-
   if (event.tag === 'periodic-update') {
     event.waitUntil(
-      Promise.all(
-        PRECACHE_ASSETS.map(url =>
-          fetch(url, { cache: 'no-cache' })
-            .then(response => {
-              if (response.ok) {
-                return caches.open(CACHE_NAME).then(cache =>
-                  cache.put(url, response)
-                );
-              }
-            })
-            .catch(() => {})
-        )
-      )
+      self.clients.matchAll().then(clients => {
+        // Only update if at least one client is on an unmetered connection
+        const allowed = clients.some(client =>
+          client.connection?.effectiveType !== 'cellular' &&
+          !client.connection?.saveData
+        );
+        if (!allowed) return;
+        return Promise.all(
+          PRECACHE_ASSETS.map(url =>
+            fetch(url, { cache: 'no-cache' })
+              .then(response => {
+                if (response.ok) {
+                  return caches.open(CACHE_NAME).then(cache =>
+                    cache.put(url, response)
+                  );
+                }
+              })
+              .catch(() => {})
+          )
+        );
+      })
     );
   }
 });
