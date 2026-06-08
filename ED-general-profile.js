@@ -543,18 +543,15 @@ window.imageShortcut = true;   // ← change this to true when you need it
 (function () {
   'use strict';
 
-  // ── Read the flag DIRECTLY from the global scope (window) ──
-  // (Ensures we're not reading a local var by accident)
-  const SHORTCUT_ENABLED = window.imageShortcut === true;
-  if (!SHORTCUT_ENABLED) return;
+  // ── Read the flag DIRECTLY from the global scope ──
+  if (window.imageShortcut !== true) return;
 
   // ── Visual proof that the shortcut is active ──
   const banner = document.createElement('div');
   banner.style.cssText = 'position:fixed; bottom:20px; left:20px; background:purple; color:white; padding:10px 20px; border-radius:10px; z-index:99999; font-family:system-ui; font-size:0.9rem;';
   banner.textContent = '🟣 imageShortcut ACTIVE';
   document.body.appendChild(banner);
-
-  console.log('🔓 Folder‑storage sandbox started (v3 – direct polling)');
+  console.log('🔓 Folder‑storage sandbox started (v4 – persistent observer)');
 
   // ── Create the folder input (hidden) ──
   const folderInput = document.createElement('input');
@@ -566,7 +563,7 @@ window.imageShortcut = true;   // ← change this to true when you need it
   folderInput.style.display = 'none';
   document.body.appendChild(folderInput);
 
-  // ── IndexedDB helpers (unchanged) ──
+  // ── IndexedDB helpers ──
   function openDB() {
     return new Promise((resolve, reject) => {
       const req = indexedDB.open('ED_ImageFolderCache', 1);
@@ -632,27 +629,28 @@ window.imageShortcut = true;   // ← change this to true when you need it
     folderInput.value = '';
   });
 
-  // ── Wait for the upload button to appear, then hijack it ──
-  let attempts = 0;
-  const checkInterval = setInterval(() => {
+  // ── Persistent hook: whenever the upload button appears, hijack it ──
+  const observer = new MutationObserver(() => {
     const uploadBtn = document.getElementById('profile-avatar-upload-btn');
-    if (uploadBtn) {
-      clearInterval(checkInterval);
-      console.log('🔓 Found upload button – hooking folder picker.');
+    if (uploadBtn && !uploadBtn.dataset.shortcutHooked) {
+      uploadBtn.dataset.shortcutHooked = 'true';
+      console.log('🔓 Hooking folder picker to upload button.');
 
-      // Hijack the click
+      // Intercept the click event in the capture phase so we run BEFORE
+      // any other click handlers (like the one that clicks the original input)
       uploadBtn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
         folderInput.click();
-      });
+      }, true);  // ← capture phase
 
-      // Optionally hide the original file input (so user doesn't get two dialogs)
+      // The original file input is already hidden (display:none), but we hide it again for safety
       const originalInput = document.getElementById('profile-avatar-upload');
       if (originalInput) originalInput.style.display = 'none';
     }
-    attempts++;
-    if (attempts > 50) clearInterval(checkInterval); // give up after ~5 seconds
-  }, 100);
+  });
+
+  // Watch the entire document for added nodes
+  observer.observe(document.body, { childList: true, subtree: true });
 
 })();
