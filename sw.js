@@ -1,4 +1,4 @@
-const CACHE_NAME = 'edudash-v153'; // bump version when deploy
+const CACHE_NAME = 'edudash-v154'; // bump version when deploy
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
@@ -128,12 +128,13 @@ self.addEventListener('fetch', event => {
 
   if (event.request.method !== 'GET') return;
   if (event.request.mode === 'navigate') {
-    event.respondWith(
-      fetch(event.request)
-        .catch(() => caches.match('/index.html') || caches.match('/'))
-    );
-    return;
-  }
+  event.respondWith(
+    fetch(event.request).catch(() =>
+      caches.match(event.request).then(cached => cached || caches.match('/index.html'))
+    )
+  );
+  return;
+}
   event.respondWith(
     caches.match(event.request).then(cached => {
       const fetchPromise = fetch(event.request).then(response => {
