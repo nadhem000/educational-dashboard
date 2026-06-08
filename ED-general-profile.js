@@ -538,22 +538,21 @@ window.imageShortcut = true;   // ← change this to true when you need it
 })();
 // =================================================================
 // ██ S A N D B O X   –   F O L D E R   I M A G E   S T O R A G E  ██
-// (Will not affect the rest of the app even if it fails)
+// (Base64 edition – stores data URLs, not Blobs)
 // =================================================================
 (function () {
   'use strict';
 
-  // ── Read the flag DIRECTLY from the global scope ──
   if (window.imageShortcut !== true) return;
 
-  // ── Visual proof that the shortcut is active ──
+  // Visual indicator
   const banner = document.createElement('div');
   banner.style.cssText = 'position:fixed; bottom:20px; left:20px; background:purple; color:white; padding:10px 20px; border-radius:10px; z-index:99999; font-family:system-ui; font-size:0.9rem;';
-  banner.textContent = '🟣 imageShortcut ACTIVE';
+  banner.textContent = '🟣 imageShortcut ACTIVE (base64)';
   document.body.appendChild(banner);
-  console.log('🔓 Folder‑storage sandbox started (v4 – persistent observer)');
+  console.log('🔓 Folder‑storage sandbox started (v5 – base64)');
 
-  // ── Create the folder input (hidden) ──
+  // Folder picker
   const folderInput = document.createElement('input');
   folderInput.type = 'file';
   folderInput.webkitdirectory = true;
@@ -563,7 +562,7 @@ window.imageShortcut = true;   // ← change this to true when you need it
   folderInput.style.display = 'none';
   document.body.appendChild(folderInput);
 
-  // ── IndexedDB helpers ──
+  // ── IndexedDB (stores strings now) ──
   function openDB() {
     return new Promise((resolve, reject) => {
       const req = indexedDB.open('ED_ImageFolderCache', 1);
@@ -578,16 +577,18 @@ window.imageShortcut = true;   // ← change this to true when you need it
     });
   }
 
-  function storeImage(name, blob) {
+  // Store a base64 data URL instead of a blob
+  function storeImage(name, dataUrl) {
     return openDB().then(db => new Promise((resolve, reject) => {
       const tx = db.transaction('images', 'readwrite');
-      tx.objectStore('images').put({ name, blob });
+      tx.objectStore('images').put({ name, data: dataUrl });   // ← data field
       tx.oncomplete = () => resolve();
       tx.onerror = () => reject(tx.error);
     }));
   }
 
-  function compressImage(file, maxWidth = 300, quality = 0.5) {
+  // Compress and return base64
+  function compressToBase64(file, maxWidth = 300, quality = 0.5) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => {
@@ -595,10 +596,15 @@ window.imageShortcut = true;   // ← change this to true when you need it
         img.onload = () => {
           const canvas = document.createElement('canvas');
           let w = img.width, h = img.height;
-          if (w > maxWidth) { h = Math.round(h * maxWidth / w); w = maxWidth; }
-          canvas.width = w; canvas.height = h;
+          if (w > maxWidth) {
+            h = Math.round((h * maxWidth) / w);
+            w = maxWidth;
+          }
+          canvas.width = w;
+          canvas.height = h;
           canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-          canvas.toBlob(resolve, 'image/jpeg', quality);
+          // Export as base64 JPEG data URL
+          resolve(canvas.toDataURL('image/jpeg', quality));
         };
         img.onerror = reject;
         img.src = reader.result;
@@ -608,49 +614,42 @@ window.imageShortcut = true;   // ← change this to true when you need it
     });
   }
 
-  // ── Process folder selection ──
+  // Process selected folder
   folderInput.addEventListener('change', async () => {
     const files = Array.from(folderInput.files);
     if (files.length === 0) return;
-    banner.textContent = 'Storing images…';
+    banner.textContent = 'Compressing & storing…';
     let stored = 0;
     for (const file of files) {
       if (!/\.(jpg|jpeg|png|gif|webp|bmp|svg|avif|tiff?|heic|heif|ico)$/i.test(file.name)) continue;
       try {
-        const compressed = await compressImage(file, 300, 0.5);
-        await storeImage(file.name, compressed);
+        const dataUrl = await compressToBase64(file, 300, 0.5);
+        await storeImage(file.name, dataUrl);
         stored++;
       } catch (err) {
         console.warn('Skipped:', file.name, err);
       }
     }
-    banner.textContent = `✔ ${stored} images stored in IndexedDB`;
-    setTimeout(() => { banner.textContent = '🟣 imageShortcut ACTIVE'; }, 4000);
+    banner.textContent = `✔ ${stored} images stored (base64)`;
+    setTimeout(() => { banner.textContent = '🟣 imageShortcut ACTIVE (base64)'; }, 4000);
     folderInput.value = '';
   });
 
-  // ── Persistent hook: whenever the upload button appears, hijack it ──
+  // Persistent hook to the upload button
   const observer = new MutationObserver(() => {
     const uploadBtn = document.getElementById('profile-avatar-upload-btn');
     if (uploadBtn && !uploadBtn.dataset.shortcutHooked) {
       uploadBtn.dataset.shortcutHooked = 'true';
-      console.log('🔓 Hooking folder picker to upload button.');
-
-      // Intercept the click event in the capture phase so we run BEFORE
-      // any other click handlers (like the one that clicks the original input)
+      console.log('🔓 Hooking folder picker (base64 mode).');
       uploadBtn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
         folderInput.click();
-      }, true);  // ← capture phase
-
-      // The original file input is already hidden (display:none), but we hide it again for safety
+      }, true);
       const originalInput = document.getElementById('profile-avatar-upload');
       if (originalInput) originalInput.style.display = 'none';
     }
   });
-
-  // Watch the entire document for added nodes
   observer.observe(document.body, { childList: true, subtree: true });
 
 })();
