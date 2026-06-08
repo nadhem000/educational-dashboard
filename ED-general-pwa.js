@@ -1,14 +1,9 @@
-// ED-general-pwa.js – PWA & Supabase push notifications
+// ED-general-pwa.js – PWA & Supabase push notifications (offline‑safe)
 (function () {
-  /* ============================================================
-     Private state
-     ============================================================ */
+  'use strict';
   let deferredPrompt;
   let isSyncActive = false;
 
-  /* ============================================================
-     Helper – convert VAPID public key to Uint8Array
-     ============================================================ */
   function urlBase64ToUint8Array(base64String) {
     const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
     const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
@@ -20,64 +15,61 @@
     return outputArray;
   }
 
-  /* ============================================================
-     Supabase – store push subscription
-     ============================================================ */
   async function saveSubscription(subscription) {
     const SUPABASE_URL = 'https://hmjbzzuresgzwzefjpyt.supabase.co';
-    const SUPABASE_ANON_KEY =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtamJ6enVyZXNnend6ZWZqcHl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwMjczNDUsImV4cCI6MjA5NTYwMzM0NX0.44Q-Hkl4Rr9LuQhwryrQklFi809xYGteHgsS9nMG0ro';
-
-    const response = await fetch(`${SUPABASE_URL}/rest/v1/push_subscriptions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        apikey: SUPABASE_ANON_KEY,
-        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-        Prefer: 'return=minimal',
-      },
-      body: JSON.stringify({ subscription }),
-    });
-   if (response.status === 409) {
-  // Already saved – suppress the console error
-  console.debug('Push subscription already exists (expected).');
-  return;
-}
-    if (!response.ok) console.error('Failed to save subscription:', response.status);
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtamJ6enVyZXNnend6ZWZqcHl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwMjczNDUsImV4cCI6MjA5NTYwMzM0NX0.44Q-Hkl4Rr9LuQhwryrQklFi809xYGteHgsS9nMG0ro';
+    try {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/push_subscriptions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+          Prefer: 'return=minimal',
+        },
+        body: JSON.stringify({ subscription }),
+      });
+      if (response.status === 409) {
+        console.debug('Push subscription already exists (expected).');
+        return;
+      }
+      if (!response.ok) console.error('Failed to save subscription:', response.status);
+    } catch (err) {
+      // Offline – ignore silently
+      console.debug('Push subscription save failed (offline)', err);
+    }
   }
 
-  /* ============================================================
-     Subscribe to push notifications
-     ============================================================ */
   async function subscribeToPush() {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
       console.warn('Push not supported');
       return;
     }
-    const permission = await Notification.requestPermission();
-    if (permission !== 'granted') {
-      console.warn('Notification permission denied');
-      return;
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') {
+        console.warn('Notification permission denied');
+        return;
+      }
+      const registration = await navigator.serviceWorker.ready;
+      const existingSubscription = await registration.pushManager.getSubscription();
+      if (existingSubscription) {
+        await saveSubscription(existingSubscription);
+        return;
+      }
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(
+          'BO2xV3C8PcVFX-2SqsAyHZgzyDBaC0N7GzDktpoX2J5Pj5Cz9IazAcybQqxe13xYqGnEpoVmXM2jHFqmjXko1kw'
+        ),
+      });
+      await saveSubscription(subscription);
+      console.log('Push subscription saved');
+    } catch (err) {
+      console.debug('Push subscription error (offline/not supported)', err);
     }
-    const registration = await navigator.serviceWorker.ready;
-    const existingSubscription = await registration.pushManager.getSubscription();
-    if (existingSubscription) {
-      await saveSubscription(existingSubscription);
-      return;
-    }
-    const subscription = await registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(
-        'BO2xV3C8PcVFX-2SqsAyHZgzyDBaC0N7GzDktpoX2J5Pj5Cz9IazAcybQqxe13xYqGnEpoVmXM2jHFqmjXko1kw'
-      ),
-    });
-    await saveSubscription(subscription);
-    console.log('Push subscription saved');
   }
 
-  /* ============================================================
-     Notification button UI
-     ============================================================ */
   function updateNotificationUI() {
     const btn = document.getElementById('enableNotifications');
     if (!btn) return;
@@ -87,7 +79,8 @@
       } else {
         btn.style.display = 'none';
         if (Notification.permission === 'granted') {
-          subscribeToPush(); // auto‑subscribe
+          // Auto‑subscribe, but ignore any errors
+          subscribeToPush().catch(() => {});
         }
       }
     } else {
@@ -95,9 +88,6 @@
     }
   }
 
-  /* ============================================================
-     PWA install prompt
-     ============================================================ */
   function setupInstallPrompt() {
     const installBtn = document.getElementById('installBtn');
     window.addEventListener('beforeinstallprompt', (e) => {
@@ -121,9 +111,6 @@
     });
   }
 
-  /* ============================================================
-     Offline banner
-     ============================================================ */
   function setupOfflineBanner() {
     const offlineBanner = document.getElementById('offline-banner');
     if (!offlineBanner) return;
@@ -136,58 +123,45 @@
     if (!navigator.onLine) offlineBanner.style.display = 'block';
   }
 
-  /* ============================================================
-     Service Worker registration & update banner
-     ============================================================ */
   function setupServiceWorker() {
-  if (!('serviceWorker' in navigator)) return;
-
-  function showUpdateBanner() {
-    const banner = document.getElementById('update-banner');
-    if (banner) banner.style.display = 'flex';
-  }
-
-  // Listen for the message the SW sends when it activates after an update
-  navigator.serviceWorker.addEventListener('message', event => {
-    if (event.data && event.data.type === 'NEW_VERSION_READY') {
-      showUpdateBanner();
+    if (!('serviceWorker' in navigator)) return;
+    function showUpdateBanner() {
+      const banner = document.getElementById('update-banner');
+      if (banner) banner.style.display = 'flex';
     }
-  });
-
-  function registerSW() {
-    if (document.readyState !== 'complete') {
-      window.addEventListener('load', registerSW);
-      return;
+    navigator.serviceWorker.addEventListener('message', event => {
+      if (event.data && event.data.type === 'NEW_VERSION_READY') {
+        showUpdateBanner();
+      }
+    });
+    function registerSW() {
+      if (document.readyState !== 'complete') {
+        window.addEventListener('load', registerSW);
+        return;
+      }
+      navigator.serviceWorker
+        .register('/sw.js')
+        .then(reg => {
+          console.log('SW registered:', reg.scope);
+        })
+        .catch(err => {
+          if (err.name !== 'InvalidStateError') {
+            console.warn('SW registration failed:', err.message);
+          }
+        });
     }
-
-    navigator.serviceWorker
-      .register('/sw.js')
-      .then((reg) => {
-        console.log('SW registered:', reg.scope);
-        // No need for handleUpdate – the message listener covers everything
-      })
-      .catch((err) => {
-        if (err.name !== 'InvalidStateError') {
-          console.warn('SW registration failed:', err.message);
-        }
-      });
+    setTimeout(registerSW, 0);
   }
-
-  setTimeout(registerSW, 0);
-}
 
   function setupUpdateBanner() {
-  const reloadBtn = document.getElementById('update-reload-btn');
-  if (reloadBtn) {
-    reloadBtn.addEventListener('click', () => {
-      window.location.reload();
-    });
+    const reloadBtn = document.getElementById('update-reload-btn');
+    if (reloadBtn) {
+      reloadBtn.addEventListener('click', () => {
+        window.location.reload();
+      });
+    }
   }
-}
 
-  /* ============================================================
-     Periodic Background Sync
-     ============================================================ */
   function setupPeriodicSync() {
     const periodicBtn = document.getElementById('enablePeriodicSync');
     if (
@@ -197,7 +171,6 @@
     )
       return;
     periodicBtn.style.display = 'inline-block';
-
     async function checkRegistrationState() {
       try {
         const reg = await navigator.serviceWorker.ready;
@@ -210,23 +183,17 @@
       }
       refreshButtonText();
     }
-
     function refreshButtonText() {
-      // Call the global function that pages provide to update i18n button text
       if (window.updatePeriodicSyncButton) window.updatePeriodicSyncButton();
       localStorage.setItem('periodicSyncActive', isSyncActive);
     }
-
-    // Make the state‑aware button text updater available globally
     window.updatePeriodicSyncButton = function () {
       const btn = document.getElementById('enablePeriodicSync');
       if (!btn || typeof window.t !== 'function') return;
       const key = isSyncActive ? 'disablePeriodicSyncBtn' : 'enablePeriodicSyncBtn';
       btn.textContent = window.t(key);
     };
-
     checkRegistrationState();
-
     periodicBtn.addEventListener('click', async () => {
       const reg = await navigator.serviceWorker.ready;
       if (!('periodicSync' in reg)) return;
@@ -271,9 +238,6 @@
     });
   }
 
-  /* ============================================================
-     Public initialisation (call after header/footer are loaded)
-     ============================================================ */
   function init() {
     setupInstallPrompt();
     setupOfflineBanner();
@@ -281,8 +245,6 @@
     setupUpdateBanner();
     updateNotificationUI();
     setupPeriodicSync();
-
-    // Notification button click handler
     const notifBtn = document.getElementById('enableNotifications');
     if (notifBtn) {
       notifBtn.addEventListener('click', async () => {
@@ -292,7 +254,6 @@
     }
   }
 
-  // Expose a global object so pages can call the init
   window.EDPWA = {
     init,
     subscribeToPush,
