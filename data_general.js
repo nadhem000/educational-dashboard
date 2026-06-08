@@ -436,8 +436,24 @@ const socialMedias = [
     mediaLink: 'https://www.ahewar.net/m.asp?i=14883',
     mediaSmallIcon: '🎮',
     mediaImage: 'assets/contact/ahewar.png',
-    en: { mediaName: 'ahewar' },
-    fr: { mediaName: 'ahewar' },
+    en: { mediaName: 'Ahewar' },
+    fr: { mediaName: 'Ahewar' },
     ar: { mediaName: 'الحوار المتمدن' }
+  },
+  {
+    mediaLink: 'https://forums.wesnoth.org/memberlist.php?mode=viewprofile&u=141214',
+    mediaSmallIcon: '🎮',
+    mediaImage: 'assets/contact/wesnoth.png',
+    en: { mediaName: 'Wesnoth' },
+    fr: { mediaName: 'Wesnoth' },
+    ar: { mediaName: 'ويسنوث' }
+  },
+  {
+    mediaLink: 'https://share.upscrolled.com/en/user/9dfa5ee2-9c86-4f7e-93e4-b16a0ce8489c/',
+    mediaSmallIcon: '🎮',
+    mediaImage: 'assets/contact/upscrolled.png',
+    en: { mediaName: 'Upscrolled' },
+    fr: { mediaName: 'Upscrolled' },
+    ar: { mediaName: 'ابسكرولد' }
   }
 ];

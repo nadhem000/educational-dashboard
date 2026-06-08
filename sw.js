@@ -1,4 +1,4 @@
-const CACHE_NAME = 'edudash-v156'; // bump version when deploy
+const CACHE_NAME = 'edudash-v158'; // bump version when deploy
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
@@ -135,7 +135,16 @@ self.addEventListener('fetch', event => {
   if (event.request.mode === 'navigate') {
   event.respondWith(
     fetch(event.request).catch(() =>
-      caches.match(event.request).then(cached => cached || caches.match('/index.html'))
+      caches.match(event.request).then(cached => {
+        if (cached) return cached;
+        // If the URL doesn’t end with .html, try adding .html and matching again
+        if (!event.request.url.endsWith('.html')) {
+          const withHtml = new URL(event.request.url);
+          withHtml.pathname += '.html';
+          return caches.match(withHtml).then(htmlCached => htmlCached || caches.match('/index.html'));
+        }
+        return caches.match('/index.html');
+      })
     )
   );
   return;
