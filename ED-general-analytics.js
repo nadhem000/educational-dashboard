@@ -122,7 +122,7 @@
       }
 	  const animBtn = e.target.closest('#profile-create-animated-avatar-btn');
 if (animBtn) {
-  trackInteraction('experimental-feature', 'create-animated-avatar');
+  trackInteraction('feature', 'create-animated-avatar');
   return;
 }
     });
