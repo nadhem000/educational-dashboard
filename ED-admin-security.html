@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ED‑Admin Security & Connectivity Audit</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f4f6f9; color: #2c3e50; padding: 2rem; max-width: 1300px; margin: auto; }
+    h1 { margin-bottom: 0.2rem; }
+    .subtitle { color: #7f8c8d; margin-bottom: 2rem; }
+    .section { background: #fff; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); padding: 1.5rem; margin-bottom: 1.5rem; }
+    .section h2 { margin-bottom: 0.8rem; color: #2c3e50; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 0.7rem 1rem; border-bottom: 1px solid #e0e0e0; text-align: left; font-size: 0.9rem; }
+    th { background: #f0f3f7; font-weight: 600; }
+    .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 4px; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; }
+    .pass { background: #d5f5e3; color: #27ae60; }
+    .warn { background: #fcf3cf; color: #b7950b; }
+    .fail { background: #fadbd8; color: #c0392b; }
+    .na { background: #ecf0f1; color: #7f8c8d; }
+    button { padding: 0.8rem 1.6rem; font-size: 1rem; background: #4a7fd9; color: #fff; border: none; border-radius: 6px; cursor: pointer; margin-right: 0.5rem; margin-bottom: 0.5rem; }
+    button:hover { background: #3b6ec4; }
+    .todo li { margin: 0.5rem 0; }
+    code { background: #eee; padding: 0.2rem 0.4rem; border-radius: 3px; font-size: 0.9em; }
+    .hidden { display: none; }
+    #report { white-space: pre-wrap; background: #2c3e50; color: #ecf0f1; padding: 1rem; border-radius: 6px; font-family: monospace; max-height: 400px; overflow-y: auto; }
+    .category { font-weight: bold; background: #f7f9fc; }
+  </style>
+</head>
+<body>
+  <h1>🛡️ ED‑Admin Security & Connectivity Audit</h1>
+  <p class="subtitle">Comprehensive checks for <span id="origin-span"></span>  |  <span id="env-span"></span></p>
+
+  <div class="section">
+    <h2>📋 To‑Do List</h2>
+    <ul class="todo">
+      <li>🔲 Enable <strong>Content‑Security‑Policy</strong> (e.g., Netlify headers)</li>
+      <li>🔲 Disable <strong>public SELECT</strong> on <code>encrypted_user_data</code> – keep only <code>INSERT</code> with RLS</li>
+      <li>🔲 Protect <strong>admin backup page</strong> (do not deploy plain HTML)</li>
+      <li>🔲 Regularly rotate RSA key pair</li>
+      <li>🔲 Add <strong>Subresource Integrity</strong> to external scripts</li>
+      <li>🔲 Remove debug <code>console.log</code> from backup handler in production</li>
+      <li>🔲 Verify all Supabase tables have strict RLS</li>
+      <li>🔲 Set <code>Secure; HttpOnly; SameSite=Lax</code> on all cookies</li>
+      <li>🔲 Enable <strong>HSTS preload</strong> and <strong>includeSubDomains</strong></li>
+      <li>🔲 Add <strong>Permissions‑Policy</strong> header to restrict features</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>🔍 Run Audit</h2>
+    <p>Click to perform <strong>40+ checks</strong>. Tests are adapted for <code>file://</code> and <code>https://</code> environments.</p>
+    <button id="run-tests">Run All Tests</button>
+    <button id="export-json">Export JSON Report</button>
+    <button id="clear-results">Clear</button>
+    <div id="results" style="margin-top: 1.5rem;"></div>
+  </div>
+
+  <script>
+    (() => {
+      const SUPABASE_URL = 'https://hmjbzzuresgzwzefjpyt.supabase.co';
+      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtamJ6enVyZXNnend6ZWZqcHl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwMjczNDUsImV4cCI6MjA5NTYwMzM0NX0.44Q-Hkl4Rr9LuQhwryrQklFi809xYGteHgsS9nMG0ro';
+
+      const origin = window.location.origin;
+      const protocol = window.location.protocol;
+      const isFileProtocol = protocol === 'file:';
+      const isHttps = protocol === 'https:';
+      document.getElementById('origin-span').textContent = origin || 'file://';
+      document.getElementById('env-span').textContent = isFileProtocol ? '(local file – header/cookie tests skipped)' : '(online – full tests)';
+
+      // Store results for export
+      const resultsArray = [];
+
+      // Helper to add a result row
+      function addResult(tableBody, test, status, detail) {
+        const cls = status === 'pass' ? 'pass' : (status === 'warn' ? 'warn' : (status === 'fail' ? 'fail' : 'na'));
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${test}</td><td><span class="badge ${cls}">${status.toUpperCase()}</span></td><td>${detail}</td>`;
+        tableBody.appendChild(row);
+        resultsArray.push({ test, status, detail });
+      }
+
+      // Fetch headers from same origin (only if not file://)
+      async function fetchHeaders(path = '/') {
+        if (isFileProtocol) throw new Error('file:// - cannot fetch headers');
+        const resp = await fetch(path, { method: 'HEAD' });
+        return { status: resp.status, headers: resp.headers };
+      }
+
+      // Main test runner
+      async function runAllTests() {
+        resultsArray.length = 0; // clear
+        const resultsDiv = document.getElementById('results');
+        resultsDiv.innerHTML = '<p>Running tests…</p>';
+
+        const table = document.createElement('table');
+        const thead = document.createElement('thead');
+        thead.innerHTML = '<tr><th>Test</th><th>Status</th><th>Details</th></tr>';
+        table.appendChild(thead);
+        const tbody = document.createElement('tbody');
+        table.appendChild(tbody);
+        resultsDiv.innerHTML = '';
+        resultsDiv.appendChild(table);
+
+        // Helper to add category header
+        function addCategory(name) {
+          const row = document.createElement('tr');
+          row.className = 'category';
+          row.innerHTML = `<td colspan="3">📂 ${name}</td>`;
+          tbody.appendChild(row);
+        }
+
+        // 1. TRANSPORT & PROTOCOL
+        addCategory('Transport & Protocol');
+
+        // HTTPS
+        addResult(tbody, 'HTTPS enforced', isHttps ? 'pass' : (isFileProtocol ? 'na' : 'fail'),
+          isHttps ? 'All traffic uses HTTPS' : (isFileProtocol ? 'N/A (local file)' : 'Site is not HTTPS!'));
+
+        // Try to fetch headers (same-origin only)
+        let headers = null;
+        let headerError = null;
+        if (!isFileProtocol) {
+          try {
+            const res = await fetchHeaders('/');
+            headers = res.headers;
+            addResult(tbody, 'Server reachable (HEAD /)', 'pass', `HTTP status: ${res.status}`);
+          } catch (e) {
+            headerError = e.message;
+            addResult(tbody, 'Server reachable', 'fail', `Could not fetch /: ${e.message}`);
+          }
+        } else {
+          addResult(tbody, 'Server headers', 'na', 'Cannot fetch headers from file://');
+        }
+
+        // HSTS
+        if (headers) {
+          const hsts = headers.get('strict-transport-security');
+          if (hsts) {
+            const maxAgeMatch = hsts.match(/max-age=(\d+)/);
+            const maxAge = maxAgeMatch ? parseInt(maxAgeMatch[1]) : 0;
+            const includesSub = hsts.includes('includeSubDomains');
+            const preload = hsts.includes('preload');
+            let status = 'pass', detail = `max-age=${maxAge}`;
+            if (maxAge < 31536000) { status = 'warn'; detail += ' (less than 1 year)'; }
+            if (!includesSub) { status = 'warn'; detail += ', missing includeSubDomains'; }
+            if (preload) detail += ', preload';
+            addResult(tbody, 'Strict-Transport-Security (HSTS)', status, detail);
+          } else {
+            addResult(tbody, 'Strict-Transport-Security (HSTS)', 'fail', 'Missing header');
+          }
+        } else {
+          addResult(tbody, 'Strict-Transport-Security (HSTS)', 'na', 'Headers not available');
+        }
+
+        // HTTP/2 (rough detection via performance API)
+        if (window.performance && performance.getEntriesByType) {
+          const navEntries = performance.getEntriesByType('navigation');
+          if (navEntries.length > 0) {
+            const nextHopProtocol = navEntries[0].nextHopProtocol || '';
+            addResult(tbody, 'HTTP Protocol', nextHopProtocol.startsWith('h2') ? 'pass' : 'warn',
+              `Current: ${nextHopProtocol || 'unknown'}`);
+          } else {
+            addResult(tbody, 'HTTP Protocol', 'warn', 'Could not detect protocol');
+          }
+        }
+
+        // 2. SECURITY HEADERS
+        addCategory('Security Headers');
+        if (headers) {
+          const headerChecks = [
+            { name: 'Content-Security-Policy', good: true, rec: 'Missing – protects against XSS/data injection' },
+            { name: 'X-Content-Type-Options', good: v => v === 'nosniff', rec: 'Should be "nosniff"' },
+            { name: 'X-Frame-Options', good: true, rec: 'Missing – prevents clickjacking' },
+            { name: 'Referrer-Policy', good: true, rec: 'Missing – controls referrer information' },
+            { name: 'Permissions-Policy', good: true, rec: 'Missing – restricts browser features' },
+            { name: 'Cross-Origin-Embedder-Policy', good: true, rec: 'Missing – enables cross-origin isolation' },
+            { name: 'Cross-Origin-Opener-Policy', good: true, rec: 'Missing – process isolation' },
+            { name: 'Cross-Origin-Resource-Policy', good: true, rec: 'Missing – limits resource sharing' },
+          ];
+          headerChecks.forEach(hc => {
+            const val = headers.get(hc.name.toLowerCase());
+            if (val) {
+              const isGood = typeof hc.good === 'function' ? hc.good(val) : true;
+              addResult(tbody, hc.name, isGood ? 'pass' : 'warn', `Value: ${val}`);
+            } else {
+              addResult(tbody, hc.name, 'warn', hc.rec);
+            }
+          });
+        } else {
+          addResult(tbody, 'Security headers', 'na', 'Headers not available');
+        }
+
+        // 3. COOKIE SECURITY
+        addCategory('Cookie Security');
+        if (!isFileProtocol && document.cookie) {
+          // We can only inspect non-HttpOnly cookies
+          const cookies = document.cookie.split(';').map(c => c.trim());
+          let insecureCookies = 0, sameSiteMissing = 0;
+          cookies.forEach(c => {
+            const parts = c.split('=');
+            // We can't reliably detect Secure/SameSite from JS, but we can check if any cookies exist without Secure on HTTPS
+          });
+          // Because we can't read Secure/SameSite, we do a heuristic: if any cookies exist and the site is HTTPS, warn if HttpOnly is not set (impossible to know)
+          if (cookies.length > 0 && isHttps) {
+            // Actually, document.cookie only shows cookies that are NOT HttpOnly. So if we see any cookies, they lack HttpOnly.
+            addResult(tbody, 'Cookies: HttpOnly flag', 'fail', `Found ${cookies.length} cookie(s) without HttpOnly – set HttpOnly on all sensitive cookies.`);
+          } else if (cookies.length === 0) {
+            addResult(tbody, 'Cookies', 'pass', 'No non‑HttpOnly cookies detected (or no cookies)');
+          }
+          // Check for Secure flag – same logic: document.cookie can't show if Secure is set. We'll note that.
+          addResult(tbody, 'Cookies: Secure flag', 'warn', 'Cannot verify Secure flag from JS; ensure all cookies have Secure attribute on HTTPS.');
+          addResult(tbody, 'Cookies: SameSite', 'warn', 'Cannot verify SameSite from JS; set SameSite=Lax or Strict to prevent CSRF.');
+        } else {
+          addResult(tbody, 'Cookie analysis', 'na', isFileProtocol ? 'Not applicable (file://)' : 'No cookies or cannot access');
+        }
+
+        // 4. SUPABASE & API SECURITY
+        addCategory('Supabase & API Security');
+
+        // Check public SELECT on encrypted_user_data
+        try {
+          const testTable = `${SUPABASE_URL}/rest/v1/encrypted_user_data?limit=1&select=id`;
+          const resp = await fetch(testTable, {
+            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
+          });
+          const data = await resp.json();
+          if (resp.ok && Array.isArray(data) && data.length > 0) {
+            addResult(tbody, 'encrypted_user_data – public SELECT', 'fail', 'RLS allows public read. Disable SELECT policy.');
+          } else if (resp.status === 401 || resp.status === 403 || (Array.isArray(data) && data.length === 0)) {
+            addResult(tbody, 'encrypted_user_data – public SELECT', 'pass', 'No data returned – RLS correctly blocks read');
+          } else {
+            addResult(tbody, 'encrypted_user_data – public SELECT', 'warn', `Unexpected: ${resp.status} ${resp.statusText}`);
+          }
+
+          // Test anonymous INSERT
+          const anonInsertResp = await fetch(`${SUPABASE_URL}/rest/v1/encrypted_user_data`, {
+            method: 'POST',
+            headers: {
+              'apikey': SUPABASE_ANON_KEY,
+              'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+              'Content-Type': 'application/json',
+              'Prefer': 'return=minimal'
+            },
+            body: JSON.stringify({ user_id: '00000000-0000-0000-0000-000000000000', encrypted_data: 'test' })
+          });
+          const insertOk = anonInsertResp.status === 401 || anonInsertResp.status === 403 || anonInsertResp.status === 400;
+          addResult(tbody, 'encrypted_user_data – anon INSERT', insertOk ? 'pass' : 'fail',
+            insertOk ? 'Blocked (good)' : `Allowed with status ${anonInsertResp.status} – tighten RLS`);
+        } catch (e) {
+          addResult(tbody, 'Supabase connectivity', 'fail', 'Could not reach Supabase: ' + e.message);
+        }
+
+        // Check if anon key is present in source (it always is) – just a note
+        addResult(tbody, 'Supabase anon key exposure', 'warn', 'Anon key is designed to be public; ensure RLS is strict.');
+
+        // 5. CODE & CONTENT INTEGRITY
+        addCategory('Code & Content Integrity');
+
+        // Scan known JS files for hardcoded secrets/dangerous patterns
+        const filesToScan = [
+          'ED-general-encrypted-backup.js',
+          'ED-general-auth.js',
+          'ED-general-profile.js',
+          'ED-general-analytics.js',
+          'ED-general-pwa.js',
+          'ED-admin-monitor.js',
+          'sw.js'
+        ];
+        const secretPatterns = [
+          { name: 'Hardcoded symmetric passphrase', pattern: /nadhem000@@@/gi, severity: 'fail' },
+          { name: 'Private RSA key (PKCS#8)', pattern: /MIIEv(?:AIB|QIB|gIB|wIB|QIB|AIB)[A-Za-z0-9+\/=]{600,}/g, severity: 'fail' },
+          { name: 'Service role key (should never be in client)', pattern: /eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+/g, severity: 'fail' },
+          { name: 'eval() usage', pattern: /\beval\(/g, severity: 'warn' },
+          { name: 'document.write()', pattern: /document\.write\(/g, severity: 'warn' },
+          { name: 'innerHTML assignment (XSS risk)', pattern: /\.innerHTML\s*=\s*(?!['"`]\s*['"`])/g, severity: 'warn' },
+          { name: 'console.log (debug info)', pattern: /console\.log\(/g, severity: 'warn' },
+          { name: 'debugger statement', pattern: /debugger;?/g, severity: 'warn' }
+        ];
+
+        if (!isFileProtocol) {
+          for (const file of filesToScan) {
+            try {
+              const content = await fetchText(file);
+              secretPatterns.forEach(pat => {
+                const matches = content.match(pat.pattern);
+                if (matches && matches.length > 0) {
+                  addResult(tbody, `Code scan: ${pat.name} in ${file}`, pat.severity,
+                    `Found ${matches.length} occurrence(s).`);
+                }
+              });
+            } catch (e) {
+              // file may not exist, skip
+            }
+          }
+          // Check SRI on external scripts
+          const externalScripts = document.querySelectorAll('script[src]');
+          let sriMissing = 0;
+          externalScripts.forEach(s => { if (s.src && !s.integrity && s.src.startsWith('http')) sriMissing++; });
+          addResult(tbody, 'Subresource Integrity (SRI)', sriMissing === 0 ? 'pass' : 'warn',
+            sriMissing > 0 ? `${sriMissing} external script(s) lack integrity attribute` : 'All scripts have integrity');
+        } else {
+          addResult(tbody, 'Code scanning', 'na', 'Cannot fetch JS files from file://');
+        }
+
+        // 6. MIXED CONTENT
+        addCategory('Mixed Content');
+        const mixedNodes = [...document.querySelectorAll('img, script, link, iframe, source, video, audio')]
+          .filter(el => {
+            const url = el.src || el.href || (el.tagName === 'SOURCE' ? el.src : '');
+            return url && url.startsWith('http://');
+          });
+        addResult(tbody, 'Mixed content (HTTP resources)', mixedNodes.length === 0 ? 'pass' : 'fail',
+          mixedNodes.length > 0 ? `${mixedNodes.length} resource(s) loaded over HTTP` : 'No mixed content found');
+
+        // 7. STORAGE SECURITY
+        addCategory('Storage Security');
+        // localStorage
+        let sensitiveLsFound = false;
+        const sensitivePrefixes = ['encBackup_pending_', '__analytics_offline_queue__'];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (sensitivePrefixes.some(p => key && key.startsWith(p))) {
+            sensitiveLsFound = true;
+            break;
+          }
+        }
+        addResult(tbody, 'localStorage – sensitive data', sensitiveLsFound ? 'warn' : 'pass',
+          sensitiveLsFound ? 'Backup or analytics queue found – ensure encrypted' : 'No sensitive offline data found');
+
+        // sessionStorage
+        if (sessionStorage.getItem('encBackup_lastPassword')) {
+          addResult(tbody, 'sessionStorage – password', 'warn',
+            'Password stored in sessionStorage for backup. Cleared on sign-out.');
+        } else {
+          addResult(tbody, 'sessionStorage – password', 'pass', 'No password in sessionStorage');
+        }
+
+        // 8. SERVICE WORKER
+        addCategory('Service Worker');
+        if ('serviceWorker' in navigator) {
+          try {
+            const reg = await navigator.serviceWorker.getRegistration();
+            if (reg && reg.active) {
+              addResult(tbody, 'Service Worker registered', 'pass', `Active: ${reg.active.scriptURL} (scope: ${reg.scope})`);
+            } else {
+              addResult(tbody, 'Service Worker', 'warn', 'No active SW – PWA offline may not work');
+            }
+          } catch (e) {
+            addResult(tbody, 'Service Worker check', 'fail', e.message);
+          }
+        } else {
+          addResult(tbody, 'Service Worker support', 'fail', 'Browser does not support Service Workers');
+        }
+
+        // 9. FORM & INPUT SECURITY
+        addCategory('Form & Input Security');
+        const passwordFields = document.querySelectorAll('input[type="password"]');
+        let autocompleteOff = false;
+        passwordFields.forEach(f => {
+          if (f.autocomplete && f.autocomplete.toLowerCase() === 'off') autocompleteOff = true;
+        });
+        addResult(tbody, 'Password autocomplete', autocompleteOff ? 'warn' : 'pass',
+          autocompleteOff ? 'Password autocomplete=off may hinder usability; prefer "new-password" or "current-password"' : 'Autocomplete appropriately set');
+
+        // 10. TLS & CERTIFICATE (basic check)
+        addCategory('TLS & Certificate');
+        if (isHttps) {
+          // Can't get full cert details from browser easily, but can check if connection is secure
+          addResult(tbody, 'TLS connection', 'pass', 'HTTPS connection established');
+          // Check if HSTS preload list (rough – if HSTS header is present with preload)
+          if (headers && headers.get('strict-transport-security')?.includes('preload')) {
+            addResult(tbody, 'HSTS preload', 'pass', 'Preload flag present');
+          } else if (headers) {
+            addResult(tbody, 'HSTS preload', 'warn', 'Consider submitting to HSTS preload list');
+          }
+        } else {
+          addResult(tbody, 'TLS', 'na', isFileProtocol ? 'N/A' : 'Not HTTPS');
+        }
+
+        // 11. CORS & CROSS-ORIGIN
+        addCategory('Cross-Origin Security');
+        if (headers) {
+          const acao = headers.get('access-control-allow-origin');
+          if (acao) {
+            const isWildcard = acao === '*';
+            addResult(tbody, 'Access-Control-Allow-Origin', isWildcard ? 'warn' : 'pass',
+              `Value: ${acao} ${isWildcard ? '(wildcard – be careful if credentials involved)' : ''}`);
+          } else {
+            addResult(tbody, 'Access-Control-Allow-Origin', 'pass', 'Not set (default same-origin)');
+          }
+        }
+
+        // 12. META TAGS
+        addCategory('Meta Tags');
+        const metaCharset = document.querySelector('meta[charset]');
+        addResult(tbody, 'Charset declared', metaCharset ? 'pass' : 'warn', metaCharset ? `charset=${metaCharset.getAttribute('charset')}` : 'Missing <meta charset>');
+
+        const metaViewport = document.querySelector('meta[name="viewport"]');
+        addResult(tbody, 'Viewport meta', metaViewport ? 'pass' : 'warn', metaViewport ? 'Present' : 'Missing – affects mobile rendering');
+
+        const metaXUA = document.querySelector('meta[http-equiv="X-UA-Compatible"]');
+        addResult(tbody, 'X-UA-Compatible', metaXUA ? 'warn' : 'pass', metaXUA ? 'Legacy meta; avoid if possible' : 'Not set');
+
+        // 13. EXPOSED INFORMATION
+        addCategory('Exposed Information');
+        // Server header
+        if (headers) {
+          const server = headers.get('server');
+          if (server) addResult(tbody, 'Server header', 'warn', `Reveals: ${server}`);
+          const xPoweredBy = headers.get('x-powered-by');
+          if (xPoweredBy) addResult(tbody, 'X-Powered-By', 'warn', `Reveals: ${xPoweredBy}`);
+        }
+        // Source maps
+        const sourceMapPattern = /\/\/# sourceMappingURL=/;
+        try {
+          const mainScripts = document.querySelectorAll('script[src]');
+          for (const s of mainScripts) {
+            const resp = await fetch(s.src);
+            const text = await resp.text();
+            if (sourceMapPattern.test(text)) {
+              addResult(tbody, `Source map exposed: ${s.src}`, 'warn', 'Source map found – may leak original source');
+              break;
+            }
+          }
+        } catch (e) {}
+
+        addResult(tbody, 'Audit completed', 'pass', `${resultsArray.length} checks performed`);
+      }
+
+      // Helper to fetch text content
+      async function fetchText(path) {
+        const resp = await fetch(path);
+        if (!resp.ok) throw new Error(`Failed to fetch ${path}`);
+        return resp.text();
+      }
+
+      // Export JSON
+      function exportReport() {
+        const blob = new Blob([JSON.stringify(resultsArray, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'security-audit-report.json';
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      // Event listeners
+      document.getElementById('run-tests').addEventListener('click', runAllTests);
+      document.getElementById('export-json').addEventListener('click', exportReport);
+      document.getElementById('clear-results').addEventListener('click', () => {
+        document.getElementById('results').innerHTML = '';
+        resultsArray.length = 0;
+      });
+
+      // Auto-detect environment
+      if (isFileProtocol) {
+        console.info('Security audit running in file:// mode – header/cookie/fetch tests will be skipped.');
+      }
+    })();
+  </script>
+</body>
+</html>
