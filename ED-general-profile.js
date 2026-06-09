@@ -637,7 +637,7 @@
       animBtn.dataset.shortcutHooked = 'true';
       animBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        e.stopPropagation();
+        /* e.stopPropagation(); */
         folderInput.click();        // open folder picker
       }, true);                     // capture phase ensures we run first
     }
