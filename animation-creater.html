@@ -1,262 +1,442 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light" dir="ltr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Animated Avatar Creator</title>
-  <link rel="icon" type="image/x-icon" href="assets/icons/icon-64x64.png">
-  <link rel="manifest" href="/manifest.json">
-  <link rel="stylesheet" href="/ED-general-common.css">
-  <style>
-    /* Page‑specific styles */
-    .step-container {
-      max-width: 960px;
-      margin: 2rem auto;
-      background: var(--ED-General-color-surface);
-      border-radius: 16px;
-      padding: 1.5rem;
-      box-shadow: 0 4px 20px rgba(var(--ED-General-color-shadow-rgb), 0.12);
-    }
-    .step-title {
-      margin: 0 0 0.5rem;
-      font-size: 1.5rem;
-      font-weight: 650;
-      color: var(--ED-General-color-text-primary);
-    }
-    .step-description {
-      margin-bottom: 1rem;
-      color: var(--ED-General-color-text-secondary);
-    }
-    .images-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-    .image-item {
-      position: relative;
-      width: 120px;
-      height: 120px;
-      border-radius: 12px;
-      overflow: hidden;
-      cursor: pointer;
-      border: 3px solid transparent;
-      transition: border-color 0.2s;
-    }
-    .image-item.selected {
-      border-color: var(--ED-General-color-accent-default);
-    }
-    .image-item img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .image-check {
-      position: absolute;
-      top: 6px;
-      left: 6px;
-      background: white;
-      border-radius: 4px;
-      width: 20px;
-      height: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
-      color: var(--ED-General-color-text-primary);
-    }
-    .actions {
-      margin-top: 2rem;
-      display: flex;
-      gap: 1rem;
-    }
-    .btn {
-      padding: 0.65rem 1.5rem;
-      border-radius: 24px;
-      font-weight: 600;
-      border: none;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-family: var(--ED-General-font-stack);
-    }
-    .btn-primary {
-      background: var(--ED-General-color-accent-default);
-      color: var(--ED-General-color-text-on-accent);
-    }
-    .btn-secondary {
-      background: var(--ED-General-color-border);
-      color: var(--ED-General-color-text-primary);
-    }
-    .btn:disabled {
-      opacity: 0.5;
-      pointer-events: none;
-    }
-    .empty-message {
-      text-align: center;
-      color: var(--ED-General-color-text-secondary);
-      padding: 2rem;
-      display: none;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Avatar Creator – Step 1</title>
+    <script src="ED-admin-monitor.js"></script>
+    <link rel="icon" type="image/x-icon" href="assets/icons/icon-64x64.png">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="stylesheet" href="/ED-general-common.css">
+    <style>
+        :root {
+            --ED-General-color-bg: #f5f1eb;
+            --ED-General-color-bg-secondary: #ede7df;
+            --ED-General-color-surface: #ffffff;
+            --ED-General-color-surface-hover: #fafaf8;
+            --ED-General-color-text-primary: #1e293b;
+            --ED-General-color-text-secondary: #5a6c7d;
+            --ED-General-color-text-tertiary: #8b9aab;
+            --ED-General-color-border: #e2dcd4;
+            --ED-General-color-border-hover: #cbc3b8;
+            --ED-General-color-shadow: rgba(60, 50, 40, 0.07);
+            --ED-General-color-shadow-hover: rgba(60, 50, 40, 0.14);
+            --ED-General-color-accent-default: #4a7fd9;
+            --ED-General-color-accent-light: #e8f1fb;
+            --ED-General-color-accent-soft: #f0f5fc;
+            --ED-General-color-header-bg: #ffffff;
+            --ED-General-color-header-border: #e8e2d9;
+            --ED-General-color-toggle-bg: #e8e2d9;
+            --ED-General-color-toggle-text: #4a5568;
+            --ED-General-color-toggle-active-bg: #4a7fd9;
+            --ED-General-color-toggle-active-text: #ffffff;
+            --ED-General-color-badge-bg: #f0ece5;
+            --ED-General-color-badge-text: #5a6c7d;
+            --ED-General-color-badge-hover-bg: #e4ded5;
+            --ED-General-color-btn-primary-bg: #4a7fd9;
+            --ED-General-color-btn-primary-text: #ffffff;
+            --ED-General-color-btn-primary-hover: #3b6ec4;
+            --ED-General-color-btn-shadow: rgba(0, 0, 0, 0.2);
+            --ED-General-color-icon-container-bg: #f0f4f9;
+            --ED-General-card-radius: 16px;
+            --ED-General-card-padding: 1.5rem;
+            --ED-General-transition-speed: 0.3s;
+            --ED-General-grid-gap: 1.25rem;
+            --ED-General-font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+                "Noto Sans", "Noto Sans Arabic", sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+            --card-accent-r: 60;
+            --card-accent-g: 50;
+            --card-accent-b: 40;
+            --card-shadow-opacity: 0.10;
+            --card-shadow-opacity-hover: 0.22;
+            --card-shadow-blur: 10px;
+            --card-shadow-blur-hover: 30px;
+            --card-shadow-offset-x: 0px;
+            --card-shadow-offset-y: 3px;
+            --card-shadow-offset-y-hover: 8px;
+            --ED-General-color-header-gradient-start: #fefdfb;
+            --ED-General-color-header-gradient-mid1: #faf8f4;
+            --ED-General-color-header-gradient-mid2: #f6f3ee;
+            --ED-General-color-header-gradient-end: #f2efe8;
+            --ED-General-color-header-accent-gradient-stop: rgba(180, 160, 140, 0.5);
+            --ED-General-color-shadow-rgb: 60, 50, 40;
+            --ED-General-color-accent-rgb: 74, 127, 217;
+            --ED-General-color-icon-sun: #e8a840;
+            --ED-General-color-icon-moon: #7b8cb0;
+            --ED-General-color-icon-sun-glow: rgba(232, 168, 64, 0.3);
+            --ED-General-color-icon-moon-glow: rgba(122, 143, 176, 0.35);
+            --ED-General-color-text-on-accent: #ffffff;
+        }
+        [data-theme="dark"] {
+            --ED-General-color-bg: #171a20;
+            --ED-General-color-bg-secondary: #1e2129;
+            --ED-General-color-surface: #23262f;
+            --ED-General-color-surface-hover: #2a2e38;
+            --ED-General-color-text-primary: #e2e4ea;
+            --ED-General-color-text-secondary: #b0b5c2;
+            --ED-General-color-text-tertiary: #7d8494;
+            --ED-General-color-border: #32353e;
+            --ED-General-color-border-hover: #454952;
+            --ED-General-color-shadow: rgba(0, 0, 0, 0.25);
+            --ED-General-color-shadow-hover: rgba(0, 0, 0, 0.45);
+            --ED-General-color-accent-default: #7aafff;
+            --ED-General-color-accent-light: #1e2d45;
+            --ED-General-color-accent-soft: #1a2535;
+            --ED-General-color-header-bg: #1c1f28;
+            --ED-General-color-header-border: #2a2e38;
+            --ED-General-color-toggle-bg: #2a2e38;
+            --ED-General-color-toggle-text: #b0b5c2;
+            --ED-General-color-toggle-active-bg: #7aafff;
+            --ED-General-color-toggle-active-text: #12151c;
+            --ED-General-color-badge-bg: #2a2e38;
+            --ED-General-color-badge-text: #b0b5c2;
+            --ED-General-color-badge-hover-bg: #353a45;
+            --ED-General-color-btn-primary-bg: #7aafff;
+            --ED-General-color-btn-primary-text: #12151c;
+            --ED-General-color-btn-primary-hover: #6199f0;
+            --ED-General-color-btn-shadow: rgba(0, 0, 0, 0.5);
+            --ED-General-color-icon-container-bg: #252b38;
+            --ED-General-color-header-gradient-start: #1f222d;
+            --ED-General-color-header-gradient-mid1: #1c1f29;
+            --ED-General-color-header-gradient-mid2: #191c24;
+            --ED-General-color-header-gradient-end: #171a20;
+            --ED-General-color-header-accent-gradient-stop: rgba(160, 175, 200, 0.4);
+            --ED-General-color-shadow-rgb: 0, 0, 0;
+            --ED-General-color-accent-rgb: 122, 175, 255;
+            --ED-General-color-icon-sun: #e8a840;
+            --ED-General-color-icon-moon: #c4d0f0;
+            --ED-General-color-icon-sun-glow: rgba(232, 168, 64, 0.3);
+            --ED-General-color-icon-moon-glow: rgba(180, 195, 235, 0.35);
+            --ED-General-color-text-on-accent: #12151c;
+        }
+        [dir="rtl"] {
+            direction: rtl;
+            text-align: right;
+        }
+
+        /* ---------- Animation creator specific ---------- */
+        .step-container {
+            max-width: 960px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+        .step-box {
+            background: var(--ED-General-color-surface);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(var(--ED-General-color-shadow-rgb), 0.12);
+        }
+        .step-title {
+            margin: 0 0 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 650;
+            color: var(--ED-General-color-text-primary);
+        }
+        .step-description {
+            margin-bottom: 1rem;
+            color: var(--ED-General-color-text-secondary);
+        }
+        .images-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .image-item {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: border-color 0.2s;
+        }
+        .image-item.selected {
+            border-color: var(--ED-General-color-accent-default);
+        }
+        .image-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .image-check {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            background: white;
+            border-radius: 4px;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+            color: var(--ED-General-color-text-primary);
+        }
+        .actions {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+        }
+        .btn {
+            padding: 0.65rem 1.5rem;
+            border-radius: 24px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: var(--ED-General-font-stack);
+        }
+        .btn-primary {
+            background: var(--ED-General-color-accent-default);
+            color: var(--ED-General-color-text-on-accent);
+        }
+        .btn-secondary {
+            background: var(--ED-General-color-border);
+            color: var(--ED-General-color-text-primary);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .empty-message {
+            text-align: center;
+            color: var(--ED-General-color-text-secondary);
+            padding: 2rem;
+            display: none;
+        }
+
+        /* ---------- Back button styling (same as Terms page) ---------- */
+        .ED-General-back-home-wrapper {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+        [dir="rtl"] .ED-General-back-home-wrapper {
+            text-align: right;
+        }
+        .ED-General-back-home-wrapper .ED-General-header-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: var(--ED-General-color-surface);
+            border: 1.5px solid var(--ED-General-color-border);
+            border-radius: 32px;
+            padding: 0.5rem 1.2rem;
+            font-weight: 600;
+            transition: all 0.22s ease;
+            text-decoration: none;
+            color: var(--ED-General-color-text-primary);
+            font-family: var(--ED-General-font-stack);
+            font-size: 0.85rem;
+        }
+        .ED-General-back-home-wrapper .ED-General-header-btn:hover {
+            border-color: var(--ED-General-color-accent-default);
+            background: var(--ED-General-color-accent-soft);
+            box-shadow: 0 2px 8px rgba(var(--ED-General-color-accent-rgb), 0.12);
+            transform: translateY(-1px);
+        }
+        .ED-General-back-home-wrapper .ED-General-header-btn:active {
+            transform: scale(0.96);
+        }
+
+        @media (max-width: 640px) {
+            .step-container {
+                padding: 0 1rem;
+            }
+            .image-item {
+                width: 100px;
+                height: 100px;
+            }
+            .ED-General-back-home-wrapper .ED-General-header-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
 <body>
-  <header id="header-container"></header>
+    <header id="header-container"></header>
 
-  <main class="ED-General-main">
-    <div class="step-container">
-      <h2 class="step-title" data-i18n="animation.step1.title">Step 1 – Choose images</h2>
-      <p class="step-description" data-i18n="animation.step1.description">Select one or more images for your animated avatar.</p>
-      <div id="imagesContainer" class="images-grid"></div>
-      <div id="emptyMessage" class="empty-message" data-i18n="animation.step1.noImages">No images found. Please go to your Profile and upload a folder first.</div>
-      <div class="actions">
-        <button id="nextBtn" class="btn btn-primary" disabled data-i18n="animation.step1.nextBtn">Next →</button>
-      </div>
+    <main class="step-container">
+        <div class="step-box">
+            <h2 class="step-title" data-i18n="animation.step1.title">Step 1 – Choose images</h2>
+            <p class="step-description" data-i18n="animation.step1.description">Select one or more images for your animated avatar.</p>
+            <div id="imagesContainer" class="images-grid"></div>
+            <div id="emptyMessage" class="empty-message" data-i18n="animation.step1.noImages">No images found. Please go to your Profile and upload a folder first.</div>
+            <div class="actions">
+                <button id="nextBtn" class="btn btn-primary" disabled data-i18n="animation.step1.nextBtn">Next →</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Back to Dashboard button (exactly like Terms page) -->
+    <div class="ED-General-back-home-wrapper">
+        <a href="index.html" class="ED-General-header-btn" data-i18n="backToHome">← Back to Dashboard</a>
     </div>
-  </main>
 
-  <footer id="footer-container"></footer>
+    <footer id="footer-container"></footer>
 
-  <!-- Shared translation data -->
-  <script src="ED-general-translations-data.js"></script>
-  <!-- Page‑specific UI text (merged with shared) -->
-  <script>
-    const PAGE_UI_TEXT = {
-      en: {
-        animation: {
-          step1: {
-            title: "Step 1 – Choose images",
-            description: "Select one or more images for your animated avatar.",
-            noImages: "No images found. Please go to your Profile and upload a folder first.",
-            nextBtn: "Next →"
-          }
-        }
-      },
-      fr: {
-        animation: {
-          step1: {
-            title: "Étape 1 – Choisissez des images",
-            description: "Sélectionnez une ou plusieurs images pour votre avatar animé.",
-            noImages: "Aucune image trouvée. Veuillez d'abord importer un dossier depuis votre profil.",
-            nextBtn: "Suivant →"
-          }
-        }
-      },
-      ar: {
-        animation: {
-          step1: {
-            title: "الخطوة 1 – اختر الصور",
-            description: "حدد صورة واحدة أو أكثر لصورتك الرمزية المتحركة.",
-            noImages: "لم يتم العثور على صور. يرجى تحميل مجلد من صفحة الملف الشخصي أولاً.",
-            nextBtn: "التالي ←"
-          }
-        }
-      }
-    };
-    // Merge with shared translations
-    window.UI_TEXT = {
-      en: { ...SHARED_UI_TEXT.en, ...PAGE_UI_TEXT.en },
-      fr: { ...SHARED_UI_TEXT.fr, ...PAGE_UI_TEXT.fr },
-      ar: { ...SHARED_UI_TEXT.ar, ...PAGE_UI_TEXT.ar }
-    };
-  </script>
-  <!-- Translation engine + shared init (loads header, footer, theme, etc.) -->
-  <script src="ED-general-translation.js"></script>
-  <script src="ED-general-analytics.js"></script>
-  <script src="ED-general-init.js"></script>
-  <script src="ED-general-auth.js"></script>
-  <script src="ED-general-profile.js"></script>
-  <script src="ED-general-encrypted-backup.js"></script>
+    <!-- Offline banner -->
+    <div id="offline-banner" class="ED-General-offline-banner" data-i18n="offlineBanner">You are offline. Some features may be unavailable.</div>
+    <div id="update-banner" class="ED-General-update-banner" style="display:none;">
+        <span id="update-banner-text" data-i18n="updateNotification">A new version is available.</span>
+        <button id="update-reload-btn" data-i18n="updateReloadBtn">Reload</button>
+    </div>
 
-  <script>
-    (function() {
-      const DB_NAME = 'ED_ImageFolderCache';
-      const STORE_NAME = 'images';
-      const imagesContainer = document.getElementById('imagesContainer');
-      const emptyMessage = document.getElementById('emptyMessage');
-      const nextBtn = document.getElementById('nextBtn');
-      
-      let selectedImages = new Set();
+    <!-- Load shared translation data (common header/footer/banners) -->
+    <script src="ED-general-translations-data.js"></script>
+    <script src="data_general.js"></script>
+    <script src="ED-general-cards.js"></script>
+    <script src="ED-general-shortcuts.js"></script>
+    <script src="ED-general-pwa.js"></script>
 
-      function openDB() {
-        return new Promise((resolve, reject) => {
-          const req = indexedDB.open(DB_NAME, 1);
-          req.onupgradeneeded = (e) => {
-            const db = e.target.result;
-            if (!db.objectStoreNames.contains(STORE_NAME)) {
-              db.createObjectStore(STORE_NAME, { keyPath: 'name' });
+    <!-- ========== TRANSLATION DICTIONARY ========== -->
+    <script>
+        const PAGE_UI_TEXT = {
+            en: {
+                animation: {
+                    step1: {
+                        title: "Step 1 – Choose images",
+                        description: "Select one or more images for your animated avatar.",
+                        noImages: "No images found. Please go to your Profile and upload a folder first.",
+                        nextBtn: "Next →"
+                    }
+                },
+                backToHome: "← Back to Dashboard"
+            },
+            fr: {
+                animation: {
+                    step1: {
+                        title: "Étape 1 – Choisissez des images",
+                        description: "Sélectionnez une ou plusieurs images pour votre avatar animé.",
+                        noImages: "Aucune image trouvée. Veuillez d'abord importer un dossier depuis votre profil.",
+                        nextBtn: "Suivant →"
+                    }
+                },
+                backToHome: "← Retour au tableau de bord"
+            },
+            ar: {
+                animation: {
+                    step1: {
+                        title: "الخطوة 1 – اختر الصور",
+                        description: "حدد صورة واحدة أو أكثر لصورتك الرمزية المتحركة.",
+                        noImages: "لم يتم العثور على صور. يرجى تحميل مجلد من صفحة الملف الشخصي أولاً.",
+                        nextBtn: "التالي ←"
+                    }
+                },
+                backToHome: "→ العودة إلى الرئيسية"
             }
-          };
-          req.onsuccess = () => resolve(req.result);
-          req.onerror = () => reject(req.error);
-        });
-      }
+        };
 
-      async function loadImages() {
-        try {
-          const db = await openDB();
-          const tx = db.transaction(STORE_NAME, 'readonly');
-          const store = tx.objectStore(STORE_NAME);
-          const allImages = await new Promise((resolve, reject) => {
-            const request = store.getAll();
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = () => reject(request.error);
-          });
+        // Merge shared + page‑specific into the final UI_TEXT
+        window.UI_TEXT = {
+            en: { ...SHARED_UI_TEXT.en, ...PAGE_UI_TEXT.en },
+            fr: { ...SHARED_UI_TEXT.fr, ...PAGE_UI_TEXT.fr },
+            ar: { ...SHARED_UI_TEXT.ar, ...PAGE_UI_TEXT.ar }
+        };
+    </script>
 
-          if (!allImages || allImages.length === 0) {
-            emptyMessage.style.display = 'block';
-            return;
-          }
+    <!-- Translation engine and shared init -->
+    <script src="ED-general-translation.js"></script>
+    <script src="ED-general-analytics.js"></script>
+    <script src="ED-general-init.js"></script>
+    <script src="ED-general-auth.js"></script>
+    <script src="ED-general-profile.js"></script>
+    <script src="ED-general-encrypted-backup.js"></script>
 
-          renderImages(allImages);
-        } catch (err) {
-          console.error('Failed to load images:', err);
-          emptyMessage.textContent = 'Could not access stored images.';
-          emptyMessage.style.display = 'block';
-        }
-      }
+    <!-- Page‑specific logic -->
+    <script>
+        (function() {
+            const DB_NAME = 'ED_ImageFolderCache';
+            const STORE_NAME = 'images';
+            const imagesContainer = document.getElementById('imagesContainer');
+            const emptyMessage = document.getElementById('emptyMessage');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            let selectedImages = new Set();
 
-      function renderImages(imageList) {
-        imagesContainer.innerHTML = '';
-        imageList.forEach(imgObj => {
-          const item = document.createElement('div');
-          item.className = 'image-item';
-          item.dataset.name = imgObj.name;
-          item.innerHTML = `
-            <img src="${imgObj.data}" alt="${imgObj.name}">
-            <div class="image-check">${selectedImages.has(imgObj.name) ? '✓' : ''}</div>
-          `;
-          item.addEventListener('click', () => toggleImage(imgObj.name, item));
-          imagesContainer.appendChild(item);
-        });
-      }
+            function openDB() {
+                return new Promise((resolve, reject) => {
+                    const req = indexedDB.open(DB_NAME, 1);
+                    req.onupgradeneeded = (e) => {
+                        const db = e.target.result;
+                        if (!db.objectStoreNames.contains(STORE_NAME)) {
+                            db.createObjectStore(STORE_NAME, { keyPath: 'name' });
+                        }
+                    };
+                    req.onsuccess = () => resolve(req.result);
+                    req.onerror = () => reject(req.error);
+                });
+            }
 
-      function toggleImage(name, element) {
-        if (selectedImages.has(name)) {
-          selectedImages.delete(name);
-          element.classList.remove('selected');
-          element.querySelector('.image-check').textContent = '';
-        } else {
-          selectedImages.add(name);
-          element.classList.add('selected');
-          element.querySelector('.image-check').textContent = '✓';
-        }
-        nextBtn.disabled = selectedImages.size === 0;
-      }
+            async function loadImages() {
+                try {
+                    const db = await openDB();
+                    const tx = db.transaction(STORE_NAME, 'readonly');
+                    const store = tx.objectStore(STORE_NAME);
+                    const allImages = await new Promise((resolve, reject) => {
+                        const request = store.getAll();
+                        request.onsuccess = () => resolve(request.result);
+                        request.onerror = () => reject(request.error);
+                    });
 
-      nextBtn.addEventListener('click', () => {
-        if (selectedImages.size === 0) return;
-        // For now, just a placeholder – you can store selection and proceed to step2
-        alert(`Selected images: ${Array.from(selectedImages).join(', ')}\n(Step 2 coming soon!)`);
-      });
+                    if (!allImages || allImages.length === 0) {
+                        emptyMessage.style.display = 'block';
+                        return;
+                    }
 
-      // Start loading after DOM is ready
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', loadImages);
-      } else {
-        loadImages();
-      }
-    })();
-  </script>
+                    renderImages(allImages);
+                } catch (err) {
+                    console.error('Failed to load images:', err);
+                    emptyMessage.textContent = 'Could not access stored images.';
+                    emptyMessage.style.display = 'block';
+                }
+            }
+
+            function renderImages(imageList) {
+                imagesContainer.innerHTML = '';
+                imageList.forEach(imgObj => {
+                    const item = document.createElement('div');
+                    item.className = 'image-item';
+                    item.dataset.name = imgObj.name;
+                    item.innerHTML = `
+                        <img src="${imgObj.data}" alt="${imgObj.name}">
+                        <div class="image-check">${selectedImages.has(imgObj.name) ? '✓' : ''}</div>
+                    `;
+                    item.addEventListener('click', () => toggleImage(imgObj.name, item));
+                    imagesContainer.appendChild(item);
+                });
+            }
+
+            function toggleImage(name, element) {
+                if (selectedImages.has(name)) {
+                    selectedImages.delete(name);
+                    element.classList.remove('selected');
+                    element.querySelector('.image-check').textContent = '';
+                } else {
+                    selectedImages.add(name);
+                    element.classList.add('selected');
+                    element.querySelector('.image-check').textContent = '✓';
+                }
+                nextBtn.disabled = selectedImages.size === 0;
+            }
+
+            nextBtn.addEventListener('click', () => {
+                if (selectedImages.size === 0) return;
+                // Placeholder – later steps can use the selected names
+                const names = Array.from(selectedImages).join(', ');
+                alert(`Selected images: ${names}\n(Step 2 coming soon!)`);
+            });
+
+            // Start loading after DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', loadImages);
+            } else {
+                loadImages();
+            }
+        })();
+    </script>
 </body>
 </html>
