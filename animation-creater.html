@@ -208,6 +208,29 @@
             display: none;
         }
 
+        /* ---------- Preview section ---------- */
+        .preview-section {
+            display: none;
+        }
+        .preview-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .preview-item {
+            width: 150px;
+            height: 150px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid var(--ED-General-color-border);
+        }
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
         /* ---------- Back button styling (same as Terms page) ---------- */
         .ED-General-back-home-wrapper {
             margin-bottom: 1.5rem;
@@ -260,13 +283,25 @@
     <header id="header-container"></header>
 
     <main class="step-container">
-        <div class="step-box">
+        <!-- Step 1: Selection -->
+        <div class="step-box" id="step1-box">
             <h2 class="step-title" data-i18n="animation.step1.title">Step 1 – Choose images</h2>
             <p class="step-description" data-i18n="animation.step1.description">Select one or more images for your animated avatar.</p>
             <div id="imagesContainer" class="images-grid"></div>
             <div id="emptyMessage" class="empty-message" data-i18n="animation.step1.noImages">No images found. Please go to your Profile and upload a folder first.</div>
             <div class="actions">
                 <button id="nextBtn" class="btn btn-primary" disabled data-i18n="animation.step1.nextBtn">Next →</button>
+            </div>
+        </div>
+
+        <!-- Preview section (hidden initially) -->
+        <div class="step-box preview-section" id="preview-box">
+            <h2 class="step-title" data-i18n="animation.preview.title">Selected images</h2>
+            <p class="step-description" data-i18n="animation.preview.description">These are the images you'll use for your animated avatar.</p>
+            <div id="previewGrid" class="preview-grid"></div>
+            <div class="actions" style="margin-top:1.5rem;">
+                <button id="backToStep1Btn" class="btn btn-secondary" data-i18n="animation.preview.backBtn">← Back</button>
+                <button id="continueBtn" class="btn btn-primary" data-i18n="animation.preview.continueBtn">Continue</button>
             </div>
         </div>
     </main>
@@ -302,6 +337,12 @@
                         description: "Select one or more images for your animated avatar.",
                         noImages: "No images found. Please go to your Profile and upload a folder first.",
                         nextBtn: "Next →"
+                    },
+                    preview: {
+                        title: "Selected images",
+                        description: "These are the images you'll use for your animated avatar.",
+                        backBtn: "← Back",
+                        continueBtn: "Continue"
                     }
                 },
                 backToHome: "← Back to Dashboard"
@@ -313,6 +354,12 @@
                         description: "Sélectionnez une ou plusieurs images pour votre avatar animé.",
                         noImages: "Aucune image trouvée. Veuillez d'abord importer un dossier depuis votre profil.",
                         nextBtn: "Suivant →"
+                    },
+                    preview: {
+                        title: "Images sélectionnées",
+                        description: "Voici les images que vous utiliserez pour votre avatar animé.",
+                        backBtn: "← Retour",
+                        continueBtn: "Continuer"
                     }
                 },
                 backToHome: "← Retour au tableau de bord"
@@ -324,6 +371,12 @@
                         description: "حدد صورة واحدة أو أكثر لصورتك الرمزية المتحركة.",
                         noImages: "لم يتم العثور على صور. يرجى تحميل مجلد من صفحة الملف الشخصي أولاً.",
                         nextBtn: "التالي ←"
+                    },
+                    preview: {
+                        title: "الصور المحددة",
+                        description: "هذه هي الصور التي ستستخدمها لصورتك الرمزية المتحركة.",
+                        backBtn: "→ رجوع",
+                        continueBtn: "متابعة"
                     }
                 },
                 backToHome: "→ العودة إلى الرئيسية"
@@ -354,8 +407,14 @@
             const imagesContainer = document.getElementById('imagesContainer');
             const emptyMessage = document.getElementById('emptyMessage');
             const nextBtn = document.getElementById('nextBtn');
+            const step1Box = document.getElementById('step1-box');
+            const previewBox = document.getElementById('preview-box');
+            const previewGrid = document.getElementById('previewGrid');
+            const backToStep1Btn = document.getElementById('backToStep1Btn');
+            const continueBtn = document.getElementById('continueBtn');
             
-            let selectedImages = new Set();
+            let allImages = [];            // { name, data }
+            let selectedImages = new Set(); // set of names
 
             function openDB() {
                 return new Promise((resolve, reject) => {
@@ -376,17 +435,18 @@
                     const db = await openDB();
                     const tx = db.transaction(STORE_NAME, 'readonly');
                     const store = tx.objectStore(STORE_NAME);
-                    const allImages = await new Promise((resolve, reject) => {
+                    const all = await new Promise((resolve, reject) => {
                         const request = store.getAll();
                         request.onsuccess = () => resolve(request.result);
                         request.onerror = () => reject(request.error);
                     });
 
-                    if (!allImages || allImages.length === 0) {
+                    if (!all || all.length === 0) {
                         emptyMessage.style.display = 'block';
                         return;
                     }
 
+                    allImages = all;
                     renderImages(allImages);
                 } catch (err) {
                     console.error('Failed to load images:', err);
@@ -423,11 +483,57 @@
                 nextBtn.disabled = selectedImages.size === 0;
             }
 
-            nextBtn.addEventListener('click', () => {
+            // Move to preview: delete unselected images from IndexedDB, show selected ones
+            nextBtn.addEventListener('click', async () => {
                 if (selectedImages.size === 0) return;
-                // Placeholder – later steps can use the selected names
-                const names = Array.from(selectedImages).join(', ');
-                alert(`Selected images: ${names}\n(Step 2 coming soon!)`);
+                
+                // Delete unselected images from IndexedDB (backup already has all)
+                const db = await openDB();
+                const tx = db.transaction(STORE_NAME, 'readwrite');
+                const store = tx.objectStore(STORE_NAME);
+                
+                const toDelete = allImages.filter(img => !selectedImages.has(img.name));
+                for (const img of toDelete) {
+                    store.delete(img.name);
+                }
+                await new Promise((resolve, reject) => {
+                    tx.oncomplete = resolve;
+                    tx.onerror = reject;
+                });
+                
+                // Filter allImages to only selected (clean up in-memory)
+                allImages = allImages.filter(img => selectedImages.has(img.name));
+                
+                // Hide step1, show preview
+                step1Box.style.display = 'none';
+                previewBox.style.display = 'block';
+                
+                // Render preview
+                renderPreview();
+            });
+
+            // Render selected images in preview grid
+            function renderPreview() {
+                previewGrid.innerHTML = '';
+                allImages.forEach(imgObj => {
+                    const item = document.createElement('div');
+                    item.className = 'preview-item';
+                    item.innerHTML = `<img src="${imgObj.data}" alt="${imgObj.name}">`;
+                    previewGrid.appendChild(item);
+                });
+            }
+
+            // Back button: go back to step1 (selected set remains, images reloaded from DB)
+            backToStep1Btn.addEventListener('click', () => {
+                step1Box.style.display = 'block';
+                previewBox.style.display = 'none';
+                // Reload images from DB (now only selected ones remain)
+                loadImages();
+            });
+
+            // Continue button placeholder (Step 2 later)
+            continueBtn.addEventListener('click', () => {
+                alert('Continue to Step 2 (coming soon)');
             });
 
             // Start loading after DOM is ready
