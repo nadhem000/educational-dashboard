@@ -658,6 +658,11 @@ window.__profileSupabase = supabase;
     }
     folderInput.value = '';
     console.log(`[Sandbox] Processing complete. ${stored} images stored.`);
+  if (stored > 0) {
+    console.log('[Sandbox] Redirecting to animation-creater.html');
+    window.location.href = 'animation-creater.html';
+  }
+
 
     // ── Now try to backup the images ──
     console.log('[Sandbox] Attempting backup dispatch…');

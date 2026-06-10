@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animated Avatar Creator – Step 1</title>
+  <link rel="stylesheet" href="/ED-general-common.css">
+  <style>
+    :root {
+      --step-bg: var(--ED-General-color-surface);
+      --step-padding: 1.5rem;
+      --thumb-size: 120px;
+    }
+    .step-container {
+      max-width: 960px;
+      margin: 2rem auto;
+      background: var(--step-bg);
+      border-radius: 16px;
+      padding: var(--step-padding);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    .step-title {
+      margin: 0 0 1rem;
+      font-size: 1.5rem;
+      font-weight: 650;
+    }
+    .images-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .image-item {
+      position: relative;
+      width: var(--thumb-size);
+      height: var(--thumb-size);
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: border-color 0.2s;
+    }
+    .image-item.selected {
+      border-color: var(--ED-General-color-accent-default);
+    }
+    .image-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .image-check {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      background: white;
+      border-radius: 4px;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+      opacity: 0.8;
+    }
+    .actions {
+      margin-top: 2rem;
+      display: flex;
+      gap: 1rem;
+    }
+    .btn {
+      padding: 0.65rem 1.5rem;
+      border-radius: 24px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: var(--ED-General-font-stack);
+    }
+    .btn-primary {
+      background: var(--ED-General-color-accent-default);
+      color: var(--ED-General-color-text-on-accent);
+    }
+    .btn-secondary {
+      background: var(--ED-General-color-border);
+      color: var(--ED-General-color-text-primary);
+    }
+    .btn:disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+    .empty-message {
+      text-align: center;
+      color: var(--ED-General-color-text-secondary);
+      padding: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="step-container">
+    <h2 class="step-title">Step 1 – Choose images for your avatar</h2>
+    <p>Select one or more images from the folder you uploaded.</p>
+    <div id="imagesContainer" class="images-grid">
+      <!-- dynamically filled -->
+    </div>
+    <div id="emptyMessage" class="empty-message" style="display:none;">
+      No images found. Please upload a folder first from the Profile page.
+    </div>
+    <div class="actions">
+      <button id="nextBtn" class="btn btn-primary" disabled>Next →</button>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const DB_NAME = 'ED_ImageFolderCache';
+      const STORE_NAME = 'images';
+      const imagesContainer = document.getElementById('imagesContainer');
+      const emptyMessage = document.getElementById('emptyMessage');
+      const nextBtn = document.getElementById('nextBtn');
+      
+      let selectedImages = new Set(); // store image names (keys)
+
+      function openDB() {
+        return new Promise((resolve, reject) => {
+          const req = indexedDB.open(DB_NAME, 1);
+          req.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains(STORE_NAME)) {
+              db.createObjectStore(STORE_NAME, { keyPath: 'name' });
+            }
+          };
+          req.onsuccess = () => resolve(req.result);
+          req.onerror = () => reject(req.error);
+        });
+      }
+
+      async function loadImages() {
+        try {
+          const db = await openDB();
+          const tx = db.transaction(STORE_NAME, 'readonly');
+          const store = tx.objectStore(STORE_NAME);
+          const allImages = await new Promise((resolve, reject) => {
+            const request = store.getAll();
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
+          });
+
+          if (!allImages || allImages.length === 0) {
+            emptyMessage.style.display = 'block';
+            return;
+          }
+
+          renderImages(allImages);
+        } catch (err) {
+          console.error('Failed to load images:', err);
+          emptyMessage.textContent = 'Could not access the stored images.';
+          emptyMessage.style.display = 'block';
+        }
+      }
+
+      function renderImages(imageList) {
+        imagesContainer.innerHTML = '';
+        imageList.forEach(imgObj => {
+          const item = document.createElement('div');
+          item.className = 'image-item';
+          item.dataset.name = imgObj.name;
+          item.innerHTML = `
+            <img src="${imgObj.data}" alt="${imgObj.name}">
+            <div class="image-check">${selectedImages.has(imgObj.name) ? '✓' : ''}</div>
+          `;
+          item.addEventListener('click', () => toggleImage(imgObj.name, item));
+          imagesContainer.appendChild(item);
+        });
+      }
+
+      function toggleImage(name, element) {
+        if (selectedImages.has(name)) {
+          selectedImages.delete(name);
+          element.classList.remove('selected');
+          element.querySelector('.image-check').textContent = '';
+        } else {
+          selectedImages.add(name);
+          element.classList.add('selected');
+          element.querySelector('.image-check').textContent = '✓';
+        }
+        nextBtn.disabled = selectedImages.size === 0;
+      }
+
+      nextBtn.addEventListener('click', () => {
+        if (selectedImages.size === 0) return;
+        // For now, just alert the selection – future steps will use this data
+        const names = Array.from(selectedImages).join(', ');
+        alert(`Selected images: ${names}\n(Step 2 coming soon!)`);
+        // Later you can store selection in sessionStorage / localStorage and navigate to step2
+      });
+
+      // Start
+      loadImages();
+    })();
+  </script>
+</body>
+</html>
