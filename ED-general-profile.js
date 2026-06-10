@@ -605,6 +605,17 @@ window.__profileSupabase = supabase;
     }));
   }
 
+  // ── Clear all existing images from IndexedDB ──
+  async function clearAllImages() {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('images', 'readwrite');
+      tx.objectStore('images').clear();
+      tx.oncomplete = resolve;
+      tx.onerror = reject;
+    });
+  }
+
   function compressToBase64(file, maxWidth = 300, quality = 0.5) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -664,6 +675,14 @@ window.__profileSupabase = supabase;
 
     // Show loading overlay
     document.body.appendChild(loadingOverlay);
+
+    // Clear old images first
+    try {
+      await clearAllImages();
+      console.log('[Sandbox] Existing images cleared.');
+    } catch (e) {
+      console.warn('[Sandbox] Failed to clear old images:', e);
+    }
 
     let stored = 0;
     const collectedImages = [];

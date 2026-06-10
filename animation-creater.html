@@ -208,24 +208,51 @@
             display: none;
         }
 
-        /* ---------- Preview section ---------- */
+        /* ---------- Preview / Ordering section ---------- */
         .preview-section {
             display: none;
         }
-        .preview-grid {
+        .preview-grid,
+        .order-grid {
             display: flex;
             flex-wrap: wrap;
             gap: 1rem;
             margin-top: 1rem;
         }
-        .preview-item {
+        .preview-item,
+        .order-item {
             width: 150px;
             height: 150px;
             border-radius: 12px;
             overflow: hidden;
             border: 2px solid var(--ED-General-color-border);
         }
-        .preview-item img {
+        .order-item {
+            cursor: pointer;
+            position: relative;
+        }
+        .order-item.ordered {
+            cursor: default;
+            opacity: 0.7;
+            border-color: var(--ED-General-color-accent-default);
+        }
+        .order-item .order-number {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            background: var(--ED-General-color-accent-default);
+            color: var(--ED-General-color-text-on-accent);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+        }
+        .order-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;
@@ -294,13 +321,16 @@
             </div>
         </div>
 
-        <!-- Preview section (hidden initially) -->
+        <!-- Preview / Ordering section (hidden initially) -->
         <div class="step-box preview-section" id="preview-box">
-            <h2 class="step-title" data-i18n="animation.preview.title">Selected images</h2>
-            <p class="step-description" data-i18n="animation.preview.description">These are the images you'll use for your animated avatar.</p>
+            <h2 class="step-title" id="preview-title" data-i18n="animation.preview.title">Selected images</h2>
+            <p class="step-description" id="preview-description" data-i18n="animation.preview.description">These are the images you'll use for your animated avatar.</p>
             <div id="previewGrid" class="preview-grid"></div>
-            <div class="actions" style="margin-top:1.5rem;">
+            <div id="orderGrid" class="order-grid" style="display:none;"></div>
+            <div class="actions" id="preview-actions">
                 <button id="backToStep1Btn" class="btn btn-secondary" data-i18n="animation.preview.backBtn">← Back</button>
+                <button id="setOrderBtn" class="btn btn-secondary" style="display:none;" data-i18n="animation.preview.setOrderBtn">Set Order</button>
+                <button id="resetOrderBtn" class="btn btn-secondary" style="display:none;" data-i18n="animation.preview.resetOrderBtn">Reset Order</button>
                 <button id="continueBtn" class="btn btn-primary" data-i18n="animation.preview.continueBtn">Continue</button>
             </div>
         </div>
@@ -341,7 +371,10 @@
                     preview: {
                         title: "Selected images",
                         description: "These are the images you'll use for your animated avatar.",
+                        descriptionOrder: "Click images in the desired order. Click an image to assign the next number.",
                         backBtn: "← Back",
+                        setOrderBtn: "Set Order",
+                        resetOrderBtn: "Reset Order",
                         continueBtn: "Continue"
                     }
                 },
@@ -358,7 +391,10 @@
                     preview: {
                         title: "Images sélectionnées",
                         description: "Voici les images que vous utiliserez pour votre avatar animé.",
+                        descriptionOrder: "Cliquez sur les images dans l'ordre souhaité. Cliquez pour attribuer le numéro suivant.",
                         backBtn: "← Retour",
+                        setOrderBtn: "Définir l'ordre",
+                        resetOrderBtn: "Réinitialiser l'ordre",
                         continueBtn: "Continuer"
                     }
                 },
@@ -375,7 +411,10 @@
                     preview: {
                         title: "الصور المحددة",
                         description: "هذه هي الصور التي ستستخدمها لصورتك الرمزية المتحركة.",
+                        descriptionOrder: "انقر على الصور بالترتيب المطلوب. انقر لتعيين الرقم التالي.",
                         backBtn: "→ رجوع",
+                        setOrderBtn: "تعيين الترتيب",
+                        resetOrderBtn: "إعادة تعيين الترتيب",
                         continueBtn: "متابعة"
                     }
                 },
@@ -410,11 +449,18 @@
             const step1Box = document.getElementById('step1-box');
             const previewBox = document.getElementById('preview-box');
             const previewGrid = document.getElementById('previewGrid');
+            const orderGrid = document.getElementById('orderGrid');
             const backToStep1Btn = document.getElementById('backToStep1Btn');
+            const setOrderBtn = document.getElementById('setOrderBtn');
+            const resetOrderBtn = document.getElementById('resetOrderBtn');
             const continueBtn = document.getElementById('continueBtn');
+            const previewTitle = document.getElementById('preview-title');
+            const previewDescription = document.getElementById('preview-description');
             
             let allImages = [];            // { name, data }
             let selectedImages = new Set(); // set of names
+            let orderArray = [];           // ordered list of names (after ordering)
+            let nextOrderNumber = 1;
 
             function openDB() {
                 return new Promise((resolve, reject) => {
@@ -483,11 +529,10 @@
                 nextBtn.disabled = selectedImages.size === 0;
             }
 
-            // Move to preview: delete unselected images from IndexedDB, show selected ones
+            // Move to preview after deleting unselected
             nextBtn.addEventListener('click', async () => {
                 if (selectedImages.size === 0) return;
                 
-                // Delete unselected images from IndexedDB (backup already has all)
                 const db = await openDB();
                 const tx = db.transaction(STORE_NAME, 'readwrite');
                 const store = tx.objectStore(STORE_NAME);
@@ -501,18 +546,35 @@
                     tx.onerror = reject;
                 });
                 
-                // Filter allImages to only selected (clean up in-memory)
                 allImages = allImages.filter(img => selectedImages.has(img.name));
                 
-                // Hide step1, show preview
                 step1Box.style.display = 'none';
                 previewBox.style.display = 'block';
                 
-                // Render preview
+                // Reset ordering state
+                orderArray = [];
+                nextOrderNumber = 1;
+                setOrderBtn.style.display = 'none';
+                resetOrderBtn.style.display = 'none';
+                orderGrid.style.display = 'none';
+                previewGrid.style.display = 'flex';
+                continueBtn.disabled = true;
+                
+                // Show appropriate UI based on image count
+                if (allImages.length > 1) {
+                    setOrderBtn.style.display = 'inline-flex';
+                    previewDescription.setAttribute('data-i18n', 'animation.preview.description');
+                } else {
+                    // Single image – skip ordering
+                    orderArray = [allImages[0].name];
+                    continueBtn.disabled = false;
+                    previewDescription.setAttribute('data-i18n', 'animation.preview.description');
+                }
+                if (window.EDTranslation) EDTranslation.translatePage();
+                
                 renderPreview();
             });
 
-            // Render selected images in preview grid
             function renderPreview() {
                 previewGrid.innerHTML = '';
                 allImages.forEach(imgObj => {
@@ -523,20 +585,87 @@
                 });
             }
 
-            // Back button: go back to step1 (selected set remains, images reloaded from DB)
+            // ── Set Order ──
+            setOrderBtn.addEventListener('click', () => {
+                // Switch to ordering mode
+                previewGrid.style.display = 'none';
+                orderGrid.style.display = 'flex';
+                setOrderBtn.style.display = 'none';
+                resetOrderBtn.style.display = 'inline-flex';
+                continueBtn.disabled = true;
+                orderArray = [];
+                nextOrderNumber = 1;
+                previewDescription.setAttribute('data-i18n', 'animation.preview.descriptionOrder');
+                if (window.EDTranslation) EDTranslation.translatePage();
+                
+                renderOrderGrid();
+            });
+
+            function renderOrderGrid() {
+                orderGrid.innerHTML = '';
+                allImages.forEach(imgObj => {
+                    const item = document.createElement('div');
+                    item.className = 'order-item';
+                    item.dataset.name = imgObj.name;
+                    item.innerHTML = `<img src="${imgObj.data}" alt="${imgObj.name}">`;
+                    
+                    // Check if already ordered
+                    const orderIndex = orderArray.indexOf(imgObj.name);
+                    if (orderIndex !== -1) {
+                        item.classList.add('ordered');
+                        const numSpan = document.createElement('div');
+                        numSpan.className = 'order-number';
+                        numSpan.textContent = orderIndex + 1;
+                        item.appendChild(numSpan);
+                    } else {
+                        item.addEventListener('click', () => assignOrder(imgObj.name, item));
+                    }
+                    orderGrid.appendChild(item);
+                });
+            }
+
+            function assignOrder(name, element) {
+                if (orderArray.includes(name)) return; // already ordered
+                orderArray.push(name);
+                // Update element appearance
+                element.classList.add('ordered');
+                const numSpan = document.createElement('div');
+                numSpan.className = 'order-number';
+                numSpan.textContent = nextOrderNumber;
+                element.appendChild(numSpan);
+                nextOrderNumber++;
+                element.removeEventListener('click', assignOrder);
+                
+                // Check if all ordered
+                if (orderArray.length === allImages.length) {
+                    continueBtn.disabled = false;
+                }
+            }
+
+            // ── Reset Order ──
+            resetOrderBtn.addEventListener('click', () => {
+                orderArray = [];
+                nextOrderNumber = 1;
+                continueBtn.disabled = true;
+                renderOrderGrid();
+            });
+
+            // ── Back to step 1 ──
             backToStep1Btn.addEventListener('click', () => {
                 step1Box.style.display = 'block';
                 previewBox.style.display = 'none';
-                // Reload images from DB (now only selected ones remain)
                 loadImages();
             });
 
-            // Continue button placeholder (Step 2 later)
+            // ── Continue (Step 2 placeholder) ──
             continueBtn.addEventListener('click', () => {
-                alert('Continue to Step 2 (coming soon)');
+                // At this point orderArray is set (even for single image)
+                const orderedNames = orderArray.join(', ');
+                alert(`Order: ${orderedNames}\n(Step 2 coming soon!)`);
+                // Optionally clear IndexedDB after finishing? We'll leave that for later.
             });
 
-            // Start loading after DOM is ready
+            // Start
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', loadImages);
             } else {
