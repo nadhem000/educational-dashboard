@@ -3,26 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Animated Avatar Creator – Step 1</title>
+  <title>Animated Avatar Creator</title>
+  <link rel="icon" type="image/x-icon" href="assets/icons/icon-64x64.png">
+  <link rel="manifest" href="/manifest.json">
   <link rel="stylesheet" href="/ED-general-common.css">
   <style>
-    :root {
-      --step-bg: var(--ED-General-color-surface);
-      --step-padding: 1.5rem;
-      --thumb-size: 120px;
-    }
+    /* Page‑specific styles */
     .step-container {
       max-width: 960px;
       margin: 2rem auto;
-      background: var(--step-bg);
+      background: var(--ED-General-color-surface);
       border-radius: 16px;
-      padding: var(--step-padding);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+      box-shadow: 0 4px 20px rgba(var(--ED-General-color-shadow-rgb), 0.12);
     }
     .step-title {
-      margin: 0 0 1rem;
+      margin: 0 0 0.5rem;
       font-size: 1.5rem;
       font-weight: 650;
+      color: var(--ED-General-color-text-primary);
+    }
+    .step-description {
+      margin-bottom: 1rem;
+      color: var(--ED-General-color-text-secondary);
     }
     .images-grid {
       display: flex;
@@ -32,8 +35,8 @@
     }
     .image-item {
       position: relative;
-      width: var(--thumb-size);
-      height: var(--thumb-size);
+      width: 120px;
+      height: 120px;
       border-radius: 12px;
       overflow: hidden;
       cursor: pointer;
@@ -61,7 +64,7 @@
       justify-content: center;
       font-size: 14px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.3);
-      opacity: 0.8;
+      color: var(--ED-General-color-text-primary);
     }
     .actions {
       margin-top: 2rem;
@@ -93,23 +96,77 @@
       text-align: center;
       color: var(--ED-General-color-text-secondary);
       padding: 2rem;
+      display: none;
     }
   </style>
 </head>
 <body>
-  <div class="step-container">
-    <h2 class="step-title">Step 1 – Choose images for your avatar</h2>
-    <p>Select one or more images from the folder you uploaded.</p>
-    <div id="imagesContainer" class="images-grid">
-      <!-- dynamically filled -->
+  <header id="header-container"></header>
+
+  <main class="ED-General-main">
+    <div class="step-container">
+      <h2 class="step-title" data-i18n="animation.step1.title">Step 1 – Choose images</h2>
+      <p class="step-description" data-i18n="animation.step1.description">Select one or more images for your animated avatar.</p>
+      <div id="imagesContainer" class="images-grid"></div>
+      <div id="emptyMessage" class="empty-message" data-i18n="animation.step1.noImages">No images found. Please go to your Profile and upload a folder first.</div>
+      <div class="actions">
+        <button id="nextBtn" class="btn btn-primary" disabled data-i18n="animation.step1.nextBtn">Next →</button>
+      </div>
     </div>
-    <div id="emptyMessage" class="empty-message" style="display:none;">
-      No images found. Please upload a folder first from the Profile page.
-    </div>
-    <div class="actions">
-      <button id="nextBtn" class="btn btn-primary" disabled>Next →</button>
-    </div>
-  </div>
+  </main>
+
+  <footer id="footer-container"></footer>
+
+  <!-- Shared translation data -->
+  <script src="ED-general-translations-data.js"></script>
+  <!-- Page‑specific UI text (merged with shared) -->
+  <script>
+    const PAGE_UI_TEXT = {
+      en: {
+        animation: {
+          step1: {
+            title: "Step 1 – Choose images",
+            description: "Select one or more images for your animated avatar.",
+            noImages: "No images found. Please go to your Profile and upload a folder first.",
+            nextBtn: "Next →"
+          }
+        }
+      },
+      fr: {
+        animation: {
+          step1: {
+            title: "Étape 1 – Choisissez des images",
+            description: "Sélectionnez une ou plusieurs images pour votre avatar animé.",
+            noImages: "Aucune image trouvée. Veuillez d'abord importer un dossier depuis votre profil.",
+            nextBtn: "Suivant →"
+          }
+        }
+      },
+      ar: {
+        animation: {
+          step1: {
+            title: "الخطوة 1 – اختر الصور",
+            description: "حدد صورة واحدة أو أكثر لصورتك الرمزية المتحركة.",
+            noImages: "لم يتم العثور على صور. يرجى تحميل مجلد من صفحة الملف الشخصي أولاً.",
+            nextBtn: "التالي ←"
+          }
+        }
+      }
+    };
+    // Merge with shared translations
+    window.UI_TEXT = {
+      en: { ...SHARED_UI_TEXT.en, ...PAGE_UI_TEXT.en },
+      fr: { ...SHARED_UI_TEXT.fr, ...PAGE_UI_TEXT.fr },
+      ar: { ...SHARED_UI_TEXT.ar, ...PAGE_UI_TEXT.ar }
+    };
+  </script>
+  <!-- Translation engine + shared init (loads header, footer, theme, etc.) -->
+  <script src="ED-general-translation.js"></script>
+  <script src="ED-general-analytics.js"></script>
+  <script src="ED-general-init.js"></script>
+  <script src="ED-general-auth.js"></script>
+  <script src="ED-general-profile.js"></script>
+  <script src="ED-general-encrypted-backup.js"></script>
 
   <script>
     (function() {
@@ -119,7 +176,7 @@
       const emptyMessage = document.getElementById('emptyMessage');
       const nextBtn = document.getElementById('nextBtn');
       
-      let selectedImages = new Set(); // store image names (keys)
+      let selectedImages = new Set();
 
       function openDB() {
         return new Promise((resolve, reject) => {
@@ -154,7 +211,7 @@
           renderImages(allImages);
         } catch (err) {
           console.error('Failed to load images:', err);
-          emptyMessage.textContent = 'Could not access the stored images.';
+          emptyMessage.textContent = 'Could not access stored images.';
           emptyMessage.style.display = 'block';
         }
       }
@@ -189,14 +246,16 @@
 
       nextBtn.addEventListener('click', () => {
         if (selectedImages.size === 0) return;
-        // For now, just alert the selection – future steps will use this data
-        const names = Array.from(selectedImages).join(', ');
-        alert(`Selected images: ${names}\n(Step 2 coming soon!)`);
-        // Later you can store selection in sessionStorage / localStorage and navigate to step2
+        // For now, just a placeholder – you can store selection and proceed to step2
+        alert(`Selected images: ${Array.from(selectedImages).join(', ')}\n(Step 2 coming soon!)`);
       });
 
-      // Start
-      loadImages();
+      // Start loading after DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', loadImages);
+      } else {
+        loadImages();
+      }
     })();
   </script>
 </body>

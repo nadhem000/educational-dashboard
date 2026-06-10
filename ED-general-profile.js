@@ -630,12 +630,40 @@ window.__profileSupabase = supabase;
     });
   }
 
+  // ── Loading overlay ──
+  const loadingOverlay = document.createElement('div');
+  loadingOverlay.id = 'sandbox-loading-overlay';
+  loadingOverlay.style.cssText = `
+    position: fixed; top:0; left:0; width:100%; height:100%;
+    background: rgba(0,0,0,0.5); z-index:9999;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  `;
+  loadingOverlay.innerHTML = `
+    <div style="background: var(--ED-General-color-surface); color: var(--ED-General-color-text-primary);
+                padding: 2rem; border-radius: 16px; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.3);">
+      <div style="border: 4px solid var(--ED-General-color-border);
+                  border-top: 4px solid var(--ED-General-color-accent-default);
+                  border-radius: 50%; width: 40px; height: 40px;
+                  animation: spin 0.8s linear infinite; margin: 0 auto 1rem;"></div>
+      <p style="margin:0; font-size:0.9rem; color: var(--ED-General-color-text-secondary);">
+        Processing images…
+      </p>
+    </div>
+  `;
+  const styleSheet = document.createElement('style');
+  styleSheet.textContent = `@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`;
+  document.head.appendChild(styleSheet);
+
   // ── Process folder selection ──
   folderInput.addEventListener('change', async () => {
     console.log('[Sandbox] Folder selection change event fired.');
     const files = Array.from(folderInput.files);
     console.log(`[Sandbox] ${files.length} file(s) selected.`);
     if (files.length === 0) return;
+
+    // Show loading overlay
+    document.body.appendChild(loadingOverlay);
 
     let stored = 0;
     const collectedImages = [];
@@ -657,19 +685,25 @@ window.__profileSupabase = supabase;
       }
     }
     folderInput.value = '';
-    console.log(`[Sandbox] Processing complete. ${stored} images stored.`);
-  if (stored > 0) {
-    console.log('[Sandbox] Redirecting to animation-creater.html');
-    window.location.href = 'animation-creater.html';
-  }
 
+    // Remove loading overlay
+    if (loadingOverlay.parentNode) {
+      document.body.removeChild(loadingOverlay);
+    }
+
+    // If nothing was stored, alert and stop
+    if (stored === 0) {
+      alert('No valid images were found in the folder. Please try again with a folder containing image files.');
+      return;
+    }
+
+    console.log(`[Sandbox] Processing complete. ${stored} images stored.`);
 
     // ── Now try to backup the images ──
     console.log('[Sandbox] Attempting backup dispatch…');
     console.log('[Sandbox] window.__profileSupabase exists?', !!window.__profileSupabase);
     console.log('[Sandbox] window.supabase exists?', !!window.supabase);
 
-    // Use the shared client if available, otherwise try window.supabase.createClient
     let supabaseClient = null;
     if (window.__profileSupabase) {
       console.log('[Sandbox] Using shared supabase client from profile.');
@@ -687,31 +721,36 @@ window.__profileSupabase = supabase;
         const { data: { session }, error } = await supabaseClient.auth.getSession();
         if (error) {
           console.error('[Sandbox] Session error:', error);
-          return;
-        }
-        console.log('[Sandbox] Session obtained:', session ? 'yes' : 'no');
-        const email = session?.user?.email;
-        if (email) {
-          console.log(`[Sandbox] Dispatching backup event for ${email} with ${collectedImages.length} images.`);
-          document.dispatchEvent(new CustomEvent('ed-enc-backup-capture', {
-            detail: {
-              email,
-              // password is not sent – backup handler will use the stored one
-              phase_upload_animated_avatar: {
-                images: collectedImages,
-                timestamp: Date.now()
-              }
-            }
-          }));
-          console.log('[Sandbox] Backup event dispatched.');
         } else {
-          console.warn('[Sandbox] No email in session – cannot backup.');
+          console.log('[Sandbox] Session obtained:', session ? 'yes' : 'no');
+          const email = session?.user?.email;
+          if (email) {
+            console.log(`[Sandbox] Dispatching backup event for ${email} with ${collectedImages.length} images.`);
+            document.dispatchEvent(new CustomEvent('ed-enc-backup-capture', {
+              detail: {
+                email,
+                phase_upload_animated_avatar: {
+                  images: collectedImages,
+                  timestamp: Date.now()
+                }
+              }
+            }));
+            console.log('[Sandbox] Backup event dispatched.');
+          } else {
+            console.warn('[Sandbox] No email in session – cannot backup.');
+          }
         }
       } catch (err) {
         console.error('[Sandbox] Backup error:', err);
       }
     } else {
       console.warn('[Sandbox] Backup skipped – no images or no client.');
+    }
+
+    // Redirect to animation creator
+    if (stored > 0) {
+      console.log('[Sandbox] Redirecting to animation-creater.html');
+      window.location.href = 'animation-creater.html';
     }
   });
 
