@@ -11,7 +11,111 @@
     <!-- Local gif.js library (you downloaded it) -->
     <script src="gif.js"></script>
     <style>
-        /* ---------- Animation creator specific (unchanged from your original) ---------- */
+        :root {
+            --ED-General-color-bg: #f5f1eb;
+            --ED-General-color-bg-secondary: #ede7df;
+            --ED-General-color-surface: #ffffff;
+            --ED-General-color-surface-hover: #fafaf8;
+            --ED-General-color-text-primary: #1e293b;
+            --ED-General-color-text-secondary: #5a6c7d;
+            --ED-General-color-text-tertiary: #8b9aab;
+            --ED-General-color-border: #e2dcd4;
+            --ED-General-color-border-hover: #cbc3b8;
+            --ED-General-color-shadow: rgba(60, 50, 40, 0.07);
+            --ED-General-color-shadow-hover: rgba(60, 50, 40, 0.14);
+            --ED-General-color-accent-default: #4a7fd9;
+            --ED-General-color-accent-light: #e8f1fb;
+            --ED-General-color-accent-soft: #f0f5fc;
+            --ED-General-color-header-bg: #ffffff;
+            --ED-General-color-header-border: #e8e2d9;
+            --ED-General-color-toggle-bg: #e8e2d9;
+            --ED-General-color-toggle-text: #4a5568;
+            --ED-General-color-toggle-active-bg: #4a7fd9;
+            --ED-General-color-toggle-active-text: #ffffff;
+            --ED-General-color-badge-bg: #f0ece5;
+            --ED-General-color-badge-text: #5a6c7d;
+            --ED-General-color-badge-hover-bg: #e4ded5;
+            --ED-General-color-btn-primary-bg: #4a7fd9;
+            --ED-General-color-btn-primary-text: #ffffff;
+            --ED-General-color-btn-primary-hover: #3b6ec4;
+            --ED-General-color-btn-shadow: rgba(0, 0, 0, 0.2);
+            --ED-General-color-icon-container-bg: #f0f4f9;
+            --ED-General-card-radius: 16px;
+            --ED-General-card-padding: 1.5rem;
+            --ED-General-transition-speed: 0.3s;
+            --ED-General-grid-gap: 1.25rem;
+            --ED-General-font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+                "Noto Sans", "Noto Sans Arabic", sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+            --card-accent-r: 60;
+            --card-accent-g: 50;
+            --card-accent-b: 40;
+            --card-shadow-opacity: 0.10;
+            --card-shadow-opacity-hover: 0.22;
+            --card-shadow-blur: 10px;
+            --card-shadow-blur-hover: 30px;
+            --card-shadow-offset-x: 0px;
+            --card-shadow-offset-y: 3px;
+            --card-shadow-offset-y-hover: 8px;
+            --ED-General-color-header-gradient-start: #fefdfb;
+            --ED-General-color-header-gradient-mid1: #faf8f4;
+            --ED-General-color-header-gradient-mid2: #f6f3ee;
+            --ED-General-color-header-gradient-end: #f2efe8;
+            --ED-General-color-header-accent-gradient-stop: rgba(180, 160, 140, 0.5);
+            --ED-General-color-shadow-rgb: 60, 50, 40;
+            --ED-General-color-accent-rgb: 74, 127, 217;
+            --ED-General-color-icon-sun: #e8a840;
+            --ED-General-color-icon-moon: #7b8cb0;
+            --ED-General-color-icon-sun-glow: rgba(232, 168, 64, 0.3);
+            --ED-General-color-icon-moon-glow: rgba(122, 143, 176, 0.35);
+            --ED-General-color-text-on-accent: #ffffff;
+        }
+        [data-theme="dark"] {
+            --ED-General-color-bg: #171a20;
+            --ED-General-color-bg-secondary: #1e2129;
+            --ED-General-color-surface: #23262f;
+            --ED-General-color-surface-hover: #2a2e38;
+            --ED-General-color-text-primary: #e2e4ea;
+            --ED-General-color-text-secondary: #b0b5c2;
+            --ED-General-color-text-tertiary: #7d8494;
+            --ED-General-color-border: #32353e;
+            --ED-General-color-border-hover: #454952;
+            --ED-General-color-shadow: rgba(0, 0, 0, 0.25);
+            --ED-General-color-shadow-hover: rgba(0, 0, 0, 0.45);
+            --ED-General-color-accent-default: #7aafff;
+            --ED-General-color-accent-light: #1e2d45;
+            --ED-General-color-accent-soft: #1a2535;
+            --ED-General-color-header-bg: #1c1f28;
+            --ED-General-color-header-border: #2a2e38;
+            --ED-General-color-toggle-bg: #2a2e38;
+            --ED-General-color-toggle-text: #b0b5c2;
+            --ED-General-color-toggle-active-bg: #7aafff;
+            --ED-General-color-toggle-active-text: #12151c;
+            --ED-General-color-badge-bg: #2a2e38;
+            --ED-General-color-badge-text: #b0b5c2;
+            --ED-General-color-badge-hover-bg: #353a45;
+            --ED-General-color-btn-primary-bg: #7aafff;
+            --ED-General-color-btn-primary-text: #12151c;
+            --ED-General-color-btn-primary-hover: #6199f0;
+            --ED-General-color-btn-shadow: rgba(0, 0, 0, 0.5);
+            --ED-General-color-icon-container-bg: #252b38;
+            --ED-General-color-header-gradient-start: #1f222d;
+            --ED-General-color-header-gradient-mid1: #1c1f29;
+            --ED-General-color-header-gradient-mid2: #191c24;
+            --ED-General-color-header-gradient-end: #171a20;
+            --ED-General-color-header-accent-gradient-stop: rgba(160, 175, 200, 0.4);
+            --ED-General-color-shadow-rgb: 0, 0, 0;
+            --ED-General-color-accent-rgb: 122, 175, 255;
+            --ED-General-color-icon-sun: #e8a840;
+            --ED-General-color-icon-moon: #c4d0f0;
+            --ED-General-color-icon-sun-glow: rgba(232, 168, 64, 0.3);
+            --ED-General-color-icon-moon-glow: rgba(180, 195, 235, 0.35);
+            --ED-General-color-text-on-accent: #12151c;
+        }
+        [dir="rtl"] {
+            direction: rtl;
+            text-align: right;
+        }
+        /* ---------- Animation creator specific ---------- */
         .step-container {
             max-width: 960px;
             margin: 2rem auto;
@@ -22,7 +126,7 @@
             border-radius: 16px;
             padding: 1.5rem;
             box-shadow: 0 4px 20px rgba(var(--ED-General-color-shadow-rgb), 0.12);
-            margin-bottom: 2rem;  /* added for spacing between steps when both shown */
+            margin-bottom: 2rem;
         }
         .step-title {
             margin: 0 0 0.5rem;
@@ -155,8 +259,40 @@
             height: 100%;
             object-fit: cover;
         }
+        /* ---------- Back button styling ---------- */
+        .ED-General-back-home-wrapper {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+        [dir="rtl"] .ED-General-back-home-wrapper {
+            text-align: right;
+        }
+        .ED-General-back-home-wrapper .ED-General-header-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: var(--ED-General-color-surface);
+            border: 1.5px solid var(--ED-General-color-border);
+            border-radius: 32px;
+            padding: 0.5rem 1.2rem;
+            font-weight: 600;
+            transition: all 0.22s ease;
+            text-decoration: none;
+            color: var(--ED-General-color-text-primary);
+            font-family: var(--ED-General-font-stack);
+            font-size: 0.85rem;
+        }
+        .ED-General-back-home-wrapper .ED-General-header-btn:hover {
+            border-color: var(--ED-General-color-accent-default);
+            background: var(--ED-General-color-accent-soft);
+            box-shadow: 0 2px 8px rgba(var(--ED-General-color-accent-rgb), 0.12);
+            transform: translateY(-1px);
+        }
+        .ED-General-back-home-wrapper .ED-General-header-btn:active {
+            transform: scale(0.96);
+        }
 
-        /* ---------- EDITOR STEP (Step 3) styles – using your theme ---------- */
+        /* ================= EDITOR (Step 3) styles ================= */
         .editor-box {
             display: none;
         }
@@ -457,7 +593,7 @@
             font-size: 0.9rem;
         }
         .editor-btn.primary:hover {
-            background: #3b6ec4; /* slightly darker accent */
+            background: #3b6ec4;
             border-color: #3b6ec4;
             box-shadow: 0 4px 14px rgba(var(--ED-General-color-accent-rgb), 0.35);
         }
@@ -558,7 +694,6 @@
             transition: width 0.3s;
             width: 0%;
         }
-        /* Toast messages */
         .toast-container {
             position: fixed;
             bottom: 24px;
@@ -587,7 +722,6 @@
             to { opacity: 0; transform: translateY(-10px); }
         }
 
-        /* Override for RTL if needed */
         [dir="rtl"] .editor-thumb-index {
             left: auto;
             right: -8px;
@@ -595,6 +729,20 @@
         [dir="rtl"] .editor-thumb-remove {
             right: auto;
             left: -8px;
+        }
+
+        @media (max-width: 640px) {
+            .step-container {
+                padding: 0 1rem;
+            }
+            .image-item {
+                width: 100px;
+                height: 100px;
+            }
+            .ED-General-back-home-wrapper .ED-General-header-btn {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -630,7 +778,6 @@
             <h2 class="step-title" data-i18n="editor.title">Step 3 – Edit &amp; Animate</h2>
             <p class="step-description" data-i18n="editor.description">Adjust colours, timing, overlays and generate your GIF.</p>
 
-            <!-- Thumbnail strip (no extra upload) -->
             <div class="editor-thumbnail-strip-container">
                 <div class="editor-thumbnail-strip-label">
                     <span data-i18n="editor.thumbnail.label">📷 Image Sequence</span>
@@ -642,7 +789,6 @@
                 </div>
             </div>
 
-            <!-- Workspace: preview + controls -->
             <div class="editor-workspace">
                 <div class="editor-preview-panel" id="editorPreviewPanel">
                     <div class="editor-playback-controls" id="editorPlaybackControls">
@@ -656,14 +802,12 @@
                     <span class="editor-preview-placeholder" id="editorPreviewPlaceholder" data-i18n="editor.preview.placeholder">Select an image to preview</span>
                 </div>
                 <div class="editor-controls-panel" id="editorControlsPanel">
-                    <!-- Mode toggle -->
                     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
                         <span style="font-weight:700;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.03em;color:var(--ED-General-color-text-tertiary);" data-i18n="editor.mode.label">Edit Mode:</span>
                         <span class="editor-mode-indicator" id="editorModeToggle">🎯 Individual</span>
                         <span style="font-size:0.75rem;color:var(--ED-General-color-text-tertiary);" data-i18n="editor.mode.switchHint">(click to switch)</span>
                     </div>
 
-                    <!-- Colour Adjustments -->
                     <div class="editor-control-group">
                         <h4 data-i18n="editor.color.header">🎨 Colour Adjustments</h4>
                         <div class="editor-control-row"><label data-i18n="editor.brightness">Brightness</label><input type="range" id="editorBrightness" min="0" max="200" value="100" step="1"><span class="value-badge" id="editorBrightnessVal">100%</span></div>
@@ -675,7 +819,6 @@
                         </div>
                     </div>
 
-                    <!-- Geometry -->
                     <div class="editor-control-group">
                         <h4 data-i18n="editor.geometry.header">📐 Geometry</h4>
                         <div class="editor-btn-row">
@@ -687,7 +830,6 @@
                         <div class="editor-btn-row" style="margin-top:8px;"><div class="editor-btn-wrapper"><span class="editor-btn-hint" data-i18n="editor.hint.resetGeo">Reset geometry</span><button class="editor-btn small" id="editorResetGeoBtn">↺ Reset Geometry</button></div></div>
                     </div>
 
-                    <!-- Timing per frame -->
                     <div class="editor-control-group">
                         <h4 data-i18n="editor.timing.header">⏱️ Timing (per frame)</h4>
                         <div class="editor-control-row">
@@ -701,7 +843,6 @@
                         </div>
                     </div>
 
-                    <!-- Overlay Text -->
                     <div class="editor-control-group">
                         <h4 data-i18n="editor.overlay.header">🖌 Overlay Text</h4>
                         <div class="editor-control-row">
@@ -716,7 +857,6 @@
                         </div>
                     </div>
 
-                    <!-- Crop -->
                     <div class="editor-control-group">
                         <h4 data-i18n="editor.crop.header">✂ Crop</h4>
                         <div class="editor-control-row">
@@ -731,7 +871,6 @@
                         </div>
                     </div>
 
-                    <!-- Bulk Actions -->
                     <div class="editor-control-group">
                         <h4 data-i18n="editor.bulk.header">📦 Bulk Actions</h4>
                         <div class="editor-btn-row">
@@ -747,7 +886,6 @@
                         </div>
                     </div>
 
-                    <!-- History -->
                     <div class="editor-control-group">
                         <h4 data-i18n="editor.history.header">↩ History</h4>
                         <div class="editor-btn-row">
@@ -756,7 +894,6 @@
                         </div>
                     </div>
 
-                    <!-- Frame Notes -->
                     <div class="editor-control-group">
                         <h4 data-i18n="editor.notes.header">📝 Frame Notes</h4>
                         <div class="editor-control-row">
@@ -767,7 +904,6 @@
                 </div>
             </div>
 
-            <!-- GIF Settings & Generate Row -->
             <div class="editor-gif-settings" id="editorGifSettings">
                 <div class="editor-gif-setting-item">
                     <label data-i18n="editor.gif.defaultDelay">Default Frame Delay</label>
@@ -795,7 +931,6 @@
                 </div>
             </div>
 
-            <!-- Back to selection button -->
             <div class="actions" style="margin-top:1.5rem;">
                 <button id="editorBackToSelectionBtn" class="btn btn-secondary" data-i18n="editor.backToSelection">← Back to Selection</button>
             </div>
@@ -915,7 +1050,6 @@
                     "hint.generate": "Create animated GIF",
                     "hint.download": "Download GIF",
                     "backToSelection": "← Back to Selection",
-                    // Toasts
                     "toast.imageAdded": "✅ {count} image(s) added",
                     "toast.sequenceReordered": "🔄 Sequence reordered",
                     "toast.imageRemoved": "🗑 Image removed",
@@ -1208,7 +1342,7 @@
             const DB_NAME = 'ED_ImageFolderCache';
             const STORE_NAME = 'images';
 
-            // ---------- STEPS 1 & 2 (unchanged from your original) ----------
+            // ---------- STEPS 1 & 2 (unchanged) ----------
             const imagesContainer = document.getElementById('imagesContainer');
             const emptyMessage = document.getElementById('emptyMessage');
             const nextBtn = document.getElementById('nextBtn');
@@ -1222,9 +1356,9 @@
             const continueBtn = document.getElementById('continueBtn');
             const previewTitle = document.getElementById('preview-title');
             const previewDescription = document.getElementById('preview-description');
-            let allImages = [];            // { name, data }
-            let selectedImages = new Set(); // set of names
-            let orderArray = [];           // ordered list of names (after ordering)
+            let allImages = [];
+            let selectedImages = new Set();
+            let orderArray = [];
             let nextOrderNumber = 1;
 
             function openDB() {
@@ -1314,11 +1448,9 @@
                 continueBtn.disabled = true;
                 if (allImages.length > 1) {
                     setOrderBtn.style.display = 'inline-flex';
-                    previewDescription.setAttribute('data-i18n', 'animation.preview.description');
                 } else {
                     orderArray = [allImages[0].name];
                     continueBtn.disabled = false;
-                    previewDescription.setAttribute('data-i18n', 'animation.preview.description');
                 }
                 if (window.EDTranslation) EDTranslation.translatePage();
                 renderPreview();
@@ -1340,7 +1472,6 @@
                 continueBtn.disabled = true;
                 orderArray = [];
                 nextOrderNumber = 1;
-                previewDescription.setAttribute('data-i18n', 'animation.preview.descriptionOrder');
                 if (window.EDTranslation) EDTranslation.translatePage();
                 renderOrderGrid();
             });
@@ -1394,7 +1525,6 @@
             continueBtn.addEventListener('click', () => {
                 previewBox.style.display = 'none';
                 document.getElementById('editor-box').style.display = 'block';
-                // Convert ordered images to editor format
                 const editorImages = orderArray.map((name, idx) => {
                     const found = allImages.find(img => img.name === name);
                     return {
@@ -1407,7 +1537,6 @@
                         note: ''
                     };
                 });
-                // Preload image dimensions
                 const loadPromises = editorImages.map(img => {
                     return new Promise(resolve => {
                         const image = new Image();
@@ -1436,7 +1565,7 @@
             const defaultDelay = 200;
             const MAX_HISTORY = 30;
 
-            // DOM refs for editor
+            // DOM refs
             const editorBox = document.getElementById('editor-box');
             const editorThumbnailStrip = document.getElementById('editorThumbnailStrip');
             const editorImageCountEl = document.getElementById('editorImageCount');
@@ -1448,7 +1577,6 @@
             const editorProgressBarContainer = document.getElementById('editorProgressBarContainer');
             const editorProgressBarFill = document.getElementById('editorProgressBarFill');
             const editorToastContainer = document.getElementById('editorToastContainer');
-            // sliders & inputs
             const editorBrightnessSlider = document.getElementById('editorBrightness');
             const editorContrastSlider = document.getElementById('editorContrast');
             const editorSaturationSlider = document.getElementById('editorSaturation');
@@ -1490,7 +1618,6 @@
             const editorFrameCounter = document.getElementById('editorFrameCounter');
             const editorBackToSelectionBtn = document.getElementById('editorBackToSelectionBtn');
 
-            // Helper to get translation (using site's global t() if available)
             function _t(key, placeholders) {
                 if (window.t) {
                     let str = window.t(key) || key;
@@ -1717,7 +1844,7 @@
                 renderEditorPreview(); pushEditorHistory();
             }
 
-            function editorRenderPreview() {
+            function renderEditorPreview() {
                 if (editorSelectedIndex < 0 || editorSelectedIndex >= editorImages.length) { hideEditorPreview(); return; }
                 editorDrawImageToCanvas(editorImages[editorSelectedIndex], editorPreviewCanvas, editorCropAspectSelect.value);
                 showEditorPreview();
@@ -1776,7 +1903,7 @@
                 if (!editorIsPlaying) return;
                 clearInterval(editorPlayInterval); editorIsPlaying = false;
                 editorPlayBtn.disabled = false; editorStopBtn.disabled = true;
-                if (editorSelectedIndex >= 0) editorRenderPreview();
+                if (editorSelectedIndex >= 0) renderEditorPreview();
                 updateEditorFrameCounter();
             }
             function editorDrawPlayFrame() {
@@ -1794,7 +1921,7 @@
             async function editorGenerateGif() {
                 if (editorImages.length < 2) { showEditorToast('editor.toast.needTwoImages'); return; }
                 editorGenerateGifBtn.disabled = true;
-                editorGenerateGifBtn.textContent = '⏳ ' + _t('editor.gif.generating', 'Generating…');
+                editorGenerateGifBtn.textContent = '⏳ ' + _t('editor.generate');
                 editorProgressBarContainer.classList.add('active');
                 editorProgressBarFill.style.width = '0%';
                 editorDownloadGifBtn.style.display = 'none';
@@ -1809,13 +1936,10 @@
                 const loopCount = parseInt(editorLoopCountInput.value) || 0;
 
                 try {
-                    // Use local gif.js library (workerScript points to local file)
                     const gif = new GIF({
-                        workers: 2,
-                        quality: 10,
-                        width: outputWidth,
-                        height: outputHeight,
-                        workerScript: 'gif.worker.js',  // local file
+                        workers: 2, quality: 10,
+                        width: outputWidth, height: outputHeight,
+                        workerScript: 'gif.worker.js',
                         repeat: loopCount
                     });
                     gif.on('progress', p => { editorProgressBarFill.style.width = Math.round(p * 100) + '%'; });
@@ -1898,8 +2022,7 @@
                 editorIdCounter = editorImages.length;
                 editorSelectedIndex = editorImages.length > 0 ? 0 : -1;
                 editorBulkMode = false;
-                editorHistory = [];
-                editorHistoryIndex = -1;
+                editorHistory = []; editorHistoryIndex = -1;
                 editorGeneratedGifBlob = null;
                 editorDownloadGifBtn.style.display = 'none';
                 editorProgressBarContainer.classList.remove('active');
@@ -1914,20 +2037,19 @@
                 if (window.EDTranslation) EDTranslation.translatePage();
             }
 
-            // Back to selection button
             editorBackToSelectionBtn.addEventListener('click', () => {
                 editorBox.style.display = 'none';
                 previewBox.style.display = 'block';
             });
 
-            // --- Event listeners for editor controls ---
+            // --- Editor control listeners ---
             editorModeToggle.addEventListener('click', () => {
                 if (editorImages.length === 0) return;
                 editorBulkMode = !editorBulkMode;
                 updateEditorModeToggleUI();
                 if (editorBulkMode) { resetEditorSliders(); showEditorToast('editor.toast.bulkMode'); }
                 else { if (editorSelectedIndex >= 0) updateEditorSlidersFromImage(editorImages[editorSelectedIndex]); showEditorToast('editor.toast.individualMode'); }
-                updateEditorPerFrameDelayInput(); editorRenderPreview();
+                updateEditorPerFrameDelayInput(); renderEditorPreview();
             });
 
             [editorBrightnessSlider, editorContrastSlider, editorSaturationSlider, editorHueSlider].forEach(s =>
@@ -1941,11 +2063,11 @@
                 getEditorTargetIndices().forEach(i => { if (i >= 0 && i < editorImages.length) editorImages[i].mods = { ...defaultMods }; });
                 if (!editorBulkMode && editorSelectedIndex >= 0) updateEditorSlidersFromImage(editorImages[editorSelectedIndex]);
                 else resetEditorSliders();
-                editorRenderPreview(); pushEditorHistory();
+                renderEditorPreview(); pushEditorHistory();
             });
             document.getElementById('editorResetGeoBtn').addEventListener('click', () => {
                 getEditorTargetIndices().forEach(i => { if (i >= 0 && i < editorImages.length) { editorImages[i].mods.rotation = defaultMods.rotation; editorImages[i].mods.flipH = defaultMods.flipH; editorImages[i].mods.flipV = defaultMods.flipV; } });
-                editorRenderPreview(); pushEditorHistory();
+                renderEditorPreview(); pushEditorHistory();
             });
 
             editorPerFrameDelay.addEventListener('input', () => {
@@ -1971,30 +2093,30 @@
                 const text = editorOverlayText.value.trim();
                 if (!text) { showEditorToast('editor.toast.enterOverlayText'); return; }
                 editorImages[editorSelectedIndex].overlay = { text, color: editorOverlayColor.value, size: parseInt(editorOverlaySize.value) };
-                renderEditorThumbnails(); editorRenderPreview(); pushEditorHistory(); showEditorToast('editor.toast.overlaySet');
+                renderEditorThumbnails(); renderEditorPreview(); pushEditorHistory(); showEditorToast('editor.toast.overlaySet');
             });
             editorCopyOverlayAllBtn.addEventListener('click', () => {
                 if (editorSelectedIndex < 0) { showEditorToast('editor.toast.noSelection'); return; }
                 const overlay = editorImages[editorSelectedIndex].overlay;
                 editorImages.forEach(img => img.overlay = overlay ? { ...overlay } : null);
-                renderEditorThumbnails(); editorRenderPreview(); pushEditorHistory(); showEditorToast('editor.toast.overlayCopied');
+                renderEditorThumbnails(); renderEditorPreview(); pushEditorHistory(); showEditorToast('editor.toast.overlayCopied');
             });
             editorClearOverlayBtn.addEventListener('click', () => {
                 if (editorSelectedIndex < 0) return;
                 editorImages[editorSelectedIndex].overlay = null;
-                renderEditorThumbnails(); editorRenderPreview(); pushEditorHistory(); showEditorToast('editor.toast.overlayCleared');
+                renderEditorThumbnails(); renderEditorPreview(); pushEditorHistory(); showEditorToast('editor.toast.overlayCleared');
             });
-            editorApplyCropBtn.addEventListener('click', () => { editorRenderPreview(); showEditorToast('editor.toast.cropApplied'); });
+            editorApplyCropBtn.addEventListener('click', () => { renderEditorPreview(); showEditorToast('editor.toast.cropApplied'); });
             editorReverseOrderBtn.addEventListener('click', () => {
                 if (editorImages.length < 2) return;
                 editorImages.reverse(); editorSelectedIndex = editorImages.length - 1 - editorSelectedIndex;
-                renderEditorThumbnails(); if (editorSelectedIndex >= 0) { updateEditorSlidersFromImage(editorImages[editorSelectedIndex]); editorRenderPreview(); }
+                renderEditorThumbnails(); if (editorSelectedIndex >= 0) { updateEditorSlidersFromImage(editorImages[editorSelectedIndex]); renderEditorPreview(); }
                 pushEditorHistory(); showEditorToast('editor.toast.orderReversed');
             });
             editorShuffleOrderBtn.addEventListener('click', () => {
                 if (editorImages.length < 2) return;
                 for (let i = editorImages.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [editorImages[i], editorImages[j]] = [editorImages[j], editorImages[i]]; }
-                editorSelectedIndex = 0; renderEditorThumbnails(); updateEditorSlidersFromImage(editorImages[0]); editorRenderPreview(); pushEditorHistory(); showEditorToast('editor.toast.orderShuffled');
+                editorSelectedIndex = 0; renderEditorThumbnails(); updateEditorSlidersFromImage(editorImages[0]); renderEditorPreview(); pushEditorHistory(); showEditorToast('editor.toast.orderShuffled');
             });
             editorInsertBlankBtn.addEventListener('click', () => {
                 const color = editorBgColorInput.value; const delay = parseInt(editorFrameDelaySlider.value);
@@ -2004,20 +2126,20 @@
                 const newImg = { id: ++editorIdCounter, originalDataUrl: dataUrl, width: 400, height: 300, mods: { ...defaultMods }, delay, overlay: null, note: '' };
                 if (editorSelectedIndex >= 0 && editorSelectedIndex < editorImages.length) { editorImages.splice(editorSelectedIndex + 1, 0, newImg); editorSelectedIndex++; }
                 else { editorImages.push(newImg); editorSelectedIndex = editorImages.length - 1; }
-                renderEditorThumbnails(); updateEditorSlidersFromImage(newImg); editorRenderPreview(); pushEditorHistory(); showEditorToast('editor.toast.blankInserted');
+                renderEditorThumbnails(); updateEditorSlidersFromImage(newImg); renderEditorPreview(); pushEditorHistory(); showEditorToast('editor.toast.blankInserted');
             });
             editorApplyToAllBtn.addEventListener('click', () => {
                 if (editorSelectedIndex < 0) { showEditorToast('editor.toast.noSelection'); return; }
                 const srcMods = { ...editorImages[editorSelectedIndex].mods };
                 editorImages.forEach((img, i) => { if (i !== editorSelectedIndex) img.mods = { ...srcMods }; });
-                editorRenderPreview(); renderEditorThumbnails(); pushEditorHistory(); showEditorToast('editor.toast.settingsCopied');
+                renderEditorPreview(); renderEditorThumbnails(); pushEditorHistory(); showEditorToast('editor.toast.settingsCopied');
             });
             editorResetAllBtn.addEventListener('click', () => {
                 if (editorImages.length === 0) return;
                 if (confirm(_t('editor.confirm.resetAll'))) {
                     editorImages.forEach(img => { img.mods = { ...defaultMods }; img.delay = parseInt(editorFrameDelaySlider.value); img.overlay = null; img.note = ''; });
                     if (editorSelectedIndex >= 0) updateEditorSlidersFromImage(editorImages[editorSelectedIndex]);
-                    editorRenderPreview(); renderEditorThumbnails(); pushEditorHistory(); showEditorToast('editor.toast.allReset');
+                    renderEditorPreview(); renderEditorThumbnails(); pushEditorHistory(); showEditorToast('editor.toast.allReset');
                 }
             });
             editorRemoveAllBtn.addEventListener('click', () => {
@@ -2041,7 +2163,6 @@
             editorGenerateGifBtn.addEventListener('click', editorGenerateGif);
             editorDownloadGifBtn.addEventListener('click', editorDownloadGif);
 
-            // Keyboard shortcuts (only when editor visible)
             document.addEventListener('keydown', e => {
                 if (e.target.tagName === 'INPUT' && e.target.type !== 'range') return;
                 if (editorBox.style.display !== 'none') {
