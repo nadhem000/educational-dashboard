@@ -3,119 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animated Avatar Creator – Step 1 & Step 2 & Step 3</title>
+    <title>Animated Avatar Creator – Step 1, 2 & 3</title>
     <script src="ED-admin-monitor.js"></script>
     <link rel="icon" type="image/x-icon" href="assets/icons/icon-64x64.png">
     <link rel="manifest" href="/manifest.json">
     <link rel="stylesheet" href="/ED-general-common.css">
-    <!-- gif.js for GIF generation -->
-    <script src="https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.js"></script>
+    <!-- Local gif.js library (you downloaded it) -->
+    <script src="gif.js"></script>
     <style>
-        :root {
-            --ED-General-color-bg: #f5f1eb;
-            --ED-General-color-bg-secondary: #ede7df;
-            --ED-General-color-surface: #ffffff;
-            --ED-General-color-surface-hover: #fafaf8;
-            --ED-General-color-text-primary: #1e293b;
-            --ED-General-color-text-secondary: #5a6c7d;
-            --ED-General-color-text-tertiary: #8b9aab;
-            --ED-General-color-border: #e2dcd4;
-            --ED-General-color-border-hover: #cbc3b8;
-            --ED-General-color-shadow: rgba(60, 50, 40, 0.07);
-            --ED-General-color-shadow-hover: rgba(60, 50, 40, 0.14);
-            --ED-General-color-accent-default: #4a7fd9;
-            --ED-General-color-accent-light: #e8f1fb;
-            --ED-General-color-accent-soft: #f0f5fc;
-            --ED-General-color-header-bg: #ffffff;
-            --ED-General-color-header-border: #e8e2d9;
-            --ED-General-color-toggle-bg: #e8e2d9;
-            --ED-General-color-toggle-text: #4a5568;
-            --ED-General-color-toggle-active-bg: #4a7fd9;
-            --ED-General-color-toggle-active-text: #ffffff;
-            --ED-General-color-badge-bg: #f0ece5;
-            --ED-General-color-badge-text: #5a6c7d;
-            --ED-General-color-badge-hover-bg: #e4ded5;
-            --ED-General-color-btn-primary-bg: #4a7fd9;
-            --ED-General-color-btn-primary-text: #ffffff;
-            --ED-General-color-btn-primary-hover: #3b6ec4;
-            --ED-General-color-btn-shadow: rgba(0, 0, 0, 0.2);
-            --ED-General-color-icon-container-bg: #f0f4f9;
-            --ED-General-card-radius: 16px;
-            --ED-General-card-padding: 1.5rem;
-            --ED-General-transition-speed: 0.3s;
-            --ED-General-grid-gap: 1.25rem;
-            --ED-General-font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
-                "Noto Sans", "Noto Sans Arabic", sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-            --card-accent-r: 60;
-            --card-accent-g: 50;
-            --card-accent-b: 40;
-            --card-shadow-opacity: 0.10;
-            --card-shadow-opacity-hover: 0.22;
-            --card-shadow-blur: 10px;
-            --card-shadow-blur-hover: 30px;
-            --card-shadow-offset-x: 0px;
-            --card-shadow-offset-y: 3px;
-            --card-shadow-offset-y-hover: 8px;
-            --ED-General-color-header-gradient-start: #fefdfb;
-            --ED-General-color-header-gradient-mid1: #faf8f4;
-            --ED-General-color-header-gradient-mid2: #f6f3ee;
-            --ED-General-color-header-gradient-end: #f2efe8;
-            --ED-General-color-header-accent-gradient-stop: rgba(180, 160, 140, 0.5);
-            --ED-General-color-shadow-rgb: 60, 50, 40;
-            --ED-General-color-accent-rgb: 74, 127, 217;
-            --ED-General-color-icon-sun: #e8a840;
-            --ED-General-color-icon-moon: #7b8cb0;
-            --ED-General-color-icon-sun-glow: rgba(232, 168, 64, 0.3);
-            --ED-General-color-icon-moon-glow: rgba(122, 143, 176, 0.35);
-            --ED-General-color-text-on-accent: #ffffff;
-        }
-        [data-theme="dark"] {
-            --ED-General-color-bg: #171a20;
-            --ED-General-color-bg-secondary: #1e2129;
-            --ED-General-color-surface: #23262f;
-            --ED-General-color-surface-hover: #2a2e38;
-            --ED-General-color-text-primary: #e2e4ea;
-            --ED-General-color-text-secondary: #b0b5c2;
-            --ED-General-color-text-tertiary: #7d8494;
-            --ED-General-color-border: #32353e;
-            --ED-General-color-border-hover: #454952;
-            --ED-General-color-shadow: rgba(0, 0, 0, 0.25);
-            --ED-General-color-shadow-hover: rgba(0, 0, 0, 0.45);
-            --ED-General-color-accent-default: #7aafff;
-            --ED-General-color-accent-light: #1e2d45;
-            --ED-General-color-accent-soft: #1a2535;
-            --ED-General-color-header-bg: #1c1f28;
-            --ED-General-color-header-border: #2a2e38;
-            --ED-General-color-toggle-bg: #2a2e38;
-            --ED-General-color-toggle-text: #b0b5c2;
-            --ED-General-color-toggle-active-bg: #7aafff;
-            --ED-General-color-toggle-active-text: #12151c;
-            --ED-General-color-badge-bg: #2a2e38;
-            --ED-General-color-badge-text: #b0b5c2;
-            --ED-General-color-badge-hover-bg: #353a45;
-            --ED-General-color-btn-primary-bg: #7aafff;
-            --ED-General-color-btn-primary-text: #12151c;
-            --ED-General-color-btn-primary-hover: #6199f0;
-            --ED-General-color-btn-shadow: rgba(0, 0, 0, 0.5);
-            --ED-General-color-icon-container-bg: #252b38;
-            --ED-General-color-header-gradient-start: #1f222d;
-            --ED-General-color-header-gradient-mid1: #1c1f29;
-            --ED-General-color-header-gradient-mid2: #191c24;
-            --ED-General-color-header-gradient-end: #171a20;
-            --ED-General-color-header-accent-gradient-stop: rgba(160, 175, 200, 0.4);
-            --ED-General-color-shadow-rgb: 0, 0, 0;
-            --ED-General-color-accent-rgb: 122, 175, 255;
-            --ED-General-color-icon-sun: #e8a840;
-            --ED-General-color-icon-moon: #c4d0f0;
-            --ED-General-color-icon-sun-glow: rgba(232, 168, 64, 0.3);
-            --ED-General-color-icon-moon-glow: rgba(180, 195, 235, 0.35);
-            --ED-General-color-text-on-accent: #12151c;
-        }
-        [dir="rtl"] {
-            direction: rtl;
-            text-align: right;
-        }
-        /* ---------- Animation creator specific ---------- */
+        /* ---------- Animation creator specific (unchanged from your original) ---------- */
         .step-container {
             max-width: 960px;
             margin: 2rem auto;
@@ -126,6 +22,7 @@
             border-radius: 16px;
             padding: 1.5rem;
             box-shadow: 0 4px 20px rgba(var(--ED-General-color-shadow-rgb), 0.12);
+            margin-bottom: 2rem;  /* added for spacing between steps when both shown */
         }
         .step-title {
             margin: 0 0 0.5rem;
@@ -180,6 +77,7 @@
             margin-top: 2rem;
             display: flex;
             gap: 1rem;
+            flex-wrap: wrap;
         }
         .btn {
             padding: 0.65rem 1.5rem;
@@ -257,198 +155,447 @@
             height: 100%;
             object-fit: cover;
         }
-        /* ---------- Back button styling (same as Terms page) ---------- */
-        .ED-General-back-home-wrapper {
-            margin-bottom: 1.5rem;
-            text-align: left;
-        }
-        [dir="rtl"] .ED-General-back-home-wrapper {
-            text-align: right;
-        }
-        .ED-General-back-home-wrapper .ED-General-header-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            background: var(--ED-General-color-surface);
-            border: 1.5px solid var(--ED-General-color-border);
-            border-radius: 32px;
-            padding: 0.5rem 1.2rem;
-            font-weight: 600;
-            transition: all 0.22s ease;
-            text-decoration: none;
-            color: var(--ED-General-color-text-primary);
-            font-family: var(--ED-General-font-stack);
-            font-size: 0.85rem;
-        }
-        .ED-General-back-home-wrapper .ED-General-header-btn:hover {
-            border-color: var(--ED-General-color-accent-default);
-            background: var(--ED-General-color-accent-soft);
-            box-shadow: 0 2px 8px rgba(var(--ED-General-color-accent-rgb), 0.12);
-            transform: translateY(-1px);
-        }
-        .ED-General-back-home-wrapper .ED-General-header-btn:active {
-            transform: scale(0.96);
-        }
-        @media (max-width: 640px) {
-            .step-container {
-                padding: 0 1rem;
-            }
-            .image-item {
-                width: 100px;
-                height: 100px;
-            }
-            .ED-General-back-home-wrapper .ED-General-header-btn {
-                width: 100%;
-                justify-content: center;
-            }
-        }
 
-        /* ======================= EDITOR STEP (inspired by standalone) ======================= */
-        .editor-upload-zone {
-            border: 2.5px dashed var(--ED-General-color-border);
-            border-radius: 14px;
-            padding: 40px 24px;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.2s;
-            background: var(--ED-General-color-bg-secondary);
-            user-select: none;
-            margin-bottom: 18px;
+        /* ---------- EDITOR STEP (Step 3) styles – using your theme ---------- */
+        .editor-box {
+            display: none;
         }
-        .editor-upload-zone:hover,
-        .editor-upload-zone.drag-over {
-            border-color: var(--ED-General-color-accent-default);
-            background: var(--ED-General-color-accent-soft);
+        .editor-thumbnail-strip-container {
+            margin-top: 18px;
+            margin-bottom: 10px;
         }
-        .editor-upload-zone .upload-icon { font-size: 3rem; }
-        .editor-upload-zone .upload-text { font-weight: 600; }
-        .editor-upload-zone .upload-hint { color: var(--ED-General-color-text-tertiary); font-size: 0.85rem; margin-top: 4px; }
-        .editor-upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-
-        .editor-thumbnail-strip-container { margin-top: 18px; }
         .editor-thumbnail-strip-label {
-            font-weight: 600; font-size: 0.85rem; color: var(--ED-General-color-text-secondary);
-            text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--ED-General-color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         .editor-thumbnail-strip-label .count {
-            background: var(--ED-General-color-text-primary); color: #fff; font-size: 0.7rem;
-            padding: 2px 8px; border-radius: 12px; font-weight: 700;
+            background: var(--ED-General-color-text-primary);
+            color: #fff;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 700;
         }
         .editor-thumbnail-strip {
-            display: flex; gap: 10px; overflow-x: auto; padding: 10px 6px 14px; scroll-behavior: smooth;
-            min-height: 110px; align-items: flex-start;
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 10px 6px 14px;
+            scroll-behavior: smooth;
+            min-height: 110px;
+            align-items: flex-start;
         }
-        .editor-thumbnail-strip::-webkit-scrollbar { height: 6px; }
-        .editor-thumbnail-strip::-webkit-scrollbar-thumb { background: var(--ED-General-color-border); border-radius: 3px; }
+        .editor-thumbnail-strip::-webkit-scrollbar {
+            height: 6px;
+        }
+        .editor-thumbnail-strip::-webkit-scrollbar-thumb {
+            background: var(--ED-General-color-border);
+            border-radius: 3px;
+        }
         .editor-thumb-wrapper {
-            flex-shrink: 0; position: relative; cursor: grab; border-radius: 8px;
-            border: 3px solid transparent; background: var(--ED-General-color-surface);
+            flex-shrink: 0;
+            position: relative;
+            cursor: grab;
+            border-radius: 8px;
+            border: 3px solid transparent;
+            background: var(--ED-General-color-surface);
             box-shadow: 0 1px 3px rgba(var(--ED-General-color-shadow-rgb), 0.1);
-            display: flex; flex-direction: column; align-items: center; padding-bottom: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 4px;
             user-select: none;
         }
-        .editor-thumb-wrapper:active { cursor: grabbing; }
-        .editor-thumb-wrapper.selected { border-color: var(--ED-General-color-accent-default); }
-        .editor-thumb-wrapper.dragging { opacity: 0.4; transform: scale(0.95); }
-        .editor-thumb-wrapper img { width: 72px; height: 72px; object-fit: cover; border-radius: 5px; display: block; pointer-events: none; }
+        .editor-thumb-wrapper:active {
+            cursor: grabbing;
+        }
+        .editor-thumb-wrapper.selected {
+            border-color: var(--ED-General-color-accent-default);
+            box-shadow: 0 0 0 4px rgba(var(--ED-General-color-accent-rgb), 0.15);
+        }
+        .editor-thumb-wrapper.dragging {
+            opacity: 0.4;
+            transform: scale(0.95);
+        }
+        .editor-thumb-wrapper img {
+            width: 72px;
+            height: 72px;
+            object-fit: cover;
+            border-radius: 5px;
+            display: block;
+            pointer-events: none;
+        }
         .editor-thumb-index {
-            position: absolute; top: -8px; left: -8px;
-            background: var(--ED-General-color-text-primary); color: #fff; width: 22px; height: 22px; border-radius: 50%;
-            font-size: 0.65rem; font-weight: 700; display: flex; align-items: center; justify-content: center; z-index: 3;
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            background: var(--ED-General-color-text-primary);
+            color: #fff;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            font-size: 0.65rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3;
         }
         .editor-thumb-remove {
-            position: absolute; top: -8px; right: -8px; width: 22px; height: 22px;
-            background: #e74c3c; color: #fff; border: none; border-radius: 50%; font-size: 0.7rem; cursor: pointer;
-            opacity: 0; transition: 0.2s; z-index: 3; display: flex; align-items: center; justify-content: center;
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 22px;
+            height: 22px;
+            background: #e74c3c;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            cursor: pointer;
+            opacity: 0;
+            transition: 0.2s;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .editor-thumb-wrapper:hover .editor-thumb-remove { opacity: 1; }
-        .editor-thumb-remove:hover { background: #c0392b; transform: scale(1.15); }
+        .editor-thumb-wrapper:hover .editor-thumb-remove {
+            opacity: 1;
+        }
+        .editor-thumb-remove:hover {
+            background: #c0392b;
+            transform: scale(1.15);
+        }
         .editor-thumb-delay-badge,
         .editor-thumb-note-badge {
-            font-size: 0.6rem; font-weight: 600; color: var(--ED-General-color-text-tertiary);
-            background: var(--ED-General-color-bg-secondary); padding: 1px 5px; border-radius: 8px;
-            margin-top: 2px; border: 1px solid var(--ED-General-color-border);
-            white-space: nowrap; max-width: 80px; overflow: hidden; text-overflow: ellipsis;
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: var(--ED-General-color-text-tertiary);
+            background: var(--ED-General-color-bg-secondary);
+            padding: 1px 5px;
+            border-radius: 8px;
+            margin-top: 2px;
+            border: 1px solid var(--ED-General-color-border);
+            white-space: nowrap;
+            max-width: 80px;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .editor-no-images-placeholder {
-            color: var(--ED-General-color-text-tertiary); font-style: italic; font-size: 0.9rem;
-            padding: 20px 6px; text-align: center; width: 100%;
+            color: var(--ED-General-color-text-tertiary);
+            font-style: italic;
+            font-size: 0.9rem;
+            padding: 20px 6px;
+            text-align: center;
+            width: 100%;
         }
-
         .editor-workspace {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 18px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 18px;
         }
-        @media (max-width: 850px) { .editor-workspace { grid-template-columns: 1fr; } }
+        @media (max-width: 850px) {
+            .editor-workspace {
+                grid-template-columns: 1fr;
+            }
+        }
         .editor-preview-panel {
-            background: var(--ED-General-color-bg-secondary); border-radius: 14px; padding: 16px;
-            display: flex; flex-direction: column; align-items: center; border: 1px solid var(--ED-General-color-border);
-            min-height: 340px; justify-content: center; position: relative;
+            background: var(--ED-General-color-bg-secondary);
+            border-radius: 14px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid var(--ED-General-color-border);
+            min-height: 340px;
+            justify-content: center;
+            position: relative;
         }
-        .editor-preview-panel canvas { max-width: 100%; max-height: 380px; border-radius: 8px; box-shadow: 0 1px 3px rgba(var(--ED-General-color-shadow-rgb), 0.1); background: #fff; }
-        .editor-preview-label { font-weight: 600; font-size: 0.8rem; color: var(--ED-General-color-text-tertiary); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-        .editor-playback-controls { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-        .editor-playback-controls .frame-counter { font-size: 0.8rem; font-weight: 600; color: var(--ED-General-color-text-tertiary); min-width: 60px; }
-        .editor-preview-placeholder { color: var(--ED-General-color-text-tertiary); text-align: center; font-size: 0.9rem; opacity: 0.7; }
-
-        .editor-controls-panel { display: flex; flex-direction: column; gap: 16px; }
+        .editor-preview-panel canvas {
+            max-width: 100%;
+            max-height: 380px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(var(--ED-General-color-shadow-rgb), 0.1);
+            background: #fff;
+        }
+        .editor-preview-label {
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: var(--ED-General-color-text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .editor-playback-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .editor-playback-controls .frame-counter {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--ED-General-color-text-tertiary);
+            min-width: 60px;
+        }
+        .editor-preview-placeholder {
+            color: var(--ED-General-color-text-tertiary);
+            text-align: center;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+        .editor-controls-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
         .editor-control-group {
-            background: var(--ED-General-color-bg-secondary); border-radius: 14px; padding: 16px 18px;
+            background: var(--ED-General-color-bg-secondary);
+            border-radius: 14px;
+            padding: 16px 18px;
             border: 1px solid var(--ED-General-color-border);
         }
         .editor-control-group h4 {
-            font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em;
-            color: var(--ED-General-color-text-tertiary); margin-bottom: 12px; font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--ED-General-color-text-tertiary);
+            margin-bottom: 12px;
+            font-weight: 700;
         }
-        .editor-control-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
-        .editor-control-row label { font-weight: 500; font-size: 0.85rem; min-width: 75px; flex-shrink: 0; }
-        .editor-control-row input[type="range"] { flex: 1; accent-color: var(--ED-General-color-accent-default); height: 6px; cursor: pointer; }
+        .editor-control-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+        .editor-control-row label {
+            font-weight: 500;
+            font-size: 0.85rem;
+            min-width: 75px;
+            flex-shrink: 0;
+        }
+        .editor-control-row input[type="range"] {
+            flex: 1;
+            accent-color: var(--ED-General-color-accent-default);
+            height: 6px;
+            cursor: pointer;
+        }
         .editor-control-row .value-badge {
-            font-size: 0.75rem; font-weight: 600; min-width: 38px; text-align: right;
-            color: var(--ED-General-color-text-tertiary); background: var(--ED-General-color-surface);
-            padding: 2px 6px; border-radius: 4px; border: 1px solid var(--ED-General-color-border);
+            font-size: 0.75rem;
+            font-weight: 600;
+            min-width: 38px;
+            text-align: right;
+            color: var(--ED-General-color-text-tertiary);
+            background: var(--ED-General-color-surface);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid var(--ED-General-color-border);
         }
-        .editor-btn-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; align-items: flex-end; }
-        .editor-btn-wrapper { display: flex; flex-direction: column; align-items: center; }
-        .editor-btn-hint { font-size: 0.6rem; color: var(--ED-General-color-text-tertiary); margin-bottom: 2px; text-align: center; line-height: 1.2; max-width: 100px; }
+        .editor-btn-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 6px;
+            align-items: flex-end;
+        }
+        .editor-btn-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .editor-btn-hint {
+            font-size: 0.6rem;
+            color: var(--ED-General-color-text-tertiary);
+            margin-bottom: 2px;
+            text-align: center;
+            line-height: 1.2;
+            max-width: 100px;
+        }
         .editor-btn {
-            font-family: var(--ED-General-font-stack); font-weight: 600; font-size: 0.82rem; padding: 8px 16px; border-radius: 20px;
-            border: 1.5px solid var(--ED-General-color-border); background: var(--ED-General-color-surface); color: var(--ED-General-color-text-primary);
-            cursor: pointer; transition: 0.2s; white-space: nowrap; display: inline-flex; align-items: center; gap: 5px;
+            font-family: var(--ED-General-font-stack);
+            font-weight: 600;
+            font-size: 0.82rem;
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1.5px solid var(--ED-General-color-border);
+            background: var(--ED-General-color-surface);
+            color: var(--ED-General-color-text-primary);
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
         }
-        .editor-btn:hover { background: var(--ED-General-color-surface-hover); border-color: var(--ED-General-color-border-hover); }
-        .editor-btn:active { transform: scale(0.97); }
+        .editor-btn:hover {
+            background: var(--ED-General-color-surface-hover);
+            border-color: var(--ED-General-color-border-hover);
+        }
+        .editor-btn:active {
+            transform: scale(0.97);
+        }
         .editor-btn.primary {
-            background: var(--ED-General-color-accent-default); color: var(--ED-General-color-text-on-accent);
-            border-color: var(--ED-General-color-accent-default); font-weight: 700; padding: 10px 22px; font-size: 0.9rem;
+            background: var(--ED-General-color-accent-default);
+            color: var(--ED-General-color-text-on-accent);
+            border-color: var(--ED-General-color-accent-default);
+            font-weight: 700;
+            padding: 10px 22px;
+            font-size: 0.9rem;
         }
-        .editor-btn.primary:hover { background: #3b6ec4; border-color: #3b6ec4; box-shadow: 0 4px 14px rgba(var(--ED-General-color-accent-rgb), 0.35); }
-        .editor-btn.primary:disabled { background: #c4bdb3; border-color: #c4bdb3; cursor: not-allowed; box-shadow: none; color: #f5f0eb; }
-        .editor-btn.danger { background: #fff; color: #c0392b; border-color: #e0c8c4; }
-        .editor-btn.danger:hover { background: #fef5f5; border-color: #c0392b; }
-        .editor-btn.small { padding: 5px 12px; font-size: 0.75rem; border-radius: 14px; }
+        .editor-btn.primary:hover {
+            background: #3b6ec4; /* slightly darker accent */
+            border-color: #3b6ec4;
+            box-shadow: 0 4px 14px rgba(var(--ED-General-color-accent-rgb), 0.35);
+        }
+        .editor-btn.primary:disabled {
+            background: #c4bdb3;
+            border-color: #c4bdb3;
+            cursor: not-allowed;
+            box-shadow: none;
+            color: #f5f0eb;
+        }
+        .editor-btn.danger {
+            background: #fff;
+            color: #c0392b;
+            border-color: #e0c8c4;
+        }
+        .editor-btn.danger:hover {
+            background: #fef5f5;
+            border-color: #c0392b;
+        }
+        .editor-btn.small {
+            padding: 5px 12px;
+            font-size: 0.75rem;
+            border-radius: 14px;
+        }
         .editor-mode-indicator {
-            display: inline-block; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 0.78rem; letter-spacing: 0.03em;
-            text-transform: uppercase; background: var(--ED-General-color-accent-light); color: var(--ED-General-color-accent-default);
-            border: 1px solid var(--ED-General-color-accent-default); cursor: pointer; transition: 0.2s; user-select: none;
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.78rem;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            background: var(--ED-General-color-accent-light);
+            color: var(--ED-General-color-accent-default);
+            border: 1px solid var(--ED-General-color-accent-default);
+            cursor: pointer;
+            transition: 0.2s;
+            user-select: none;
         }
-        .editor-mode-indicator.bulk { background: #fff0f5; color: #c0392b; border-color: #c0392b; }
+        .editor-mode-indicator.bulk {
+            background: #fff0f5;
+            color: #c0392b;
+            border-color: #c0392b;
+        }
         .editor-gif-settings {
-            display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; margin-top: 18px;
-            padding: 16px 18px; background: var(--ED-General-color-bg-secondary);
-            border-radius: 14px; border: 1px solid var(--ED-General-color-border);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: flex-end;
+            margin-top: 18px;
+            padding: 16px 18px;
+            background: var(--ED-General-color-bg-secondary);
+            border-radius: 14px;
+            border: 1px solid var(--ED-General-color-border);
         }
-        .editor-gif-setting-item { display: flex; flex-direction: column; gap: 4px; }
-        .editor-gif-setting-item label { font-weight: 600; font-size: 0.78rem; color: var(--ED-General-color-text-tertiary); text-transform: uppercase; letter-spacing: 0.03em; }
-        .editor-gif-setting-item input[type="range"] { accent-color: var(--ED-General-color-accent-default); width: 140px; }
-        .editor-gif-setting-item .val { font-weight: 600; font-size: 0.85rem; }
-        .editor-generate-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-left: auto; }
-        .editor-progress-bar-container { display: none; width: 200px; height: 8px; background: var(--ED-General-color-border); border-radius: 4px; overflow: hidden; }
-        .editor-progress-bar-container.active { display: block; }
-        .editor-progress-bar-fill { height: 100%; background: var(--ED-General-color-accent-default); border-radius: 4px; transition: width 0.3s; width: 0%; }
-        .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 999; display: flex; flex-direction: column; gap: 8px; }
-        .toast { background: #2c2416; color: #fff; padding: 12px 20px; border-radius: 25px; font-weight: 600; font-size: 0.85rem; box-shadow: 0 12px 40px rgba(44, 36, 22, 0.14); animation: slideIn 0.35s ease, fadeOut 0.4s ease 2.2s forwards; max-width: 380px; }
-        @keyframes slideIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        @keyframes fadeOut { to { opacity: 0; transform: translateY(-10px); } }
+        .editor-gif-setting-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .editor-gif-setting-item label {
+            font-weight: 600;
+            font-size: 0.78rem;
+            color: var(--ED-General-color-text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .editor-gif-setting-item input[type="range"] {
+            accent-color: var(--ED-General-color-accent-default);
+            width: 140px;
+        }
+        .editor-gif-setting-item .val {
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        .editor-generate-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-left: auto;
+        }
+        .editor-progress-bar-container {
+            display: none;
+            width: 200px;
+            height: 8px;
+            background: var(--ED-General-color-border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .editor-progress-bar-container.active {
+            display: block;
+        }
+        .editor-progress-bar-fill {
+            height: 100%;
+            background: var(--ED-General-color-accent-default);
+            border-radius: 4px;
+            transition: width 0.3s;
+            width: 0%;
+        }
+        /* Toast messages */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .toast {
+            background: #2c2416;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            box-shadow: 0 12px 40px rgba(44, 36, 22, 0.14);
+            animation: slideIn 0.35s ease, fadeOut 0.4s ease 2.2s forwards;
+            max-width: 380px;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(120%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes fadeOut {
+            to { opacity: 0; transform: translateY(-10px); }
+        }
+
+        /* Override for RTL if needed */
+        [dir="rtl"] .editor-thumb-index {
+            left: auto;
+            right: -8px;
+        }
+        [dir="rtl"] .editor-thumb-remove {
+            right: auto;
+            left: -8px;
+        }
     </style>
 </head>
 <body>
@@ -464,7 +611,7 @@
                 <button id="nextBtn" class="btn btn-primary" disabled data-i18n="animation.step1.nextBtn">Next →</button>
             </div>
         </div>
-        <!-- Preview / Ordering section (hidden initially) -->
+        <!-- Step 2: Preview / Ordering -->
         <div class="step-box preview-section" id="preview-box">
             <h2 class="step-title" id="preview-title" data-i18n="animation.preview.title">Selected images</h2>
             <p class="step-description" id="preview-description" data-i18n="animation.preview.description">These are the images you'll use for your animated avatar.</p>
@@ -478,19 +625,12 @@
             </div>
         </div>
 
-        <!-- ==================== STEP 3 – Full Studio (inspired by standalone) ==================== -->
-        <div class="step-box" id="editor-box" style="display:none;">
+        <!-- ==================== STEP 3 – Full Studio ==================== -->
+        <div class="step-box editor-box" id="editor-box">
             <h2 class="step-title" data-i18n="editor.title">Step 3 – Edit &amp; Animate</h2>
-            <p class="step-description" data-i18n="editor.description">Adjust colors, timing, overlays and generate your GIF.</p>
-            <!-- Upload zone (optional extra images) -->
-            <div class="editor-upload-zone" id="editorUploadZone" title="Click to browse or drop images (JPG, PNG, WEBP)" data-i18n-title="editor.upload.title">
-                <span class="upload-icon">📁</span>
-                <span class="upload-text" data-i18n="editor.upload.text">Drop more photos here or click to browse</span>
-                <span class="upload-hint" data-i18n="editor.upload.hint">JPG, PNG, WEBP</span>
-                <input type="file" id="editorFileInput" accept="image/*" multiple>
-            </div>
+            <p class="step-description" data-i18n="editor.description">Adjust colours, timing, overlays and generate your GIF.</p>
 
-            <!-- Thumbnail strip -->
+            <!-- Thumbnail strip (no extra upload) -->
             <div class="editor-thumbnail-strip-container">
                 <div class="editor-thumbnail-strip-label">
                     <span data-i18n="editor.thumbnail.label">📷 Image Sequence</span>
@@ -522,17 +662,19 @@
                         <span class="editor-mode-indicator" id="editorModeToggle">🎯 Individual</span>
                         <span style="font-size:0.75rem;color:var(--ED-General-color-text-tertiary);" data-i18n="editor.mode.switchHint">(click to switch)</span>
                     </div>
-                    <!-- Color Adjustments -->
+
+                    <!-- Colour Adjustments -->
                     <div class="editor-control-group">
-                        <h4 data-i18n="editor.color.header">🎨 Color Adjustments</h4>
+                        <h4 data-i18n="editor.color.header">🎨 Colour Adjustments</h4>
                         <div class="editor-control-row"><label data-i18n="editor.brightness">Brightness</label><input type="range" id="editorBrightness" min="0" max="200" value="100" step="1"><span class="value-badge" id="editorBrightnessVal">100%</span></div>
                         <div class="editor-control-row"><label data-i18n="editor.contrast">Contrast</label><input type="range" id="editorContrast" min="0" max="200" value="100" step="1"><span class="value-badge" id="editorContrastVal">100%</span></div>
                         <div class="editor-control-row"><label data-i18n="editor.saturation">Saturation</label><input type="range" id="editorSaturation" min="0" max="200" value="100" step="1"><span class="value-badge" id="editorSaturationVal">100%</span></div>
                         <div class="editor-control-row"><label data-i18n="editor.hueRotate">Hue Rotate</label><input type="range" id="editorHue" min="-180" max="180" value="0" step="1"><span class="value-badge" id="editorHueVal">0°</span></div>
                         <div class="editor-btn-row">
-                            <div class="editor-btn-wrapper"><span class="editor-btn-hint" data-i18n="editor.hint.resetColors">Reset colors</span><button class="editor-btn small" id="editorResetColorsBtn">↺ Reset Colors</button></div>
+                            <div class="editor-btn-wrapper"><span class="editor-btn-hint" data-i18n="editor.hint.resetColors">Reset colours</span><button class="editor-btn small" id="editorResetColorsBtn">↺ Reset Colors</button></div>
                         </div>
                     </div>
+
                     <!-- Geometry -->
                     <div class="editor-control-group">
                         <h4 data-i18n="editor.geometry.header">📐 Geometry</h4>
@@ -544,6 +686,7 @@
                         </div>
                         <div class="editor-btn-row" style="margin-top:8px;"><div class="editor-btn-wrapper"><span class="editor-btn-hint" data-i18n="editor.hint.resetGeo">Reset geometry</span><button class="editor-btn small" id="editorResetGeoBtn">↺ Reset Geometry</button></div></div>
                     </div>
+
                     <!-- Timing per frame -->
                     <div class="editor-control-group">
                         <h4 data-i18n="editor.timing.header">⏱️ Timing (per frame)</h4>
@@ -557,12 +700,13 @@
                             <div class="editor-btn-wrapper"><span class="editor-btn-hint" data-i18n="editor.hint.setGlobalDelay">Set all to default</span><button class="editor-btn" id="editorSetGlobalDelayBtn">🌐 Set All to Default</button></div>
                         </div>
                     </div>
+
                     <!-- Overlay Text -->
                     <div class="editor-control-group">
                         <h4 data-i18n="editor.overlay.header">🖌 Overlay Text</h4>
                         <div class="editor-control-row">
                             <label data-i18n="editor.overlay.text">Text</label><input type="text" id="editorOverlayText" placeholder="e.g. My GIF" style="width:120px;">
-                            <label data-i18n="editor.overlay.color">Color</label><input type="color" id="editorOverlayColor" value="#ffffff" class="color-picker" style="width:40px;">
+                            <label data-i18n="editor.overlay.color">Color</label><input type="color" id="editorOverlayColor" value="#ffffff" style="width:40px; height:30px; border:1px solid var(--ED-General-color-border); border-radius:8px;">
                             <label data-i18n="editor.overlay.size">Size</label><input type="number" id="editorOverlaySize" value="24" min="8" max="100" step="1" style="width:60px;">
                         </div>
                         <div class="editor-btn-row">
@@ -571,12 +715,13 @@
                             <div class="editor-btn-wrapper"><span class="editor-btn-hint" data-i18n="editor.hint.clearOverlay">Remove from selected</span><button class="editor-btn small" id="editorClearOverlayBtn">✕ Clear</button></div>
                         </div>
                     </div>
+
                     <!-- Crop -->
                     <div class="editor-control-group">
                         <h4 data-i18n="editor.crop.header">✂ Crop</h4>
                         <div class="editor-control-row">
                             <label data-i18n="editor.crop.aspectRatio">Aspect Ratio</label>
-                            <select id="editorCropAspectSelect" style="padding:6px;border-radius:14px;">
+                            <select id="editorCropAspectSelect" style="padding:6px; border-radius:14px; border:1px solid var(--ED-General-color-border); background:var(--ED-General-color-surface); color:var(--ED-General-color-text-primary);">
                                 <option value="original" data-i18n="editor.crop.original">Original</option>
                                 <option value="1:1" data-i18n="editor.crop.square">1:1 Square</option>
                                 <option value="4:3" data-i18n="editor.crop.ratio43">4:3</option>
@@ -585,6 +730,7 @@
                             <div class="editor-btn-wrapper"><span class="editor-btn-hint" data-i18n="editor.hint.applyCrop">Apply to preview</span><button class="editor-btn" id="editorApplyCropBtn">Apply Crop</button></div>
                         </div>
                     </div>
+
                     <!-- Bulk Actions -->
                     <div class="editor-control-group">
                         <h4 data-i18n="editor.bulk.header">📦 Bulk Actions</h4>
@@ -600,6 +746,7 @@
                             <div class="editor-btn-wrapper"><span class="editor-btn-hint" data-i18n="editor.hint.clearAll">Remove all images</span><button class="editor-btn danger" id="editorRemoveAllBtn">✕ Clear All</button></div>
                         </div>
                     </div>
+
                     <!-- History -->
                     <div class="editor-control-group">
                         <h4 data-i18n="editor.history.header">↩ History</h4>
@@ -608,6 +755,7 @@
                             <div class="editor-btn-wrapper"><span class="editor-btn-hint" data-i18n="editor.hint.redo">Redo</span><button class="editor-btn" id="editorRedoBtn" disabled>↪ Redo</button></div>
                         </div>
                     </div>
+
                     <!-- Frame Notes -->
                     <div class="editor-control-group">
                         <h4 data-i18n="editor.notes.header">📝 Frame Notes</h4>
@@ -638,7 +786,7 @@
                 </div>
                 <div class="editor-gif-setting-item">
                     <label data-i18n="editor.gif.background">Background</label>
-                    <input type="color" id="editorBgColor" value="#ffffff" class="color-picker" style="width:40px;">
+                    <input type="color" id="editorBgColor" value="#ffffff" style="width:40px; height:30px; border:1px solid var(--ED-General-color-border); border-radius:8px;">
                 </div>
                 <div class="editor-generate-row">
                     <div class="editor-progress-bar-container" id="editorProgressBarContainer"><div class="editor-progress-bar-fill" id="editorProgressBarFill"></div></div>
@@ -676,6 +824,7 @@
     <script src="ED-general-cards.js"></script>
     <script src="ED-general-shortcuts.js"></script>
     <script src="ED-general-pwa.js"></script>
+
     <!-- ========== TRANSLATION DICTIONARY ========== -->
     <script>
         const PAGE_UI_TEXT = {
@@ -699,10 +848,7 @@
                 },
                 editor: {
                     title: "Step 3 – Edit & Animate",
-                    description: "Adjust colors, timing, overlays and generate your GIF.",
-                    "upload.title": "Add more images",
-                    "upload.text": "Drop more photos here or click to browse",
-                    "upload.hint": "JPG, PNG, WEBP",
+                    description: "Adjust colours, timing, overlays and generate your GIF.",
                     "thumbnail.label": "📷 Image Sequence",
                     "thumbnail.reorder": "— drag to reorder",
                     noImages: "No images yet.",
@@ -715,19 +861,19 @@
                     "mode.individual": "🎯 Individual",
                     "mode.bulk": "📦 Bulk (All)",
                     "mode.switchHint": "(click to switch)",
-                    "color.header": "🎨 Color Adjustments",
+                    "color.header": "🎨 Colour Adjustments",
                     brightness: "Brightness",
                     contrast: "Contrast",
                     saturation: "Saturation",
                     hueRotate: "Hue Rotate",
-                    "hint.resetColors": "Reset colors to default",
+                    "hint.resetColors": "Reset colours",
                     resetColors: "↺ Reset Colors",
                     "geometry.header": "📐 Geometry",
                     "hint.rotateLeft": "Rotate 90° left",
                     "hint.rotateRight": "Rotate 90° right",
                     "hint.flipH": "Flip horizontally",
                     "hint.flipV": "Flip vertically",
-                    "hint.resetGeo": "Reset rotation & flip",
+                    "hint.resetGeo": "Reset geometry",
                     "timing.header": "⏱️ Timing (per frame)",
                     frameDelay: "Frame delay",
                     ms: "ms",
@@ -748,7 +894,7 @@
                     "crop.ratio169": "16:9",
                     "hint.applyCrop": "Apply to preview",
                     "bulk.header": "📦 Bulk Actions",
-                    "hint.copySettingsAll": "Copy edits to all",
+                    "hint.copySettingsAll": "Copy settings to all",
                     "hint.duplicate": "Duplicate selected",
                     "hint.reverse": "Reverse order",
                     "hint.shuffle": "Shuffle frames",
@@ -769,6 +915,7 @@
                     "hint.generate": "Create animated GIF",
                     "hint.download": "Download GIF",
                     "backToSelection": "← Back to Selection",
+                    // Toasts
                     "toast.imageAdded": "✅ {count} image(s) added",
                     "toast.sequenceReordered": "🔄 Sequence reordered",
                     "toast.imageRemoved": "🗑 Image removed",
@@ -822,9 +969,6 @@
                 editor: {
                     title: "Étape 3 – Modifier & Animer",
                     description: "Réglez les couleurs, le timing, les superpositions et générez votre GIF.",
-                    "upload.title": "Ajouter d'autres images",
-                    "upload.text": "Déposez d'autres photos ici ou cliquez pour parcourir",
-                    "upload.hint": "JPG, PNG, WEBP",
                     "thumbnail.label": "📷 Séquence d'images",
                     "thumbnail.reorder": "— glissez pour réorganiser",
                     noImages: "Pas encore d'images.",
@@ -944,9 +1088,6 @@
                 editor: {
                     title: "الخطوة 3 – تعديل وتحريك",
                     description: "اضبط الألوان والتوقيت والتراكبات وأنشئ GIF.",
-                    "upload.title": "أضف المزيد من الصور",
-                    "upload.text": "أسقط المزيد من الصور هنا أو انقر للتصفح",
-                    "upload.hint": "JPG, PNG, WEBP",
                     "thumbnail.label": "📷 تسلسل الصور",
                     "thumbnail.reorder": "— اسحب لإعادة الترتيب",
                     noImages: "لا توجد صور بعد.",
@@ -1060,11 +1201,14 @@
     <script src="ED-general-auth.js"></script>
     <script src="ED-general-profile.js"></script>
     <script src="ED-general-encrypted-backup.js"></script>
+
     <!-- Page‑specific logic -->
     <script>
         (function() {
             const DB_NAME = 'ED_ImageFolderCache';
             const STORE_NAME = 'images';
+
+            // ---------- STEPS 1 & 2 (unchanged from your original) ----------
             const imagesContainer = document.getElementById('imagesContainer');
             const emptyMessage = document.getElementById('emptyMessage');
             const nextBtn = document.getElementById('nextBtn');
@@ -1144,7 +1288,7 @@
                 }
                 nextBtn.disabled = selectedImages.size === 0;
             }
-            // Move to preview after deleting unselected
+
             nextBtn.addEventListener('click', async () => {
                 if (selectedImages.size === 0) return;
                 const db = await openDB();
@@ -1161,7 +1305,6 @@
                 allImages = allImages.filter(img => selectedImages.has(img.name));
                 step1Box.style.display = 'none';
                 previewBox.style.display = 'block';
-                // Reset ordering state
                 orderArray = [];
                 nextOrderNumber = 1;
                 setOrderBtn.style.display = 'none';
@@ -1169,12 +1312,10 @@
                 orderGrid.style.display = 'none';
                 previewGrid.style.display = 'flex';
                 continueBtn.disabled = true;
-                // Show appropriate UI based on image count
                 if (allImages.length > 1) {
                     setOrderBtn.style.display = 'inline-flex';
                     previewDescription.setAttribute('data-i18n', 'animation.preview.description');
                 } else {
-                    // Single image – skip ordering
                     orderArray = [allImages[0].name];
                     continueBtn.disabled = false;
                     previewDescription.setAttribute('data-i18n', 'animation.preview.description');
@@ -1191,7 +1332,6 @@
                     previewGrid.appendChild(item);
                 });
             }
-            // ── Set Order ──
             setOrderBtn.addEventListener('click', () => {
                 previewGrid.style.display = 'none';
                 orderGrid.style.display = 'flex';
@@ -1238,23 +1378,20 @@
                     continueBtn.disabled = false;
                 }
             }
-            // ── Reset Order ──
             resetOrderBtn.addEventListener('click', () => {
                 orderArray = [];
                 nextOrderNumber = 1;
                 continueBtn.disabled = true;
                 renderOrderGrid();
             });
-            // ── Back to step 1 ──
             backToStep1Btn.addEventListener('click', () => {
                 step1Box.style.display = 'block';
                 previewBox.style.display = 'none';
                 loadImages();
             });
 
-            // ── Continue to EDITOR (Step 3) ──
+            // ---------- CONTINUE TO EDITOR (Step 3) ----------
             continueBtn.addEventListener('click', () => {
-                // Hide preview & show editor
                 previewBox.style.display = 'none';
                 document.getElementById('editor-box').style.display = 'block';
                 // Convert ordered images to editor format
@@ -1289,7 +1426,6 @@
             let editorSelectedIndex = -1;
             let editorBulkMode = false;
             let editorGeneratedGifBlob = null;
-            let editorGifWorkerUrl = null;
             let editorIdCounter = 0;
             let editorHistory = [];
             let editorHistoryIndex = -1;
@@ -1302,8 +1438,6 @@
 
             // DOM refs for editor
             const editorBox = document.getElementById('editor-box');
-            const editorUploadZone = document.getElementById('editorUploadZone');
-            const editorFileInput = document.getElementById('editorFileInput');
             const editorThumbnailStrip = document.getElementById('editorThumbnailStrip');
             const editorImageCountEl = document.getElementById('editorImageCount');
             const editorPreviewCanvas = document.getElementById('editorPreviewCanvas');
@@ -1356,19 +1490,28 @@
             const editorFrameCounter = document.getElementById('editorFrameCounter');
             const editorBackToSelectionBtn = document.getElementById('editorBackToSelectionBtn');
 
-            function showEditorToast(msg) {
-                const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
+            // Helper to get translation (using site's global t() if available)
+            function _t(key, placeholders) {
+                if (window.t) {
+                    let str = window.t(key) || key;
+                    if (placeholders) {
+                        Object.keys(placeholders).forEach(k => { str = str.replace(`{${k}}`, placeholders[k]); });
+                    }
+                    return str;
+                }
+                return key;
+            }
+
+            function showEditorToast(msgKey, placeholders) {
+                const text = _t(msgKey, placeholders);
+                const t = document.createElement('div'); t.className = 'toast'; t.textContent = text;
                 editorToastContainer.appendChild(t);
                 setTimeout(() => { if (t.parentNode) t.remove(); }, 2700);
             }
 
             function pushEditorHistory() {
                 if (editorHistoryIndex < editorHistory.length - 1) editorHistory = editorHistory.slice(0, editorHistoryIndex + 1);
-                const snapshot = editorImages.map(img => ({
-                    ...img,
-                    mods: { ...img.mods },
-                    overlay: img.overlay ? { ...img.overlay } : null
-                }));
+                const snapshot = editorImages.map(img => ({ ...img, mods: { ...img.mods }, overlay: img.overlay ? { ...img.overlay } : null }));
                 editorHistory.push(snapshot);
                 if (editorHistory.length > MAX_HISTORY) editorHistory.shift();
                 editorHistoryIndex = editorHistory.length - 1;
@@ -1378,30 +1521,22 @@
             function editorUndo() {
                 if (editorHistoryIndex <= 0) return;
                 editorHistoryIndex--;
-                editorImages = editorHistory[editorHistoryIndex].map(img => ({
-                    ...img,
-                    mods: { ...img.mods },
-                    overlay: img.overlay ? { ...img.overlay } : null
-                }));
+                editorImages = editorHistory[editorHistoryIndex].map(img => ({ ...img, mods: { ...img.mods }, overlay: img.overlay ? { ...img.overlay } : null }));
                 if (editorSelectedIndex >= editorImages.length) editorSelectedIndex = editorImages.length - 1;
                 renderEditorThumbnails();
                 if (editorSelectedIndex >= 0) { updateEditorSlidersFromImage(editorImages[editorSelectedIndex]); renderEditorPreview(); }
                 updateEditorUndoRedo();
-                showEditorToast(PAGE_UI_TEXT.en.editor["toast.undo"] || '↩ Undo');
+                showEditorToast('editor.toast.undo');
             }
             function editorRedo() {
                 if (editorHistoryIndex >= editorHistory.length - 1) return;
                 editorHistoryIndex++;
-                editorImages = editorHistory[editorHistoryIndex].map(img => ({
-                    ...img,
-                    mods: { ...img.mods },
-                    overlay: img.overlay ? { ...img.overlay } : null
-                }));
+                editorImages = editorHistory[editorHistoryIndex].map(img => ({ ...img, mods: { ...img.mods }, overlay: img.overlay ? { ...img.overlay } : null }));
                 if (editorSelectedIndex >= editorImages.length) editorSelectedIndex = editorImages.length - 1;
                 renderEditorThumbnails();
                 if (editorSelectedIndex >= 0) { updateEditorSlidersFromImage(editorImages[editorSelectedIndex]); renderEditorPreview(); }
                 updateEditorUndoRedo();
-                showEditorToast(PAGE_UI_TEXT.en.editor["toast.redo"] || '↪ Redo');
+                showEditorToast('editor.toast.redo');
             }
             function updateEditorUndoRedo() {
                 editorUndoBtn.disabled = editorHistoryIndex <= 0;
@@ -1419,10 +1554,10 @@
             }
             function updateEditorModeToggleUI() {
                 if (editorBulkMode) {
-                    editorModeToggle.textContent = '📦 Bulk (All)';
+                    editorModeToggle.textContent = _t('editor.mode.bulk');
                     editorModeToggle.classList.add('bulk');
                 } else {
-                    editorModeToggle.textContent = '🎯 Individual';
+                    editorModeToggle.textContent = _t('editor.mode.individual');
                     editorModeToggle.classList.remove('bulk');
                 }
                 if (editorImages.length === 0) { editorModeToggle.style.opacity = '0.5'; editorModeToggle.style.pointerEvents = 'none'; }
@@ -1446,7 +1581,7 @@
                 if (editorImages.length === 0) {
                     const placeholder = document.createElement('span');
                     placeholder.className = 'editor-no-images-placeholder';
-                    placeholder.textContent = 'No images yet.';
+                    placeholder.textContent = _t('editor.noImages');
                     editorThumbnailStrip.appendChild(placeholder);
                     updateEditorImageCount(); return;
                 }
@@ -1496,48 +1631,11 @@
                     renderEditorThumbnails();
                     if (editorSelectedIndex >= 0) { updateEditorSlidersFromImage(editorImages[editorSelectedIndex]); renderEditorPreview(); }
                     pushEditorHistory();
-                    showEditorToast('Sequence reordered');
+                    showEditorToast('editor.toast.sequenceReordered');
                 }
                 editorDragSrcIndex = -1;
             }
             function editorHandleDragEnd(e) { this.classList.remove('dragging'); editorDragSrcIndex = -1; }
-
-            function editorAddImages(files) {
-                const valid = Array.from(files).filter(f => f.type.startsWith('image/'));
-                if (!valid.length) { showEditorToast('Please select image files'); return; }
-                let loaded = 0; const total = valid.length;
-                valid.forEach(file => {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const dataUrl = e.target.result;
-                        const img = new Image();
-                        img.onload = function() {
-                            editorImages.push({
-                                id: ++editorIdCounter,
-                                originalDataUrl: dataUrl,
-                                width: img.naturalWidth, height: img.naturalHeight,
-                                mods: { ...defaultMods },
-                                delay: parseInt(editorFrameDelaySlider.value),
-                                overlay: null, note: ''
-                            });
-                            loaded++;
-                            if (loaded === total) {
-                                if (editorSelectedIndex < 0 && editorImages.length > 0) editorSelectImage(0);
-                                renderEditorThumbnails();
-                                if (editorSelectedIndex >= 0) renderEditorPreview();
-                                pushEditorHistory();
-                                showEditorToast(`${total} image(s) added`);
-                            }
-                        };
-                        img.onerror = function() {
-                            loaded++;
-                            if (loaded === total && editorImages.length > 0 && editorSelectedIndex < 0) editorSelectImage(0);
-                        };
-                        img.src = dataUrl;
-                    };
-                    reader.readAsDataURL(file);
-                });
-            }
 
             function editorRemoveImage(idx) {
                 if (idx < 0 || idx >= editorImages.length) return;
@@ -1546,7 +1644,7 @@
                 if (editorSelectedIndex < 0) { hideEditorPreview(); resetEditorSliders(); }
                 else { updateEditorSlidersFromImage(editorImages[editorSelectedIndex]); renderEditorPreview(); }
                 renderEditorThumbnails(); pushEditorHistory();
-                showEditorToast('Image removed');
+                showEditorToast('editor.toast.imageRemoved');
             }
 
             function editorSelectImage(idx) {
@@ -1693,25 +1791,10 @@
                 else if (!editorIsPlaying) editorFrameCounter.textContent = '-/0';
             }
 
-            async function editorEnsureGifWorker() {
-                if (editorGifWorkerUrl) return editorGifWorkerUrl;
-                try {
-                    const resp = await fetch('https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.worker.js');
-                    if (!resp.ok) throw new Error('fetch failed');
-                    const code = await resp.text();
-                    const blob = new Blob([code], { type: 'application/javascript' });
-                    editorGifWorkerUrl = URL.createObjectURL(blob);
-                    return editorGifWorkerUrl;
-                } catch (e) {
-                    editorGifWorkerUrl = 'https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.worker.js';
-                    return editorGifWorkerUrl;
-                }
-            }
-
             async function editorGenerateGif() {
-                if (editorImages.length < 2) { showEditorToast('Need at least 2 images'); return; }
+                if (editorImages.length < 2) { showEditorToast('editor.toast.needTwoImages'); return; }
                 editorGenerateGifBtn.disabled = true;
-                editorGenerateGifBtn.textContent = '⏳ Generating…';
+                editorGenerateGifBtn.textContent = '⏳ ' + _t('editor.gif.generating', 'Generating…');
                 editorProgressBarContainer.classList.add('active');
                 editorProgressBarFill.style.width = '0%';
                 editorDownloadGifBtn.style.display = 'none';
@@ -1724,19 +1807,28 @@
                 const outputHeight = Math.round(outputWidth * (fnh / fnw)) || outputWidth;
                 const bgColor = editorBgColorInput.value;
                 const loopCount = parseInt(editorLoopCountInput.value) || 0;
+
                 try {
-                    const workerUrl = await editorEnsureGifWorker();
-                    const gif = new GIF({ workers: 2, quality: 10, width: outputWidth, height: outputHeight, workerScript: workerUrl, repeat: loopCount });
+                    // Use local gif.js library (workerScript points to local file)
+                    const gif = new GIF({
+                        workers: 2,
+                        quality: 10,
+                        width: outputWidth,
+                        height: outputHeight,
+                        workerScript: 'gif.worker.js',  // local file
+                        repeat: loopCount
+                    });
                     gif.on('progress', p => { editorProgressBarFill.style.width = Math.round(p * 100) + '%'; });
                     gif.on('finished', blob => {
                         editorGeneratedGifBlob = blob;
                         editorProgressBarFill.style.width = '100%';
-                        editorGenerateGifBtn.textContent = '🎬 Generate GIF';
+                        editorGenerateGifBtn.textContent = '🎬 ' + _t('editor.generate');
                         editorGenerateGifBtn.disabled = false;
                         editorProgressBarContainer.classList.remove('active');
                         editorDownloadGifBtn.style.display = 'inline-flex';
-                        showEditorToast('GIF generated! Click Download.');
+                        showEditorToast('editor.toast.gifGenerated');
                     });
+
                     for (let i = 0; i < editorImages.length; i++) {
                         const imgData = editorImages[i];
                         const frameCanvas = document.createElement('canvas');
@@ -1784,21 +1876,21 @@
                     gif.render();
                 } catch (e) {
                     console.error(e);
-                    showEditorToast('GIF generation failed');
-                    editorGenerateGifBtn.textContent = '🎬 Generate GIF';
+                    showEditorToast('editor.toast.gifFailed');
+                    editorGenerateGifBtn.textContent = '🎬 ' + _t('editor.generate');
                     editorGenerateGifBtn.disabled = false;
                     editorProgressBarContainer.classList.remove('active');
                 }
             }
 
             function editorDownloadGif() {
-                if (!editorGeneratedGifBlob) { showEditorToast('Generate a GIF first'); return; }
+                if (!editorGeneratedGifBlob) { showEditorToast('editor.toast.generateFirst'); return; }
                 const url = URL.createObjectURL(editorGeneratedGifBlob);
                 const a = document.createElement('a');
                 a.href = url; a.download = 'animated_avatar_' + Date.now() + '.gif';
                 document.body.appendChild(a); a.click(); document.body.removeChild(a);
                 URL.revokeObjectURL(url);
-                showEditorToast('GIF downloaded');
+                showEditorToast('editor.toast.gifDownloaded');
             }
 
             function initEditor(initialImages) {
@@ -1819,30 +1911,22 @@
                 renderEditorThumbnails();
                 updateEditorImageCount();
                 pushEditorHistory();
-                editorBox.style.display = 'block';
+                if (window.EDTranslation) EDTranslation.translatePage();
             }
 
             // Back to selection button
             editorBackToSelectionBtn.addEventListener('click', () => {
                 editorBox.style.display = 'none';
-                // Go back to preview (step 2)
                 previewBox.style.display = 'block';
-                // Keep existing allImages & orderArray intact
             });
 
-            // --- Event listeners for editor controls (similar to standalone) ---
-            editorUploadZone.addEventListener('click', e => { if (e.target !== editorFileInput) editorFileInput.click(); });
-            editorFileInput.addEventListener('change', e => { if (e.target.files.length) { editorAddImages(e.target.files); editorFileInput.value = ''; } });
-            editorUploadZone.addEventListener('dragover', e => { e.preventDefault(); editorUploadZone.classList.add('drag-over'); });
-            editorUploadZone.addEventListener('dragleave', () => editorUploadZone.classList.remove('drag-over'));
-            editorUploadZone.addEventListener('drop', e => { e.preventDefault(); editorUploadZone.classList.remove('drag-over'); if (e.dataTransfer.files.length) editorAddImages(e.dataTransfer.files); });
-
+            // --- Event listeners for editor controls ---
             editorModeToggle.addEventListener('click', () => {
                 if (editorImages.length === 0) return;
                 editorBulkMode = !editorBulkMode;
                 updateEditorModeToggleUI();
-                if (editorBulkMode) { resetEditorSliders(); showEditorToast('Bulk mode: changes apply to ALL images'); }
-                else { if (editorSelectedIndex >= 0) updateEditorSlidersFromImage(editorImages[editorSelectedIndex]); showEditorToast('Individual mode'); }
+                if (editorBulkMode) { resetEditorSliders(); showEditorToast('editor.toast.bulkMode'); }
+                else { if (editorSelectedIndex >= 0) updateEditorSlidersFromImage(editorImages[editorSelectedIndex]); showEditorToast('editor.toast.individualMode'); }
                 updateEditorPerFrameDelayInput(); editorRenderPreview();
             });
 
@@ -1870,47 +1954,47 @@
                 if (!isNaN(val) && val >= 10 && val <= 5000) { editorImages[editorSelectedIndex].delay = val; renderEditorThumbnails(); pushEditorHistory(); }
             });
             editorCopyDelayToAllBtn.addEventListener('click', () => {
-                if (editorSelectedIndex < 0) { showEditorToast('Select a frame first'); return; }
+                if (editorSelectedIndex < 0) { showEditorToast('editor.toast.noSelection'); return; }
                 const delayVal = editorImages[editorSelectedIndex].delay;
                 editorImages.forEach(img => img.delay = delayVal);
-                renderEditorThumbnails(); pushEditorHistory(); showEditorToast('Delay copied to all');
+                renderEditorThumbnails(); pushEditorHistory(); showEditorToast('editor.toast.delayCopied');
             });
             editorSetGlobalDelayBtn.addEventListener('click', () => {
                 const globalDelay = parseInt(editorFrameDelaySlider.value);
                 editorImages.forEach(img => img.delay = globalDelay);
                 if (editorSelectedIndex >= 0) editorPerFrameDelay.value = globalDelay;
-                renderEditorThumbnails(); pushEditorHistory(); showEditorToast('All frames set to default delay');
+                renderEditorThumbnails(); pushEditorHistory(); showEditorToast('editor.toast.allGlobalDelay');
             });
 
             editorSetOverlayBtn.addEventListener('click', () => {
                 if (editorSelectedIndex < 0) return;
                 const text = editorOverlayText.value.trim();
-                if (!text) { showEditorToast('Enter overlay text'); return; }
+                if (!text) { showEditorToast('editor.toast.enterOverlayText'); return; }
                 editorImages[editorSelectedIndex].overlay = { text, color: editorOverlayColor.value, size: parseInt(editorOverlaySize.value) };
-                renderEditorThumbnails(); editorRenderPreview(); pushEditorHistory(); showEditorToast('Overlay set');
+                renderEditorThumbnails(); editorRenderPreview(); pushEditorHistory(); showEditorToast('editor.toast.overlaySet');
             });
             editorCopyOverlayAllBtn.addEventListener('click', () => {
-                if (editorSelectedIndex < 0) { showEditorToast('Select a frame first'); return; }
+                if (editorSelectedIndex < 0) { showEditorToast('editor.toast.noSelection'); return; }
                 const overlay = editorImages[editorSelectedIndex].overlay;
                 editorImages.forEach(img => img.overlay = overlay ? { ...overlay } : null);
-                renderEditorThumbnails(); editorRenderPreview(); pushEditorHistory(); showEditorToast('Overlay copied to all');
+                renderEditorThumbnails(); editorRenderPreview(); pushEditorHistory(); showEditorToast('editor.toast.overlayCopied');
             });
             editorClearOverlayBtn.addEventListener('click', () => {
                 if (editorSelectedIndex < 0) return;
                 editorImages[editorSelectedIndex].overlay = null;
-                renderEditorThumbnails(); editorRenderPreview(); pushEditorHistory(); showEditorToast('Overlay cleared');
+                renderEditorThumbnails(); editorRenderPreview(); pushEditorHistory(); showEditorToast('editor.toast.overlayCleared');
             });
-            editorApplyCropBtn.addEventListener('click', () => { editorRenderPreview(); showEditorToast('Crop applied'); });
+            editorApplyCropBtn.addEventListener('click', () => { editorRenderPreview(); showEditorToast('editor.toast.cropApplied'); });
             editorReverseOrderBtn.addEventListener('click', () => {
                 if (editorImages.length < 2) return;
                 editorImages.reverse(); editorSelectedIndex = editorImages.length - 1 - editorSelectedIndex;
                 renderEditorThumbnails(); if (editorSelectedIndex >= 0) { updateEditorSlidersFromImage(editorImages[editorSelectedIndex]); editorRenderPreview(); }
-                pushEditorHistory(); showEditorToast('Order reversed');
+                pushEditorHistory(); showEditorToast('editor.toast.orderReversed');
             });
             editorShuffleOrderBtn.addEventListener('click', () => {
                 if (editorImages.length < 2) return;
                 for (let i = editorImages.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [editorImages[i], editorImages[j]] = [editorImages[j], editorImages[i]]; }
-                editorSelectedIndex = 0; renderEditorThumbnails(); updateEditorSlidersFromImage(editorImages[0]); editorRenderPreview(); pushEditorHistory(); showEditorToast('Order shuffled');
+                editorSelectedIndex = 0; renderEditorThumbnails(); updateEditorSlidersFromImage(editorImages[0]); editorRenderPreview(); pushEditorHistory(); showEditorToast('editor.toast.orderShuffled');
             });
             editorInsertBlankBtn.addEventListener('click', () => {
                 const color = editorBgColorInput.value; const delay = parseInt(editorFrameDelaySlider.value);
@@ -1920,27 +2004,27 @@
                 const newImg = { id: ++editorIdCounter, originalDataUrl: dataUrl, width: 400, height: 300, mods: { ...defaultMods }, delay, overlay: null, note: '' };
                 if (editorSelectedIndex >= 0 && editorSelectedIndex < editorImages.length) { editorImages.splice(editorSelectedIndex + 1, 0, newImg); editorSelectedIndex++; }
                 else { editorImages.push(newImg); editorSelectedIndex = editorImages.length - 1; }
-                renderEditorThumbnails(); updateEditorSlidersFromImage(newImg); editorRenderPreview(); pushEditorHistory(); showEditorToast('Blank frame inserted');
+                renderEditorThumbnails(); updateEditorSlidersFromImage(newImg); editorRenderPreview(); pushEditorHistory(); showEditorToast('editor.toast.blankInserted');
             });
             editorApplyToAllBtn.addEventListener('click', () => {
-                if (editorSelectedIndex < 0) { showEditorToast('Select a frame first'); return; }
+                if (editorSelectedIndex < 0) { showEditorToast('editor.toast.noSelection'); return; }
                 const srcMods = { ...editorImages[editorSelectedIndex].mods };
                 editorImages.forEach((img, i) => { if (i !== editorSelectedIndex) img.mods = { ...srcMods }; });
-                editorRenderPreview(); renderEditorThumbnails(); pushEditorHistory(); showEditorToast('Settings copied to all');
+                editorRenderPreview(); renderEditorThumbnails(); pushEditorHistory(); showEditorToast('editor.toast.settingsCopied');
             });
             editorResetAllBtn.addEventListener('click', () => {
                 if (editorImages.length === 0) return;
-                if (confirm('Reset all images to original state?')) {
+                if (confirm(_t('editor.confirm.resetAll'))) {
                     editorImages.forEach(img => { img.mods = { ...defaultMods }; img.delay = parseInt(editorFrameDelaySlider.value); img.overlay = null; img.note = ''; });
                     if (editorSelectedIndex >= 0) updateEditorSlidersFromImage(editorImages[editorSelectedIndex]);
-                    editorRenderPreview(); renderEditorThumbnails(); pushEditorHistory(); showEditorToast('All images reset');
+                    editorRenderPreview(); renderEditorThumbnails(); pushEditorHistory(); showEditorToast('editor.toast.allReset');
                 }
             });
             editorRemoveAllBtn.addEventListener('click', () => {
                 if (editorImages.length === 0) return;
-                if (confirm('Remove all images?')) {
+                if (confirm(_t('editor.confirm.clearAll'))) {
                     editorImages = []; editorSelectedIndex = -1; resetEditorSliders(); hideEditorPreview(); renderEditorThumbnails();
-                    editorGeneratedGifBlob = null; editorDownloadGifBtn.style.display = 'none'; pushEditorHistory(); showEditorToast('All cleared');
+                    editorGeneratedGifBlob = null; editorDownloadGifBtn.style.display = 'none'; pushEditorHistory(); showEditorToast('editor.toast.allCleared');
                 }
             });
             editorUndoBtn.addEventListener('click', editorUndo);
@@ -1948,7 +2032,7 @@
             editorSaveNoteBtn.addEventListener('click', () => {
                 if (editorSelectedIndex < 0) return;
                 editorImages[editorSelectedIndex].note = editorFrameNoteInput.value.trim();
-                renderEditorThumbnails(); pushEditorHistory(); showEditorToast('Note saved');
+                renderEditorThumbnails(); pushEditorHistory(); showEditorToast('editor.toast.noteSaved');
             });
             editorPlayBtn.addEventListener('click', startEditorPlayback);
             editorStopBtn.addEventListener('click', stopEditorPlayback);
@@ -1956,6 +2040,8 @@
             editorOutputWidthSlider.addEventListener('input', updateEditorSliderLabels);
             editorGenerateGifBtn.addEventListener('click', editorGenerateGif);
             editorDownloadGifBtn.addEventListener('click', editorDownloadGif);
+
+            // Keyboard shortcuts (only when editor visible)
             document.addEventListener('keydown', e => {
                 if (e.target.tagName === 'INPUT' && e.target.type !== 'range') return;
                 if (editorBox.style.display !== 'none') {
