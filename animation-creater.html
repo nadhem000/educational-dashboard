@@ -462,6 +462,27 @@
             color: var(--ED-General-color-accent-default);
             font-weight: 600;
         }
+
+        /* Dark‑mode friendly inputs inside the editor */
+        .editor-control-row input[type="number"],
+        .editor-control-row input[type="text"],
+        .editor-control-row select,
+        .editor-gif-settings input[type="number"] {
+            background: var(--ED-General-color-surface);
+            color: var(--ED-General-color-text-primary);
+            border: 1px solid var(--ED-General-color-border);
+            border-radius: 8px;
+            padding: 4px 8px;
+            font-family: var(--ED-General-font-stack);
+        }
+        .editor-gif-settings select {
+            background: var(--ED-General-color-surface);
+            color: var(--ED-General-color-text-primary);
+            border: 1px solid var(--ED-General-color-border);
+            border-radius: 8px;
+            padding: 4px 8px;
+        }
+
         @media (max-width: 640px) {
             .step-container {
                 padding: 0 1rem;
@@ -577,7 +598,7 @@
                         <h4 data-i18n="editor.crop.header">✂ Crop</h4>
                         <div class="editor-control-row">
                             <label data-i18n="editor.crop.aspectRatio">Aspect Ratio</label>
-                            <select id="editorCropAspectSelect" style="padding:6px; border-radius:14px; border:1px solid var(--ED-General-color-border);">
+                            <select id="editorCropAspectSelect">
                                 <option value="original" data-i18n="editor.crop.original">Original</option>
                                 <option value="1:1" data-i18n="editor.crop.square">1:1 Square</option>
                                 <option value="4:3" data-i18n="editor.crop.ratio43">4:3</option>
@@ -1663,7 +1684,7 @@
                 renderEditorThumbnails();
                 updateEditorImageCount();
                 pushEditorHistory();
-                EDTranslation.translatePage();
+                EDTranslation.translatePage(); // Ensures everything (including backToHome) is translated
             }
 
             document.addEventListener('translationsApplied', function() {
@@ -1675,6 +1696,9 @@
                         updateEditorSlidersFromImage(editorImages[editorSelectedIndex]);
                         renderEditorPreview();
                     }
+                } else {
+                    // Even if editor is hidden, translate the whole page (backToHome)
+                    EDTranslation.translatePage();
                 }
             });
 
