@@ -790,7 +790,7 @@
                     msgBulkMode: "📦 Bulk mode: changes apply to ALL images",
                     msgIndividualMode: "🎯 Individual mode"
                 },
-                backToHome: "→ العودة إلى الرئيسية"
+                backToHome: "← Back to Dashboard"
             },
             fr: {
                 animation: {
@@ -904,7 +904,7 @@
                     msgBulkMode: "📦 Mode lot : les modifications s'appliquent à TOUTES les images",
                     msgIndividualMode: "🎯 Mode individuel"
                 },
-                backToHome: "→ العودة إلى الرئيسية"
+                backToHome: "← Retour au tableau de bord"
             },
             ar: {
                 animation: {
@@ -1038,13 +1038,13 @@
     <script src="ED-general-encrypted-backup.js"></script>
     <!-- gif.js local library -->
     <script src="gif.js"></script>
-    <!-- Page‑specific logic (unchanged Steps 1‑2 + full editor for Step 3) -->
+    <!-- Page‑specific logic (modified Step 2 to allow continuation without ordering) -->
     <script>
         (function() {
             const DB_NAME = 'ED_ImageFolderCache';
             const STORE_NAME = 'images';
 
-            // ---------- STEPS 1 & 2 (unchanged) ----------
+            // ---------- STEPS 1 & 2 ----------
             const imagesContainer = document.getElementById('imagesContainer');
             const emptyMessage = document.getElementById('emptyMessage');
             const nextBtn = document.getElementById('nextBtn');
@@ -1147,12 +1147,10 @@
                 resetOrderBtn.style.display = 'none';
                 orderGrid.style.display = 'none';
                 previewGrid.style.display = 'flex';
-                continueBtn.disabled = true;
+                // Enable Continue always (at least one image)
+                continueBtn.disabled = allImages.length === 0;
                 if (allImages.length > 1) {
                     setOrderBtn.style.display = 'inline-flex';
-                } else {
-                    orderArray = [allImages[0].name];
-                    continueBtn.disabled = false;
                 }
                 if (window.EDTranslation) EDTranslation.translatePage();
                 renderPreview();
@@ -1171,7 +1169,7 @@
                 orderGrid.style.display = 'flex';
                 setOrderBtn.style.display = 'none';
                 resetOrderBtn.style.display = 'inline-flex';
-                continueBtn.disabled = true;
+                // Continue still enabled (we don't disable it)
                 orderArray = [];
                 nextOrderNumber = 1;
                 if (window.EDTranslation) EDTranslation.translatePage();
@@ -1207,14 +1205,12 @@
                 element.appendChild(numSpan);
                 nextOrderNumber++;
                 element.removeEventListener('click', assignOrder);
-                if (orderArray.length === allImages.length) {
-                    continueBtn.disabled = false;
-                }
+                // We no longer enable Continue after full ordering; it's already enabled
             }
             resetOrderBtn.addEventListener('click', () => {
                 orderArray = [];
                 nextOrderNumber = 1;
-                continueBtn.disabled = true;
+                // Continue stays enabled
                 renderOrderGrid();
             });
             backToStep1Btn.addEventListener('click', () => {
@@ -1225,6 +1221,10 @@
 
             // ---------- CONTINUE TO EDITOR (Step 3) ----------
             continueBtn.addEventListener('click', () => {
+                // If user did not set order, use current allImages order
+                if (orderArray.length === 0) {
+                    orderArray = allImages.map(img => img.name);
+                }
                 previewBox.style.display = 'none';
                 document.getElementById('editor-box').style.display = 'block';
                 const editorImages = orderArray.map((name, idx) => {
@@ -1252,7 +1252,7 @@
                 });
             });
 
-            // ===================== EDITOR LOGIC =====================
+            // ===================== EDITOR LOGIC (unchanged) =====================
             let editorImages = [];
             let editorSelectedIndex = -1;
             let editorBulkMode = false;
@@ -1711,7 +1711,6 @@
                 renderEditorThumbnails();
                 updateEditorImageCount();
                 pushEditorHistory();
-                // Translate the editor after it becomes visible
                 if (window.EDTranslation) EDTranslation.translatePage();
             }
 
