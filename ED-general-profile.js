@@ -516,76 +516,93 @@
       btn.onclick = null;
     }
   }
+
+  // ──────────────────────────────────────────────
+  // 7. Init – setup auth listener and welcome bar
+  // ──────────────────────────────────────────────
   async function init() {
     try {
       const Supabase = await loadSupabaseClient();
       supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-window.__profileSupabase = supabase;
+      window.__profileSupabase = supabase;
       await waitForHeaderControls();
       insertProfileButton();
-      supabase.auth.onAuthStateChange((event, session) => {
-    const user = session?.user ?? null;
-    updateProfileButton(user);
-    updateWelcomeBar(user);
-});
-	  if (session) {
-    updateWelcomeBar(session.user);
-}
-// ── Update the welcome bar when auth state changes ──
-async function updateWelcomeBar(user) {
-    const bar = document.getElementById('welcome-bar');
-    if (!bar) return;
-    if (!user) {
-        bar.style.display = 'none';
-        return;
-    }
 
-    const imgEl = document.getElementById('welcome-avatar-img');
-    const emojiEl = document.getElementById('welcome-avatar-emoji');
-    const textEl = document.getElementById('welcome-text');
+      // Show avatar full‑size in a modal
+      function showAvatarModal(src) {
+        const existing = document.getElementById('avatar-modal');
+        if (existing) existing.remove();
+        const modal = document.createElement('div');
+        modal.id = 'avatar-modal';
+        modal.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:flex; align-items:center; justify-content:center; z-index:10000; cursor:pointer;';
+        modal.innerHTML = `<img src="${src}" style="max-width:90%; max-height:90%; object-fit:contain; border-radius:8px;">`;
+        modal.addEventListener('click', () => modal.remove());
+        document.body.appendChild(modal);
+      }
 
-    let username = '';
-    let avatarUrl = null;
-    let avatarEmoji = null;
+      // Update the welcome bar
+      async function updateWelcomeBar(user) {
+        const bar = document.getElementById('welcome-bar');
+        if (!bar) return;
+        if (!user) {
+          bar.style.display = 'none';
+          return;
+        }
 
-    try {
-        const { data: profile, error } = await supabase
+        const imgEl = document.getElementById('welcome-avatar-img');
+        const emojiEl = document.getElementById('welcome-avatar-emoji');
+        const textEl = document.getElementById('welcome-text');
+        const container = document.getElementById('welcome-avatar-container');
+
+        let username = '';
+        let avatarUrl = null;
+        let avatarEmoji = null;
+
+        try {
+          const { data: profile, error } = await supabase
             .from('profiles')
             .select('username, avatar, avatar_url')
             .eq('id', user.id)
             .maybeSingle();
-
-        if (!error && profile) {
+          if (!error && profile) {
             username = profile.username || '';
             avatarUrl = profile.avatar_url;
             avatarEmoji = profile.avatar;
+          }
+        } catch (e) { /* ignore */ }
+
+        // Welcome text with translation
+        const template = t('welcomeMessage', 'Welcome, {name}');
+        const displayName = username || (user.email ? user.email.split('@')[0] : 'User');
+        const welcomeText = template.replace('{name}', displayName);
+        textEl.textContent = welcomeText;
+
+        // Avatar display + click behaviour
+        if (avatarUrl) {
+          imgEl.src = avatarUrl;
+          imgEl.style.display = 'block';
+          emojiEl.style.display = 'none';
+          container.style.cursor = 'pointer';
+          container.onclick = () => showAvatarModal(avatarUrl);
+        } else {
+          imgEl.style.display = 'none';
+          emojiEl.textContent = avatarEmoji || '🦉';
+          emojiEl.style.display = 'block';
+          container.style.cursor = 'default';
+          container.onclick = null;
         }
-    } catch (e) {
-        // ignore, proceed with fallbacks
-    }
 
-    // Fallback name: part of email before '@'
-    if (!username && user.email) {
-        username = user.email.split('@')[0];
-    }
+        bar.style.display = 'block';
+      }
 
-    textEl.textContent = `Welcome, ${username || 'User'}`;
+      // Auth state change handler
+      supabase.auth.onAuthStateChange((event, session) => {
+        const user = session?.user ?? null;
+        updateProfileButton(user);
+        updateWelcomeBar(user);
+      });
 
-    // Show avatar image if custom URL exists
-    if (avatarUrl) {
-        imgEl.src = avatarUrl;
-        imgEl.style.display = 'block';
-        emojiEl.style.display = 'none';
-    } else {
-        // Show emoji (fallback to a default)
-        emojiEl.textContent = avatarEmoji || '🦉';
-        emojiEl.style.display = 'block';
-        imgEl.style.display = 'none';
-    }
-
-    bar.style.display = 'block';
-}
-      // ---------- OFFLINE FIX: wrap getSession in try/catch ----------
+      // Initial session load
       let session = null;
       try {
         const { data } = await supabase.auth.getSession();
@@ -593,16 +610,27 @@ async function updateWelcomeBar(user) {
       } catch (err) {
         console.debug('Profile getSession failed (offline):', err.message);
       }
-      updateProfileButton(session?.user ?? null);
-      document.addEventListener('translationsApplied', () => {
-        supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
-          updateProfileButton(currentSession?.user ?? null);
-        });
+      const initialUser = session?.user ?? null;
+      updateProfileButton(initialUser);
+      await updateWelcomeBar(initialUser);
+
+      // Re‑translate welcome bar when language changes
+      document.addEventListener('translationsApplied', async () => {
+        try {
+          const { data: { session: currentSession } } = await supabase.auth.getSession();
+          const user = currentSession?.user ?? null;
+          updateProfileButton(user);
+          await updateWelcomeBar(user);
+        } catch (err) {
+          // offline, ignore
+        }
       });
+
     } catch (err) {
       console.error('ED-profile initialisation failed:', err);
     }
   }
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
@@ -613,9 +641,6 @@ async function updateWelcomeBar(user) {
 // =================================================================
 // ██ S A N D B O X   –   A N I M A T E D   A V A T A R   (base64) ██
 // (Triggered only by the "Create animated avatar" button)
-// =================================================================
-// =================================================================
-// ██ S A N D B O X   –   A N I M A T E D   A V A T A R   (base64) ██
 // =================================================================
 (function () {
   'use strict';

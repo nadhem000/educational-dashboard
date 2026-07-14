@@ -15,6 +15,7 @@ const SHARED_UI_TEXT = {
 		periodicSyncDisabled: 'Background updates disabled!',
 		periodicSyncDenied: 'Permission not granted. Please check site settings.',
 		enableNotificationsBtn: 'Enable Notifications',
+welcomeMessage: "Welcome, {name}",
 		footer: {
 			version: "version '0.0.1'",
 			confidentiality: 'Confidentiality Politics',
@@ -119,6 +120,7 @@ const SHARED_UI_TEXT = {
 		periodicSyncDisabled: 'Mises à jour en arrière-plan désactivées !',
 		periodicSyncDenied: 'Permission non accordée. Veuillez vérifier les paramètres du site.',
 		enableNotificationsBtn: 'Activer les Notifications',
+welcomeMessage: "Bienvenue, {name}",
 		footer: {
 			version: "version '0.0.1'",
 			confidentiality: 'Politique de confidentialité',
@@ -223,6 +225,7 @@ const SHARED_UI_TEXT = {
 		periodicSyncDisabled: 'تم تعطيل التحديثات في الخلفية!',
 		periodicSyncDenied: 'لم يتم منح الإذن. يرجى التحقق من إعدادات الموقع.',
 		enableNotificationsBtn: 'تفعيل الاشعارات',
+welcomeMessage: "مرحباً، {name}",
 		footer: {
 			version: "الإصدار '0.0.1'",
 			confidentiality: 'سياسة الخصوصية',
