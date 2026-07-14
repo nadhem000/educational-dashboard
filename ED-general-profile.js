@@ -524,8 +524,67 @@ window.__profileSupabase = supabase;
       await waitForHeaderControls();
       insertProfileButton();
       supabase.auth.onAuthStateChange((event, session) => {
-        updateProfileButton(session?.user ?? null);
-      });
+    const user = session?.user ?? null;
+    updateProfileButton(user);
+    updateWelcomeBar(user);
+});
+	  if (session) {
+    updateWelcomeBar(session.user);
+}
+// ── Update the welcome bar when auth state changes ──
+async function updateWelcomeBar(user) {
+    const bar = document.getElementById('welcome-bar');
+    if (!bar) return;
+    if (!user) {
+        bar.style.display = 'none';
+        return;
+    }
+
+    const imgEl = document.getElementById('welcome-avatar-img');
+    const emojiEl = document.getElementById('welcome-avatar-emoji');
+    const textEl = document.getElementById('welcome-text');
+
+    let username = '';
+    let avatarUrl = null;
+    let avatarEmoji = null;
+
+    try {
+        const { data: profile, error } = await supabase
+            .from('profiles')
+            .select('username, avatar, avatar_url')
+            .eq('id', user.id)
+            .maybeSingle();
+
+        if (!error && profile) {
+            username = profile.username || '';
+            avatarUrl = profile.avatar_url;
+            avatarEmoji = profile.avatar;
+        }
+    } catch (e) {
+        // ignore, proceed with fallbacks
+    }
+
+    // Fallback name: part of email before '@'
+    if (!username && user.email) {
+        username = user.email.split('@')[0];
+    }
+
+    textEl.textContent = `Welcome, ${username || 'User'}`;
+
+    // Show avatar image if custom URL exists
+    if (avatarUrl) {
+        imgEl.src = avatarUrl;
+        imgEl.style.display = 'block';
+        emojiEl.style.display = 'none';
+    } else {
+        // Show emoji (fallback to a default)
+        emojiEl.textContent = avatarEmoji || '🦉';
+        emojiEl.style.display = 'block';
+        imgEl.style.display = 'none';
+    }
+
+    bar.style.display = 'block';
+}
       // ---------- OFFLINE FIX: wrap getSession in try/catch ----------
       let session = null;
       try {
