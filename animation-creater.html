@@ -483,6 +483,11 @@
             padding: 4px 8px;
         }
 
+        /* Single‑image editor tweaks */
+        .editor-single-box {
+            display: none;
+        }
+
         @media (max-width: 640px) {
             .step-container {
                 padding: 0 1rem;
@@ -525,7 +530,7 @@
             </div>
         </div>
 
-        <!-- ============ STEP 3 – Editor ============ -->
+        <!-- ============ STEP 3 – Multi‑frame Editor ============ -->
         <div class="step-box editor-box" id="editor-box">
             <h2 class="step-title" data-i18n="editor.title">Step 3 – Edit &amp; Animate</h2>
             <p class="step-description" data-i18n="editor.description">Adjust colours, timing, overlays and generate your GIF.</p>
@@ -656,6 +661,83 @@
                 <button id="editorBackToSelectionBtn" class="btn btn-secondary" data-i18n="editor.backToSelection">← Back to Selection</button>
             </div>
         </div>
+
+        <!-- ============ STEP 3 – Single‑image Editor ============ -->
+        <div class="step-box editor-single-box" id="editor-single-box">
+            <h2 class="step-title" data-i18n="editor.single.title">Step 3 – Animate your photo</h2>
+            <p class="step-description" data-i18n="editor.single.description">Choose an effect and create a moving GIF from your single image.</p>
+            <div class="editor-message" id="editorSingleMessage"></div>
+            <div class="editor-workspace">
+                <div class="editor-preview-panel">
+                    <canvas id="editorSinglePreviewCanvas" width="400" height="300" style="display:none;"></canvas>
+                    <span id="editorSinglePreviewPlaceholder" data-i18n="editor.preview.placeholder">Select an image to preview</span>
+                </div>
+                <div>
+                    <div class="editor-control-group">
+                        <h4 data-i18n="editor.single.effect.label">✨ Animation Effect</h4>
+                        <div class="editor-control-row">
+                            <label data-i18n="editor.single.effect.select">Effect</label>
+                            <select id="editorSingleEffectSelect">
+                                <option value="zoom-in" data-i18n="editor.single.effect.zoomIn">Zoom In</option>
+                                <option value="zoom-out" data-i18n="editor.single.effect.zoomOut">Zoom Out</option>
+                                <option value="pan-left" data-i18n="editor.single.effect.panLeft">Pan Left</option>
+                                <option value="pan-right" data-i18n="editor.single.effect.panRight">Pan Right</option>
+                                <option value="pan-up" data-i18n="editor.single.effect.panUp">Pan Up</option>
+                                <option value="pan-down" data-i18n="editor.single.effect.panDown">Pan Down</option>
+                                <option value="ken-burns-in" data-i18n="editor.single.effect.kenBurnsIn">Ken Burns (Zoom In)</option>
+                                <option value="ken-burns-out" data-i18n="editor.single.effect.kenBurnsOut">Ken Burns (Zoom Out)</option>
+                                <option value="rotate-cw" data-i18n="editor.single.effect.rotateCw">Rotate Clockwise</option>
+                                <option value="rotate-ccw" data-i18n="editor.single.effect.rotateCcw">Rotate Counter‑Clockwise</option>
+                                <option value="fade-in" data-i18n="editor.single.effect.fadeIn">Fade In</option>
+                                <option value="fade-out" data-i18n="editor.single.effect.fadeOut">Fade Out</option>
+                                <option value="slide-left" data-i18n="editor.single.effect.slideLeft">Slide Left</option>
+                                <option value="slide-right" data-i18n="editor.single.effect.slideRight">Slide Right</option>
+                                <option value="slide-up" data-i18n="editor.single.effect.slideUp">Slide Up</option>
+                                <option value="slide-down" data-i18n="editor.single.effect.slideDown">Slide Down</option>
+                                <option value="pulse" data-i18n="editor.single.effect.pulse">Pulse</option>
+                                <option value="wobble" data-i18n="editor.single.effect.wobble">Wobble</option>
+                                <option value="shake" data-i18n="editor.single.effect.shake">Shake</option>
+                                <option value="rain" data-i18n="editor.single.effect.rain">🌧 Rain</option>
+                                <option value="stars" data-i18n="editor.single.effect.stars">⭐ Stars</option>
+                                <option value="snow" data-i18n="editor.single.effect.snow">❄️ Snow</option>
+                                <option value="bubbles" data-i18n="editor.single.effect.bubbles">🫧 Bubbles</option>
+                                <option value="confetti" data-i18n="editor.single.effect.confetti">🎉 Confetti</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="editor-control-group">
+                        <h4 data-i18n="editor.single.settings.header">⚙️ Settings</h4>
+                        <div class="editor-control-row">
+                            <label data-i18n="editor.single.duration">Duration (s)</label>
+                            <input type="range" id="editorSingleDuration" min="0.5" max="5" value="2" step="0.1">
+                            <span class="value-badge" id="editorSingleDurationVal">2 s</span>
+                        </div>
+                        <div class="editor-control-row">
+                            <label data-i18n="editor.single.frameCount">Frames</label>
+                            <input type="range" id="editorSingleFrameCount" min="5" max="50" value="20" step="1">
+                            <span class="value-badge" id="editorSingleFrameCountVal">20</span>
+                        </div>
+                        <div class="editor-control-row">
+                            <label data-i18n="editor.single.outputWidth">Output Width</label>
+                            <input type="range" id="editorSingleOutputWidth" min="100" max="600" value="400" step="10">
+                            <span class="value-badge" id="editorSingleOutputWidthVal">400 px</span>
+                        </div>
+                        <div class="editor-control-row">
+                            <label data-i18n="editor.single.background">Background</label>
+                            <input type="color" id="editorSingleBgColor" value="#000000">
+                        </div>
+                    </div>
+                    <div class="editor-btn-row" style="align-items:center; gap:12px;">
+                        <button id="editorSingleGenerateGifBtn" class="btn btn-primary" disabled data-i18n="editor.single.generate">🎬 Generate Animated GIF</button>
+                        <button id="editorSingleDownloadGifBtn" class="btn btn-primary" style="display:none;" data-i18n="editor.single.download">⬇ Download GIF</button>
+                        <div class="editor-progress-bar" id="editorSingleProgressBar"><div class="editor-progress-bar-fill" id="editorSingleProgressBarFill"></div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="actions" style="margin-top:1.5rem;">
+                <button id="editorSingleBackToSelectionBtn" class="btn btn-secondary" data-i18n="editor.backToSelection">← Back to Selection</button>
+            </div>
+        </div>
     </main>
     <!-- Back to Dashboard button -->
     <div class="ED-General-back-home-wrapper">
@@ -698,6 +780,50 @@
                 editor: {
                     title: "Step 3 – Edit & Animate",
                     description: "Adjust colours, timing, overlays and generate your GIF.",
+                    single: {
+                        title: "Step 3 – Animate your photo",
+                        description: "Choose an effect and create a moving GIF from your single image.",
+                        effect: {
+                            label: "✨ Animation Effect",
+                            select: "Effect",
+                            zoomIn: "Zoom In",
+                            zoomOut: "Zoom Out",
+                            panLeft: "Pan Left",
+                            panRight: "Pan Right",
+                            panUp: "Pan Up",
+                            panDown: "Pan Down",
+                            kenBurnsIn: "Ken Burns (Zoom In)",
+                            kenBurnsOut: "Ken Burns (Zoom Out)",
+                            rotateCw: "Rotate Clockwise",
+                            rotateCcw: "Rotate Counter‑Clockwise",
+                            fadeIn: "Fade In",
+                            fadeOut: "Fade Out",
+                            slideLeft: "Slide Left",
+                            slideRight: "Slide Right",
+                            slideUp: "Slide Up",
+                            slideDown: "Slide Down",
+                            pulse: "Pulse",
+                            wobble: "Wobble",
+                            shake: "Shake",
+                            rain: "🌧 Rain",
+                            stars: "⭐ Stars",
+                            snow: "❄️ Snow",
+                            bubbles: "🫧 Bubbles",
+                            confetti: "🎉 Confetti"
+                        },
+                        settings: {
+                            header: "⚙️ Settings"
+                        },
+                        duration: "Duration (s)",
+                        frameCount: "Frames",
+                        outputWidth: "Output Width",
+                        background: "Background",
+                        generate: "🎬 Generate Animated GIF",
+                        download: "⬇ Download GIF",
+                        msgGifGenerated: "✅ GIF generated! Click Download.",
+                        msgGifFailed: "❌ GIF generation failed",
+                        msgGenerateFirst: "⚠️ Generate a GIF first"
+                    },
                     thumbnail: {
                         label: "📷 Image Sequence",
                         reorder: "— drag to reorder"
@@ -813,6 +939,50 @@
                 editor: {
                     title: "Étape 3 – Modifier & Animer",
                     description: "Réglez les couleurs, le timing, les superpositions et générez votre GIF.",
+                    single: {
+                        title: "Étape 3 – Animez votre photo",
+                        description: "Choisissez un effet et créez un GIF animé à partir de votre image unique.",
+                        effect: {
+                            label: "✨ Effet d'animation",
+                            select: "Effet",
+                            zoomIn: "Zoom avant",
+                            zoomOut: "Zoom arrière",
+                            panLeft: "Pan gauche",
+                            panRight: "Pan droite",
+                            panUp: "Pan haut",
+                            panDown: "Pan bas",
+                            kenBurnsIn: "Ken Burns (Zoom avant)",
+                            kenBurnsOut: "Ken Burns (Zoom arrière)",
+                            rotateCw: "Rotation horaire",
+                            rotateCcw: "Rotation anti‑horaire",
+                            fadeIn: "Fondu entrant",
+                            fadeOut: "Fondu sortant",
+                            slideLeft: "Glisser à gauche",
+                            slideRight: "Glisser à droite",
+                            slideUp: "Glisser vers le haut",
+                            slideDown: "Glisser vers le bas",
+                            pulse: "Pulsation",
+                            wobble: "Oscillation",
+                            shake: "Secousse",
+                            rain: "🌧 Pluie",
+                            stars: "⭐ Étoiles",
+                            snow: "❄️ Neige",
+                            bubbles: "🫧 Bulles",
+                            confetti: "🎉 Confettis"
+                        },
+                        settings: {
+                            header: "⚙️ Paramètres"
+                        },
+                        duration: "Durée (s)",
+                        frameCount: "Images",
+                        outputWidth: "Largeur de sortie",
+                        background: "Arrière‑plan",
+                        generate: "🎬 Générer un GIF animé",
+                        download: "⬇ Télécharger le GIF",
+                        msgGifGenerated: "✅ GIF généré ! Cliquez pour télécharger.",
+                        msgGifFailed: "❌ Échec de la génération du GIF",
+                        msgGenerateFirst: "⚠️ Générez d'abord un GIF"
+                    },
                     thumbnail: {
                         label: "📷 Séquence d'images",
                         reorder: "— glissez pour réorganiser"
@@ -927,6 +1097,50 @@
                 editor: {
                     title: "الخطوة 3 – تعديل وتحريك",
                     description: "اضبط الألوان والتوقيت والتراكبات وأنشئ GIF.",
+                    single: {
+                        title: "الخطوة 3 – حرّك صورتك",
+                        description: "اختر تأثيرًا وأنشئ GIF متحركًا من صورتك الواحدة.",
+                        effect: {
+                            label: "✨ تأثير الحركة",
+                            select: "التأثير",
+                            zoomIn: "تكبير",
+                            zoomOut: "تصغير",
+                            panLeft: "تحريك لليسار",
+                            panRight: "تحريك لليمين",
+                            panUp: "تحريك للأعلى",
+                            panDown: "تحريك للأسفل",
+                            kenBurnsIn: "كين بيرنز (تكبير)",
+                            kenBurnsOut: "كين بيرنز (تصغير)",
+                            rotateCw: "دوران مع عقارب الساعة",
+                            rotateCcw: "دوران عكس عقارب الساعة",
+                            fadeIn: "ظهور تدريجي",
+                            fadeOut: "اختفاء تدريجي",
+                            slideLeft: "انزلاق لليسار",
+                            slideRight: "انزلاق لليمين",
+                            slideUp: "انزلاق للأعلى",
+                            slideDown: "انزلاق للأسفل",
+                            pulse: "نبض",
+                            wobble: "تذبذب",
+                            shake: "اهتزاز",
+                            rain: "🌧 مطر",
+                            stars: "⭐ نجوم",
+                            snow: "❄️ ثلج",
+                            bubbles: "🫧 فقاعات",
+                            confetti: "🎉 قصاصات"
+                        },
+                        settings: {
+                            header: "⚙️ الإعدادات"
+                        },
+                        duration: "المدة (ثانية)",
+                        frameCount: "عدد الإطارات",
+                        outputWidth: "عرض الإخراج",
+                        background: "الخلفية",
+                        generate: "🎬 توليد GIF متحرك",
+                        download: "⬇ تنزيل GIF",
+                        msgGifGenerated: "✅ تم توليد GIF! انقر للتنزيل.",
+                        msgGifFailed: "❌ فشل توليد GIF",
+                        msgGenerateFirst: "⚠️ قم بتوليد GIF أولاً"
+                    },
                     thumbnail: {
                         label: "📷 تسلسل الصور",
                         reorder: "— اسحب لإعادة الترتيب"
@@ -1038,13 +1252,13 @@
     <script src="ED-general-encrypted-backup.js"></script>
     <!-- gif.js local library -->
     <script src="gif.js"></script>
-    <!-- Page‑specific logic (modified Step 2 to allow continuation without ordering) -->
+    <!-- Page‑specific logic -->
     <script>
         (function() {
             const DB_NAME = 'ED_ImageFolderCache';
             const STORE_NAME = 'images';
 
-            // ---------- STEPS 1 & 2 ----------
+            // ---------- STEPS 1 & 2 (unchanged) ----------
             const imagesContainer = document.getElementById('imagesContainer');
             const emptyMessage = document.getElementById('emptyMessage');
             const nextBtn = document.getElementById('nextBtn');
@@ -1147,7 +1361,6 @@
                 resetOrderBtn.style.display = 'none';
                 orderGrid.style.display = 'none';
                 previewGrid.style.display = 'flex';
-                // Enable Continue always (at least one image)
                 continueBtn.disabled = allImages.length === 0;
                 if (allImages.length > 1) {
                     setOrderBtn.style.display = 'inline-flex';
@@ -1169,7 +1382,6 @@
                 orderGrid.style.display = 'flex';
                 setOrderBtn.style.display = 'none';
                 resetOrderBtn.style.display = 'inline-flex';
-                // Continue still enabled (we don't disable it)
                 orderArray = [];
                 nextOrderNumber = 1;
                 if (window.EDTranslation) EDTranslation.translatePage();
@@ -1205,12 +1417,10 @@
                 element.appendChild(numSpan);
                 nextOrderNumber++;
                 element.removeEventListener('click', assignOrder);
-                // We no longer enable Continue after full ordering; it's already enabled
             }
             resetOrderBtn.addEventListener('click', () => {
                 orderArray = [];
                 nextOrderNumber = 1;
-                // Continue stays enabled
                 renderOrderGrid();
             });
             backToStep1Btn.addEventListener('click', () => {
@@ -1221,488 +1431,491 @@
 
             // ---------- CONTINUE TO EDITOR (Step 3) ----------
             continueBtn.addEventListener('click', () => {
-                // If user did not set order, use current allImages order
                 if (orderArray.length === 0) {
                     orderArray = allImages.map(img => img.name);
                 }
                 previewBox.style.display = 'none';
-                document.getElementById('editor-box').style.display = 'block';
-                const editorImages = orderArray.map((name, idx) => {
-                    const found = allImages.find(img => img.name === name);
-                    return {
-                        id: idx + 1,
-                        originalDataUrl: found ? found.data : '',
-                        width: 0, height: 0,
-                        mods: { brightness:100, contrast:100, saturation:100, hue:0, rotation:0, flipH:false, flipV:false },
-                        delay: 200,
-                        overlay: null,
-                        note: ''
-                    };
-                });
-                const loadPromises = editorImages.map(img => {
-                    return new Promise(resolve => {
-                        const image = new Image();
-                        image.onload = () => { img.width = image.naturalWidth; img.height = image.naturalHeight; resolve(); };
-                        image.onerror = resolve;
-                        image.src = img.originalDataUrl;
+
+                if (orderArray.length === 1) {
+                    // Show single‑image editor
+                    document.getElementById('editor-single-box').style.display = 'block';
+                    initSingleEditor(allImages.find(img => img.name === orderArray[0]));
+                } else {
+                    // Show multi‑frame editor
+                    document.getElementById('editor-box').style.display = 'block';
+                    const editorImages = orderArray.map((name, idx) => {
+                        const found = allImages.find(img => img.name === name);
+                        return {
+                            id: idx + 1,
+                            originalDataUrl: found ? found.data : '',
+                            width: 0, height: 0,
+                            mods: { brightness:100, contrast:100, saturation:100, hue:0, rotation:0, flipH:false, flipV:false },
+                            delay: 200,
+                            overlay: null,
+                            note: ''
+                        };
                     });
-                });
-                Promise.all(loadPromises).then(() => {
-                    initEditor(editorImages);
-                });
+                    const loadPromises = editorImages.map(img => {
+                        return new Promise(resolve => {
+                            const image = new Image();
+                            image.onload = () => { img.width = image.naturalWidth; img.height = image.naturalHeight; resolve(); };
+                            image.onerror = resolve;
+                            image.src = img.originalDataUrl;
+                        });
+                    });
+                    Promise.all(loadPromises).then(() => {
+                        initMultiEditor(editorImages);
+                    });
+                }
             });
 
-            // ===================== EDITOR LOGIC (unchanged) =====================
-            let editorImages = [];
-            let editorSelectedIndex = -1;
-            let editorBulkMode = false;
-            let editorGeneratedGifBlob = null;
-            let editorIdCounter = 0;
-            let editorHistory = [];
-            let editorHistoryIndex = -1;
-            let editorIsPlaying = false;
-            let editorPlayInterval = null;
-            let editorPlayIndex = 0;
-            const defaultMods = { brightness:100, contrast:100, saturation:100, hue:0, rotation:0, flipH:false, flipV:false };
-            const defaultDelay = 200;
-            const MAX_HISTORY = 30;
+            // ===================== MULTI‑FRAME EDITOR =====================
+            function initMultiEditor(initialImages) {
+                // Editor state
+                let editorImages = initialImages;
+                let editorSelectedIndex = initialImages.length > 0 ? 0 : -1;
+                let editorBulkMode = false;
+                let editorGeneratedGifBlob = null;
+                let editorIdCounter = editorImages.length;
+                let editorHistory = [];
+                let editorHistoryIndex = -1;
+                let editorIsPlaying = false;
+                let editorPlayInterval = null;
+                let editorPlayIndex = 0;
+                const defaultMods = { brightness:100, contrast:100, saturation:100, hue:0, rotation:0, flipH:false, flipV:false };
+                const defaultDelay = 200;
+                const MAX_HISTORY = 30;
 
-            const editorBox = document.getElementById('editor-box');
-            const editorMessageEl = document.getElementById('editorMessage');
-            const editorThumbnailStrip = document.getElementById('editorThumbnailStrip');
-            const editorPreviewCanvas = document.getElementById('editorPreviewCanvas');
-            const editorPreviewPlaceholder = document.getElementById('editorPreviewPlaceholder');
-            const editorModeToggle = document.getElementById('editorModeToggle');
-            const editorGenerateGifBtn = document.getElementById('editorGenerateGifBtn');
-            const editorDownloadGifBtn = document.getElementById('editorDownloadGifBtn');
-            const editorProgressBar = document.getElementById('editorProgressBar');
-            const editorProgressBarFill = document.getElementById('editorProgressBarFill');
-            const editorBrightnessSlider = document.getElementById('editorBrightness');
-            const editorContrastSlider = document.getElementById('editorContrast');
-            const editorSaturationSlider = document.getElementById('editorSaturation');
-            const editorHueSlider = document.getElementById('editorHue');
-            const editorBrightnessVal = document.getElementById('editorBrightnessVal');
-            const editorContrastVal = document.getElementById('editorContrastVal');
-            const editorSaturationVal = document.getElementById('editorSaturationVal');
-            const editorHueVal = document.getElementById('editorHueVal');
-            const editorFrameDelaySlider = document.getElementById('editorFrameDelaySlider');
-            const editorFrameDelayVal = document.getElementById('editorFrameDelayVal');
-            const editorOutputWidthSlider = document.getElementById('editorOutputWidthSlider');
-            const editorOutputWidthVal = document.getElementById('editorOutputWidthVal');
-            const editorPerFrameDelay = document.getElementById('editorPerFrameDelay');
-            const editorCopyDelayToAllBtn = document.getElementById('editorCopyDelayToAllBtn');
-            const editorSetGlobalDelayBtn = document.getElementById('editorSetGlobalDelayBtn');
-            const editorOverlayText = document.getElementById('editorOverlayText');
-            const editorOverlayColor = document.getElementById('editorOverlayColor');
-            const editorOverlaySize = document.getElementById('editorOverlaySize');
-            const editorSetOverlayBtn = document.getElementById('editorSetOverlayBtn');
-            const editorCopyOverlayAllBtn = document.getElementById('editorCopyOverlayAllBtn');
-            const editorClearOverlayBtn = document.getElementById('editorClearOverlayBtn');
-            const editorCropAspectSelect = document.getElementById('editorCropAspectSelect');
-            const editorApplyCropBtn = document.getElementById('editorApplyCropBtn');
-            const editorDuplicateSelectedBtn = document.getElementById('editorDuplicateSelectedBtn');
-            const editorReverseOrderBtn = document.getElementById('editorReverseOrderBtn');
-            const editorShuffleOrderBtn = document.getElementById('editorShuffleOrderBtn');
-            const editorInsertBlankBtn = document.getElementById('editorInsertBlankBtn');
-            const editorApplyToAllBtn = document.getElementById('editorApplyToAllBtn');
-            const editorResetAllBtn = document.getElementById('editorResetAllBtn');
-            const editorRemoveAllBtn = document.getElementById('editorRemoveAllBtn');
-            const editorUndoBtn = document.getElementById('editorUndoBtn');
-            const editorRedoBtn = document.getElementById('editorRedoBtn');
-            const editorFrameNoteInput = document.getElementById('editorFrameNoteInput');
-            const editorSaveNoteBtn = document.getElementById('editorSaveNoteBtn');
-            const editorLoopCountInput = document.getElementById('editorLoopCount');
-            const editorBgColorInput = document.getElementById('editorBgColor');
-            const editorPlayBtn = document.getElementById('editorPlayBtn');
-            const editorStopBtn = document.getElementById('editorStopBtn');
-            const editorBackToSelectionBtn = document.getElementById('editorBackToSelectionBtn');
+                // DOM refs (multi‑editor)
+                const editorBox = document.getElementById('editor-box');
+                const editorMessageEl = document.getElementById('editorMessage');
+                const editorThumbnailStrip = document.getElementById('editorThumbnailStrip');
+                const editorPreviewCanvas = document.getElementById('editorPreviewCanvas');
+                const editorPreviewPlaceholder = document.getElementById('editorPreviewPlaceholder');
+                const editorModeToggle = document.getElementById('editorModeToggle');
+                const editorGenerateGifBtn = document.getElementById('editorGenerateGifBtn');
+                const editorDownloadGifBtn = document.getElementById('editorDownloadGifBtn');
+                const editorProgressBar = document.getElementById('editorProgressBar');
+                const editorProgressBarFill = document.getElementById('editorProgressBarFill');
+                const editorBrightnessSlider = document.getElementById('editorBrightness');
+                const editorContrastSlider = document.getElementById('editorContrast');
+                const editorSaturationSlider = document.getElementById('editorSaturation');
+                const editorHueSlider = document.getElementById('editorHue');
+                const editorBrightnessVal = document.getElementById('editorBrightnessVal');
+                const editorContrastVal = document.getElementById('editorContrastVal');
+                const editorSaturationVal = document.getElementById('editorSaturationVal');
+                const editorHueVal = document.getElementById('editorHueVal');
+                const editorFrameDelaySlider = document.getElementById('editorFrameDelaySlider');
+                const editorFrameDelayVal = document.getElementById('editorFrameDelayVal');
+                const editorOutputWidthSlider = document.getElementById('editorOutputWidthSlider');
+                const editorOutputWidthVal = document.getElementById('editorOutputWidthVal');
+                const editorPerFrameDelay = document.getElementById('editorPerFrameDelay');
+                const editorCopyDelayToAllBtn = document.getElementById('editorCopyDelayToAllBtn');
+                const editorSetGlobalDelayBtn = document.getElementById('editorSetGlobalDelayBtn');
+                const editorOverlayText = document.getElementById('editorOverlayText');
+                const editorOverlayColor = document.getElementById('editorOverlayColor');
+                const editorOverlaySize = document.getElementById('editorOverlaySize');
+                const editorSetOverlayBtn = document.getElementById('editorSetOverlayBtn');
+                const editorCopyOverlayAllBtn = document.getElementById('editorCopyOverlayAllBtn');
+                const editorClearOverlayBtn = document.getElementById('editorClearOverlayBtn');
+                const editorCropAspectSelect = document.getElementById('editorCropAspectSelect');
+                const editorApplyCropBtn = document.getElementById('editorApplyCropBtn');
+                const editorDuplicateSelectedBtn = document.getElementById('editorDuplicateSelectedBtn');
+                const editorReverseOrderBtn = document.getElementById('editorReverseOrderBtn');
+                const editorShuffleOrderBtn = document.getElementById('editorShuffleOrderBtn');
+                const editorInsertBlankBtn = document.getElementById('editorInsertBlankBtn');
+                const editorApplyToAllBtn = document.getElementById('editorApplyToAllBtn');
+                const editorResetAllBtn = document.getElementById('editorResetAllBtn');
+                const editorRemoveAllBtn = document.getElementById('editorRemoveAllBtn');
+                const editorUndoBtn = document.getElementById('editorUndoBtn');
+                const editorRedoBtn = document.getElementById('editorRedoBtn');
+                const editorFrameNoteInput = document.getElementById('editorFrameNoteInput');
+                const editorSaveNoteBtn = document.getElementById('editorSaveNoteBtn');
+                const editorLoopCountInput = document.getElementById('editorLoopCount');
+                const editorBgColorInput = document.getElementById('editorBgColor');
+                const editorPlayBtn = document.getElementById('editorPlayBtn');
+                const editorStopBtn = document.getElementById('editorStopBtn');
+                const editorBackToSelectionBtn = document.getElementById('editorBackToSelectionBtn');
 
-            function getMsg(key, placeholders) {
-                let str = EDTranslation.getText(key);
-                if (!str) str = key;
-                if (placeholders) {
-                    Object.keys(placeholders).forEach(k => { str = str.replace(`{${k}}`, placeholders[k]); });
+                // Helper to get translation
+                function getMsg(key, placeholders) {
+                    let str = EDTranslation.getText(key);
+                    if (!str) str = key;
+                    if (placeholders) {
+                        Object.keys(placeholders).forEach(k => { str = str.replace(`{${k}}`, placeholders[k]); });
+                    }
+                    return str;
                 }
-                return str;
-            }
 
-            function showEditorMessage(msgKey, placeholders) {
-                const txt = getMsg(msgKey, placeholders);
-                editorMessageEl.textContent = txt;
-                setTimeout(() => {
-                    if (editorMessageEl.textContent === txt) editorMessageEl.textContent = '';
-                }, 2800);
-            }
-
-            function pushEditorHistory() {
-                if (editorHistoryIndex < editorHistory.length - 1) editorHistory = editorHistory.slice(0, editorHistoryIndex + 1);
-                const snapshot = editorImages.map(img => ({ ...img, mods: { ...img.mods }, overlay: img.overlay ? { ...img.overlay } : null }));
-                editorHistory.push(snapshot);
-                if (editorHistory.length > MAX_HISTORY) editorHistory.shift();
-                editorHistoryIndex = editorHistory.length - 1;
-                updateEditorUndoRedo();
-            }
-
-            function editorUndo() {
-                if (editorHistoryIndex <= 0) return;
-                editorHistoryIndex--;
-                editorImages = editorHistory[editorHistoryIndex].map(img => ({ ...img, mods: { ...img.mods }, overlay: img.overlay ? { ...img.overlay } : null }));
-                if (editorSelectedIndex >= editorImages.length) editorSelectedIndex = editorImages.length - 1;
-                renderEditorThumbnails();
-                if (editorSelectedIndex >= 0) { updateEditorSlidersFromImage(editorImages[editorSelectedIndex]); renderEditorPreview(); }
-                updateEditorUndoRedo();
-                showEditorMessage('editor.msgUndo');
-            }
-            function editorRedo() {
-                if (editorHistoryIndex >= editorHistory.length - 1) return;
-                editorHistoryIndex++;
-                editorImages = editorHistory[editorHistoryIndex].map(img => ({ ...img, mods: { ...img.mods }, overlay: img.overlay ? { ...img.overlay } : null }));
-                if (editorSelectedIndex >= editorImages.length) editorSelectedIndex = editorImages.length - 1;
-                renderEditorThumbnails();
-                if (editorSelectedIndex >= 0) { updateEditorSlidersFromImage(editorImages[editorSelectedIndex]); renderEditorPreview(); }
-                updateEditorUndoRedo();
-                showEditorMessage('editor.msgRedo');
-            }
-            function updateEditorUndoRedo() {
-                editorUndoBtn.disabled = editorHistoryIndex <= 0;
-                editorRedoBtn.disabled = editorHistoryIndex >= editorHistory.length - 1;
-            }
-
-            function updateEditorImageCount() {
-                editorGenerateGifBtn.disabled = editorImages.length < 2;
-                if (editorImages.length === 0) { editorSelectedIndex = -1; hideEditorPreview(); stopEditorPlayback(); }
-                if (editorSelectedIndex >= editorImages.length) editorSelectedIndex = editorImages.length - 1;
-                updateEditorModeToggleUI();
-                updateEditorPerFrameDelayInput();
-            }
-            function updateEditorModeToggleUI() {
-                const key = editorBulkMode ? 'editor.mode.bulk' : 'editor.mode.individual';
-                editorModeToggle.textContent = getMsg(key);
-            }
-            function hideEditorPreview() { editorPreviewCanvas.style.display = 'none'; editorPreviewPlaceholder.style.display = 'block'; }
-            function showEditorPreview() { editorPreviewCanvas.style.display = 'block'; editorPreviewPlaceholder.style.display = 'none'; }
-            function updateEditorPerFrameDelayInput() {
-                if (editorSelectedIndex >= 0 && editorSelectedIndex < editorImages.length && !editorBulkMode) {
-                    editorPerFrameDelay.value = editorImages[editorSelectedIndex].delay;
-                    editorPerFrameDelay.disabled = false;
-                    editorFrameNoteInput.value = editorImages[editorSelectedIndex].note || '';
-                } else {
-                    editorPerFrameDelay.value = '';
-                    editorPerFrameDelay.disabled = true;
-                    editorFrameNoteInput.value = '';
+                function showEditorMessage(msgKey, placeholders) {
+                    const txt = getMsg(msgKey, placeholders);
+                    editorMessageEl.textContent = txt;
+                    setTimeout(() => {
+                        if (editorMessageEl.textContent === txt) editorMessageEl.textContent = '';
+                    }, 2800);
                 }
-            }
 
-            function renderEditorThumbnails() {
-                editorThumbnailStrip.innerHTML = '';
-                if (editorImages.length === 0) {
-                    editorThumbnailStrip.innerHTML = '<span style="color:var(--ED-General-color-text-tertiary);">' + getMsg('editor.noImages') + '</span>';
-                    updateEditorImageCount(); return;
+                function pushEditorHistory() {
+                    if (editorHistoryIndex < editorHistory.length - 1) editorHistory = editorHistory.slice(0, editorHistoryIndex + 1);
+                    const snapshot = editorImages.map(img => ({ ...img, mods: { ...img.mods }, overlay: img.overlay ? { ...img.overlay } : null }));
+                    editorHistory.push(snapshot);
+                    if (editorHistory.length > MAX_HISTORY) editorHistory.shift();
+                    editorHistoryIndex = editorHistory.length - 1;
+                    updateEditorUndoRedo();
                 }
-                const label = document.createElement('div');
-                label.style.cssText = 'font-weight:600;font-size:0.85rem;color:var(--ED-General-color-text-secondary);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;';
-                label.innerHTML = getMsg('editor.thumbnail.label') + ' <span class="count">' + editorImages.length + '</span>';
-                editorThumbnailStrip.appendChild(label);
-                const strip = document.createElement('div');
-                strip.style.cssText = 'display:flex;gap:10px;overflow-x:auto;padding:10px 6px 14px;';
-                editorImages.forEach((img, idx) => {
-                    const wrapper = document.createElement('div');
-                    wrapper.className = 'editor-thumb-wrapper';
-                    if (idx === editorSelectedIndex) wrapper.classList.add('selected');
-                    wrapper.draggable = true; wrapper.dataset.index = idx;
-                    wrapper.addEventListener('dragstart', editorHandleDragStart);
-                    wrapper.addEventListener('dragover', editorHandleDragOver);
-                    wrapper.addEventListener('drop', editorHandleDrop);
-                    wrapper.addEventListener('dragend', editorHandleDragEnd);
-                    wrapper.addEventListener('click', (e) => { if (!e.target.classList.contains('editor-thumb-remove')) editorSelectImage(idx); });
-                    const imgEl = document.createElement('img'); imgEl.src = img.originalDataUrl; imgEl.draggable = false;
-                    const badge = document.createElement('span'); badge.className = 'editor-thumb-index'; badge.textContent = idx + 1;
-                    const removeBtn = document.createElement('button'); removeBtn.className = 'editor-thumb-remove'; removeBtn.textContent = '×';
-                    removeBtn.addEventListener('click', (e) => { e.stopPropagation(); editorRemoveImage(idx); });
-                    wrapper.appendChild(imgEl); wrapper.appendChild(badge); wrapper.appendChild(removeBtn);
-                    strip.appendChild(wrapper);
-                });
-                editorThumbnailStrip.appendChild(strip);
-                updateEditorImageCount();
-            }
 
-            let editorDragSrcIndex = -1;
-            function editorHandleDragStart(e) { editorDragSrcIndex = parseInt(this.dataset.index); this.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; }
-            function editorHandleDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }
-            function editorHandleDrop(e) {
-                e.preventDefault();
-                const targetIdx = parseInt(this.dataset.index);
-                if (editorDragSrcIndex >= 0 && editorDragSrcIndex !== targetIdx) {
-                    const [moved] = editorImages.splice(editorDragSrcIndex, 1);
-                    editorImages.splice(targetIdx, 0, moved);
-                    if (editorSelectedIndex === editorDragSrcIndex) editorSelectedIndex = targetIdx;
-                    else if (editorDragSrcIndex < editorSelectedIndex && targetIdx >= editorSelectedIndex) editorSelectedIndex--;
-                    else if (editorDragSrcIndex > editorSelectedIndex && targetIdx <= editorSelectedIndex) editorSelectedIndex++;
+                function editorUndo() {
+                    if (editorHistoryIndex <= 0) return;
+                    editorHistoryIndex--;
+                    editorImages = editorHistory[editorHistoryIndex].map(img => ({ ...img, mods: { ...img.mods }, overlay: img.overlay ? { ...img.overlay } : null }));
+                    if (editorSelectedIndex >= editorImages.length) editorSelectedIndex = editorImages.length - 1;
                     renderEditorThumbnails();
                     if (editorSelectedIndex >= 0) { updateEditorSlidersFromImage(editorImages[editorSelectedIndex]); renderEditorPreview(); }
-                    pushEditorHistory();
-                    showEditorMessage('editor.msgSequenceReordered');
+                    updateEditorUndoRedo();
+                    showEditorMessage('editor.msgUndo');
                 }
-                editorDragSrcIndex = -1;
-            }
-            function editorHandleDragEnd(e) { this.classList.remove('dragging'); editorDragSrcIndex = -1; }
-
-            function editorRemoveImage(idx) {
-                if (idx < 0 || idx >= editorImages.length) return;
-                editorImages.splice(idx, 1);
-                if (editorSelectedIndex >= editorImages.length) editorSelectedIndex = editorImages.length - 1;
-                if (editorSelectedIndex < 0) { hideEditorPreview(); resetEditorSliders(); }
-                else { updateEditorSlidersFromImage(editorImages[editorSelectedIndex]); renderEditorPreview(); }
-                renderEditorThumbnails(); pushEditorHistory();
-                showEditorMessage('editor.msgImageRemoved');
-            }
-
-            function editorSelectImage(idx) {
-                if (idx < 0 || idx >= editorImages.length) return;
-                editorSelectedIndex = idx;
-                updateEditorSlidersFromImage(editorImages[editorSelectedIndex]);
-                renderEditorThumbnails();
-                renderEditorPreview();
-                showEditorPreview();
-                updateEditorPerFrameDelayInput();
-                if (editorImages[editorSelectedIndex].overlay) {
-                    editorOverlayText.value = editorImages[editorSelectedIndex].overlay.text || '';
-                    editorOverlayColor.value = editorImages[editorSelectedIndex].overlay.color || '#ffffff';
-                    editorOverlaySize.value = editorImages[editorSelectedIndex].overlay.size || 24;
-                } else {
-                    editorOverlayText.value = ''; editorOverlayColor.value = '#ffffff'; editorOverlaySize.value = 24;
+                function editorRedo() {
+                    if (editorHistoryIndex >= editorHistory.length - 1) return;
+                    editorHistoryIndex++;
+                    editorImages = editorHistory[editorHistoryIndex].map(img => ({ ...img, mods: { ...img.mods }, overlay: img.overlay ? { ...img.overlay } : null }));
+                    if (editorSelectedIndex >= editorImages.length) editorSelectedIndex = editorImages.length - 1;
+                    renderEditorThumbnails();
+                    if (editorSelectedIndex >= 0) { updateEditorSlidersFromImage(editorImages[editorSelectedIndex]); renderEditorPreview(); }
+                    updateEditorUndoRedo();
+                    showEditorMessage('editor.msgRedo');
                 }
-            }
+                function updateEditorUndoRedo() {
+                    editorUndoBtn.disabled = editorHistoryIndex <= 0;
+                    editorRedoBtn.disabled = editorHistoryIndex >= editorHistory.length - 1;
+                }
 
-            function updateEditorSlidersFromImage(img) {
-                editorBrightnessSlider.value = img.mods.brightness;
-                editorContrastSlider.value = img.mods.contrast;
-                editorSaturationSlider.value = img.mods.saturation;
-                editorHueSlider.value = img.mods.hue;
-                updateEditorSliderLabels();
-            }
-            function resetEditorSliders() {
-                editorBrightnessSlider.value = defaultMods.brightness;
-                editorContrastSlider.value = defaultMods.contrast;
-                editorSaturationSlider.value = defaultMods.saturation;
-                editorHueSlider.value = defaultMods.hue;
-                updateEditorSliderLabels();
-            }
-            function updateEditorSliderLabels() {
-                editorBrightnessVal.textContent = editorBrightnessSlider.value + '%';
-                editorContrastVal.textContent = editorContrastSlider.value + '%';
-                editorSaturationVal.textContent = editorSaturationSlider.value + '%';
-                editorHueVal.textContent = editorHueSlider.value + '°';
-                editorFrameDelayVal.textContent = editorFrameDelaySlider.value + ' ms';
-                editorOutputWidthVal.textContent = editorOutputWidthSlider.value + ' px';
-            }
-
-            function getEditorTargetIndices() {
-                return editorBulkMode ? editorImages.map((_, i) => i) : (editorSelectedIndex >= 0 ? [editorSelectedIndex] : []);
-            }
-
-            function editorApplyColorMods(indices) {
-                const b = parseInt(editorBrightnessSlider.value), c = parseInt(editorContrastSlider.value),
-                      s = parseInt(editorSaturationSlider.value), h = parseInt(editorHueSlider.value);
-                indices.forEach(i => {
-                    if (i >= 0 && i < editorImages.length) {
-                        editorImages[i].mods.brightness = b;
-                        editorImages[i].mods.contrast = c;
-                        editorImages[i].mods.saturation = s;
-                        editorImages[i].mods.hue = h;
+                function updateEditorImageCount() {
+                    editorGenerateGifBtn.disabled = editorImages.length < 2;
+                    if (editorImages.length === 0) { editorSelectedIndex = -1; hideEditorPreview(); stopEditorPlayback(); }
+                    if (editorSelectedIndex >= editorImages.length) editorSelectedIndex = editorImages.length - 1;
+                    updateEditorModeToggleUI();
+                    updateEditorPerFrameDelayInput();
+                }
+                function updateEditorModeToggleUI() {
+                    const key = editorBulkMode ? 'editor.mode.bulk' : 'editor.mode.individual';
+                    editorModeToggle.textContent = getMsg(key);
+                }
+                function hideEditorPreview() { editorPreviewCanvas.style.display = 'none'; editorPreviewPlaceholder.style.display = 'block'; }
+                function showEditorPreview() { editorPreviewCanvas.style.display = 'block'; editorPreviewPlaceholder.style.display = 'none'; }
+                function updateEditorPerFrameDelayInput() {
+                    if (editorSelectedIndex >= 0 && editorSelectedIndex < editorImages.length && !editorBulkMode) {
+                        editorPerFrameDelay.value = editorImages[editorSelectedIndex].delay;
+                        editorPerFrameDelay.disabled = false;
+                        editorFrameNoteInput.value = editorImages[editorSelectedIndex].note || '';
+                    } else {
+                        editorPerFrameDelay.value = '';
+                        editorPerFrameDelay.disabled = true;
+                        editorFrameNoteInput.value = '';
                     }
-                });
-                updateEditorSliderLabels(); renderEditorPreview(); pushEditorHistory();
-            }
+                }
 
-            function editorApplyGeoMod(transformFn) {
-                const indices = getEditorTargetIndices();
-                indices.forEach(i => {
-                    if (i >= 0 && i < editorImages.length) {
-                        transformFn(editorImages[i].mods);
-                        editorImages[i].mods.rotation = ((editorImages[i].mods.rotation % 360) + 360) % 360;
+                function renderEditorThumbnails() {
+                    editorThumbnailStrip.innerHTML = '';
+                    if (editorImages.length === 0) {
+                        editorThumbnailStrip.innerHTML = '<span style="color:var(--ED-General-color-text-tertiary);">' + getMsg('editor.noImages') + '</span>';
+                        updateEditorImageCount(); return;
                     }
-                });
-                if (!editorBulkMode && editorSelectedIndex >= 0) updateEditorSlidersFromImage(editorImages[editorSelectedIndex]);
-                renderEditorPreview(); pushEditorHistory();
-            }
-
-            function renderEditorPreview() {
-                if (editorSelectedIndex < 0 || editorSelectedIndex >= editorImages.length) { hideEditorPreview(); return; }
-                editorDrawImageToCanvas(editorImages[editorSelectedIndex], editorPreviewCanvas, editorCropAspectSelect.value);
-                showEditorPreview();
-            }
-            function editorDrawImageToCanvas(imgData, canvas, cropAspect) {
-                const mods = imgData.mods;
-                const srcImg = new Image();
-                srcImg.onload = function() {
-                    const maxW = 420, maxH = 380;
-                    const isRot90 = mods.rotation === 90 || mods.rotation === 270;
-                    const srcW = isRot90 ? imgData.height : imgData.width;
-                    const srcH = isRot90 ? imgData.width : imgData.height;
-                    let drawW = srcW, drawH = srcH;
-                    if (cropAspect && cropAspect !== 'original') {
-                        const [wR, hR] = cropAspect.split(':').map(Number);
-                        const targetRatio = wR / hR;
-                        const currentRatio = drawW / drawH;
-                        if (currentRatio > targetRatio) drawW = drawH * targetRatio;
-                        else if (currentRatio < targetRatio) drawH = drawW / targetRatio;
-                    }
-                    const scale = Math.min(maxW / drawW, maxH / drawH);
-                    canvas.width = Math.round(drawW * scale); canvas.height = Math.round(drawH * scale);
-                    const ctx = canvas.getContext('2d');
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    ctx.fillStyle = editorBgColorInput.value; ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    ctx.save();
-                    ctx.filter = `brightness(${mods.brightness}%) contrast(${mods.contrast}%) saturate(${mods.saturation}%) hue-rotate(${mods.hue}deg)`;
-                    ctx.translate(canvas.width / 2, canvas.height / 2);
-                    ctx.rotate((mods.rotation * Math.PI) / 180);
-                    ctx.scale(mods.flipH ? -1 : 1, mods.flipV ? -1 : 1);
-                    const srcDrawW = srcW * scale, srcDrawH = srcH * scale;
-                    ctx.drawImage(srcImg, -srcDrawW / 2, -srcDrawH / 2, srcDrawW, srcDrawH);
-                    ctx.restore();
-                    ctx.filter = 'none';
-                    if (imgData.overlay && imgData.overlay.text) {
-                        ctx.fillStyle = imgData.overlay.color;
-                        ctx.font = `${imgData.overlay.size}px var(--ED-General-font-stack)`;
-                        ctx.textAlign = 'center';
-                        ctx.fillText(imgData.overlay.text, canvas.width / 2, canvas.height - 15);
-                    }
-                };
-                srcImg.onerror = function() { canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height); };
-                srcImg.src = imgData.originalDataUrl;
-            }
-
-            function startEditorPlayback() {
-                if (editorImages.length < 2 || editorIsPlaying) return;
-                editorIsPlaying = true; editorPlayBtn.disabled = true; editorStopBtn.disabled = false;
-                editorPlayIndex = 0; editorDrawPlayFrame();
-                editorPlayInterval = setInterval(() => {
-                    editorPlayIndex = (editorPlayIndex + 1) % editorImages.length;
-                    editorDrawPlayFrame();
-                }, editorImages[editorPlayIndex].delay);
-            }
-            function stopEditorPlayback() {
-                if (!editorIsPlaying) return;
-                clearInterval(editorPlayInterval); editorIsPlaying = false;
-                editorPlayBtn.disabled = false; editorStopBtn.disabled = true;
-                if (editorSelectedIndex >= 0) renderEditorPreview();
-            }
-            function editorDrawPlayFrame() {
-                if (!editorIsPlaying) return;
-                const imgData = editorImages[editorPlayIndex];
-                editorDrawImageToCanvas(imgData, editorPreviewCanvas, editorCropAspectSelect.value);
-                showEditorPreview();
-            }
-
-            async function editorGenerateGif() {
-                if (editorImages.length < 2) { showEditorMessage('editor.msgNeedTwoImages'); return; }
-                editorGenerateGifBtn.disabled = true;
-                editorGenerateGifBtn.textContent = '⏳ ' + getMsg('editor.generate');
-                editorProgressBar.classList.add('active');
-                editorProgressBarFill.style.width = '0%';
-                editorDownloadGifBtn.style.display = 'none';
-                editorGeneratedGifBlob = null;
-                const outputWidth = parseInt(editorOutputWidthSlider.value);
-                const cropAspect = editorCropAspectSelect.value;
-                const first = editorImages[0];
-                const firstRot = first.mods.rotation === 90 || first.mods.rotation === 270;
-                const fnw = firstRot ? first.height : first.width, fnh = firstRot ? first.width : first.height;
-                const outputHeight = Math.round(outputWidth * (fnh / fnw)) || outputWidth;
-                const bgColor = editorBgColorInput.value;
-                const loopCount = parseInt(editorLoopCountInput.value) || 0;
-
-                try {
-                    const gif = new GIF({
-                        workers: 2, quality: 10,
-                        width: outputWidth, height: outputHeight,
-                        workerScript: 'gif.worker.js',
-                        repeat: loopCount
+                    const label = document.createElement('div');
+                    label.style.cssText = 'font-weight:600;font-size:0.85rem;color:var(--ED-General-color-text-secondary);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;';
+                    label.innerHTML = getMsg('editor.thumbnail.label') + ' <span class="count">' + editorImages.length + '</span>';
+                    editorThumbnailStrip.appendChild(label);
+                    const strip = document.createElement('div');
+                    strip.style.cssText = 'display:flex;gap:10px;overflow-x:auto;padding:10px 6px 14px;';
+                    editorImages.forEach((img, idx) => {
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'editor-thumb-wrapper';
+                        if (idx === editorSelectedIndex) wrapper.classList.add('selected');
+                        wrapper.draggable = true; wrapper.dataset.index = idx;
+                        wrapper.addEventListener('dragstart', editorHandleDragStart);
+                        wrapper.addEventListener('dragover', editorHandleDragOver);
+                        wrapper.addEventListener('drop', editorHandleDrop);
+                        wrapper.addEventListener('dragend', editorHandleDragEnd);
+                        wrapper.addEventListener('click', (e) => { if (!e.target.classList.contains('editor-thumb-remove')) editorSelectImage(idx); });
+                        const imgEl = document.createElement('img'); imgEl.src = img.originalDataUrl; imgEl.draggable = false;
+                        const badge = document.createElement('span'); badge.className = 'editor-thumb-index'; badge.textContent = idx + 1;
+                        const removeBtn = document.createElement('button'); removeBtn.className = 'editor-thumb-remove'; removeBtn.textContent = '×';
+                        removeBtn.addEventListener('click', (e) => { e.stopPropagation(); editorRemoveImage(idx); });
+                        wrapper.appendChild(imgEl); wrapper.appendChild(badge); wrapper.appendChild(removeBtn);
+                        strip.appendChild(wrapper);
                     });
-                    gif.on('progress', p => { editorProgressBarFill.style.width = Math.round(p * 100) + '%'; });
-                    gif.on('finished', blob => {
-                        editorGeneratedGifBlob = blob;
-                        editorProgressBarFill.style.width = '100%';
+                    editorThumbnailStrip.appendChild(strip);
+                    updateEditorImageCount();
+                }
+
+                let editorDragSrcIndex = -1;
+                function editorHandleDragStart(e) { editorDragSrcIndex = parseInt(this.dataset.index); this.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; }
+                function editorHandleDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }
+                function editorHandleDrop(e) {
+                    e.preventDefault();
+                    const targetIdx = parseInt(this.dataset.index);
+                    if (editorDragSrcIndex >= 0 && editorDragSrcIndex !== targetIdx) {
+                        const [moved] = editorImages.splice(editorDragSrcIndex, 1);
+                        editorImages.splice(targetIdx, 0, moved);
+                        if (editorSelectedIndex === editorDragSrcIndex) editorSelectedIndex = targetIdx;
+                        else if (editorDragSrcIndex < editorSelectedIndex && targetIdx >= editorSelectedIndex) editorSelectedIndex--;
+                        else if (editorDragSrcIndex > editorSelectedIndex && targetIdx <= editorSelectedIndex) editorSelectedIndex++;
+                        renderEditorThumbnails();
+                        if (editorSelectedIndex >= 0) { updateEditorSlidersFromImage(editorImages[editorSelectedIndex]); renderEditorPreview(); }
+                        pushEditorHistory();
+                        showEditorMessage('editor.msgSequenceReordered');
+                    }
+                    editorDragSrcIndex = -1;
+                }
+                function editorHandleDragEnd(e) { this.classList.remove('dragging'); editorDragSrcIndex = -1; }
+
+                function editorRemoveImage(idx) {
+                    if (idx < 0 || idx >= editorImages.length) return;
+                    editorImages.splice(idx, 1);
+                    if (editorSelectedIndex >= editorImages.length) editorSelectedIndex = editorImages.length - 1;
+                    if (editorSelectedIndex < 0) { hideEditorPreview(); resetEditorSliders(); }
+                    else { updateEditorSlidersFromImage(editorImages[editorSelectedIndex]); renderEditorPreview(); }
+                    renderEditorThumbnails(); pushEditorHistory();
+                    showEditorMessage('editor.msgImageRemoved');
+                }
+
+                function editorSelectImage(idx) {
+                    if (idx < 0 || idx >= editorImages.length) return;
+                    editorSelectedIndex = idx;
+                    updateEditorSlidersFromImage(editorImages[editorSelectedIndex]);
+                    renderEditorThumbnails();
+                    renderEditorPreview();
+                    showEditorPreview();
+                    updateEditorPerFrameDelayInput();
+                    if (editorImages[editorSelectedIndex].overlay) {
+                        editorOverlayText.value = editorImages[editorSelectedIndex].overlay.text || '';
+                        editorOverlayColor.value = editorImages[editorSelectedIndex].overlay.color || '#ffffff';
+                        editorOverlaySize.value = editorImages[editorSelectedIndex].overlay.size || 24;
+                    } else {
+                        editorOverlayText.value = ''; editorOverlayColor.value = '#ffffff'; editorOverlaySize.value = 24;
+                    }
+                }
+
+                function updateEditorSlidersFromImage(img) {
+                    editorBrightnessSlider.value = img.mods.brightness;
+                    editorContrastSlider.value = img.mods.contrast;
+                    editorSaturationSlider.value = img.mods.saturation;
+                    editorHueSlider.value = img.mods.hue;
+                    updateEditorSliderLabels();
+                }
+                function resetEditorSliders() {
+                    editorBrightnessSlider.value = defaultMods.brightness;
+                    editorContrastSlider.value = defaultMods.contrast;
+                    editorSaturationSlider.value = defaultMods.saturation;
+                    editorHueSlider.value = defaultMods.hue;
+                    updateEditorSliderLabels();
+                }
+                function updateEditorSliderLabels() {
+                    editorBrightnessVal.textContent = editorBrightnessSlider.value + '%';
+                    editorContrastVal.textContent = editorContrastSlider.value + '%';
+                    editorSaturationVal.textContent = editorSaturationSlider.value + '%';
+                    editorHueVal.textContent = editorHueSlider.value + '°';
+                    editorFrameDelayVal.textContent = editorFrameDelaySlider.value + ' ms';
+                    editorOutputWidthVal.textContent = editorOutputWidthSlider.value + ' px';
+                }
+
+                function getEditorTargetIndices() {
+                    return editorBulkMode ? editorImages.map((_, i) => i) : (editorSelectedIndex >= 0 ? [editorSelectedIndex] : []);
+                }
+
+                function editorApplyColorMods(indices) {
+                    const b = parseInt(editorBrightnessSlider.value), c = parseInt(editorContrastSlider.value),
+                          s = parseInt(editorSaturationSlider.value), h = parseInt(editorHueSlider.value);
+                    indices.forEach(i => {
+                        if (i >= 0 && i < editorImages.length) {
+                            editorImages[i].mods.brightness = b;
+                            editorImages[i].mods.contrast = c;
+                            editorImages[i].mods.saturation = s;
+                            editorImages[i].mods.hue = h;
+                        }
+                    });
+                    updateEditorSliderLabels(); renderEditorPreview(); pushEditorHistory();
+                }
+
+                function editorApplyGeoMod(transformFn) {
+                    const indices = getEditorTargetIndices();
+                    indices.forEach(i => {
+                        if (i >= 0 && i < editorImages.length) {
+                            transformFn(editorImages[i].mods);
+                            editorImages[i].mods.rotation = ((editorImages[i].mods.rotation % 360) + 360) % 360;
+                        }
+                    });
+                    if (!editorBulkMode && editorSelectedIndex >= 0) updateEditorSlidersFromImage(editorImages[editorSelectedIndex]);
+                    renderEditorPreview(); pushEditorHistory();
+                }
+
+                function renderEditorPreview() {
+                    if (editorSelectedIndex < 0 || editorSelectedIndex >= editorImages.length) { hideEditorPreview(); return; }
+                    editorDrawImageToCanvas(editorImages[editorSelectedIndex], editorPreviewCanvas, editorCropAspectSelect.value);
+                    showEditorPreview();
+                }
+                function editorDrawImageToCanvas(imgData, canvas, cropAspect) {
+                    const mods = imgData.mods;
+                    const srcImg = new Image();
+                    srcImg.onload = function() {
+                        const maxW = 420, maxH = 380;
+                        const isRot90 = mods.rotation === 90 || mods.rotation === 270;
+                        const srcW = isRot90 ? imgData.height : imgData.width;
+                        const srcH = isRot90 ? imgData.width : imgData.height;
+                        let drawW = srcW, drawH = srcH;
+                        if (cropAspect && cropAspect !== 'original') {
+                            const [wR, hR] = cropAspect.split(':').map(Number);
+                            const targetRatio = wR / hR;
+                            const currentRatio = drawW / drawH;
+                            if (currentRatio > targetRatio) drawW = drawH * targetRatio;
+                            else if (currentRatio < targetRatio) drawH = drawW / targetRatio;
+                        }
+                        const scale = Math.min(maxW / drawW, maxH / drawH);
+                        canvas.width = Math.round(drawW * scale); canvas.height = Math.round(drawH * scale);
+                        const ctx = canvas.getContext('2d');
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        ctx.fillStyle = editorBgColorInput.value; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        ctx.save();
+                        ctx.filter = `brightness(${mods.brightness}%) contrast(${mods.contrast}%) saturate(${mods.saturation}%) hue-rotate(${mods.hue}deg)`;
+                        ctx.translate(canvas.width / 2, canvas.height / 2);
+                        ctx.rotate((mods.rotation * Math.PI) / 180);
+                        ctx.scale(mods.flipH ? -1 : 1, mods.flipV ? -1 : 1);
+                        const srcDrawW = srcW * scale, srcDrawH = srcH * scale;
+                        ctx.drawImage(srcImg, -srcDrawW / 2, -srcDrawH / 2, srcDrawW, srcDrawH);
+                        ctx.restore();
+                        ctx.filter = 'none';
+                        if (imgData.overlay && imgData.overlay.text) {
+                            ctx.fillStyle = imgData.overlay.color;
+                            ctx.font = `${imgData.overlay.size}px var(--ED-General-font-stack)`;
+                            ctx.textAlign = 'center';
+                            ctx.fillText(imgData.overlay.text, canvas.width / 2, canvas.height - 15);
+                        }
+                    };
+                    srcImg.onerror = function() { canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height); };
+                    srcImg.src = imgData.originalDataUrl;
+                }
+
+                function startEditorPlayback() {
+                    if (editorImages.length < 2 || editorIsPlaying) return;
+                    editorIsPlaying = true; editorPlayBtn.disabled = true; editorStopBtn.disabled = false;
+                    editorPlayIndex = 0; editorDrawPlayFrame();
+                    editorPlayInterval = setInterval(() => {
+                        editorPlayIndex = (editorPlayIndex + 1) % editorImages.length;
+                        editorDrawPlayFrame();
+                    }, editorImages[editorPlayIndex].delay);
+                }
+                function stopEditorPlayback() {
+                    if (!editorIsPlaying) return;
+                    clearInterval(editorPlayInterval); editorIsPlaying = false;
+                    editorPlayBtn.disabled = false; editorStopBtn.disabled = true;
+                    if (editorSelectedIndex >= 0) renderEditorPreview();
+                }
+                function editorDrawPlayFrame() {
+                    if (!editorIsPlaying) return;
+                    const imgData = editorImages[editorPlayIndex];
+                    editorDrawImageToCanvas(imgData, editorPreviewCanvas, editorCropAspectSelect.value);
+                    showEditorPreview();
+                }
+
+                async function editorGenerateGif() {
+                    if (editorImages.length < 2) { showEditorMessage('editor.msgNeedTwoImages'); return; }
+                    editorGenerateGifBtn.disabled = true;
+                    editorGenerateGifBtn.textContent = '⏳ ' + getMsg('editor.generate');
+                    editorProgressBar.classList.add('active');
+                    editorProgressBarFill.style.width = '0%';
+                    editorDownloadGifBtn.style.display = 'none';
+                    editorGeneratedGifBlob = null;
+                    const outputWidth = parseInt(editorOutputWidthSlider.value);
+                    const cropAspect = editorCropAspectSelect.value;
+                    const first = editorImages[0];
+                    const firstRot = first.mods.rotation === 90 || first.mods.rotation === 270;
+                    const fnw = firstRot ? first.height : first.width, fnh = firstRot ? first.width : first.height;
+                    const outputHeight = Math.round(outputWidth * (fnh / fnw)) || outputWidth;
+                    const bgColor = editorBgColorInput.value;
+                    const loopCount = parseInt(editorLoopCountInput.value) || 0;
+
+                    try {
+                        const gif = new GIF({
+                            workers: 2, quality: 10,
+                            width: outputWidth, height: outputHeight,
+                            workerScript: 'gif.worker.js',
+                            repeat: loopCount
+                        });
+                        gif.on('progress', p => { editorProgressBarFill.style.width = Math.round(p * 100) + '%'; });
+                        gif.on('finished', blob => {
+                            editorGeneratedGifBlob = blob;
+                            editorProgressBarFill.style.width = '100%';
+                            editorGenerateGifBtn.textContent = getMsg('editor.generate');
+                            editorGenerateGifBtn.disabled = false;
+                            editorProgressBar.classList.remove('active');
+                            editorDownloadGifBtn.style.display = 'inline-flex';
+                            showEditorMessage('editor.msgGifGenerated');
+                        });
+
+                        for (let i = 0; i < editorImages.length; i++) {
+                            const imgData = editorImages[i];
+                            const frameCanvas = document.createElement('canvas');
+                            frameCanvas.width = outputWidth; frameCanvas.height = outputHeight;
+                            const ctx = frameCanvas.getContext('2d');
+                            ctx.fillStyle = bgColor; ctx.fillRect(0, 0, outputWidth, outputHeight);
+                            await new Promise(resolve => {
+                                const srcImg = new Image();
+                                srcImg.onload = function() {
+                                    const mods = imgData.mods;
+                                    const isRot90 = mods.rotation === 90 || mods.rotation === 270;
+                                    const srcW = isRot90 ? imgData.height : imgData.width;
+                                    const srcH = isRot90 ? imgData.width : imgData.height;
+                                    let drawW = srcW, drawH = srcH;
+                                    if (cropAspect && cropAspect !== 'original') {
+                                        const [wR, hR] = cropAspect.split(':').map(Number);
+                                        const targetRatio = wR / hR;
+                                        const currentRatio = drawW / drawH;
+                                        if (currentRatio > targetRatio) drawW = drawH * targetRatio;
+                                        else if (currentRatio < targetRatio) drawH = drawW / targetRatio;
+                                    }
+                                    const scale = Math.min(outputWidth / drawW, outputHeight / drawH);
+                                    ctx.save();
+                                    ctx.filter = `brightness(${mods.brightness}%) contrast(${mods.contrast}%) saturate(${mods.saturation}%) hue-rotate(${mods.hue}deg)`;
+                                    ctx.translate(outputWidth / 2, outputHeight / 2);
+                                    ctx.rotate((mods.rotation * Math.PI) / 180);
+                                    ctx.scale(mods.flipH ? -1 : 1, mods.flipV ? -1 : 1);
+                                    const srcDrawW = srcW * scale, srcDrawH = srcH * scale;
+                                    ctx.drawImage(srcImg, -srcDrawW / 2, -srcDrawH / 2, srcDrawW, srcDrawH);
+                                    ctx.restore();
+                                    ctx.filter = 'none';
+                                    if (imgData.overlay && imgData.overlay.text) {
+                                        ctx.fillStyle = imgData.overlay.color;
+                                        ctx.font = `${imgData.overlay.size}px var(--ED-General-font-stack)`;
+                                        ctx.textAlign = 'center';
+                                        ctx.fillText(imgData.overlay.text, outputWidth / 2, outputHeight - 15);
+                                    }
+                                    resolve();
+                                };
+                                srcImg.onerror = () => { ctx.fillStyle = bgColor; ctx.fillRect(0, 0, outputWidth, outputHeight); resolve(); };
+                                srcImg.src = imgData.originalDataUrl;
+                            });
+                            gif.addFrame(frameCanvas, { delay: imgData.delay, copy: true });
+                        }
+                        gif.render();
+                    } catch (e) {
+                        console.error(e);
+                        showEditorMessage('editor.msgGifFailed');
                         editorGenerateGifBtn.textContent = getMsg('editor.generate');
                         editorGenerateGifBtn.disabled = false;
                         editorProgressBar.classList.remove('active');
-                        editorDownloadGifBtn.style.display = 'inline-flex';
-                        showEditorMessage('editor.msgGifGenerated');
-                    });
-
-                    for (let i = 0; i < editorImages.length; i++) {
-                        const imgData = editorImages[i];
-                        const frameCanvas = document.createElement('canvas');
-                        frameCanvas.width = outputWidth; frameCanvas.height = outputHeight;
-                        const ctx = frameCanvas.getContext('2d');
-                        ctx.fillStyle = bgColor; ctx.fillRect(0, 0, outputWidth, outputHeight);
-                        await new Promise(resolve => {
-                            const srcImg = new Image();
-                            srcImg.onload = function() {
-                                const mods = imgData.mods;
-                                const isRot90 = mods.rotation === 90 || mods.rotation === 270;
-                                const srcW = isRot90 ? imgData.height : imgData.width;
-                                const srcH = isRot90 ? imgData.width : imgData.height;
-                                let drawW = srcW, drawH = srcH;
-                                if (cropAspect && cropAspect !== 'original') {
-                                    const [wR, hR] = cropAspect.split(':').map(Number);
-                                    const targetRatio = wR / hR;
-                                    const currentRatio = drawW / drawH;
-                                    if (currentRatio > targetRatio) drawW = drawH * targetRatio;
-                                    else if (currentRatio < targetRatio) drawH = drawW / targetRatio;
-                                }
-                                const scale = Math.min(outputWidth / drawW, outputHeight / drawH);
-                                ctx.save();
-                                ctx.filter = `brightness(${mods.brightness}%) contrast(${mods.contrast}%) saturate(${mods.saturation}%) hue-rotate(${mods.hue}deg)`;
-                                ctx.translate(outputWidth / 2, outputHeight / 2);
-                                ctx.rotate((mods.rotation * Math.PI) / 180);
-                                ctx.scale(mods.flipH ? -1 : 1, mods.flipV ? -1 : 1);
-                                const srcDrawW = srcW * scale, srcDrawH = srcH * scale;
-                                ctx.drawImage(srcImg, -srcDrawW / 2, -srcDrawH / 2, srcDrawW, srcDrawH);
-                                ctx.restore();
-                                ctx.filter = 'none';
-                                if (imgData.overlay && imgData.overlay.text) {
-                                    ctx.fillStyle = imgData.overlay.color;
-                                    ctx.font = `${imgData.overlay.size}px var(--ED-General-font-stack)`;
-                                    ctx.textAlign = 'center';
-                                    ctx.fillText(imgData.overlay.text, outputWidth / 2, outputHeight - 15);
-                                }
-                                resolve();
-                            };
-                            srcImg.onerror = () => { ctx.fillStyle = bgColor; ctx.fillRect(0, 0, outputWidth, outputHeight); resolve(); };
-                            srcImg.src = imgData.originalDataUrl;
-                        });
-                        gif.addFrame(frameCanvas, { delay: imgData.delay, copy: true });
                     }
-                    gif.render();
-                } catch (e) {
-                    console.error(e);
-                    showEditorMessage('editor.msgGifFailed');
-                    editorGenerateGifBtn.textContent = getMsg('editor.generate');
-                    editorGenerateGifBtn.disabled = false;
-                    editorProgressBar.classList.remove('active');
                 }
-            }
 
-            function editorDownloadGif() {
-                if (!editorGeneratedGifBlob) { showEditorMessage('editor.msgGenerateFirst'); return; }
-                const url = URL.createObjectURL(editorGeneratedGifBlob);
-                const a = document.createElement('a');
-                a.href = url; a.download = 'animated_avatar_' + Date.now() + '.gif';
-                document.body.appendChild(a); a.click(); document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                showEditorMessage('editor.msgGifDownloaded');
-            }
+                function editorDownloadGif() {
+                    if (!editorGeneratedGifBlob) { showEditorMessage('editor.msgGenerateFirst'); return; }
+                    const url = URL.createObjectURL(editorGeneratedGifBlob);
+                    const a = document.createElement('a');
+                    a.href = url; a.download = 'animated_avatar_' + Date.now() + '.gif';
+                    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    showEditorMessage('editor.msgGifDownloaded');
+                }
 
-            function initEditor(initialImages) {
-                editorImages = initialImages;
-                editorIdCounter = editorImages.length;
-                editorSelectedIndex = editorImages.length > 0 ? 0 : -1;
-                editorBulkMode = false;
-                editorHistory = []; editorHistoryIndex = -1;
-                editorGeneratedGifBlob = null;
-                editorDownloadGifBtn.style.display = 'none';
-                editorProgressBar.classList.remove('active');
+                // Initialize
                 resetEditorSliders();
                 if (editorSelectedIndex >= 0) {
                     updateEditorSlidersFromImage(editorImages[0]);
@@ -1711,155 +1924,386 @@
                 renderEditorThumbnails();
                 updateEditorImageCount();
                 pushEditorHistory();
-                if (window.EDTranslation) EDTranslation.translatePage();
+                EDTranslation.translatePage();
+
+                // Event listeners for multi editor controls
+                document.addEventListener('translationsApplied', function() {
+                    if (editorBox.style.display !== 'none') {
+                        EDTranslation.translatePage();
+                        updateEditorModeToggleUI();
+                        renderEditorThumbnails();
+                        if (editorSelectedIndex >= 0) {
+                            updateEditorSlidersFromImage(editorImages[editorSelectedIndex]);
+                            renderEditorPreview();
+                        }
+                    }
+                });
+
+                editorBackToSelectionBtn.addEventListener('click', () => {
+                    editorBox.style.display = 'none';
+                    previewBox.style.display = 'block';
+                });
+
+                editorModeToggle.addEventListener('click', () => {
+                    if (editorImages.length === 0) return;
+                    editorBulkMode = !editorBulkMode;
+                    updateEditorModeToggleUI();
+                    if (editorBulkMode) { resetEditorSliders(); showEditorMessage('editor.msgBulkMode'); }
+                    else { if (editorSelectedIndex >= 0) updateEditorSlidersFromImage(editorImages[editorSelectedIndex]); showEditorMessage('editor.msgIndividualMode'); }
+                    updateEditorPerFrameDelayInput(); renderEditorPreview();
+                });
+
+                [editorBrightnessSlider, editorContrastSlider, editorSaturationSlider, editorHueSlider].forEach(s =>
+                    s.addEventListener('input', () => editorApplyColorMods(getEditorTargetIndices()))
+                );
+                document.getElementById('editorRotateLeftBtn').addEventListener('click', () => editorApplyGeoMod(m => m.rotation -= 90));
+                document.getElementById('editorRotateRightBtn').addEventListener('click', () => editorApplyGeoMod(m => m.rotation += 90));
+                document.getElementById('editorFlipHBtn').addEventListener('click', () => editorApplyGeoMod(m => m.flipH = !m.flipH));
+                document.getElementById('editorFlipVBtn').addEventListener('click', () => editorApplyGeoMod(m => m.flipV = !m.flipV));
+                document.getElementById('editorResetColorsBtn').addEventListener('click', () => {
+                    getEditorTargetIndices().forEach(i => { if (i >= 0 && i < editorImages.length) editorImages[i].mods = { ...defaultMods }; });
+                    if (!editorBulkMode && editorSelectedIndex >= 0) updateEditorSlidersFromImage(editorImages[editorSelectedIndex]);
+                    else resetEditorSliders();
+                    renderEditorPreview(); pushEditorHistory();
+                });
+                document.getElementById('editorResetGeoBtn').addEventListener('click', () => {
+                    getEditorTargetIndices().forEach(i => { if (i >= 0 && i < editorImages.length) { editorImages[i].mods.rotation = defaultMods.rotation; editorImages[i].mods.flipH = defaultMods.flipH; editorImages[i].mods.flipV = defaultMods.flipV; } });
+                    renderEditorPreview(); pushEditorHistory();
+                });
+
+                editorPerFrameDelay.addEventListener('input', () => {
+                    if (editorBulkMode || editorSelectedIndex < 0) return;
+                    const val = parseInt(editorPerFrameDelay.value);
+                    if (!isNaN(val) && val >= 10 && val <= 5000) { editorImages[editorSelectedIndex].delay = val; renderEditorThumbnails(); pushEditorHistory(); }
+                });
+                editorCopyDelayToAllBtn.addEventListener('click', () => {
+                    if (editorSelectedIndex < 0) { showEditorMessage('editor.msgNoSelection'); return; }
+                    const delayVal = editorImages[editorSelectedIndex].delay;
+                    editorImages.forEach(img => img.delay = delayVal);
+                    renderEditorThumbnails(); pushEditorHistory(); showEditorMessage('editor.msgDelayCopied');
+                });
+                editorSetGlobalDelayBtn.addEventListener('click', () => {
+                    const globalDelay = parseInt(editorFrameDelaySlider.value);
+                    editorImages.forEach(img => img.delay = globalDelay);
+                    if (editorSelectedIndex >= 0) editorPerFrameDelay.value = globalDelay;
+                    renderEditorThumbnails(); pushEditorHistory(); showEditorMessage('editor.msgAllGlobalDelay');
+                });
+
+                editorSetOverlayBtn.addEventListener('click', () => {
+                    if (editorSelectedIndex < 0) return;
+                    const text = editorOverlayText.value.trim();
+                    if (!text) { showEditorMessage('editor.msgEnterOverlayText'); return; }
+                    editorImages[editorSelectedIndex].overlay = { text, color: editorOverlayColor.value, size: parseInt(editorOverlaySize.value) };
+                    renderEditorThumbnails(); renderEditorPreview(); pushEditorHistory(); showEditorMessage('editor.msgOverlaySet');
+                });
+                editorCopyOverlayAllBtn.addEventListener('click', () => {
+                    if (editorSelectedIndex < 0) { showEditorMessage('editor.msgNoSelection'); return; }
+                    const overlay = editorImages[editorSelectedIndex].overlay;
+                    editorImages.forEach(img => img.overlay = overlay ? { ...overlay } : null);
+                    renderEditorThumbnails(); renderEditorPreview(); pushEditorHistory(); showEditorMessage('editor.msgOverlayCopied');
+                });
+                editorClearOverlayBtn.addEventListener('click', () => {
+                    if (editorSelectedIndex < 0) return;
+                    editorImages[editorSelectedIndex].overlay = null;
+                    renderEditorThumbnails(); renderEditorPreview(); pushEditorHistory(); showEditorMessage('editor.msgOverlayCleared');
+                });
+                editorApplyCropBtn.addEventListener('click', () => { renderEditorPreview(); showEditorMessage('editor.msgCropApplied'); });
+                editorReverseOrderBtn.addEventListener('click', () => {
+                    if (editorImages.length < 2) return;
+                    editorImages.reverse(); editorSelectedIndex = editorImages.length - 1 - editorSelectedIndex;
+                    renderEditorThumbnails(); if (editorSelectedIndex >= 0) { updateEditorSlidersFromImage(editorImages[editorSelectedIndex]); renderEditorPreview(); }
+                    pushEditorHistory(); showEditorMessage('editor.msgOrderReversed');
+                });
+                editorShuffleOrderBtn.addEventListener('click', () => {
+                    if (editorImages.length < 2) return;
+                    for (let i = editorImages.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [editorImages[i], editorImages[j]] = [editorImages[j], editorImages[i]]; }
+                    editorSelectedIndex = 0; renderEditorThumbnails(); updateEditorSlidersFromImage(editorImages[0]); renderEditorPreview(); pushEditorHistory(); showEditorMessage('editor.msgOrderShuffled');
+                });
+                editorInsertBlankBtn.addEventListener('click', () => {
+                    const color = editorBgColorInput.value; const delay = parseInt(editorFrameDelaySlider.value);
+                    const canvas = document.createElement('canvas'); canvas.width = 400; canvas.height = 300;
+                    const ctx = canvas.getContext('2d'); ctx.fillStyle = color; ctx.fillRect(0, 0, 400, 300);
+                    const dataUrl = canvas.toDataURL();
+                    const newImg = { id: ++editorIdCounter, originalDataUrl: dataUrl, width: 400, height: 300, mods: { ...defaultMods }, delay, overlay: null, note: '' };
+                    if (editorSelectedIndex >= 0 && editorSelectedIndex < editorImages.length) { editorImages.splice(editorSelectedIndex + 1, 0, newImg); editorSelectedIndex++; }
+                    else { editorImages.push(newImg); editorSelectedIndex = editorImages.length - 1; }
+                    renderEditorThumbnails(); updateEditorSlidersFromImage(newImg); renderEditorPreview(); pushEditorHistory(); showEditorMessage('editor.msgBlankInserted');
+                });
+                editorApplyToAllBtn.addEventListener('click', () => {
+                    if (editorSelectedIndex < 0) { showEditorMessage('editor.msgNoSelection'); return; }
+                    const srcMods = { ...editorImages[editorSelectedIndex].mods };
+                    editorImages.forEach((img, i) => { if (i !== editorSelectedIndex) img.mods = { ...srcMods }; });
+                    renderEditorPreview(); renderEditorThumbnails(); pushEditorHistory(); showEditorMessage('editor.msgSettingsCopied');
+                });
+                editorResetAllBtn.addEventListener('click', () => {
+                    if (editorImages.length === 0) return;
+                    if (confirm(getMsg('editor.confirmResetAll') || 'Reset all images?')) {
+                        editorImages.forEach(img => { img.mods = { ...defaultMods }; img.delay = parseInt(editorFrameDelaySlider.value); img.overlay = null; img.note = ''; });
+                        if (editorSelectedIndex >= 0) updateEditorSlidersFromImage(editorImages[editorSelectedIndex]);
+                        renderEditorPreview(); renderEditorThumbnails(); pushEditorHistory(); showEditorMessage('editor.msgAllReset');
+                    }
+                });
+                editorRemoveAllBtn.addEventListener('click', () => {
+                    if (editorImages.length === 0) return;
+                    if (confirm(getMsg('editor.confirmClearAll') || 'Remove all images?')) {
+                        editorImages = []; editorSelectedIndex = -1; resetEditorSliders(); hideEditorPreview(); renderEditorThumbnails();
+                        editorGeneratedGifBlob = null; editorDownloadGifBtn.style.display = 'none'; pushEditorHistory(); showEditorMessage('editor.msgAllCleared');
+                    }
+                });
+                editorUndoBtn.addEventListener('click', editorUndo);
+                editorRedoBtn.addEventListener('click', editorRedo);
+                editorSaveNoteBtn.addEventListener('click', () => {
+                    if (editorSelectedIndex < 0) return;
+                    editorImages[editorSelectedIndex].note = editorFrameNoteInput.value.trim();
+                    renderEditorThumbnails(); pushEditorHistory(); showEditorMessage('editor.msgNoteSaved');
+                });
+                editorPlayBtn.addEventListener('click', startEditorPlayback);
+                editorStopBtn.addEventListener('click', stopEditorPlayback);
+                editorFrameDelaySlider.addEventListener('input', updateEditorSliderLabels);
+                editorOutputWidthSlider.addEventListener('input', updateEditorSliderLabels);
+                editorGenerateGifBtn.addEventListener('click', editorGenerateGif);
+                editorDownloadGifBtn.addEventListener('click', editorDownloadGif);
+
+                document.addEventListener('keydown', e => {
+                    if (e.target.tagName === 'INPUT' && e.target.type !== 'range') return;
+                    if (editorBox.style.display !== 'none') {
+                        if (e.key === 'ArrowLeft' && editorSelectedIndex > 0) { e.preventDefault(); editorSelectImage(editorSelectedIndex - 1); }
+                        else if (e.key === 'ArrowRight' && editorSelectedIndex < editorImages.length - 1) { e.preventDefault(); editorSelectImage(editorSelectedIndex + 1); }
+                        else if (e.key === 'Delete' && editorSelectedIndex >= 0) { e.preventDefault(); editorRemoveImage(editorSelectedIndex); }
+                    }
+                });
             }
 
-            document.addEventListener('translationsApplied', function() {
-                if (editorBox.style.display !== 'none') {
-                    if (window.EDTranslation) EDTranslation.translatePage();
-                    updateEditorModeToggleUI();
-                    renderEditorThumbnails();
-                    if (editorSelectedIndex >= 0) {
-                        updateEditorSlidersFromImage(editorImages[editorSelectedIndex]);
-                        renderEditorPreview();
+            // ===================== SINGLE‑IMAGE EDITOR =====================
+            function initSingleEditor(imgObj) {
+                let singleImage = null;
+                let singleGeneratedBlob = null;
+
+                const singleBox = document.getElementById('editor-single-box');
+                const singleMsg = document.getElementById('editorSingleMessage');
+                const singleCanvas = document.getElementById('editorSinglePreviewCanvas');
+                const singlePlaceholder = document.getElementById('editorSinglePreviewPlaceholder');
+                const singleEffectSelect = document.getElementById('editorSingleEffectSelect');
+                const singleDuration = document.getElementById('editorSingleDuration');
+                const singleDurationVal = document.getElementById('editorSingleDurationVal');
+                const singleFrameCount = document.getElementById('editorSingleFrameCount');
+                const singleFrameCountVal = document.getElementById('editorSingleFrameCountVal');
+                const singleOutputWidth = document.getElementById('editorSingleOutputWidth');
+                const singleOutputWidthVal = document.getElementById('editorSingleOutputWidthVal');
+                const singleBgColor = document.getElementById('editorSingleBgColor');
+                const singleGenerateBtn = document.getElementById('editorSingleGenerateGifBtn');
+                const singleDownloadBtn = document.getElementById('editorSingleDownloadGifBtn');
+                const singleProgressBar = document.getElementById('editorSingleProgressBar');
+                const singleProgressBarFill = document.getElementById('editorSingleProgressBarFill');
+                const singleBackBtn = document.getElementById('editorSingleBackToSelectionBtn');
+
+                function singleShowMsg(msgKey, placeholders) {
+                    let str = EDTranslation.getText(msgKey) || msgKey;
+                    if (placeholders) Object.keys(placeholders).forEach(k => str = str.replace(`{${k}}`, placeholders[k]));
+                    singleMsg.textContent = str;
+                    setTimeout(() => { if (singleMsg.textContent === str) singleMsg.textContent = ''; }, 2800);
+                }
+
+                // Seeded random for particle effects
+                function mulberry32(seed) {
+                    return function() {
+                        seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+                        var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+                        t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+                        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+                    };
+                }
+
+                function drawSingleFrame(frameIndex, totalFrames, effect, width, height, canvas) {
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const t = totalFrames > 1 ? frameIndex / (totalFrames - 1) : 0;
+                    const bgColor = singleBgColor.value;
+                    ctx.clearRect(0, 0, width, height);
+                    ctx.fillStyle = bgColor; ctx.fillRect(0, 0, width, height);
+
+                    if (['rain','stars','snow','bubbles','confetti'].includes(effect)) {
+                        // Draw image as cover
+                        const imgW = singleImage.naturalWidth;
+                        const imgH = singleImage.naturalHeight;
+                        const scale = Math.max(width / imgW, height / imgH);
+                        const dw = imgW * scale, dh = imgH * scale;
+                        ctx.drawImage(singleImage, (width - dw)/2, (height - dh)/2, dw, dh);
+                        // Particle effects
+                        const seed = effect.charCodeAt(0) + frameIndex * 1000;
+                        const rng = mulberry32(seed);
+                        if (effect === 'rain') {
+                            for (let i=0; i<120; i++) {
+                                const x = rng()*width, speed = 20+rng()*25, y = (rng()*(height+50)+speed*frameIndex)%(height+50)-25;
+                                ctx.strokeStyle = `rgba(180,200,255,${0.3+rng()*0.5})`;
+                                ctx.lineWidth = 1.2;
+                                ctx.beginPath();
+                                ctx.moveTo(x,y); ctx.lineTo(x-1.5,y+12);
+                                ctx.stroke();
+                            }
+                        } else if (effect === 'stars') {
+                            for (let i=0; i<60; i++) {
+                                const x=rng()*width, y=rng()*height;
+                                const op = 0.2+rng()*0.5+0.3*Math.sin(frameIndex*0.3+rng()*Math.PI*2);
+                                ctx.fillStyle = `rgba(255,255,200,${Math.max(0,op)})`;
+                                ctx.beginPath(); ctx.arc(x,y,1+rng()*2.5,0,Math.PI*2); ctx.fill();
+                            }
+                        } else if (effect === 'snow') {
+                            for (let i=0; i<80; i++) {
+                                const x=rng()*width, speed=8+rng()*15, y=(rng()*(height+30)+speed*frameIndex)%(height+30)-15;
+                                ctx.fillStyle = `rgba(255,255,255,${0.5+rng()*0.5})`;
+                                ctx.beginPath(); ctx.arc(x+Math.sin(frameIndex*0.2+i)*15,y,2+rng()*5,0,Math.PI*2); ctx.fill();
+                            }
+                        } else if (effect === 'bubbles') {
+                            for (let i=0; i<40; i++) {
+                                const x=rng()*width, speed=6+rng()*10, y=((rng()*(height+40)-speed*frameIndex)%(height+40)+20);
+                                ctx.strokeStyle = `rgba(255,255,255,${0.3+rng()*0.4})`;
+                                ctx.fillStyle = `rgba(255,255,255,${0.1+rng()*0.2})`;
+                                ctx.lineWidth=1;
+                                ctx.beginPath(); ctx.arc(x,y,3+rng()*8,0,Math.PI*2); ctx.fill(); ctx.stroke();
+                            }
+                        } else if (effect === 'confetti') {
+                            const colors=['#FF6B6B','#4ECDC4','#FFE66D','#A78BFA','#F472B6','#60A5FA'];
+                            for (let i=0; i<60; i++) {
+                                const x=rng()*width, speed=15+rng()*25, y=(rng()*(height+30)+speed*frameIndex)%(height+30)-15;
+                                ctx.save(); ctx.translate(x,y); ctx.rotate(rng()*360*Math.PI/180);
+                                ctx.fillStyle = colors[Math.floor(rng()*colors.length)];
+                                ctx.globalAlpha = 0.7+rng()*0.3;
+                                ctx.fillRect(-(4+rng()*6)/2,-(4+rng()*6)/4,4+rng()*6,(4+rng()*6)/2);
+                                ctx.restore();
+                            }
+                        }
+                    } else {
+                        // Transformation effects
+                        let scale = 1.0, angle = 0, ox = 0, oy = 0, alpha = 1.0;
+                        switch(effect) {
+                            case 'zoom-in': scale = 1.0 + t*0.5; break;
+                            case 'zoom-out': scale = 1.5 - t*0.5; break;
+                            case 'pan-left': ox = (0.5 - t)*0.3*singleImage.naturalWidth; break;
+                            case 'pan-right': ox = (-0.5 + t)*0.3*singleImage.naturalWidth; break;
+                            case 'pan-up': oy = (0.5 - t)*0.3*singleImage.naturalHeight; break;
+                            case 'pan-down': oy = (-0.5 + t)*0.3*singleImage.naturalHeight; break;
+                            case 'ken-burns-in': scale = 1.0 + t*0.5; ox = t*0.05*singleImage.naturalWidth; oy = t*0.05*singleImage.naturalHeight; break;
+                            case 'ken-burns-out': scale = 1.5 - t*0.5; ox = (1-t)*0.05*singleImage.naturalWidth; oy = (1-t)*0.05*singleImage.naturalHeight; break;
+                            case 'rotate-cw': angle = t*Math.PI*2; break;
+                            case 'rotate-ccw': angle = -t*Math.PI*2; break;
+                            case 'fade-in': alpha = t; break;
+                            case 'fade-out': alpha = 1 - t; break;
+                            case 'slide-left': ox = -t*width; break;
+                            case 'slide-right': ox = t*width; break;
+                            case 'slide-up': oy = -t*height; break;
+                            case 'slide-down': oy = t*height; break;
+                            case 'pulse': scale = 1 + 0.15*Math.sin(t*Math.PI*2*2); break;
+                            case 'wobble': angle = 5*(Math.PI/180)*Math.sin(t*Math.PI*2*3); break;
+                            case 'shake': ox = 10*Math.sin(t*Math.PI*2*4); oy = 8*Math.cos(t*Math.PI*2*4); break;
+                        }
+                        ctx.save();
+                        ctx.globalAlpha = alpha;
+                        ctx.translate(width/2, height/2);
+                        if (angle) ctx.rotate(angle);
+                        if (scale !== 1.0) ctx.scale(scale, scale);
+                        ctx.drawImage(singleImage, -singleImage.naturalWidth/2 + ox, -singleImage.naturalHeight/2 + oy, singleImage.naturalWidth, singleImage.naturalHeight);
+                        ctx.restore();
                     }
                 }
-            });
 
-            editorBackToSelectionBtn.addEventListener('click', () => {
-                editorBox.style.display = 'none';
-                previewBox.style.display = 'block';
-            });
-
-            // --- Event listeners ---
-            editorModeToggle.addEventListener('click', () => {
-                if (editorImages.length === 0) return;
-                editorBulkMode = !editorBulkMode;
-                updateEditorModeToggleUI();
-                if (editorBulkMode) { resetEditorSliders(); showEditorMessage('editor.msgBulkMode'); }
-                else { if (editorSelectedIndex >= 0) updateEditorSlidersFromImage(editorImages[editorSelectedIndex]); showEditorMessage('editor.msgIndividualMode'); }
-                updateEditorPerFrameDelayInput(); renderEditorPreview();
-            });
-
-            [editorBrightnessSlider, editorContrastSlider, editorSaturationSlider, editorHueSlider].forEach(s =>
-                s.addEventListener('input', () => editorApplyColorMods(getEditorTargetIndices()))
-            );
-            document.getElementById('editorRotateLeftBtn').addEventListener('click', () => editorApplyGeoMod(m => m.rotation -= 90));
-            document.getElementById('editorRotateRightBtn').addEventListener('click', () => editorApplyGeoMod(m => m.rotation += 90));
-            document.getElementById('editorFlipHBtn').addEventListener('click', () => editorApplyGeoMod(m => m.flipH = !m.flipH));
-            document.getElementById('editorFlipVBtn').addEventListener('click', () => editorApplyGeoMod(m => m.flipV = !m.flipV));
-            document.getElementById('editorResetColorsBtn').addEventListener('click', () => {
-                getEditorTargetIndices().forEach(i => { if (i >= 0 && i < editorImages.length) editorImages[i].mods = { ...defaultMods }; });
-                if (!editorBulkMode && editorSelectedIndex >= 0) updateEditorSlidersFromImage(editorImages[editorSelectedIndex]);
-                else resetEditorSliders();
-                renderEditorPreview(); pushEditorHistory();
-            });
-            document.getElementById('editorResetGeoBtn').addEventListener('click', () => {
-                getEditorTargetIndices().forEach(i => { if (i >= 0 && i < editorImages.length) { editorImages[i].mods.rotation = defaultMods.rotation; editorImages[i].mods.flipH = defaultMods.flipH; editorImages[i].mods.flipV = defaultMods.flipV; } });
-                renderEditorPreview(); pushEditorHistory();
-            });
-
-            editorPerFrameDelay.addEventListener('input', () => {
-                if (editorBulkMode || editorSelectedIndex < 0) return;
-                const val = parseInt(editorPerFrameDelay.value);
-                if (!isNaN(val) && val >= 10 && val <= 5000) { editorImages[editorSelectedIndex].delay = val; renderEditorThumbnails(); pushEditorHistory(); }
-            });
-            editorCopyDelayToAllBtn.addEventListener('click', () => {
-                if (editorSelectedIndex < 0) { showEditorMessage('editor.msgNoSelection'); return; }
-                const delayVal = editorImages[editorSelectedIndex].delay;
-                editorImages.forEach(img => img.delay = delayVal);
-                renderEditorThumbnails(); pushEditorHistory(); showEditorMessage('editor.msgDelayCopied');
-            });
-            editorSetGlobalDelayBtn.addEventListener('click', () => {
-                const globalDelay = parseInt(editorFrameDelaySlider.value);
-                editorImages.forEach(img => img.delay = globalDelay);
-                if (editorSelectedIndex >= 0) editorPerFrameDelay.value = globalDelay;
-                renderEditorThumbnails(); pushEditorHistory(); showEditorMessage('editor.msgAllGlobalDelay');
-            });
-
-            editorSetOverlayBtn.addEventListener('click', () => {
-                if (editorSelectedIndex < 0) return;
-                const text = editorOverlayText.value.trim();
-                if (!text) { showEditorMessage('editor.msgEnterOverlayText'); return; }
-                editorImages[editorSelectedIndex].overlay = { text, color: editorOverlayColor.value, size: parseInt(editorOverlaySize.value) };
-                renderEditorThumbnails(); renderEditorPreview(); pushEditorHistory(); showEditorMessage('editor.msgOverlaySet');
-            });
-            editorCopyOverlayAllBtn.addEventListener('click', () => {
-                if (editorSelectedIndex < 0) { showEditorMessage('editor.msgNoSelection'); return; }
-                const overlay = editorImages[editorSelectedIndex].overlay;
-                editorImages.forEach(img => img.overlay = overlay ? { ...overlay } : null);
-                renderEditorThumbnails(); renderEditorPreview(); pushEditorHistory(); showEditorMessage('editor.msgOverlayCopied');
-            });
-            editorClearOverlayBtn.addEventListener('click', () => {
-                if (editorSelectedIndex < 0) return;
-                editorImages[editorSelectedIndex].overlay = null;
-                renderEditorThumbnails(); renderEditorPreview(); pushEditorHistory(); showEditorMessage('editor.msgOverlayCleared');
-            });
-            editorApplyCropBtn.addEventListener('click', () => { renderEditorPreview(); showEditorMessage('editor.msgCropApplied'); });
-            editorReverseOrderBtn.addEventListener('click', () => {
-                if (editorImages.length < 2) return;
-                editorImages.reverse(); editorSelectedIndex = editorImages.length - 1 - editorSelectedIndex;
-                renderEditorThumbnails(); if (editorSelectedIndex >= 0) { updateEditorSlidersFromImage(editorImages[editorSelectedIndex]); renderEditorPreview(); }
-                pushEditorHistory(); showEditorMessage('editor.msgOrderReversed');
-            });
-            editorShuffleOrderBtn.addEventListener('click', () => {
-                if (editorImages.length < 2) return;
-                for (let i = editorImages.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [editorImages[i], editorImages[j]] = [editorImages[j], editorImages[i]]; }
-                editorSelectedIndex = 0; renderEditorThumbnails(); updateEditorSlidersFromImage(editorImages[0]); renderEditorPreview(); pushEditorHistory(); showEditorMessage('editor.msgOrderShuffled');
-            });
-            editorInsertBlankBtn.addEventListener('click', () => {
-                const color = editorBgColorInput.value; const delay = parseInt(editorFrameDelaySlider.value);
-                const canvas = document.createElement('canvas'); canvas.width = 400; canvas.height = 300;
-                const ctx = canvas.getContext('2d'); ctx.fillStyle = color; ctx.fillRect(0, 0, 400, 300);
-                const dataUrl = canvas.toDataURL();
-                const newImg = { id: ++editorIdCounter, originalDataUrl: dataUrl, width: 400, height: 300, mods: { ...defaultMods }, delay, overlay: null, note: '' };
-                if (editorSelectedIndex >= 0 && editorSelectedIndex < editorImages.length) { editorImages.splice(editorSelectedIndex + 1, 0, newImg); editorSelectedIndex++; }
-                else { editorImages.push(newImg); editorSelectedIndex = editorImages.length - 1; }
-                renderEditorThumbnails(); updateEditorSlidersFromImage(newImg); renderEditorPreview(); pushEditorHistory(); showEditorMessage('editor.msgBlankInserted');
-            });
-            editorApplyToAllBtn.addEventListener('click', () => {
-                if (editorSelectedIndex < 0) { showEditorMessage('editor.msgNoSelection'); return; }
-                const srcMods = { ...editorImages[editorSelectedIndex].mods };
-                editorImages.forEach((img, i) => { if (i !== editorSelectedIndex) img.mods = { ...srcMods }; });
-                renderEditorPreview(); renderEditorThumbnails(); pushEditorHistory(); showEditorMessage('editor.msgSettingsCopied');
-            });
-            editorResetAllBtn.addEventListener('click', () => {
-                if (editorImages.length === 0) return;
-                if (confirm(getMsg('editor.confirmResetAll') || 'Reset all images?')) {
-                    editorImages.forEach(img => { img.mods = { ...defaultMods }; img.delay = parseInt(editorFrameDelaySlider.value); img.overlay = null; img.note = ''; });
-                    if (editorSelectedIndex >= 0) updateEditorSlidersFromImage(editorImages[editorSelectedIndex]);
-                    renderEditorPreview(); renderEditorThumbnails(); pushEditorHistory(); showEditorMessage('editor.msgAllReset');
+                function renderSingleStill() {
+                    if (!singleImage) return;
+                    const w = parseInt(singleOutputWidth.value);
+                    const h = Math.round(w * (singleImage.naturalHeight / singleImage.naturalWidth));
+                    drawSingleFrame(0, parseInt(singleFrameCount.value), singleEffectSelect.value, w, h, singleCanvas);
+                    singleCanvas.style.display = 'block';
+                    singlePlaceholder.style.display = 'none';
                 }
-            });
-            editorRemoveAllBtn.addEventListener('click', () => {
-                if (editorImages.length === 0) return;
-                if (confirm(getMsg('editor.confirmClearAll') || 'Remove all images?')) {
-                    editorImages = []; editorSelectedIndex = -1; resetEditorSliders(); hideEditorPreview(); renderEditorThumbnails();
-                    editorGeneratedGifBlob = null; editorDownloadGifBtn.style.display = 'none'; pushEditorHistory(); showEditorMessage('editor.msgAllCleared');
-                }
-            });
-            editorUndoBtn.addEventListener('click', editorUndo);
-            editorRedoBtn.addEventListener('click', editorRedo);
-            editorSaveNoteBtn.addEventListener('click', () => {
-                if (editorSelectedIndex < 0) return;
-                editorImages[editorSelectedIndex].note = editorFrameNoteInput.value.trim();
-                renderEditorThumbnails(); pushEditorHistory(); showEditorMessage('editor.msgNoteSaved');
-            });
-            editorPlayBtn.addEventListener('click', startEditorPlayback);
-            editorStopBtn.addEventListener('click', stopEditorPlayback);
-            editorFrameDelaySlider.addEventListener('input', updateEditorSliderLabels);
-            editorOutputWidthSlider.addEventListener('input', updateEditorSliderLabels);
-            editorGenerateGifBtn.addEventListener('click', editorGenerateGif);
-            editorDownloadGifBtn.addEventListener('click', editorDownloadGif);
 
-            document.addEventListener('keydown', e => {
-                if (e.target.tagName === 'INPUT' && e.target.type !== 'range') return;
-                if (editorBox.style.display !== 'none') {
-                    if (e.key === 'ArrowLeft' && editorSelectedIndex > 0) { e.preventDefault(); editorSelectImage(editorSelectedIndex - 1); }
-                    else if (e.key === 'ArrowRight' && editorSelectedIndex < editorImages.length - 1) { e.preventDefault(); editorSelectImage(editorSelectedIndex + 1); }
-                    else if (e.key === 'Delete' && editorSelectedIndex >= 0) { e.preventDefault(); editorRemoveImage(editorSelectedIndex); }
+                function updateSingleUI() {
+                    singleDurationVal.textContent = parseFloat(singleDuration.value).toFixed(1) + ' s';
+                    singleFrameCountVal.textContent = singleFrameCount.value;
+                    singleOutputWidthVal.textContent = singleOutputWidth.value + ' px';
+                    renderSingleStill();
                 }
-            });
+
+                // Load the image
+                const img = new Image();
+                img.onload = function() {
+                    singleImage = img;
+                    singleGenerateBtn.disabled = false;
+                    updateSingleUI();
+                };
+                img.src = imgObj.data;
+
+                // Event listeners
+                singleEffectSelect.addEventListener('change', updateSingleUI);
+                singleDuration.addEventListener('input', updateSingleUI);
+                singleFrameCount.addEventListener('input', updateSingleUI);
+                singleOutputWidth.addEventListener('input', updateSingleUI);
+                singleBgColor.addEventListener('input', updateSingleUI);
+
+                singleBackBtn.addEventListener('click', () => {
+                    singleBox.style.display = 'none';
+                    previewBox.style.display = 'block';
+                });
+
+                singleGenerateBtn.addEventListener('click', async () => {
+                    if (!singleImage) { singleShowMsg('editor.single.msgGenerateFirst'); return; }
+                    singleGenerateBtn.disabled = true;
+                    singleGenerateBtn.textContent = '⏳ ' + (EDTranslation.getText('editor.single.generate') || 'Generating…');
+                    singleProgressBar.classList.add('active');
+                    singleProgressBarFill.style.width = '0%';
+                    singleDownloadBtn.style.display = 'none';
+                    const effect = singleEffectSelect.value;
+                    const totalFrames = parseInt(singleFrameCount.value);
+                    const duration = parseFloat(singleDuration.value);
+                    const frameDelay = Math.round((duration * 1000) / totalFrames);
+                    const outW = parseInt(singleOutputWidth.value);
+                    const outH = Math.round(outW * (singleImage.naturalHeight / singleImage.naturalWidth));
+                    const bg = singleBgColor.value;
+
+                    try {
+                        const gif = new GIF({
+                            workers: 2, quality: 10,
+                            width: outW, height: outH,
+                            workerScript: 'gif.worker.js',
+                            repeat: 0
+                        });
+                        gif.on('progress', p => { singleProgressBarFill.style.width = Math.round(p*100) + '%'; });
+                        gif.on('finished', blob => {
+                            singleGeneratedBlob = blob;
+                            singleProgressBarFill.style.width = '100%';
+                            singleGenerateBtn.textContent = EDTranslation.getText('editor.single.generate') || '🎬 Generate Animated GIF';
+                            singleGenerateBtn.disabled = false;
+                            singleProgressBar.classList.remove('active');
+                            singleDownloadBtn.style.display = 'inline-flex';
+                            singleShowMsg('editor.single.msgGifGenerated');
+                        });
+                        for (let i=0; i<totalFrames; i++) {
+                            const canvas = document.createElement('canvas');
+                            drawSingleFrame(i, totalFrames, effect, outW, outH, canvas);
+                            gif.addFrame(canvas, { delay: frameDelay, copy: true });
+                        }
+                        gif.render();
+                    } catch(e) {
+                        console.error(e);
+                        singleShowMsg('editor.single.msgGifFailed');
+                        singleGenerateBtn.textContent = EDTranslation.getText('editor.single.generate') || '🎬 Generate Animated GIF';
+                        singleGenerateBtn.disabled = false;
+                        singleProgressBar.classList.remove('active');
+                    }
+                });
+
+                singleDownloadBtn.addEventListener('click', () => {
+                    if (!singleGeneratedBlob) { singleShowMsg('editor.single.msgGenerateFirst'); return; }
+                    const url = URL.createObjectURL(singleGeneratedBlob);
+                    const a = document.createElement('a');
+                    a.href = url; a.download = 'animated_single_' + Date.now() + '.gif';
+                    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    singleShowMsg('editor.msgGifDownloaded');
+                });
+
+                EDTranslation.translatePage();
+            }
 
             // Start page
             if (document.readyState === 'loading') {
