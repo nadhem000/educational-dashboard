@@ -616,15 +616,13 @@
 
       // Re‑translate welcome bar when language changes
       document.addEventListener('translationsApplied', async () => {
-        try {
-          const { data: { session: currentSession } } = await supabase.auth.getSession();
-          const user = currentSession?.user ?? null;
-          updateProfileButton(user);
-          await updateWelcomeBar(user);
-        } catch (err) {
-          // offline, ignore
-        }
-      });
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user ?? null;
+    updateProfileButton(user);
+    await updateWelcomeBar(user);
+  } catch (_) {}
+});
 
     } catch (err) {
       console.error('ED-profile initialisation failed:', err);
