@@ -780,6 +780,10 @@
                 editor: {
                     title: "Step 3 – Edit & Animate",
                     description: "Adjust colours, timing, overlays and generate your GIF.",
+  saveAsAvatar: "🖼 Save as Avatar",
+  savingAvatar: "⏳ Saving…",
+  avatarSaved: "🖼 Saved ✓",
+  avatarSaveFailed: "❌ Failed to save avatar",
                     single: {
                         title: "Step 3 – Animate your photo",
                         description: "Choose an effect and create a moving GIF from your single image.",
@@ -939,6 +943,10 @@
                 editor: {
                     title: "Étape 3 – Modifier & Animer",
                     description: "Réglez les couleurs, le timing, les superpositions et générez votre GIF.",
+saveAsAvatar: "🖼 Enregistrer comme avatar",
+savingAvatar: "⏳ Enregistrement…",
+avatarSaved: "🖼 Enregistré ✓",
+avatarSaveFailed: "❌ Échec de l'enregistrement",
                     single: {
                         title: "Étape 3 – Animez votre photo",
                         description: "Choisissez un effet et créez un GIF animé à partir de votre image unique.",
@@ -1097,6 +1105,10 @@
                 editor: {
                     title: "الخطوة 3 – تعديل وتحريك",
                     description: "اضبط الألوان والتوقيت والتراكبات وأنشئ GIF.",
+saveAsAvatar: "🖼 حفظ كصورة رمزية",
+savingAvatar: "⏳ جارٍ الحفظ…",
+avatarSaved: "🖼 تم الحفظ ✓",
+avatarSaveFailed: "❌ فشل حفظ الصورة الرمزية"
                     single: {
                         title: "الخطوة 3 – حرّك صورتك",
                         description: "اختر تأثيرًا وأنشئ GIF متحركًا من صورتك الواحدة.",
@@ -2074,54 +2086,69 @@
 
                 // ===== NEW: Save GIF as profile avatar =====
                 const editorSaveAsAvatarBtn = document.createElement('button');
-                editorSaveAsAvatarBtn.id = 'editorSaveAsAvatarBtn';
-                editorSaveAsAvatarBtn.className = 'btn btn-primary';
-                editorSaveAsAvatarBtn.style.display = 'none';
-                editorSaveAsAvatarBtn.textContent = '🖼 Save as Avatar';
-                editorSaveAsAvatarBtn.addEventListener('click', async () => {
-                    if (!editorGeneratedGifBlob) {
-                        showEditorMessage('editor.msgGenerateFirst');
-                        return;
-                    }
-                    editorSaveAsAvatarBtn.disabled = true;
-                    editorSaveAsAvatarBtn.textContent = '⏳ Saving...';
+editorSaveAsAvatarBtn.id = 'editorSaveAsAvatarBtn';
+editorSaveAsAvatarBtn.className = 'btn btn-primary';
+editorSaveAsAvatarBtn.style.display = 'none';
 
-                    const reader = new FileReader();
-                    reader.onload = async (e) => {
-                        const base64Gif = e.target.result; // data:image/gif;base64,...
+function setSaveAsAvatarText(status) {
+  const key = status === 'saving' ? 'editor.savingAvatar' :
+              status === 'saved' ? 'editor.avatarSaved' :
+              'editor.saveAsAvatar';
+  editorSaveAsAvatarBtn.textContent = getMsg(key) || '🖼 Save as Avatar';
+}
+// Initial text
+setSaveAsAvatarText('default');
 
-                        const SUPABASE_URL = 'https://hmjbzzuresgzwzefjpyt.supabase.co';
-                        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtamJ6enVyZXNnend6ZWZqcHl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwMjczNDUsImV4cCI6MjA5NTYwMzM0NX0.44Q-Hkl4Rr9LuQhwryrQklFi809xYGteHgsS9nMG0ro';
-                        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Update on language change
+document.addEventListener('translationsApplied', () => {
+  if (editorSaveAsAvatarBtn.disabled && editorSaveAsAvatarBtn.textContent.includes('Saving')) {
+    setSaveAsAvatarText('saving');
+  } else if (editorSaveAsAvatarBtn.textContent === '🖼 Saved ✓') {
+    setSaveAsAvatarText('saved');
+  } else {
+    setSaveAsAvatarText('default');
+  }
+});
 
-                        try {
-                            const { data: { session }, error: authError } = await supabase.auth.getSession();
-                            if (authError || !session) throw new Error('Not logged in');
+editorSaveAsAvatarBtn.addEventListener('click', async () => {
+  if (!editorGeneratedGifBlob) {
+    showEditorMessage('editor.msgGenerateFirst');
+    return;
+  }
+  editorSaveAsAvatarBtn.disabled = true;
+  setSaveAsAvatarText('saving');
 
-                            const { error: updateError } = await supabase
-                                .from('profiles')
-                                .upsert({
-                                    id: session.user.id,
-                                    avatar_url: base64Gif,
-                                    avatar: '🦉' // keep emoji as fallback
-                                }, { onConflict: 'id' });
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const base64Gif = e.target.result;
+    const SUPABASE_URL = 'https://hmjbzzuresgzwzefjpyt.supabase.co';
+    const SUPABASE_ANON_KEY = '…'; // same as before
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-                            if (updateError) throw updateError;
-
-                            showEditorMessage('✅ Avatar updated!');
-                            editorSaveAsAvatarBtn.textContent = '🖼 Saved ✓';
-                            // Notify other tabs/windows to refresh welcome bar
-                            window.postMessage({ type: 'avatar-updated' }, '*');
-                        } catch (err) {
-                            console.error(err);
-                            showEditorMessage('❌ Failed to save avatar: ' + err.message);
-                            editorSaveAsAvatarBtn.textContent = '🖼 Save as Avatar';
-                        } finally {
-                            editorSaveAsAvatarBtn.disabled = false;
-                        }
-                    };
-                    reader.readAsDataURL(editorGeneratedGifBlob);
-                });
+    try {
+      const { data: { session }, error: authError } = await supabase.auth.getSession();
+      if (authError || !session) throw new Error('Not logged in');
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .upsert({
+          id: session.user.id,
+          avatar_url: base64Gif,
+          avatar: '🦉'
+        }, { onConflict: 'id' });
+      if (updateError) throw updateError;
+      showEditorMessage('✅ ' + (getMsg('editor.avatarSaved') || 'Avatar updated!'));
+      setSaveAsAvatarText('saved');
+      window.postMessage({ type: 'avatar-updated' }, '*');
+    } catch (err) {
+      console.error(err);
+      showEditorMessage(getMsg('editor.avatarSaveFailed') || '❌ Failed to save avatar: ' + err.message);
+      setSaveAsAvatarText('default');
+    } finally {
+      editorSaveAsAvatarBtn.disabled = false;
+    }
+  };
+  reader.readAsDataURL(editorGeneratedGifBlob);
+});
 
                 // Place the button next to the download button
                 const editorDownloadBtn = document.getElementById('editorDownloadGifBtn');

@@ -164,14 +164,18 @@
 
     // Avatar display + click behaviour
     if (avatarUrl) {
-      // Cache‑bust: add a timestamp to force the browser to reload the image
-      const cacheBuster = avatarUrl.includes('?') ? '&' : '?';
-      imgEl.src = avatarUrl + cacheBuster + 'v=' + Date.now();
-      imgEl.style.display = 'block';
-      emojiEl.style.display = 'none';
-      container.style.cursor = 'pointer';
-      container.onclick = () => showAvatarModal(avatarUrl);
-    } else {
+  // Only add cache-busting for real URLs (skip base64 data URIs)
+  let displayUrl = avatarUrl;
+  if (avatarUrl.startsWith('http')) {
+    const cacheBuster = avatarUrl.includes('?') ? '&' : '?';
+    displayUrl = avatarUrl + cacheBuster + 'v=' + Date.now();
+  }
+  imgEl.src = displayUrl;
+  imgEl.style.display = 'block';
+  emojiEl.style.display = 'none';
+  container.style.cursor = 'pointer';
+  container.onclick = () => showAvatarModal(avatarUrl);
+} else {
       imgEl.style.display = 'none';
       emojiEl.textContent = avatarEmoji || '🦉';
       emojiEl.style.display = 'block';
