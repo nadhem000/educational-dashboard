@@ -593,7 +593,11 @@ if (!finalAvatarUrl) {
     const btnContainer = document.createElement('span');
     btnContainer.id = 'ED-General-profile-btn-container';
     btnContainer.style.display = 'inline-flex';
-    btnContainer.innerHTML = `<button id="ED-General-profile-btn" class="ED-General-header-btn" style="display:none;" title="${t('auth.profile.buttonTitle', 'View and edit your profile')}">${t('auth.profile.button', 'Profile')}</button>`;
+    btnContainer.innerHTML = `<button id="ED-General-profile-btn" class="ED-General-header-btn"
+  style="display:none;"
+  data-i18n="auth.profile.button"
+  data-i18n-title="auth.profile.buttonTitle"
+  title="${t('auth.profile.buttonTitle', 'View and edit your profile')}">${t('auth.profile.button', 'Profile')}</button>`;
     const authContainer = document.getElementById('ED-General-auth-btn-container');
     if (authContainer) {
       controls.insertBefore(btnContainer, authContainer);
