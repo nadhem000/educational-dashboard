@@ -164,7 +164,9 @@
 
     // Avatar display + click behaviour
     if (avatarUrl) {
-      imgEl.src = avatarUrl;
+      // Cache‑bust: add a timestamp to force the browser to reload the image
+      const cacheBuster = avatarUrl.includes('?') ? '&' : '?';
+      imgEl.src = avatarUrl + cacheBuster + 'v=' + Date.now();
       imgEl.style.display = 'block';
       emojiEl.style.display = 'none';
       container.style.cursor = 'pointer';
@@ -560,7 +562,7 @@
         currentAvatarEmoji = finalAvatarEmoji;
         if (finalAvatarUrl) avatarRemoved = false;
         updateAvatarDisplay();
-        // *** Refresh the welcome bar immediately ***
+        // Refresh the welcome bar immediately
         await updateWelcomeBar(user);
         setTimeout(closeModal, 1500);
       } catch (err) {
@@ -639,6 +641,16 @@
           updateProfileButton(user);
           await updateWelcomeBar(user);
         } catch (_) {}
+      });
+
+      // Listen for avatar-updated message from animation creator (cross-tab)
+      window.addEventListener('message', async (event) => {
+        if (event.data && event.data.type === 'avatar-updated') {
+          try {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) await updateWelcomeBar(session.user);
+          } catch (_) {}
+        }
       });
 
     } catch (err) {

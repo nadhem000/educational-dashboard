@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animated Avatar Creator – Step 1, 2 & 3</title>
+    <title>Animated Avatar Creator – Step 1, 2 &amp; 3</title>
     <script src="ED-admin-monitor.js"></script>
     <link rel="icon" type="image/x-icon" href="assets/icons/icon-64x64.png">
     <link rel="manifest" href="/manifest.json">
@@ -1252,6 +1252,8 @@
     <script src="ED-general-encrypted-backup.js"></script>
     <!-- gif.js local library -->
     <script src="gif.js"></script>
+    <!-- Supabase client for saving avatar from the animation creator -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Page‑specific logic -->
     <script>
         (function() {
@@ -1848,6 +1850,9 @@
                             editorGenerateGifBtn.disabled = false;
                             editorProgressBar.classList.remove('active');
                             editorDownloadGifBtn.style.display = 'inline-flex';
+                            // Show the Save as Avatar button if it exists
+                            const saveBtn = document.getElementById('editorSaveAsAvatarBtn');
+                            if (saveBtn) saveBtn.style.display = 'inline-flex';
                             showEditorMessage('editor.msgGifGenerated');
                         });
 
@@ -2047,7 +2052,10 @@
                     if (editorImages.length === 0) return;
                     if (confirm(getMsg('editor.confirmClearAll') || 'Remove all images?')) {
                         editorImages = []; editorSelectedIndex = -1; resetEditorSliders(); hideEditorPreview(); renderEditorThumbnails();
-                        editorGeneratedGifBlob = null; editorDownloadGifBtn.style.display = 'none'; pushEditorHistory(); showEditorMessage('editor.msgAllCleared');
+                        editorGeneratedGifBlob = null; editorDownloadGifBtn.style.display = 'none'; 
+                        const saveBtn = document.getElementById('editorSaveAsAvatarBtn');
+                        if (saveBtn) saveBtn.style.display = 'none';
+                        pushEditorHistory(); showEditorMessage('editor.msgAllCleared');
                     }
                 });
                 editorUndoBtn.addEventListener('click', editorUndo);
@@ -2063,6 +2071,63 @@
                 editorOutputWidthSlider.addEventListener('input', updateEditorSliderLabels);
                 editorGenerateGifBtn.addEventListener('click', editorGenerateGif);
                 editorDownloadGifBtn.addEventListener('click', editorDownloadGif);
+
+                // ===== NEW: Save GIF as profile avatar =====
+                const editorSaveAsAvatarBtn = document.createElement('button');
+                editorSaveAsAvatarBtn.id = 'editorSaveAsAvatarBtn';
+                editorSaveAsAvatarBtn.className = 'btn btn-primary';
+                editorSaveAsAvatarBtn.style.display = 'none';
+                editorSaveAsAvatarBtn.textContent = '🖼 Save as Avatar';
+                editorSaveAsAvatarBtn.addEventListener('click', async () => {
+                    if (!editorGeneratedGifBlob) {
+                        showEditorMessage('editor.msgGenerateFirst');
+                        return;
+                    }
+                    editorSaveAsAvatarBtn.disabled = true;
+                    editorSaveAsAvatarBtn.textContent = '⏳ Saving...';
+
+                    const reader = new FileReader();
+                    reader.onload = async (e) => {
+                        const base64Gif = e.target.result; // data:image/gif;base64,...
+
+                        const SUPABASE_URL = 'https://hmjbzzuresgzwzefjpyt.supabase.co';
+                        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtamJ6enVyZXNnend6ZWZqcHl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwMjczNDUsImV4cCI6MjA5NTYwMzM0NX0.44Q-Hkl4Rr9LuQhwryrQklFi809xYGteHgsS9nMG0ro';
+                        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+                        try {
+                            const { data: { session }, error: authError } = await supabase.auth.getSession();
+                            if (authError || !session) throw new Error('Not logged in');
+
+                            const { error: updateError } = await supabase
+                                .from('profiles')
+                                .upsert({
+                                    id: session.user.id,
+                                    avatar_url: base64Gif,
+                                    avatar: '🦉' // keep emoji as fallback
+                                }, { onConflict: 'id' });
+
+                            if (updateError) throw updateError;
+
+                            showEditorMessage('✅ Avatar updated!');
+                            editorSaveAsAvatarBtn.textContent = '🖼 Saved ✓';
+                            // Notify other tabs/windows to refresh welcome bar
+                            window.postMessage({ type: 'avatar-updated' }, '*');
+                        } catch (err) {
+                            console.error(err);
+                            showEditorMessage('❌ Failed to save avatar: ' + err.message);
+                            editorSaveAsAvatarBtn.textContent = '🖼 Save as Avatar';
+                        } finally {
+                            editorSaveAsAvatarBtn.disabled = false;
+                        }
+                    };
+                    reader.readAsDataURL(editorGeneratedGifBlob);
+                });
+
+                // Place the button next to the download button
+                const editorDownloadBtn = document.getElementById('editorDownloadGifBtn');
+                if (editorDownloadBtn && editorDownloadBtn.parentNode) {
+                    editorDownloadBtn.parentNode.insertBefore(editorSaveAsAvatarBtn, editorDownloadBtn.nextSibling);
+                }
 
                 document.addEventListener('keydown', e => {
                     if (e.target.tagName === 'INPUT' && e.target.type !== 'range') return;
