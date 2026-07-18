@@ -564,8 +564,16 @@
         submitBtn.disabled = false;
         currentAvatarUrl = finalAvatarUrl;
         currentAvatarEmoji = finalAvatarEmoji;
-        if (finalAvatarUrl) avatarRemoved = false;
+if (finalAvatarUrl) avatarRemoved = false;
+else avatarRemoved = true;       // <- ensure avatarRemoved stays true
         updateAvatarDisplay();
+// Force emoji display when avatar was removed (finalAvatarUrl is null)
+if (!finalAvatarUrl) {
+    avatarDisplay.innerHTML = '';
+    avatarDisplay.textContent = finalAvatarEmoji || currentAvatarEmoji || '🦉';
+    avatarDisplay.style.fontSize = '2.5rem';
+    avatarDisplay.style.background = 'var(--ED-General-color-bg-secondary)';
+}
         // Refresh the welcome bar immediately
         await updateWelcomeBar(user);
         setTimeout(closeModal, 1500);
