@@ -77,6 +77,13 @@
         }
       }
       supabase.auth.onAuthStateChange((event, session) => updateAuthUI(session?.user ?? null));
+document.addEventListener('translationsApplied', async () => {
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user ?? null;
+    updateAuthUI(user);
+  } catch (_) {}
+});
       insertAuthButton();
       // ---------- OFFLINE FIX: wrap getSession in try/catch ----------
       let session = null;

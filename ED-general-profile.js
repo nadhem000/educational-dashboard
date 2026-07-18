@@ -243,11 +243,11 @@
                 <!-- Experimental animated avatar (separate row, note below) -->
                 <div style="margin-top:0.3rem;">
                   <button type="button" id="profile-create-animated-avatar-btn"
-                          class="ED-General-header-btn"
-                          style="font-size:0.8rem;"
-                          title="Experimental feature">
-                    🎞️ ${t('auth.profile.createAnimatedAvatar', 'Create animated avatar')}
-                  </button>
+        class="ED-General-header-btn"
+        style="font-size:0.8rem;"
+        title="${t('auth.profile.experimentalNote')}">
+  🎞️ ${t('auth.profile.createAnimatedAvatar', 'Create animated avatar')}
+</button>
                   <div style="font-size:0.7rem; color: var(--ED-General-color-text-tertiary); margin-top:0.2rem;">
                     ${t('auth.profile.experimentalNote', 'still experimental')}
                   </div>
